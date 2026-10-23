@@ -28,7 +28,7 @@ function render(){
  $("#listHeading").textContent=state.topic||"Школьные материалы";
  $("#catalog").innerHTML=filtered.map(m=>{
  const d=DETAILS[m.name],age=d?.age||m.age;
- const kind=(d?.graphic==='drawing'||d?.graphic==='sociogram')?'drawing':(d?.graphic==='dictation'||d?.graphic==='schulte'||d?.graphic==='dembo'||d?.graphic==='ladder')?'graphic':(d?.calculator?'scale':'other');
+ const kind=d?.special==='memory10'?'memory':d?.special==='odd4'?'cognitive':(d?.graphic==='drawing'||d?.graphic==='sociogram')?'drawing':(d?.graphic==='dictation'||d?.graphic==='schulte'||d?.graphic==='dembo'||d?.graphic==='ladder')?'graphic':(d?.calculator?'scale':'other');
  return '<article class="method" data-kind="'+kind+'"><div class="head"><div class="glyph">'+iconSvg(m.theme)+'</div><div><h3>'+escapeHTML(m.name)+'</h3><small>'+escapeHTML(d?.author||m.author)+'</small></div></div><div class="tags"><span class="tag">'+escapeHTML(m.theme)+'</span><span class="tag">'+escapeHTML(age)+'</span></div><p>'+escapeHTML(d?.goal||m.goal)+'</p><div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">'+(d?'Открыть методику':'Подробнее')+'</button>'+(d?.calculator?'<button class="btn" data-score="'+escapeHTML(m.id)+'">Обработка</button>':'')+'</div></article>';
  }).join("") || '<p>Не найдено материалов по выбранным параметрам.</p>';
  document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openMethod(C.find(m=>m.id===b.dataset.open)));
@@ -54,7 +54,7 @@ function viewOverview(m){
 function viewInstruction(m){
  const d=DETAILS[m.name];
  if(!d)return viewOverview(m);
- return '<h3>Инструкция для участника</h3><blockquote class="kid-instruction">'+escapeHTML(d.instructions)+'</blockquote><h3>Порядок проведения для психолога</h3><ol><li>Проверьте соответствие возраста и цели.</li><li>Объясните добровольность и порядок работы.</li><li>Предъявите стимульный материал без подсказок.</li><li>Зафиксируйте ответы, длительность и существенные наблюдения.</li><li>Проводите интерпретацию в пределах применимых методических норм.</li></ol>'+(d.graphic==='dictation'?dictationCommands(d):'');
+ return '<h3>Инструкция для участника</h3><blockquote class="kid-instruction">'+escapeHTML(d.instructions)+'</blockquote><h3>Порядок проведения для психолога</h3><ol><li>Проверьте соответствие возраста и цели.</li><li>Объясните добровольность и порядок работы.</li><li>Предъявите стимульный материал без подсказок.</li><li>Зафиксируйте ответы, длительность и существенные наблюдения.</li><li>Проводите интерпретацию в пределах применимых методических норм.</li></ol>'+(d.graphic==='dictation'?dictationCommands(d):'')+(d.special?window.PSY_BATCH02.extraInstructions(d):'');
 }
 function ladderSvg(){let s='<svg width="500" height="250" viewBox="0 0 500 250" aria-label="Лестница из семи ступеней"><path d="M16 224 H485" stroke="#42765c" stroke-width="3"/>';for(let i=0;i<7;i++){let h=23*(i+1);s+='<rect x="'+(50+i*59)+'" y="'+(224-h)+'" width="56" height="'+h+'" fill="'+(i%2?'#b4dbb9':'#d8ecd7')+'" stroke="#41795c" stroke-width="2"/><text x="'+(77+i*59)+'" y="'+(216-h)+'" text-anchor="middle" font-size="15" fill="#28553f">'+(i+1)+'</text>'}return s+'</svg>'}
 const schulteNumbers=[4,17,9,22,1,13,6,25,12,19,24,15,2,7,11,8,20,14,5,23,3,18,10,21,16];
@@ -104,6 +104,7 @@ function viewDictationCalculator(d){
 function materials(m,blank){
  const d=DETAILS[m.name];
  if(!d)return '<p>Полный материал доступен только у правообладателя.</p>';
+ if(d.special)return window.PSY_BATCH02.materials(d,blank);
  if(d.graphic==='dembo')return '<div class="stimulus-paper"><h3>Отметь свое нынешнее и желаемое положение</h3>'+demboSvg()+'</div>';
  if(d.graphic==='sociogram')return '<div class="stimulus-paper"><h3>Размести членов семьи внутри круга</h3>'+sociogramSvg()+'</div>';
  if(d.graphic==='ladder')return '<div class="stimulus-paper"><h3>Задание</h3>'+ladderSvg()+'</div>';
@@ -124,6 +125,7 @@ function viewProcessing(m){
  return '<h3>Подсчет / фиксация</h3><p>'+escapeHTML(d.scoring)+'</p><h3>Интерпретация</h3><p>'+escapeHTML(d.interpret)+'</p>'+(d.source?'<p>Источник: <a target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d.source)+'">'+escapeHTML(d.source)+'</a></p>':'');
 }
 function getScores(d,answers){
+ if(d.special)return window.PSY_BATCH02.score(d,answers);
  if(d.graphic==='dictation'){
   if(!Array.isArray(answers)||Array.from({length:6},(_,i)=>answers[i]).some(v=>v==null||v===''||![0,1,2,3,4].includes(Number(v))))return null;
   const x=answers.slice(0,6).map(Number);
@@ -139,6 +141,7 @@ function getScores(d,answers){
 }
 function viewCalculator(m){
  const d=DETAILS[m.name];
+ if(d?.special)return window.PSY_BATCH02.calculator(d,{rows,rowIndex,calcMode,getScores});
  if(d?.graphic==='dictation')return viewDictationCalculator(d);
  if(!d?.calculator)return '<p>У этой методики нет онлайн-подсчета. Используйте качественное наблюдение и руководство выбранной версии.</p>';
  if(!rows.length) rows=[{name:"",answers:[]}]; if(rowIndex>=rows.length)rowIndex=0;
@@ -160,6 +163,7 @@ function viewCalculator(m){
 }
 function bindControls(){
  const d=DETAILS[methodNow.name];
+ if(d?.special)window.PSY_BATCH02.bind(d,{rows,rowIndex,calcMode,getScores});
  document.querySelectorAll('.dict-score-select').forEach(el=>el.addEventListener('change',()=>{rows[rowIndex].answers[+el.dataset.dictN]=el.value;setTab('score')}));
 
  document.querySelectorAll('[data-cmode]').forEach(b=>b.onclick=()=>{
@@ -193,6 +197,7 @@ function updateGroupTable(d){
  table.innerHTML=rows.map((x,i)=>{const z=getScores(d,x.answers);return '<tr><td>'+escapeHTML(x.name||'Участник '+(i+1))+'</td><td>'+(z?z.raw:'–')+'</td>'+(d.options.length===6?'<td>'+(z?z.index:'–')+'</td>':'')+'</tr>'}).join('');
 }
 function exportGroup(d){
+ if(d.special)return window.PSY_BATCH02.exportGroup(d,rows);
  const safe=s=>{let x=String(s||'');if(/^[\s]*[=+\-@]/.test(x))x="'"+x;return '"'+x.replace(/"/g,'""')+'"'};
  if(d.graphic==='dictation'){
   const head=['Участник','Узор 2 диктовка','Узор 2 самостоятельно','Узор 3 диктовка','Узор 3 самостоятельно','Узор 4 диктовка','Узор 4 самостоятельно','Итог /16'];
@@ -206,7 +211,7 @@ function exportGroup(d){
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Психотека_результаты.csv';a.click();URL.revokeObjectURL(url);
 }
 function makePrintPage(d,blank){
- const h='<html lang="ru"><head><meta charset="utf-8"><title>Психотека - '+escapeHTML(methodNow.name)+'</title><style>@page{size:A4;margin:13mm}body{font:11pt/1.35 Arial,sans-serif;color:#22372d}h1{font-size:18pt}h2{font-size:13pt}p{margin:7px 0}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #789c87;padding:6px;vertical-align:top;font-size:10pt;overflow-wrap:break-word}tr{break-inside:avoid;page-break-inside:avoid}.questions-table td:first-child{width:38px}.questions-table td:last-child{width:75px}.stimulus-paper svg{max-width:100%;height:auto}.drawing-space{border:1px solid #abc5b3;height:570px}.dictation-grid{break-inside:avoid;margin:5px 0}.dictation-grid svg{width:100%;height:132px}.dictation-grid h4{margin:0}.dictation-script{margin:8px 0;break-inside:avoid}.schulte-grid{display:grid;grid-template-columns:repeat(5,1fr);max-width:430px;margin:25px auto}.schulte-grid div{border:1px solid #698f76;text-align:center;font-size:22pt;padding:15px}.scale-options{margin:15px 0;display:flex;flex-wrap:wrap;gap:9px}.scale-options span{border:1px solid #b8cfbe;padding:8px}.drawing-instruction{margin:15px 0}.blank-instruction{margin:15px 0}button{display:none}</style></head><body>';
+ const h='<html lang="ru"><head><meta charset="utf-8"><title>Психотека - '+escapeHTML(methodNow.name)+'</title><style>@page{size:A4;margin:13mm}body{font:11pt/1.35 Arial,sans-serif;color:#22372d}h1{font-size:18pt}h2{font-size:13pt}p{margin:7px 0}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #789c87;padding:6px;vertical-align:top;font-size:10pt;overflow-wrap:break-word}tr{break-inside:avoid;page-break-inside:avoid}.questions-table td:first-child{width:38px}.questions-table td:last-child{width:75px}.stimulus-paper svg{max-width:100%;height:auto}.drawing-space{border:1px solid #abc5b3;height:570px}.dictation-grid{break-inside:avoid;margin:5px 0}.dictation-grid svg{width:100%;height:132px}.dictation-grid h4{margin:0}.dictation-script{margin:8px 0;break-inside:avoid}.schulte-grid{display:grid;grid-template-columns:repeat(5,1fr);max-width:430px;margin:25px auto}.schulte-grid div{border:1px solid #698f76;text-align:center;font-size:22pt;padding:15px}.scale-options{margin:15px 0;display:flex;flex-wrap:wrap;gap:9px}.scale-options span{border:1px solid #b8cfbe;padding:8px}.drawing-instruction{margin:15px 0}.blank-instruction{margin:15px 0}button{display:none}'+(d.special?window.PSY_BATCH02.printCSS:'')+'</style></head><body>';
  const base=blank?'<p>Фамилия, имя: ________________________________ Дата: ____________</p>':'<h1>'+escapeHTML(methodNow.name)+'</h1><p>'+escapeHTML(d.author)+' · '+escapeHTML(d.age)+'</p><h2>Цель</h2><p>'+escapeHTML(d.goal)+'</p><h2>Инструкция участнику</h2><p>'+escapeHTML(d.instructions)+'</p>';
  return h+base+(blank?materials(methodNow,true):'<h2>Задания и стимулы</h2>'+materials(methodNow,false)+(d.graphic==='dictation'?dictationCommands(d):'')+(d.graphic==='drawing'&&d.questions?.length?'<h2>Протокол беседы</h2><ol>'+d.questions.map(q=>'<li>'+escapeHTML(q)+' — ________________________________</li>').join('')+'</ol>':'')+'<h2>Обработка</h2><p>'+escapeHTML(d.scoring)+'</p><h2>Интерпретация</h2><p>'+escapeHTML(d.interpret)+'</p>')+'</body></html>';
 }
@@ -240,7 +245,7 @@ function openMethod(m){
  header.insertAdjacentHTML('afterend','<nav class="method-tabs" id="methodTabs">'+tabs.map(([key,title])=>'<button class="modal-tab" data-tab="'+key+'">'+title+'</button>').join('')+'</nav>');
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
- footer.innerHTML='<div class="actions" id="methodButtons">'+(d?'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">Бланк для ребенка</button><button class="btn" id="saveMethod">Скачать методику</button>':'')+'</div><div class="actions"><button class="btn" id="closeFooter">Закрыть</button>'+(m.source||d?.source?'<a class="btn primary" target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d?.source||m.source)+'">Первоисточник ↗</a>':'')+'</div>';
+ footer.innerHTML='<div class="actions" id="methodButtons">'+(d?'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.special==='memory10'?'Протокол для психолога':'Бланк для ребёнка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>':'')+'</div><div class="actions"><button class="btn" id="closeFooter">Закрыть</button>'+(m.source||d?.source?'<a class="btn primary" target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d?.source||m.source)+'">Первоисточник ↗</a>':'')+'</div>';
  $('#closeFooter').onclick=closeModal;
  if(d){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>printMaterial(true);$('#saveMethod').onclick=saveMethodHTML;}
  $('#modal').hidden=false;$('#shade').hidden=false;setTab('overview');
