@@ -54,9 +54,15 @@ function viewInstruction(m){
 }
 function ladderSvg(){let s='<svg width="500" height="250" viewBox="0 0 500 250" aria-label="Лестница из семи ступеней"><path d="M16 224 H485" stroke="#42765c" stroke-width="3"/>';for(let i=0;i<7;i++){let h=23*(i+1);s+='<rect x="'+(50+i*59)+'" y="'+(224-h)+'" width="56" height="'+h+'" fill="'+(i%2?'#b4dbb9':'#d8ecd7')+'" stroke="#41795c" stroke-width="2"/><text x="'+(77+i*59)+'" y="'+(216-h)+'" text-anchor="middle" font-size="15" fill="#28553f">'+(i+1)+'</text>'}return s+'</svg>'}
 const schulteNumbers=[4,17,9,22,1,13,6,25,12,19,24,15,2,7,11,8,20,14,5,23,3,18,10,21,16];
+
+function demboSvg(){const labels=["Здоровье","Ум","Характер","Авторитет","Умения","Внешность","Уверенность"];let q='<svg viewBox="0 0 770 390" role="img" aria-label="Семь шкал самооценки">';labels.forEach((name,i)=>{let x=60+i*105;q+='<line x1="'+x+'" y1="42" x2="'+x+'" y2="310" stroke="#3b7657" stroke-width="3"/><path d="M'+(x-7)+' 42h14 M'+(x-7)+' 310h14" stroke="#3b7657" stroke-width="2"/><text x="'+x+'" y="338" fill="#305b44" font-size="14" text-anchor="middle">'+name+'</text>';});return q+'</svg>'}
+function sociogramSvg(){return '<svg viewBox="0 0 510 470" role="img" aria-label="Пустой круг для семейной социограммы"><circle cx="255" cy="235" r="196" fill="none" stroke="#4c8c6a" stroke-width="3"/></svg>'}
+
 function materials(m,blank){
  const d=DETAILS[m.name];
  if(!d)return '<p>Полный материал доступен только у правообладателя.</p>';
+ if(d.graphic==='dembo')return '<div class="stimulus-paper"><h3>Отметь свое нынешнее и желаемое положение</h3>'+demboSvg()+'</div>';
+ if(d.graphic==='sociogram')return '<div class="stimulus-paper"><h3>Размести членов семьи внутри круга</h3>'+sociogramSvg()+'</div>';
  if(d.graphic==='ladder')return '<div class="stimulus-paper"><h3>Задание</h3>'+ladderSvg()+'</div>';
  if(d.graphic==='schulte')return '<div class="stimulus-paper"><h3>Найди числа от 1 до 25 по порядку</h3><div class="schulte-grid">'+schulteNumbers.map(n=>'<div>'+n+'</div>').join('')+'</div></div>';
  if(d.graphic==='drawing')return '<div class="stimulus-paper drawing"><div class="drawing-instruction">'+escapeHTML(d.instructions)+'</div><div class="drawing-space"></div></div>';
