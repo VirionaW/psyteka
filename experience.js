@@ -3,6 +3,9 @@
 const DETAILS=window.PSY_FULL_METHODS||{};
 let methodNow=null, tabNow="overview", calcMode="one", rowIndex=0;
 let rows=[{name:"",answers:[]}];
+let modeSnapshots={one:[{name:"",answers:[]}],class:[{name:"",answers:[]}]};
+let modeIndices={one:0,class:0};
+const methodSessions={};
 const categoryIcons={
 "Тревожность":'<path d="M8 18c-2-6 3-10 8-9 5-5 13 0 12 5 9 1 11 16-1 17H11C1 31 0 21 8 18z"/><path d="M13 22h3m3 0h3"/>',
 "Адаптация":'<path d="M6 20 20 8l14 12v15H6z"/><path d="M16 35V24h8v11"/>',
@@ -109,7 +112,10 @@ function viewCalculator(m){
 }
 function bindControls(){
  const d=DETAILS[methodNow.name];
- document.querySelectorAll('[data-cmode]').forEach(b=>b.onclick=()=>{calcMode=b.dataset.cmode;rowIndex=0;rows=[{name:"",answers:[]}];setTab("score")});
+ document.querySelectorAll('[data-cmode]').forEach(b=>b.onclick=()=>{
+ modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
+ calcMode=b.dataset.cmode;rows=modeSnapshots[calcMode];rowIndex=modeIndices[calcMode]||0;setTab("score");
+});
  $("#participantSelect")?.addEventListener('change',e=>{rowIndex=+e.target.value;setTab("score")});
  $("#participantName")?.addEventListener('input',e=>{rows[rowIndex].name=e.target.value;const sel=$("#participantSelect");sel.options[rowIndex].text=(rowIndex+1)+'. '+(e.target.value||'Участник '+(rowIndex+1))});
  $("#addParticipant")?.addEventListener('click',()=>{rows.push({name:"",answers:[]});rowIndex=rows.length-1;setTab("score")});
@@ -161,7 +167,13 @@ function saveMethodHTML(){
 }
 function openMethod(m){
  if(!m)return;
- methodNow=m;tabNow='overview';calcMode='one';rows=[{name:"",answers:[]}];rowIndex=0;
+ if(methodNow?.name){methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex}};
+ methodNow=m;tabNow='overview';
+ const saved=methodSessions[m.name];
+ calcMode=saved?.calcMode||'one';
+ modeSnapshots=saved?.modeSnapshots||{one:[{name:"",answers:[]}],class:[{name:"",answers:[]}]};
+ modeIndices=saved?.modeIndices||{one:0,class:0};
+ rows=saved?.rows||modeSnapshots[calcMode];rowIndex=saved?.rowIndex||0;
  const d=DETAILS[m.name];$('#modalTitle').textContent=m.name;$('#modalAuthor').textContent=d?.author||m.author;
  $('#modalBody').innerHTML='';
  const header=$('#modal').querySelector('.modalhead');
