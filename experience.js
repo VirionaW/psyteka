@@ -197,7 +197,7 @@ function bindControls(){
  })});
  $("#jumpMissing")?.addEventListener('click',()=>{let input=[...document.querySelectorAll('.answer-input')].find(x=>!x.value);(input||document.querySelector('.answer-input'))?.focus()});
  $("#nextParticipant")?.addEventListener('click',()=>{if(rowIndex>=rows.length-1)rows.push({name:"",answers:[]});rowIndex++;setTab("score");$('.answer-input')?.focus()});
- $("#resetParticipant")?.addEventListener('click',()=>{if(confirm('Очистить ответы выбранного участника?')){rows[rowIndex].answers=[];setTab('score')}});
+ $("#resetParticipant")?.addEventListener('click',()=>{if(confirm('Очистить ответы выбранного участника?')){const current=rows[rowIndex];current.answers=[];if(d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){current.answerSets ||= {};current.answerSets[current.variant||'parent']=current.answers;}setTab('score')}});
  $("#exportGroup")?.addEventListener('click',()=>exportGroup(d));
 }
 function updateGroupTable(d){
