@@ -186,3 +186,24 @@ html.dark .stimulus-paper .word-matrix,.stimulus-paper .odd-print-item{color:#26
 .diag-answer-cells span{padding:10px;border:1px solid #b9ccc0;white-space:nowrap;font-size:13px}
 .diag-attribution{font-size:11px;color:#53685b;margin:20px 0 0}
 @media(max-width:760px){.diag-input-grid{grid-template-columns:1fr}.diag-answer-cells{grid-template-columns:repeat(2,minmax(0,1fr))}.diag-sheet{padding:14px}.diag-output{padding:15px}}
+
+/* Завершенные диагностические карточки Rosenberg / Vanderbilt */
+.diag03-workflow{min-width:0}
+.diag03-code{max-width:370px;margin:15px 0}
+.diag03-code label,.diag03-variant label{display:flex;flex-direction:column;gap:7px;color:var(--muted);font-size:13px;font-weight:700}
+.diag03-code input,.diag03-variant select{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:var(--paper);color:var(--ink);font:16px system-ui}
+.diag03-variant{border:1px solid var(--line);border-radius:14px;background:var(--soft);padding:16px;margin:16px 0}
+.diag03-section{margin:22px 0;border:1px solid var(--line);border-radius:15px;padding:18px;background:var(--paper)}
+.diag03-section h4{margin:0 0 14px;font-size:16px;color:var(--green)}
+.diag03-answer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.diag03-item{display:flex;flex-direction:column;justify-content:space-between;gap:12px;min-width:0;padding:12px 15px;border:1px solid var(--line);border-radius:12px;background:var(--paper);font-size:14px}
+.diag03-item span{line-height:1.55}
+.diag03-item select{background:var(--bg);color:var(--ink);font:15px system-ui;width:100%;border-radius:8px;border:1px solid var(--line);padding:10px}
+.diag03-result{margin:25px 0;padding:20px;border:1px solid var(--line);background:var(--soft);border-radius:15px}
+.diag03-result h3{margin-top:0}
+.diag03-value{display:block;font-size:37px;font-weight:800;color:var(--green);font-variant-numeric:tabular-nums}
+.diag03-result .diag-questions-table{font-size:13px}
+.diag03-result .diag-questions-table td,.diag03-result .diag-questions-table th{padding:9px}
+.diag03-actions button:disabled{opacity:.45;cursor:not-allowed}
+.diag03-actions button{white-space:normal}
+@media(max-width:750px){.diag03-section{padding:12px}.diag03-answer-grid{grid-template-columns:1fr}.diag03-result{padding:13px}.diag03-result .diag-questions-table{font-size:12px}}
