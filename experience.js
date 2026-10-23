@@ -28,7 +28,7 @@ function render(){
  $("#listHeading").textContent=state.topic||"Школьные материалы";
  $("#catalog").innerHTML=filtered.map(m=>{
  const d=DETAILS[m.name],age=d?.age||m.age;
- const kind=d?.special==='memory10'?'memory':d?.special==='odd4'?'cognitive':(d?.graphic==='drawing'||d?.graphic==='sociogram')?'drawing':(d?.graphic==='dictation'||d?.graphic==='schulte'||d?.graphic==='dembo'||d?.graphic==='ladder')?'graphic':(d?.calculator?'scale':'other');
+ const kind=d?.workflow==='diagnostic03'?'scale':d?.special==='memory10'?'memory':d?.special==='odd4'?'cognitive':(d?.graphic==='drawing'||d?.graphic==='sociogram')?'drawing':(d?.graphic==='dictation'||d?.graphic==='schulte'||d?.graphic==='dembo'||d?.graphic==='ladder')?'graphic':(d?.calculator?'scale':'other');
  return '<article class="method" data-kind="'+kind+'"><div class="head"><div class="glyph">'+iconSvg(m.theme)+'</div><div><h3>'+escapeHTML(m.name)+'</h3><small>'+escapeHTML(d?.author||m.author)+'</small></div></div><div class="tags"><span class="tag">'+escapeHTML(m.theme)+'</span><span class="tag">'+escapeHTML(age)+'</span></div><p>'+escapeHTML(d?.goal||m.goal)+'</p><div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">'+(d?'Открыть методику':'Подробнее')+'</button>'+(d?.calculator?'<button class="btn" data-score="'+escapeHTML(m.id)+'">Обработка</button>':'')+'</div></article>';
  }).join("") || '<p>Не найдено материалов по выбранным параметрам.</p>';
  document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openMethod(C.find(m=>m.id===b.dataset.open)));
@@ -49,12 +49,12 @@ function setTab(name){
 function viewOverview(m){
  const d=DETAILS[m.name];
  if(!d) return '<div class="portfolio-note"><div class="method-facts"><span><b>Автор</b>'+escapeHTML(m.author)+'</span><span><b>Возраст</b>'+escapeHTML(m.age)+'</span></div><h3>Назначение</h3><p>'+escapeHTML(m.goal)+'</p><h3>Вид материала</h3><p>'+escapeHTML(m.format)+'</p>'+(m.source?'<p><a href="'+escapeHTML(m.source)+'" target="_blank" rel="noopener noreferrer">Материалы первоисточника ↗</a></p>':'')+'</div>';
- return '<div class="method-facts"><span><b>Автор</b>'+escapeHTML(d.author)+'</span><span><b>Возраст</b>'+escapeHTML(d.age)+'</span><span><b>Объем</b>'+escapeHTML(d.count)+'</span><span><b>Вид</b>'+escapeHTML(d.kind)+'</span></div><h3>Цель методики</h3><p>'+escapeHTML(d.goal)+'</p><h3>Что исследует</h3><div class="notice">'+escapeHTML(d.interpret)+'</div><h3>Происхождение и условия</h3><p>'+escapeHTML(d.license||'Профессиональная проба: интерпретация по выбранному руководству, без самодельных возрастных норм.')+'</p>'+(d.workflow==='diagnostic'?'<div class="notice">Рабочий цикл: откройте официальный бланк, проведите обследование, перенесите ответы на вкладке «Подсчёт» и скачайте результат.</div><p><a class="btn primary" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Официальный бланк PDF ↗</a></p>':'');
+ return '<div class="method-facts"><span><b>Автор</b>'+escapeHTML(d.author)+'</span><span><b>Возраст</b>'+escapeHTML(d.age)+'</span><span><b>Объем</b>'+escapeHTML(d.count)+'</span><span><b>Вид</b>'+escapeHTML(d.kind)+'</span></div><h3>Цель методики</h3><p>'+escapeHTML(d.goal)+'</p><h3>Что исследует</h3><div class="notice">'+escapeHTML(d.interpret)+'</div><h3>Происхождение и условия</h3><p>'+escapeHTML(d.license||'Профессиональная проба: интерпретация по выбранному руководству, без самодельных возрастных норм.')+'</p>'+(d.workflow==='diagnostic'?'<div class="notice">Рабочий цикл: откройте официальный бланк, проведите обследование, перенесите ответы на вкладке «Подсчёт» и скачайте результат.</div><p><a class="btn primary" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Официальный бланк PDF ↗</a></p>':d.workflow==='diagnostic03'?'<div class="notice">Рабочий цикл: бланк → проведение → ввод ответов → подсчёт → скачивание результата.</div><p><a href="'+escapeHTML(d.source)+'" target="_blank" rel="noopener noreferrer">Первоисточник и ключ ↗</a></p>':'');
 }
 function viewInstruction(m){
  const d=DETAILS[m.name];
  if(!d)return viewOverview(m);
- return '<h3>Инструкция для участника</h3><blockquote class="kid-instruction">'+escapeHTML(d.instructions)+'</blockquote><h3>Порядок проведения для психолога</h3><ol><li>Проверьте соответствие возраста и цели.</li><li>Объясните добровольность и порядок работы.</li><li>Предъявите стимульный материал без подсказок.</li><li>Зафиксируйте ответы, длительность и существенные наблюдения.</li><li>Проводите интерпретацию в пределах применимых методических норм.</li></ol>'+(d.graphic==='dictation'?dictationCommands(d):'')+(d.special?window.PSY_BATCH02.extraInstructions(d):'')+(d.workflow==='diagnostic'?window.PSY_DIAGNOSTICS.instructions(d):'');
+ return '<h3>Инструкция для участника</h3><blockquote class="kid-instruction">'+escapeHTML(d.instructions)+'</blockquote><h3>Порядок проведения для психолога</h3><ol><li>Проверьте соответствие возраста и цели.</li><li>Объясните добровольность и порядок работы.</li><li>Предъявите стимульный материал без подсказок.</li><li>Зафиксируйте ответы, длительность и существенные наблюдения.</li><li>Проводите интерпретацию в пределах применимых методических норм.</li></ol>'+(d.graphic==='dictation'?dictationCommands(d):'')+(d.special?window.PSY_BATCH02.extraInstructions(d):'')+(d.workflow==='diagnostic'?window.PSY_DIAGNOSTICS.instructions(d):'')+(d.workflow==='diagnostic03'?window.PSY_DIAG03.instructions(d):'');
 }
 function ladderSvg(){let s='<svg width="500" height="250" viewBox="0 0 500 250" aria-label="Лестница из семи ступеней"><path d="M16 224 H485" stroke="#42765c" stroke-width="3"/>';for(let i=0;i<7;i++){let h=23*(i+1);s+='<rect x="'+(50+i*59)+'" y="'+(224-h)+'" width="56" height="'+h+'" fill="'+(i%2?'#b4dbb9':'#d8ecd7')+'" stroke="#41795c" stroke-width="2"/><text x="'+(77+i*59)+'" y="'+(216-h)+'" text-anchor="middle" font-size="15" fill="#28553f">'+(i+1)+'</text>'}return s+'</svg>'}
 const schulteNumbers=[4,17,9,22,1,13,6,25,12,19,24,15,2,7,11,8,20,14,5,23,3,18,10,21,16];
@@ -106,6 +106,7 @@ function materials(m,blank){
  if(!d)return '<p>Полный материал доступен только у правообладателя.</p>';
  if(d.special)return window.PSY_BATCH02.materials(d,blank);
  if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.materials(d,blank);
+ if(d.workflow==='diagnostic03')return window.PSY_DIAG03.materials(d,blank);
  if(d.graphic==='dembo')return '<div class="stimulus-paper"><h3>Отметь свое нынешнее и желаемое положение</h3>'+demboSvg()+'</div>';
  if(d.graphic==='sociogram')return '<div class="stimulus-paper"><h3>Размести членов семьи внутри круга</h3>'+sociogramSvg()+'</div>';
  if(d.graphic==='ladder')return '<div class="stimulus-paper"><h3>Задание</h3>'+ladderSvg()+'</div>';
@@ -124,9 +125,11 @@ function viewMaterials(m){
 function viewProcessing(m){
  const d=DETAILS[m.name];if(!d)return viewOverview(m);
  if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.processing(d);
+ if(d.workflow==='diagnostic03')return window.PSY_DIAG03.processing(d);
  return '<h3>Подсчет / фиксация</h3><p>'+escapeHTML(d.scoring)+'</p><h3>Интерпретация</h3><p>'+escapeHTML(d.interpret)+'</p>'+(d.source?'<p>Источник: <a target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d.source)+'">'+escapeHTML(d.source)+'</a></p>':'');
 }
 function getScores(d,answers){
+ if(d.workflow==='diagnostic03')return window.PSY_DIAG03.score(d,{answers});
  if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.score(d,answers);
  if(d.special)return window.PSY_BATCH02.score(d,answers);
  if(d.graphic==='dictation'){
@@ -144,6 +147,7 @@ function getScores(d,answers){
 }
 function viewCalculator(m){
  const d=DETAILS[m.name];
+ if(d?.workflow==='diagnostic03')return window.PSY_DIAG03.calculator(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.calculator(d,{rows,rowIndex,calcMode});
  if(d?.special)return window.PSY_BATCH02.calculator(d,{rows,rowIndex,calcMode,getScores});
  if(d?.graphic==='dictation')return viewDictationCalculator(d);
@@ -167,6 +171,7 @@ function viewCalculator(m){
 }
 function bindControls(){
  const d=DETAILS[methodNow.name];
+ if(d?.workflow==='diagnostic03')window.PSY_DIAG03.bind(d,{rows,rowIndex,calcMode},()=>setTab('score'));
  if(d?.workflow==='diagnostic')window.PSY_DIAGNOSTICS.bind(d,{rows,rowIndex,calcMode});
  if(d?.special)window.PSY_BATCH02.bind(d,{rows,rowIndex,calcMode,getScores});
  document.querySelectorAll('.dict-score-select').forEach(el=>el.addEventListener('change',()=>{rows[rowIndex].answers[+el.dataset.dictN]=el.value;setTab('score')}));
@@ -202,6 +207,7 @@ function updateGroupTable(d){
  table.innerHTML=rows.map((x,i)=>{const z=getScores(d,x.answers);return '<tr><td>'+escapeHTML(x.name||'Участник '+(i+1))+'</td><td>'+(z?z.raw:'–')+'</td>'+(d.options.length===6?'<td>'+(z?z.index:'–')+'</td>':'')+'</tr>'}).join('');
 }
 function exportGroup(d){
+ if(d.workflow==='diagnostic03'){window.PSY_DIAG03.download(window.PSY_DIAG03.csv(d,rows),(d.diagnosticType==='rses'?'RSES':'Vanderbilt')+'_класс.csv','text/csv;charset=utf-8');return;}
  if(d.workflow==='diagnostic'){window.PSY_DIAGNOSTICS.download(window.PSY_DIAGNOSTICS.csv(d,rows),(d.scales?'SCARED':'WHO5')+'_класс.csv','text/csv;charset=utf-8');return;}
  if(d.special)return window.PSY_BATCH02.exportGroup(d,rows);
  const safe=s=>{let x=String(s||'');if(/^[\s]*[=+\-@]/.test(x))x="'"+x;return '"'+x.replace(/"/g,'""')+'"'};
@@ -251,9 +257,9 @@ function openMethod(m){
  header.insertAdjacentHTML('afterend','<nav class="method-tabs" id="methodTabs">'+tabs.map(([key,title])=>'<button class="modal-tab" data-tab="'+key+'">'+title+'</button>').join('')+'</nav>');
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
- footer.innerHTML='<div class="actions" id="methodButtons">'+(d?'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребёнка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>':'')+'</div><div class="actions"><button class="btn" id="closeFooter">Закрыть</button>'+(m.source||d?.source?'<a class="btn primary" target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d?.source||m.source)+'">Первоисточник ↗</a>':'')+'</div>';
+ footer.innerHTML='<div class="actions" id="methodButtons">'+(d?'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребёнка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions"><button class="btn" id="closeFooter">Закрыть</button>'+(m.source||d?.source?'<a class="btn primary" target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d?.source||m.source)+'">Первоисточник ↗</a>':'')+'</div>';
  $('#closeFooter').onclick=closeModal;
- if(d){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;}
+ if(d){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;if(d.workflow==='diagnostic03'&&d.diagnosticType==='rses')$('#saveBlank').onclick=()=>window.PSY_DIAG03.saveBlank(d);}
  $('#modal').hidden=false;$('#shade').hidden=false;setTab('overview');
 }
 window.openMethod=openMethod;
