@@ -149,3 +149,40 @@ html.dark .method[data-kind="cognitive"] .glyph{background:linear-gradient(145de
 .odd-results b{float:right;margin-left:9px;font-size:19px}
 html.dark .stimulus-paper .word-matrix,.stimulus-paper .odd-print-item{color:#264a35}
 @media(max-width:720px){.memory-stages{grid-template-columns:repeat(2,1fr)}.memory-intrusions,.odd-entry-fields,.odd-results{grid-template-columns:1fr}.odd-entry{padding:13px}.special-score-feedback{padding:14px}}
+
+/* Полный диагностический рабочий цикл — существующие карточки SCARED / WHO-5 */
+.diagnostic-intro{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin:10px 0 20px}
+.diagnostic-intro .btn{margin:8px 0}
+.diag-code{max-width:365px;margin:14px 0}
+.diag-code label{display:block;font-weight:700;font-size:13px;color:var(--muted)}
+.diag-code input{display:block;width:100%;padding:12px;border-radius:10px;background:var(--paper);color:var(--ink);border:1px solid var(--line);margin-top:5px;font:inherit}
+.diag-progress{height:11px;border-radius:20px;overflow:hidden;background:var(--soft);margin:15px 0 20px;border:1px solid var(--line)}
+.diag-progress span{height:100%;background:var(--green);display:block;transition:width .2s}
+.diag-input-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.diag-item{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:13px;display:flex;flex-direction:column;gap:10px;justify-content:space-between}
+.diag-item>span{font-size:14px;line-height:1.5}
+.diag-item select{background:var(--bg);color:var(--ink);font:inherit;min-width:0;width:100%;border-radius:9px;border:1px solid var(--line);padding:10px}
+.diag-item select:focus{outline:2px solid var(--green)}
+.diag-output{margin:25px 0;padding:20px;border:1px solid var(--line);background:var(--soft);border-radius:16px}
+.diag-output h3{margin-top:0}
+.diag-headline{display:flex;align-items:baseline;gap:25px;flex-wrap:wrap;margin:12px 0}
+.diag-headline>strong{font-size:32px;color:var(--green);font-variant-numeric:tabular-nums}
+.diag-headline span{font-size:18px}
+.diag-interpret{border-left:3px solid var(--green);padding:11px 15px;background:var(--paper);border-radius:6px}
+.diag-scales{display:grid;gap:13px;margin:12px 0}
+.diag-scales>div{padding:11px;border:1px solid var(--line);background:var(--paper);border-radius:11px}
+.diag-scales>div>div:first-child{display:flex;justify-content:space-between;gap:10px;font-size:13px;flex-wrap:wrap;margin-bottom:6px}
+.diag-scale-bar{height:9px;background:var(--soft);border-radius:12px;overflow:hidden}
+.diag-scale-bar span{height:100%;background:var(--green);display:block}
+.diag-actions button{white-space:normal}
+.diag-actions button:disabled{opacity:.45;cursor:not-allowed}
+.diag-sheet{background:#fff;color:#24382d;border:1px solid #bfd5c5;padding:22px;border-radius:15px;margin:15px 0}
+.diag-sheet h3{margin-top:0;color:#267450}
+.diag-options{font-size:13px;line-height:1.8}
+.diag-questions-table{width:100%;border-collapse:collapse;table-layout:auto;margin:15px 0}
+.diag-questions-table td,.diag-questions-table th{border:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}
+.diag-sheet .diag-questions-table td,.diag-sheet .diag-questions-table th{border-color:#9bbca9}
+.diag-answer-cells{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+.diag-answer-cells span{padding:10px;border:1px solid #b9ccc0;white-space:nowrap;font-size:13px}
+.diag-attribution{font-size:11px;color:#53685b;margin:20px 0 0}
+@media(max-width:760px){.diag-input-grid{grid-template-columns:1fr}.diag-answer-cells{grid-template-columns:repeat(2,minmax(0,1fr))}.diag-sheet{padding:14px}.diag-output{padding:15px}}
