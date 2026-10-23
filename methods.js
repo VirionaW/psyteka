@@ -158,4 +158,4 @@ window.PSY_FULL_METHODS={
     "category": "school",
     "calculator": false
   }
-};\n
+};
