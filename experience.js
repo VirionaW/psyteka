@@ -27,8 +27,9 @@ function render(){
  $("#resultCount").textContent="Найдено: "+filtered.length;
  $("#listHeading").textContent=state.topic||"Школьные материалы";
  $("#catalog").innerHTML=filtered.map(m=>{
- const d=DETAILS[m.name], tag=d?'Материал для просмотра':'Портфолио и источник',age=d?.age||m.age;
- return '<article class="method"><div class="head"><div class="glyph">'+iconSvg(m.theme)+'</div><div><h3>'+escapeHTML(m.name)+'</h3><small>'+escapeHTML(d?.author||m.author)+'</small></div></div><div class="tags"><span class="tag">'+escapeHTML(m.theme)+'</span><span class="tag">'+escapeHTML(age)+'</span></div><p>'+escapeHTML(d?.goal||m.goal)+'</p><div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">'+(d?'Посмотреть методику':'Портфолио')+'</button>'+(d?.calculator?'<button class="btn" data-score="'+escapeHTML(m.id)+'">Подсчет</button>':'')+'</div><div class="card-availability">'+escapeHTML(tag)+'</div></article>';
+ const d=DETAILS[m.name],age=d?.age||m.age;
+ const kind=(d?.graphic==='drawing'||d?.graphic==='sociogram')?'drawing':(d?.graphic==='dictation'||d?.graphic==='schulte'||d?.graphic==='dembo'||d?.graphic==='ladder')?'graphic':(d?.calculator?'scale':'other');
+ return '<article class="method" data-kind="'+kind+'"><div class="head"><div class="glyph">'+iconSvg(m.theme)+'</div><div><h3>'+escapeHTML(m.name)+'</h3><small>'+escapeHTML(d?.author||m.author)+'</small></div></div><div class="tags"><span class="tag">'+escapeHTML(m.theme)+'</span><span class="tag">'+escapeHTML(age)+'</span></div><p>'+escapeHTML(d?.goal||m.goal)+'</p><div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">'+(d?'Открыть методику':'Подробнее')+'</button>'+(d?.calculator?'<button class="btn" data-score="'+escapeHTML(m.id)+'">Обработка</button>':'')+'</div></article>';
  }).join("") || '<p>Не найдено материалов по выбранным параметрам.</p>';
  document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openMethod(C.find(m=>m.id===b.dataset.open)));
  document.querySelectorAll('[data-score]').forEach(b=>b.onclick=()=>{openMethod(C.find(m=>m.id===b.dataset.score));setTab("score")});
@@ -53,7 +54,7 @@ function viewOverview(m){
 function viewInstruction(m){
  const d=DETAILS[m.name];
  if(!d)return viewOverview(m);
- return '<h3>Инструкция для участника</h3><blockquote class="kid-instruction">'+escapeHTML(d.instructions)+'</blockquote><h3>Порядок проведения для психолога</h3><ol><li>Проверьте соответствие возраста и цели.</li><li>Объясните добровольность и порядок работы.</li><li>Предъявите стимульный материал без подсказок.</li><li>Зафиксируйте ответы, длительность и существенные наблюдения.</li><li>Проводите интерпретацию в пределах применимых методических норм.</li></ol>';
+ return '<h3>Инструкция для участника</h3><blockquote class="kid-instruction">'+escapeHTML(d.instructions)+'</blockquote><h3>Порядок проведения для психолога</h3><ol><li>Проверьте соответствие возраста и цели.</li><li>Объясните добровольность и порядок работы.</li><li>Предъявите стимульный материал без подсказок.</li><li>Зафиксируйте ответы, длительность и существенные наблюдения.</li><li>Проводите интерпретацию в пределах применимых методических норм.</li></ol>'+(d.graphic==='dictation'?dictationCommands(d):'');
 }
 function ladderSvg(){let s='<svg width="500" height="250" viewBox="0 0 500 250" aria-label="Лестница из семи ступеней"><path d="M16 224 H485" stroke="#42765c" stroke-width="3"/>';for(let i=0;i<7;i++){let h=23*(i+1);s+='<rect x="'+(50+i*59)+'" y="'+(224-h)+'" width="56" height="'+h+'" fill="'+(i%2?'#b4dbb9':'#d8ecd7')+'" stroke="#41795c" stroke-width="2"/><text x="'+(77+i*59)+'" y="'+(216-h)+'" text-anchor="middle" font-size="15" fill="#28553f">'+(i+1)+'</text>'}return s+'</svg>'}
 const schulteNumbers=[4,17,9,22,1,13,6,25,12,19,24,15,2,7,11,8,20,14,5,23,3,18,10,21,16];
@@ -61,12 +62,52 @@ const schulteNumbers=[4,17,9,22,1,13,6,25,12,19,24,15,2,7,11,8,20,14,5,23,3,18,1
 function demboSvg(){const labels=["Здоровье","Ум","Характер","Авторитет","Умения","Внешность","Уверенность"];let q='<svg viewBox="0 0 770 390" role="img" aria-label="Семь шкал самооценки">';labels.forEach((name,i)=>{let x=60+i*105;q+='<line x1="'+x+'" y1="42" x2="'+x+'" y2="310" stroke="#3b7657" stroke-width="3"/><path d="M'+(x-7)+' 42h14 M'+(x-7)+' 310h14" stroke="#3b7657" stroke-width="2"/><text x="'+x+'" y="338" fill="#305b44" font-size="14" text-anchor="middle">'+name+'</text>';});return q+'</svg>'}
 function sociogramSvg(){return '<svg viewBox="0 0 510 470" role="img" aria-label="Пустой круг для семейной социограммы"><circle cx="255" cy="235" r="196" fill="none" stroke="#4c8c6a" stroke-width="3"/></svg>'}
 
+
+function dictationCommands(d){
+ const names={'↑':'вверх','↓':'вниз','←':'влево','→':'вправо'};
+ const txt=m=>m.slice(1)+' '+names[m[0]];
+ return '<h3>Маршрут диктовки · только для психолога</h3><p>Первый узор тренировочный. Диктуйте по одной команде с паузами; затем дайте около 1–2 минут на самостоятельное продолжение. Для трех следующих узоров не исправляйте линии во время выполнения.</p>'+
+ d.patterns.map(p=>'<div class="dictation-script"><h4>'+escapeHTML(p.title)+'</h4><p>'+p.moves.map(x=>escapeHTML(txt(x))).join(' → ')+'</p></div>').join('');
+}
+function dictationGridSvg(i){
+ return '<svg viewBox="0 0 760 148" role="img" aria-label="Пустой лист в клетку, стартовая точка"><defs><pattern id="psygrid'+i+'" width="18" height="18" patternUnits="userSpaceOnUse"><path d="M18 0H0V18" fill="none" stroke="#cad8d3" stroke-width="1"/></pattern></defs><rect x="10" y="4" width="738" height="140" fill="url(#psygrid'+i+')" stroke="#b9cdc4"/><circle cx="64" cy="94" r="5" fill="#192f2b"/></svg>';
+}
+function dictationPaper(d){
+ return '<div class="stimulus-paper dictation-paper"><p>Проводите линию от точки, слушая команды. После диктовки продолжайте узор сами.</p>'+d.patterns.map((p,i)=>'<section class="dictation-grid"><h4>Узор '+(i+1)+(i===0?' · тренировка':'')+'</h4>'+dictationGridSvg(i)+'</section>').join('')+'</div>';
+}
+function dictationLevel(n){
+ return n<=3?'Низкий':n<=6?'Ниже среднего':n<=10?'Средний':n<=13?'Выше среднего':'Высокий';
+}
+function viewDictationCalculator(d){
+ if(!rows.length)rows=[{name:"",answers:[]}];
+ if(rowIndex>=rows.length)rowIndex=0;
+ const r=rows[rowIndex];
+ let h='<div class="calc-mode"><button class="btn '+(calcMode==='one'?'primary':'')+'" data-cmode="one">Один участник</button><button class="btn '+(calcMode==='class'?'primary':'')+'" data-cmode="class">Группа / класс</button></div>';
+ if(calcMode==='class')h+='<div class="group-tools"><label>Участник <select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===rowIndex?'selected':'')+'>'+(i+1)+'. '+escapeHTML(x.name||'Участник '+(i+1))+'</option>').join('')+'</select></label><label>Имя или код <input id="participantName" value="'+escapeHTML(r.name)+'" placeholder="Необязательно"></label><button class="btn" id="addParticipant">Добавить</button></div>';
+ h+='<p class="privacy-inline">Оценки вносятся вручную специалистом после проверки бумажного бланка. Данные остаются в этом браузере до закрытия страницы и не отправляются на сервер.</p>';
+ h+='<div class="dictation-score-grid"><div><b>Узор</b><b>Под диктовку</b><b>Самостоятельно</b></div>';
+ for(let j=0;j<3;j++){
+  h+='<div><strong>Узор '+(j+2)+'</strong>';
+  for(let k=0;k<2;k++){
+   const idx=j*2+k,v=r.answers[idx];
+   h+='<select class="dict-score-select" data-dict-n="'+idx+'" aria-label="Узор '+(j+2)+', '+(k===0?'диктовка':'самостоятельное продолжение')+'"><option value="">—</option>'+[0,1,2,3,4].map(n=>'<option value="'+n+'" '+(String(v)===String(n)?'selected':'')+'>'+n+'</option>').join('')+'</select>';
+  }
+  h+='</div>';
+ }
+ h+='</div>';
+ const z=getScores(d,r.answers);
+ h+='<div class="score-section"><h3>Итог обработки</h3>'+(z?'<b class="dictation-total">'+z.raw+' / 16</b><p>Уровень по указанной схеме: <strong>'+dictationLevel(z.raw)+'</strong></p><p>Вычисление: (минимум + максимум трех оценок диктовки) + (минимум + максимум трех оценок продолжения).</p>':'<p>Укажите все шесть оценок от 0 до 4 — три за работу по инструкции и три за самостоятельное продолжение.</p>')+'<p class="privacy-inline">Показатель выполнения пробы не является диагнозом и не заменяет комплексного обследования.</p></div>';
+ if(calcMode==='class')h+='<div class="class-actions"><button class="btn primary" id="nextParticipant">Следующий участник</button><button class="btn" id="exportGroup">Скачать CSV для Excel</button></div><h3>Результаты группы</h3><div class="results-table"><table><thead><tr><th>Участник</th><th>Итог / 16</th></tr></thead><tbody>'+rows.map((x,i)=>{const z=getScores(d,x.answers);return '<tr><td>'+escapeHTML(x.name||'Участник '+(i+1))+'</td><td>'+(z?z.raw+' · '+dictationLevel(z.raw):'—')+'</td></tr>'}).join('')+'</tbody></table></div>';
+ return h+'<div class="class-actions"><button class="btn" id="resetParticipant">Очистить оценки участника</button></div>';
+}
+
 function materials(m,blank){
  const d=DETAILS[m.name];
  if(!d)return '<p>Полный материал доступен только у правообладателя.</p>';
  if(d.graphic==='dembo')return '<div class="stimulus-paper"><h3>Отметь свое нынешнее и желаемое положение</h3>'+demboSvg()+'</div>';
  if(d.graphic==='sociogram')return '<div class="stimulus-paper"><h3>Размести членов семьи внутри круга</h3>'+sociogramSvg()+'</div>';
  if(d.graphic==='ladder')return '<div class="stimulus-paper"><h3>Задание</h3>'+ladderSvg()+'</div>';
+ if(d.graphic==='dictation')return dictationPaper(d);
  if(d.graphic==='schulte')return '<div class="stimulus-paper"><h3>Найди числа от 1 до 25 по порядку</h3><div class="schulte-grid">'+schulteNumbers.map(n=>'<div>'+n+'</div>').join('')+'</div></div>';
  if(d.graphic==='drawing')return '<div class="stimulus-paper drawing"><div class="drawing-instruction">'+escapeHTML(d.instructions)+'</div><div class="drawing-space"></div></div>';
  if(Array.isArray(d.questions)&&d.questions.length){
@@ -76,13 +117,19 @@ function materials(m,blank){
 }
 function viewMaterials(m){
  const d=DETAILS[m.name];if(!d)return viewOverview(m);
- return '<h3>Стимульный материал и бланк</h3>'+materials(m,false)+(d.questions?.length && d.graphic ? '<h3>Вопросы для беседы</h3><ol>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ol>':"");
+ return '<h3>Стимульный материал и бланк</h3>'+materials(m,false)+(d.questions?.length && d.graphic ? '<h3>Протокол беседы</h3><table class="questions-table"><thead><tr><th>№</th><th>Вопрос психолога</th><th>Ответ / наблюдение</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td>________________</td></tr>').join('')+'</tbody></table>':"");
 }
 function viewProcessing(m){
  const d=DETAILS[m.name];if(!d)return viewOverview(m);
  return '<h3>Подсчет / фиксация</h3><p>'+escapeHTML(d.scoring)+'</p><h3>Интерпретация</h3><p>'+escapeHTML(d.interpret)+'</p>'+(d.source?'<p>Источник: <a target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d.source)+'">'+escapeHTML(d.source)+'</a></p>':'');
 }
 function getScores(d,answers){
+ if(d.graphic==='dictation'){
+  if(!Array.isArray(answers)||Array.from({length:6},(_,i)=>answers[i]).some(v=>v==null||v===''||![0,1,2,3,4].includes(Number(v))))return null;
+  const x=answers.slice(0,6).map(Number);
+  const a=[x[0],x[2],x[4]],b=[x[1],x[3],x[5]];
+  return {raw:Math.min(...a)+Math.max(...a)+Math.min(...b)+Math.max(...b),index:null,max:16,caption:'Суммарный балл'};
+ }
  const n=d.questions.length;if(answers.length<n || answers.some((v,i)=>i<n && (v==null || v==="")))return null;
  const nums=answers.slice(0,n).map(Number);
  if(d.reversed) nums.forEach((v,i)=>{if(d.reversed.includes(i))nums[i]=(d.options.length-1)-v});
@@ -92,6 +139,7 @@ function getScores(d,answers){
 }
 function viewCalculator(m){
  const d=DETAILS[m.name];
+ if(d?.graphic==='dictation')return viewDictationCalculator(d);
  if(!d?.calculator)return '<p>У этой методики нет онлайн-подсчета. Используйте качественное наблюдение и руководство выбранной версии.</p>';
  if(!rows.length) rows=[{name:"",answers:[]}]; if(rowIndex>=rows.length)rowIndex=0;
  const r=rows[rowIndex],count=d.questions.length;
@@ -112,6 +160,8 @@ function viewCalculator(m){
 }
 function bindControls(){
  const d=DETAILS[methodNow.name];
+ document.querySelectorAll('.dict-score-select').forEach(el=>el.addEventListener('change',()=>{rows[rowIndex].answers[+el.dataset.dictN]=el.value;setTab('score')}));
+
  document.querySelectorAll('[data-cmode]').forEach(b=>b.onclick=()=>{
  modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
  calcMode=b.dataset.cmode;rows=modeSnapshots[calcMode];rowIndex=modeIndices[calcMode]||0;setTab("score");
@@ -138,19 +188,27 @@ function bindControls(){
 }
 function updateGroupTable(d){
  const table=$('.results-table tbody');if(!table)return;
+ if(d.graphic==='dictation'){table.innerHTML=rows.map((x,i)=>{const z=getScores(d,x.answers);return '<tr><td>'+escapeHTML(x.name||'Участник '+(i+1))+'</td><td>'+(z?z.raw:'—')+'</td></tr>'}).join('');return;}
+
  table.innerHTML=rows.map((x,i)=>{const z=getScores(d,x.answers);return '<tr><td>'+escapeHTML(x.name||'Участник '+(i+1))+'</td><td>'+(z?z.raw:'–')+'</td>'+(d.options.length===6?'<td>'+(z?z.index:'–')+'</td>':'')+'</tr>'}).join('');
 }
 function exportGroup(d){
  const safe=s=>{let x=String(s||'');if(/^[\s]*[=+\-@]/.test(x))x="'"+x;return '"'+x.replace(/"/g,'""')+'"'};
+ if(d.graphic==='dictation'){
+  const head=['Участник','Узор 2 диктовка','Узор 2 самостоятельно','Узор 3 диктовка','Узор 3 самостоятельно','Узор 4 диктовка','Узор 4 самостоятельно','Итог /16'];
+  const data=[head,...rows.map((x,i)=>[x.name||'Участник '+(i+1),...Array.from({length:6},(_,k)=>x.answers[k]??''),getScores(d,x.answers)?.raw??''])];
+  const blob=new Blob(['\uFEFF'+data.map(row=>row.map(safe).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Психотека_Графический_диктант.csv';a.click();URL.revokeObjectURL(url);return;
+ }
  let data=[['Участник','Сырая сумма',...(d.options.length===6?['Индекс']:[])]];
  rows.forEach((r,i)=>{let z=getScores(d,r.answers);data.push([r.name||'Участник '+(i+1),z?.raw??'',...(d.options.length===6?[z?.index??'']:[])])});
  const csv='\uFEFF'+data.map(row=>row.map(safe).join(';')).join('\r\n');
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Психотека_результаты.csv';a.click();URL.revokeObjectURL(url);
 }
 function makePrintPage(d,blank){
- const h='<html lang="ru"><head><meta charset="utf-8"><title>Психотека - '+escapeHTML(methodNow.name)+'</title><style>@page{size:A4;margin:13mm}body{font:11pt/1.35 Arial,sans-serif;color:#22372d}h1{font-size:18pt}h2{font-size:13pt}p{margin:7px 0}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #789c87;padding:6px;vertical-align:top;font-size:10pt;overflow-wrap:break-word}tr{break-inside:avoid;page-break-inside:avoid}.questions-table td:first-child{width:38px}.questions-table td:last-child{width:75px}.stimulus-paper svg{max-width:100%;height:auto}.drawing-space{border:1px solid #abc5b3;height:570px}.schulte-grid{display:grid;grid-template-columns:repeat(5,1fr);max-width:430px;margin:25px auto}.schulte-grid div{border:1px solid #698f76;text-align:center;font-size:22pt;padding:15px}.scale-options{margin:15px 0;display:flex;flex-wrap:wrap;gap:9px}.scale-options span{border:1px solid #b8cfbe;padding:8px}.drawing-instruction{margin:15px 0}.blank-instruction{margin:15px 0}button{display:none}</style></head><body>';
+ const h='<html lang="ru"><head><meta charset="utf-8"><title>Психотека - '+escapeHTML(methodNow.name)+'</title><style>@page{size:A4;margin:13mm}body{font:11pt/1.35 Arial,sans-serif;color:#22372d}h1{font-size:18pt}h2{font-size:13pt}p{margin:7px 0}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #789c87;padding:6px;vertical-align:top;font-size:10pt;overflow-wrap:break-word}tr{break-inside:avoid;page-break-inside:avoid}.questions-table td:first-child{width:38px}.questions-table td:last-child{width:75px}.stimulus-paper svg{max-width:100%;height:auto}.drawing-space{border:1px solid #abc5b3;height:570px}.dictation-grid{break-inside:avoid;margin:5px 0}.dictation-grid svg{width:100%;height:132px}.dictation-grid h4{margin:0}.dictation-script{margin:8px 0;break-inside:avoid}.schulte-grid{display:grid;grid-template-columns:repeat(5,1fr);max-width:430px;margin:25px auto}.schulte-grid div{border:1px solid #698f76;text-align:center;font-size:22pt;padding:15px}.scale-options{margin:15px 0;display:flex;flex-wrap:wrap;gap:9px}.scale-options span{border:1px solid #b8cfbe;padding:8px}.drawing-instruction{margin:15px 0}.blank-instruction{margin:15px 0}button{display:none}</style></head><body>';
  const base=blank?'<p>Фамилия, имя: ________________________________ Дата: ____________</p>':'<h1>'+escapeHTML(methodNow.name)+'</h1><p>'+escapeHTML(d.author)+' · '+escapeHTML(d.age)+'</p><h2>Цель</h2><p>'+escapeHTML(d.goal)+'</p><h2>Инструкция участнику</h2><p>'+escapeHTML(d.instructions)+'</p>';
- return h+base+(blank?materials(methodNow,true):'<h2>Задания и стимулы</h2>'+materials(methodNow,false)+'<h2>Обработка</h2><p>'+escapeHTML(d.scoring)+'</p><h2>Интерпретация</h2><p>'+escapeHTML(d.interpret)+'</p>')+'</body></html>';
+ return h+base+(blank?materials(methodNow,true):'<h2>Задания и стимулы</h2>'+materials(methodNow,false)+(d.graphic==='dictation'?dictationCommands(d):'')+(d.graphic==='drawing'&&d.questions?.length?'<h2>Протокол беседы</h2><ol>'+d.questions.map(q=>'<li>'+escapeHTML(q)+' — ________________________________</li>').join('')+'</ol>':'')+'<h2>Обработка</h2><p>'+escapeHTML(d.scoring)+'</p><h2>Интерпретация</h2><p>'+escapeHTML(d.interpret)+'</p>')+'</body></html>';
 }
 function printMaterial(blank){
  const d=DETAILS[methodNow?.name];if(!d)return;
