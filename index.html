@@ -14,8 +14,13 @@
  <div class="brand"><div class="logo" aria-hidden="true"><svg viewBox="0 0 50 50"><path d="M25 41V12M24 25C8 27 7 11 7 11c18-1 20 14 20 14M25 34c16 1 18-17 18-17-18 1-19 17-19 17" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div><div><strong>Психотека</strong><span>Библиотека психолога</span></div></div>
  <div class="side-head">Материалы</div>
  <button class="navgroup" data-view="preschool"><span class="navicon">✿</span> Детский сад</button>
- <button class="navgroup active" data-view="school"><span class="navicon">▦</span> Школа</button>
- <div class="nested" id="topics"></div>
+ <button class="navgroup active" data-view="school" aria-expanded="true" aria-controls="schoolTree"><span class="navicon">▦</span> Школа <span class="nav-chevron" aria-hidden="true">⌄</span></button>
+ <div class="school-tree" id="schoolTree">
+  <button class="section-toggle" data-section="diagnosticsGroup" aria-expanded="true" aria-controls="diagnosticsGroup">Диагностика <span class="nav-chevron" aria-hidden="true">⌄</span></button>
+  <div class="nested" id="diagnosticsGroup"><div id="topics"></div></div>
+  <button class="section-toggle" data-section="correctionGroup" aria-expanded="false" aria-controls="correctionGroup">Коррекционная работа <span class="nav-chevron" aria-hidden="true">⌄</span></button>
+  <div class="nested" id="correctionGroup" hidden><button class="topic-btn" data-topic="Программы">Программы и занятия</button></div>
+ </div>
  <button class="navgroup" data-view="adults"><span class="navicon">♧</span> Взрослые</button>
  <div class="side-head second">Дополнительно</div>
  <button class="navgroup" data-view="documents"><span class="navicon">▤</span> Документация</button>
