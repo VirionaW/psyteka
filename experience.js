@@ -61,7 +61,7 @@ function materials(m,blank){
  if(d.graphic==='schulte')return '<div class="stimulus-paper"><h3>Найди числа от 1 до 25 по порядку</h3><div class="schulte-grid">'+schulteNumbers.map(n=>'<div>'+n+'</div>').join('')+'</div></div>';
  if(d.graphic==='drawing')return '<div class="stimulus-paper drawing"><div class="drawing-instruction">'+escapeHTML(d.instructions)+'</div><div class="drawing-space"></div></div>';
  if(Array.isArray(d.questions)&&d.questions.length){
-  return '<div class="blank-instruction">'+escapeHTML(d.instructions)+'</div><div class="scale-options">'+d.options.map((x,i)=>'<span><b>'+i+'</b> '+escapeHTML(x)+'</span>').join('')+'</div><table class="questions-table"><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td class="blank-cell">'+(blank?'_____':'0 / 1 / 2 / 3 / '+(d.options.length-1))+'</td></tr>').join('')+'</tbody></table>';
+  return '<div class="blank-instruction">'+escapeHTML(d.instructions)+'</div><div class="scale-options">'+d.options.map((x,i)=>'<span><b>'+i+'</b> '+escapeHTML(x)+'</span>').join('')+'</div><table class="questions-table"><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td class="blank-cell">'+(blank?'_____':d.options.map((_,k)=>k).join(' / '))+'</td></tr>').join('')+'</tbody></table>';
  }
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
@@ -78,7 +78,7 @@ function getScores(d,answers){
  const nums=answers.slice(0,n).map(Number);
  if(d.reversed) nums.forEach((v,i)=>{if(d.reversed.includes(i))nums[i]=(d.options.length-1)-v});
  const raw=nums.reduce((a,b)=>a+b,0);
- if(d.name?.includes('WHO')) return {raw,index:raw*4,max:25,caption:'Индекс благополучия 0-100'};
+ if(d.options.length===6) return {raw,index:raw*4,max:25,caption:'Индекс благополучия 0-100'};
  return {raw,index:null,max:n*(d.options.length-1),caption:'Сырая сумма'};
 }
 function viewCalculator(m){
