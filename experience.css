@@ -97,3 +97,12 @@ html.dark .method[data-kind="scale"] .glyph{background:linear-gradient(145deg,#2
 .dictation-score-grid select{width:100%;padding:12px;font:600 17px system-ui;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:9px}
 .dictation-total{font-size:36px;color:var(--green);font-variant-numeric:tabular-nums}
 @media(max-width:720px){.method{min-height:265px}.dictation-score-grid>div{grid-template-columns:minmax(70px,1fr) minmax(95px,1fr) minmax(95px,1fr);gap:6px;padding:10px 8px}.dictation-score-grid>div b{font-size:12px}}
+
+/* Независимые раскрывающиеся разделы левой панели */
+.school-tree{margin:0 0 12px 8px}
+.section-toggle{border:0;background:transparent;color:var(--ink);font:700 13px system-ui;text-align:left;display:flex;align-items:center;gap:8px;width:100%;padding:11px 11px 11px 18px;border-radius:10px;cursor:pointer}
+.section-toggle:hover{background:var(--soft);color:var(--green)}
+.school-tree .nested{margin-left:15px}
+.nav-chevron{margin-left:auto;color:var(--muted);font-size:17px;transition:transform .2s}
+[aria-expanded="false"]>.nav-chevron{transform:rotate(-90deg)}
+.school-tree[hidden],.school-tree .nested[hidden]{display:none !important}
