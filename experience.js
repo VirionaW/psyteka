@@ -48,7 +48,7 @@ function setTab(name){
 }
 function viewOverview(m){
  const d=DETAILS[m.name];
- if(!d) return '<div class="portfolio-note"><h3>Портфолио методики</h3><p>Название: <strong>'+escapeHTML(m.name)+'</strong></p><p>Автор: '+escapeHTML(m.author)+'</p><p>Возраст: '+escapeHTML(m.age)+'</p><p>Назначение: '+escapeHTML(m.goal)+'</p><div class="notice">Оригинальные задания и ключи этой методики не опубликованы здесь. Для проведения необходима корректная версия из первоисточника. Описание не заменяет тест.</div></div>';
+ if(!d) return '<div class="portfolio-note"><div class="method-facts"><span><b>Автор</b>'+escapeHTML(m.author)+'</span><span><b>Возраст</b>'+escapeHTML(m.age)+'</span></div><h3>Назначение</h3><p>'+escapeHTML(m.goal)+'</p><h3>Вид материала</h3><p>'+escapeHTML(m.format)+'</p>'+(m.source?'<p><a href="'+escapeHTML(m.source)+'" target="_blank" rel="noopener noreferrer">Материалы первоисточника ↗</a></p>':'')+'</div>';
  return '<div class="method-facts"><span><b>Автор</b>'+escapeHTML(d.author)+'</span><span><b>Возраст</b>'+escapeHTML(d.age)+'</span><span><b>Объем</b>'+escapeHTML(d.count)+'</span><span><b>Вид</b>'+escapeHTML(d.kind)+'</span></div><h3>Цель методики</h3><p>'+escapeHTML(d.goal)+'</p><h3>Что исследует</h3><div class="notice">'+escapeHTML(d.interpret)+'</div><h3>Происхождение и условия</h3><p>'+escapeHTML(d.license||'Профессиональная проба: интерпретация по выбранному руководству, без самодельных возрастных норм.')+'</p>';
 }
 function viewInstruction(m){
@@ -236,7 +236,7 @@ function openMethod(m){
  $('#modalBody').innerHTML='';
  const header=$('#modal').querySelector('.modalhead');
  let old=$('#methodTabs');if(old)old.remove();
- const tabs=d?[['overview','Описание'],['instruction','Инструкция'],['materials','Методика и бланк'],['processing','Обработка'],...(d.calculator?[['score','Подсчет']]:[])]:[['overview','Портфолио']];
+ const tabs=d?[['overview','Описание'],['instruction','Инструкция'],['materials','Методика и бланк'],['processing','Обработка'],...(d.calculator?[['score','Подсчет']]:[])]:[['overview','Описание']];
  header.insertAdjacentHTML('afterend','<nav class="method-tabs" id="methodTabs">'+tabs.map(([key,title])=>'<button class="modal-tab" data-tab="'+key+'">'+title+'</button>').join('')+'</nav>');
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
