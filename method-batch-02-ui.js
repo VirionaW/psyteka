@@ -8,8 +8,8 @@
   ["unclear","Обоснование не получено"]
  ];
  const groupButtons=(ctx)=>'<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>'+
- (ctx.calcMode==="class"?'<div class="group-tools"><label>Участник<select id="participantSelect">'+ctx.rows.map((r,i)=>'<option value="'+i+'" '+(ctx.rowIndex===i?'selected':'')+'>'+(i+1)+'. '+e(r.name||'Участник '+(i+1))+'</option>').join('')+'</select></label><label>Код участника<input id="participantName" placeholder="Например, № 01" value="'+e(ctx.rows[ctx.rowIndex].name)+'"></label><button class="btn" id="addParticipant">Добавить</button></div>':'')+
- '<p class="privacy-inline">Обработка выполняется в браузере без отправки на сервер. Для работы с несовершеннолетними используйте коды, а не ФИО. Несохранённые данные пропадут при закрытии страницы.</p>';
+ (ctx.calcMode==="class"?'<div class="group-tools"><label>Участник<select id="participantSelect">'+ctx.rows.map((r,i)=>'<option value="'+i+'" '+(ctx.rowIndex===i?'selected':'')+'>'+e(r.name||'Участник '+(i+1))+'</option>').join('')+'</select></label><label>Код участника<input id="participantName" placeholder="Например, № 01" value="'+e(ctx.rows[ctx.rowIndex].name)+'"></label><button class="btn" id="addParticipant">Добавить</button></div>':'')+
+ '<p class="privacy-inline">Обработка выполняется в браузере без отправки на сервер. Для работы с несовершеннолетними используйте коды, а не ФИО. Несохраненные данные пропадут при закрытии страницы.</p>';
  function memoryScore(answers){
   if(!Array.isArray(answers))answers=[];
   const series=stages.map((_,t)=>answers[60+t]==="1"?Array.from({length:10},(_,i)=>answers[t*10+i]==="1"?1:0).reduce((a,b)=>a+b,0):null);
@@ -24,9 +24,9 @@
  function score(d,answers){return d.special==="memory10"?memoryScore(answers):oddScore(answers);}
  function memorySheet(d){
   return '<div class="stimulus-paper"><p class="material-warning"><strong>Только для психолога.</strong> Слова произносятся вслух. Не показывайте этот список участнику.</p><table class="word-matrix"><thead><tr><th>Слово</th>'+stages.map((x,i)=>'<th>'+(i+1)+'</th>').join('')+'</tr></thead><tbody>'+
-  d.words.map(w=>'<tr><th>'+e(w)+'</th>'+stages.map(()=>'<td>□</td>').join('')+'</tr>').join('')+
+  d.words.map(w=>'<tr><th>'+e(w)+'</th>'+stages.map(()=>'<td></td>').join('')+'</tr>').join('')+
   '<tr><th>Верно слов</th>'+stages.map(()=>'<td>___</td>').join('')+'</tr></tbody></table>'+
-  '<p>Дополнительные / повторённые слова: ______________________________________________________</p>'+
+  '<p>Дополнительные / повторенные слова: ______________________________________________________</p>'+
   '<p>Время отсрочки: ______ минут. Наблюдения: _________________________________________________</p></div>';
  }
  function oddSheet(d){
@@ -35,14 +35,14 @@
  }
  function materials(d){return d.special==="memory10"?memorySheet(d):oddSheet(d);}
  function extraInstructions(d){
-  if(d.special==="memory10")return '<h3>Протокол проведения для специалиста</h3><ol><li>Прочитайте десять слов один раз, спокойно, с одинаковой интонацией.</li><li>Зафиксируйте все слова, повторенные после чтения, включая посторонние и повторы.</li><li>Повторите тот же список ещё четыре раза, после каждого чтения фиксируйте ответ.</li><li>После интервала (в этой рабочей версии — около часа) без повторного зачитывания запросите отсроченное воспроизведение; запишите фактическую длительность паузы.</li><li>Сравните количества и качественные особенности ошибок; не присваивайте диагноз по графику.</li></ol><p class="notice">Рабочий набор из 10 слов в этом интерфейсе — демонстрационный. Не переносите на него без проверки нормы иной версии.</p>';
-  return '<h3>Протокол проведения для специалиста</h3><ol><li>Серия 1 — тренировочная, объясните на ней принцип задания.</li><li>Серии 2–12 предъявляйте по одной, без подсказок, если это позволяет возраст и состояние.</li><li>Записывайте исключённое слово, обобщающее понятие и объяснение дословно.</li><li>Если потребовалась помощь, отдельно отметьте её содержание.</li><li>Возможен обоснованный альтернативный способ классификации; его нельзя автоматически считать ошибкой.</li></ol><h3>Ориентиры для беседы со специалистом</h3><div class="odd-guide">'+d.samples.map((s,i)=>'<p>'+(i+1)+'. '+e(s.extra)+' — пример основания: '+e(s.group)+'.</p>').join('')+'</div><p class="notice">Это оригинальные демонстрационные серии «Психотеки», а не стандартизированный комплект тестовых карточек.</p>';
+  if(d.special==="memory10")return '<h3>Протокол проведения для специалиста</h3><ol><li>Прочитайте десять слов один раз, спокойно, с одинаковой интонацией.</li><li>Зафиксируйте все слова, повторенные после чтения, включая посторонние и повторы.</li><li>Повторите тот же список еще четыре раза, после каждого чтения фиксируйте ответ.</li><li>После интервала (в этой рабочей версии – около часа) без повторного зачитывания запросите отсроченное воспроизведение; запишите фактическую длительность паузы.</li><li>Сравните количества и качественные особенности ошибок; не присваивайте диагноз по графику.</li></ol><p class="notice">Рабочий набор из 10 слов в этом интерфейсе – демонстрационный. Не переносите на него без проверки нормы иной версии.</p>';
+  return '<h3>Протокол проведения для специалиста</h3><ol><li>Серия 1 – тренировочная, объясните на ней принцип задания.</li><li>Серии 2–12 предъявляйте по одной, без подсказок, если это позволяет возраст и состояние.</li><li>Записывайте исключенное слово, обобщающее понятие и объяснение дословно.</li><li>Если потребовалась помощь, отдельно отметьте ее содержание.</li><li>Возможен обоснованный альтернативный способ классификации; его нельзя автоматически считать ошибкой.</li></ol><h3>Ориентиры для беседы со специалистом</h3><div class="odd-guide">'+d.samples.map((s,i)=>'<p>'+(i+1)+'. '+e(s.extra)+' – пример основания: '+e(s.group)+'.</p>').join('')+'</div><p class="notice">Это оригинальные демонстрационные серии «Психотеки», а не стандартизированный комплект тестовых карточек.</p>';
  }
  function memoryFeedback(d,ctx){
   const row=ctx.rows[ctx.rowIndex],z=score(d,row.answers);
   const vals=z.series.map((v,i)=>'<div><span>'+e(stages[i])+'</span><b>'+(v===null?'Не завершено':v+' / 10')+'</b></div>').join('');
   return '<h3>Кривая воспроизведения</h3><div class="memory-stages">'+vals+'</div><p>Этапов завершено: '+z.completed+' из 6. Отсроченный результат считается отдельно.</p>'+
-   '<div class="memory-bars">'+z.series.map((v,i)=>'<div><small>'+e(i===5?'Отср.':String(i+1))+'</small><div class="memory-track"><span style="width:'+((v??0)*10)+'%"></span></div><b>'+(v===null?'—':v)+'</b></div>').join('')+'</div>'+
+   '<div class="memory-bars">'+z.series.map((v,i)=>'<div><small>'+e(i===5?'Отср.':String(i+1))+'</small><div class="memory-track"><span style="width:'+((v??0)*10)+'%"></span></div><b>'+(v===null?'–':v)+'</b></div>').join('')+'</div>'+
    '<p class="privacy-inline">Ни один балл не означает диагноз. Важны ошибки, порядок и условия выполнения.</p>';
  }
  function oddFeedback(d,ctx){
@@ -59,7 +59,7 @@
    out+='</tr>';
   }
   out+='<tr><th>Этап закончен</th>'+stages.map((st,i)=>'<td><input type="checkbox" class="memory-done" data-memory-stage="'+i+'" aria-label="Завершен этап '+e(st)+'" '+(a[60+i]==="1"?'checked':'')+'></td>').join('')+'</tr></tbody></table></div>';
-  out+='<p class="privacy-inline">Поставьте галочку напротив воспроизведённых слов. После окончания каждого предъявления отметьте «Этап закончен», даже если не названо ни одного слова. Отсроченное воспроизведение — отдельный этап.</p>';
+  out+='<p class="privacy-inline">Поставьте галочку напротив воспроизведенных слов. После окончания каждого предъявления отметьте «Этап закончен», даже если не названо ни одного слова. Отсроченное воспроизведение – отдельный этап.</p>';
   ctx.rows[ctx.rowIndex].intrusions ||= [];
   out+='<h3>Ошибки и посторонние слова</h3><div class="memory-intrusions">'+stages.map((st,i)=>'<label>'+e(st)+'<input data-memory-note="'+i+'" value="'+e(ctx.rows[ctx.rowIndex].intrusions[i]||'')+'" placeholder="Повторы, лишние слова или наблюдения"></label>').join('')+'</div>';
   return out;
@@ -68,11 +68,11 @@
   const r=ctx.rows[ctx.rowIndex];r.excluded ||= [];r.generalizations ||= [];r.rationales ||= [];
   return '<p class="privacy-inline">Записывайте ответы так, как они прозвучали. В поле «Оценка» выбирайте способ решения, учитывая объяснение, а не только совпадение с одним из вариантов.</p>'+
   d.samples.map((s,i)=>{
-   if(i===0)return '<div class="odd-entry"><h4>1. Тренировочная серия</h4><p>'+s.words.map(e).join(' · ')+'</p><small>В расчёт 11 рабочих серий не входит.</small></div>';
+   if(i===0)return '<div class="odd-entry"><h4>1. Тренировочная серия</h4><p>'+s.words.map(e).join(' · ')+'</p><small>В расчет 11 рабочих серий не входит.</small></div>';
    return '<div class="odd-entry"><h4>'+(i+1)+'. '+s.words.map(e).join(' · ')+'</h4>'+
     '<div class="odd-entry-fields"><label>Исключено<select data-odd-excluded="'+i+'"><option value="">Не указано</option>'+s.words.map(w=>'<option value="'+e(w)+'" '+(r.excluded[i]===w?'selected':'')+'>'+e(w)+'</option>').join('')+'</select></label>'+
     '<label>Обобщающее понятие<input data-odd-general="'+i+'" value="'+e(r.generalizations[i]||'')+'" placeholder="Как названы остальные три"></label></div>'+
-    '<label>Дословное объяснение и помощь<textarea rows="2" data-odd-reason="'+i+'" placeholder="Ответ ребёнка, подсказки, замечания">'+e(r.rationales[i]||'')+'</textarea></label>'+
+    '<label>Дословное объяснение и помощь<textarea rows="2" data-odd-reason="'+i+'" placeholder="Ответ ребенка, подсказки, замечания">'+e(r.rationales[i]||'')+'</textarea></label>'+
     '<label>Оценка способа решения<select data-odd-status="'+i+'">'+statuses.map(([key,label])=>'<option value="'+key+'" '+(r.answers[i]===key?'selected':'')+'>'+label+'</option>').join('')+'</select></label></div>';
   }).join('');
  }
@@ -81,7 +81,7 @@
   const header=d.special==="memory10"?['Участник',...stages]:['Участник','Самостоятельно','С помощью','Иное обосновано','Без обоснования','Оценено'];
   const cells=ctx.rows.map((r,i)=>{
    const z=score(d,r.answers);
-   const values=d.special==="memory10"?z.series.map(n=>n===null?'—':String(n)):[z.counts.independent,z.counts.assisted,z.counts.alternative,z.counts.unclear,z.completed];
+   const values=d.special==="memory10"?z.series.map(n=>n===null?'–':String(n)):[z.counts.independent,z.counts.assisted,z.counts.alternative,z.counts.unclear,z.completed];
    return '<tr><td>'+e(r.name||'Участник '+(i+1))+'</td>'+values.map(n=>'<td>'+e(n)+'</td>').join('')+'</tr>';
   }).join('');
   return '<div class="class-actions"><button class="btn primary" id="nextParticipant">Следующий участник</button><button class="btn" id="exportGroup">Скачать CSV</button></div><h3>Группа</h3><div class="results-table"><table><thead><tr>'+header.map(x=>'<th>'+e(x)+'</th>').join('')+'</tr></thead><tbody>'+cells+'</tbody></table></div>';
