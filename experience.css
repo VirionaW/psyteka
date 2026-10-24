@@ -150,7 +150,7 @@ html.dark .method[data-kind="cognitive"] .glyph{background:linear-gradient(145de
 html.dark .stimulus-paper .word-matrix,.stimulus-paper .odd-print-item{color:#264a35}
 @media(max-width:720px){.memory-stages{grid-template-columns:repeat(2,1fr)}.memory-intrusions,.odd-entry-fields,.odd-results{grid-template-columns:1fr}.odd-entry{padding:13px}.special-score-feedback{padding:14px}}
 
-/* Полный диагностический рабочий цикл — существующие карточки SCARED / WHO-5 */
+/* Полный диагностический рабочий цикл – существующие карточки SCARED / WHO-5 */
 .diagnostic-intro{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin:10px 0 20px}
 .diagnostic-intro .btn{margin:8px 0}
 .diag-code{max-width:365px;margin:14px 0}
@@ -207,3 +207,29 @@ html.dark .stimulus-paper .word-matrix,.stimulus-paper .odd-print-item{color:#26
 .diag03-actions button:disabled{opacity:.45;cursor:not-allowed}
 .diag03-actions button{white-space:normal}
 @media(max-width:750px){.diag03-section{padding:12px}.diag03-answer-grid{grid-template-columns:1fr}.diag03-result{padding:13px}.diag03-result .diag-questions-table{font-size:12px}}
+
+
+/* Чистый бланк и единая навигация */
+.processing-toolbar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;position:sticky;top:-24px;z-index:2;background:var(--paper);padding:12px 0 14px;border-bottom:1px solid var(--line)}
+.processing-toolbar h3{margin:0!important;font-size:22px!important;color:var(--ink)}
+.blank-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:4px 0 8px}
+.blank-toolbar h3{margin:0!important}
+.method-guide{margin:23px 0;border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+.method-guide summary,.bulk-participants summary{font-weight:750;cursor:pointer;color:var(--green)}
+#footerResetSlot{margin-left:auto}
+.blank-mark-instruction{font-size:17px;font-weight:600}
+.answers-table th:first-child,.answers-table td:first-child{width:37px!important;min-width:37px}
+.answers-table th:nth-child(n+3),.answers-table td:nth-child(n+3){width:37px!important;min-width:30px;text-align:center;padding:9px 4px}
+.answers-table td.blank-mark-cell{height:34px;background:#fff}
+.answers-table td:nth-child(2){width:auto}
+.diag-sheet .numeric-answers{table-layout:fixed;width:100%;font-size:14px}
+.diag-sheet .numeric-answers td:first-child,.diag-sheet .numeric-answers th:first-child{width:38px;text-align:center}
+.diag-sheet .numeric-answers th:nth-child(n+3),.diag-sheet .numeric-answers td:nth-child(n+3){width:36px;text-align:center;padding:9px 4px}
+.diag-sheet .numeric-answers tbody td:nth-child(n+3){height:34px}
+.diag-sheet .compact-answers{max-width:430px;margin-left:0}
+.diag-sheet .compact-answers th,.diag-sheet .compact-answers td{width:25%!important;text-align:center!important}
+.diag-sheet .compact-answers tbody td{height:30px}
+.bulk-participants{background:var(--soft);border:1px solid var(--line);padding:12px 16px;margin-top:14px;border-radius:12px}
+.bulk-participants textarea{display:block;width:100%;margin:12px 0;padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:var(--paper);color:var(--ink)}
+.modalbody .diag03-result .notice,.modalbody .score-section .notice{font-size:16px;font-weight:600;line-height:1.5}
+@media(max-width:680px){.processing-toolbar{top:-20px}.processing-toolbar h3{font-size:18px!important}.blank-toolbar{align-items:stretch}.answers-table th:nth-child(n+3),.answers-table td:nth-child(n+3){width:28px!important;min-width:25px;padding:4px 2px}.diag-sheet .numeric-answers th:nth-child(n+3),.diag-sheet .numeric-answers td:nth-child(n+3){width:27px;padding:6px 2px}#footerResetSlot{margin-left:0}}

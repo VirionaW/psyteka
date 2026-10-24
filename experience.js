@@ -35,21 +35,43 @@ function render(){
  document.querySelectorAll('[data-score]').forEach(b=>b.onclick=()=>{openMethod(C.find(m=>m.id===b.dataset.score));setTab("score")});
 }
 function setTab(name){
+ const previous=tabNow;
  tabNow=name;
  document.querySelectorAll(".modal-tab").forEach(x=>{x.classList.toggle("active",x.dataset.tab===name);x.setAttribute("aria-selected",String(x.dataset.tab===name))});
  const body=$("#modalBody");
- if(!methodNow){return}
- body.innerHTML=name==="overview"?viewOverview(methodNow):
- name==="instruction"?viewInstruction(methodNow):
- name==="materials"?viewMaterials(methodNow):
- name==="processing"?viewProcessing(methodNow):viewCalculator(methodNow);
- body.scrollTop=0;
+ if(!methodNow)return;
+ const oldScroll=body.scrollTop;
+ const back=name==="score"||name==="processing"?'<div class="processing-toolbar"><button class="btn" id="backToPortfolio">← Вернуться в портфолио</button><h3>Обработка результатов</h3></div>':'';
+ body.innerHTML=back+(name==="overview"?viewOverview(methodNow)+'<details class="method-guide"><summary>Инструкция и руководство</summary>'+viewInstruction(methodNow)+'</details>':
+  name==="instruction"?viewInstruction(methodNow):
+  name==="materials"?viewMaterials(methodNow):
+  name==="processing"?viewProcessing(methodNow):viewCalculator(methodNow));
+ if(name==="score"&&calcMode==="class"){
+  const group=body.querySelector(".group-tools");
+  if(group)group.insertAdjacentHTML("afterend",'<details class="bulk-participants"><summary>Добавить список учеников сразу</summary><p>Имя или код указывать необязательно. Если указываете, напишите каждого ученика с новой строки.</p><textarea id="bulkParticipants" rows="5" placeholder="Иванова Анна&#10;Петров Максим&#10;Ученик 3"></textarea><button class="btn primary" id="addBulkParticipants">Добавить учеников</button></details>');
+ }
+ body.scrollTop=previous===name?oldScroll:0;
+ const reset=body.querySelector("#resetParticipant"),slot=$("#footerResetSlot");
+ if(slot){slot.replaceChildren();if(name==="score"&&reset){reset.textContent="Сбросить ответы";const parent=reset.parentElement;slot.appendChild(reset);if(parent?.classList.contains("class-actions")&&!parent.children.length)parent.remove();}}
+ $("#footerPortfolio")?.classList.toggle("primary",name==="overview");
+ $("#footerBlank")?.classList.toggle("primary",name==="materials");
+ $("#footerScore")?.classList.toggle("primary",name==="score"||name==="processing");
+ $("#backToPortfolio")?.addEventListener("click",()=>setTab("overview"));
+ $("#previewBlank")?.addEventListener("click",()=>printMaterial(true));
+ $("#addBulkParticipants")?.addEventListener("click",()=>{
+  const names=($("#bulkParticipants")?.value||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  if(!names.length)return;
+  if(rows.length===1&&!rows[0].name&&(!rows[0].answers||!rows[0].answers.some(x=>x!==""&&x!=null)))rows.shift();
+  names.forEach(name=>rows.push({name,answers:[]}));
+  rowIndex=Math.max(0,rows.length-names.length);
+  setTab("score");
+ });
  bindControls();
 }
 function viewOverview(m){
  const d=DETAILS[m.name];
  if(!d) return '<div class="portfolio-note"><div class="method-facts"><span><b>Автор</b>'+escapeHTML(m.author)+'</span><span><b>Возраст</b>'+escapeHTML(m.age)+'</span></div><h3>Назначение</h3><p>'+escapeHTML(m.goal)+'</p><h3>Вид материала</h3><p>'+escapeHTML(m.format)+'</p>'+(m.source?'<p><a href="'+escapeHTML(m.source)+'" target="_blank" rel="noopener noreferrer">Материалы первоисточника ↗</a></p>':'')+'</div>';
- return '<div class="method-facts"><span><b>Автор</b>'+escapeHTML(d.author)+'</span><span><b>Возраст</b>'+escapeHTML(d.age)+'</span><span><b>Объем</b>'+escapeHTML(d.count)+'</span><span><b>Вид</b>'+escapeHTML(d.kind)+'</span></div><h3>Цель методики</h3><p>'+escapeHTML(d.goal)+'</p><h3>Что исследует</h3><div class="notice">'+escapeHTML(d.interpret)+'</div><h3>Происхождение и условия</h3><p>'+escapeHTML(d.license||'Профессиональная проба: интерпретация по выбранному руководству, без самодельных возрастных норм.')+'</p>'+(d.workflow==='diagnostic'?'<div class="notice">Рабочий цикл: откройте официальный бланк, проведите обследование, перенесите ответы на вкладке «Подсчёт» и скачайте результат.</div><p><a class="btn primary" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Официальный бланк PDF ↗</a></p>':d.workflow==='diagnostic03'?'<div class="notice">Рабочий цикл: бланк → проведение → ввод ответов → подсчёт → скачивание результата.</div><p><a href="'+escapeHTML(d.source)+'" target="_blank" rel="noopener noreferrer">Первоисточник и ключ ↗</a></p>':'');
+ return '<div class="method-facts"><span><b>Автор</b>'+escapeHTML(d.author)+'</span><span><b>Возраст</b>'+escapeHTML(d.age)+'</span><span><b>Объем</b>'+escapeHTML(d.count)+'</span><span><b>Вид</b>'+escapeHTML(d.kind)+'</span></div><h3>Цель методики</h3><p>'+escapeHTML(d.goal)+'</p><h3>Что исследует</h3><div class="notice">'+escapeHTML(d.interpret)+'</div><h3>Происхождение и условия</h3><p>'+escapeHTML(d.license||'Профессиональная проба: интерпретация по выбранному руководству, без самодельных возрастных норм.')+'</p>'+(d.workflow==='diagnostic'?'<div class="notice">Рабочий цикл: откройте официальный бланк, проведите обследование, перенесите ответы на вкладке «Подсчет» и скачайте результат.</div><p><a class="btn primary" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Официальный бланк PDF ↗</a></p>':d.workflow==='diagnostic03'?'<div class="notice">Рабочий цикл: бланк → проведение → ввод ответов → подсчет → скачивание результата.</div><p><a href="'+escapeHTML(d.source)+'" target="_blank" rel="noopener noreferrer">Первоисточник и ключ ↗</a></p>':'');
 }
 function viewInstruction(m){
  const d=DETAILS[m.name];
@@ -82,22 +104,22 @@ function viewDictationCalculator(d){
  if(!rows.length)rows=[{name:"",answers:[]}];
  if(rowIndex>=rows.length)rowIndex=0;
  const r=rows[rowIndex];
- let h='<div class="calc-mode"><button class="btn '+(calcMode==='one'?'primary':'')+'" data-cmode="one">Один участник</button><button class="btn '+(calcMode==='class'?'primary':'')+'" data-cmode="class">Группа / класс</button></div>';
- if(calcMode==='class')h+='<div class="group-tools"><label>Участник <select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===rowIndex?'selected':'')+'>'+(i+1)+'. '+escapeHTML(x.name||'Участник '+(i+1))+'</option>').join('')+'</select></label><label>Имя или код <input id="participantName" value="'+escapeHTML(r.name)+'" placeholder="Необязательно"></label><button class="btn" id="addParticipant">Добавить</button></div>';
+ let h='<div class="calc-mode"><button class="btn '+(calcMode==='one'?'primary':'')+'" data-cmode="one">Один участник</button><button class="btn '+(calcMode==='class'?'primary':'')+'" data-cmode="class">Целый класс</button></div>';
+ if(calcMode==='class')h+='<div class="group-tools"><label>Участник <select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===rowIndex?'selected':'')+'>'+escapeHTML(x.name||'Участник '+(i+1))+'</option>').join('')+'</select></label><label>Имя или код <input id="participantName" value="'+escapeHTML(r.name)+'" placeholder="Необязательно"></label><button class="btn" id="addParticipant">Добавить</button></div>';
  h+='<p class="privacy-inline">Оценки вносятся вручную специалистом после проверки бумажного бланка. Данные остаются в этом браузере до закрытия страницы и не отправляются на сервер.</p>';
  h+='<div class="dictation-score-grid"><div><b>Узор</b><b>Под диктовку</b><b>Самостоятельно</b></div>';
  for(let j=0;j<3;j++){
   h+='<div><strong>Узор '+(j+2)+'</strong>';
   for(let k=0;k<2;k++){
    const idx=j*2+k,v=r.answers[idx];
-   h+='<select class="dict-score-select" data-dict-n="'+idx+'" aria-label="Узор '+(j+2)+', '+(k===0?'диктовка':'самостоятельное продолжение')+'"><option value="">—</option>'+[0,1,2,3,4].map(n=>'<option value="'+n+'" '+(String(v)===String(n)?'selected':'')+'>'+n+'</option>').join('')+'</select>';
+   h+='<select class="dict-score-select" data-dict-n="'+idx+'" aria-label="Узор '+(j+2)+', '+(k===0?'диктовка':'самостоятельное продолжение')+'"><option value="">–</option>'+[0,1,2,3,4].map(n=>'<option value="'+n+'" '+(String(v)===String(n)?'selected':'')+'>'+n+'</option>').join('')+'</select>';
   }
   h+='</div>';
  }
  h+='</div>';
  const z=getScores(d,r.answers);
- h+='<div class="score-section"><h3>Итог обработки</h3>'+(z?'<b class="dictation-total">'+z.raw+' / 16</b><p>Уровень по указанной схеме: <strong>'+dictationLevel(z.raw)+'</strong></p><p>Вычисление: (минимум + максимум трех оценок диктовки) + (минимум + максимум трех оценок продолжения).</p>':'<p>Укажите все шесть оценок от 0 до 4 — три за работу по инструкции и три за самостоятельное продолжение.</p>')+'<p class="privacy-inline">Показатель выполнения пробы не является диагнозом и не заменяет комплексного обследования.</p></div>';
- if(calcMode==='class')h+='<div class="class-actions"><button class="btn primary" id="nextParticipant">Следующий участник</button><button class="btn" id="exportGroup">Скачать CSV для Excel</button></div><h3>Результаты группы</h3><div class="results-table"><table><thead><tr><th>Участник</th><th>Итог / 16</th></tr></thead><tbody>'+rows.map((x,i)=>{const z=getScores(d,x.answers);return '<tr><td>'+escapeHTML(x.name||'Участник '+(i+1))+'</td><td>'+(z?z.raw+' · '+dictationLevel(z.raw):'—')+'</td></tr>'}).join('')+'</tbody></table></div>';
+ h+='<div class="score-section"><h3>Итог обработки</h3>'+(z?'<b class="dictation-total">'+z.raw+' / 16</b><p>Уровень по указанной схеме: <strong>'+dictationLevel(z.raw)+'</strong></p><p>Вычисление: (минимум + максимум трех оценок диктовки) + (минимум + максимум трех оценок продолжения).</p>':'<p>Укажите все шесть оценок от 0 до 4 – три за работу по инструкции и три за самостоятельное продолжение.</p>')+'<p class="privacy-inline">Показатель выполнения пробы не является диагнозом и не заменяет комплексного обследования.</p></div>';
+ if(calcMode==='class')h+='<div class="class-actions"><button class="btn primary" id="nextParticipant">Следующий участник</button><button class="btn" id="exportGroup">Скачать CSV для Excel</button></div><h3>Результаты группы</h3><div class="results-table"><table><thead><tr><th>Участник</th><th>Итог / 16</th></tr></thead><tbody>'+rows.map((x,i)=>{const z=getScores(d,x.answers);return '<tr><td>'+escapeHTML(x.name||'Участник '+(i+1))+'</td><td>'+(z?z.raw+' · '+dictationLevel(z.raw):'–')+'</td></tr>'}).join('')+'</tbody></table></div>';
  return h+'<div class="class-actions"><button class="btn" id="resetParticipant">Очистить оценки участника</button></div>';
 }
 
@@ -114,13 +136,15 @@ function materials(m,blank){
  if(d.graphic==='schulte')return '<div class="stimulus-paper"><h3>Найди числа от 1 до 25 по порядку</h3><div class="schulte-grid">'+schulteNumbers.map(n=>'<div>'+n+'</div>').join('')+'</div></div>';
  if(d.graphic==='drawing')return '<div class="stimulus-paper drawing"><div class="drawing-instruction">'+escapeHTML(d.instructions)+'</div><div class="drawing-space"></div></div>';
  if(Array.isArray(d.questions)&&d.questions.length){
-  return '<div class="blank-instruction">'+escapeHTML(d.instructions)+'</div><div class="scale-options">'+d.options.map((x,i)=>'<span><b>'+i+'</b> '+escapeHTML(x)+'</span>').join('')+'</div><table class="questions-table"><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td class="blank-cell">'+(blank?'_____':d.options.map((_,k)=>k).join(' / '))+'</td></tr>').join('')+'</tbody></table>';
+  return '<div class="blank-instruction">'+escapeHTML(d.instructions)+'</div><p class="blank-mark-instruction"><b>Как отвечать:</b> поставь плюс (+) в одной клетке под выбранной цифрой.</p><div class="scale-options">'+d.options.map((x,i)=>'<span><b>'+i+'</b> - '+escapeHTML(x)+'</span>').join('')+'</div><table class="questions-table answers-table"><thead><tr><th>№</th><th>Утверждение</th>'+d.options.map((_,i)=>'<th>'+i+'</th>').join('')+'</tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td>'+d.options.map(()=>'<td class="blank-mark-cell"></td>').join('')+'</tr>').join('')+'</tbody></table>';
  }
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
 function viewMaterials(m){
  const d=DETAILS[m.name];if(!d)return viewOverview(m);
- return '<h3>Стимульный материал и бланк</h3>'+materials(m,false)+(d.questions?.length && d.graphic ? '<h3>Протокол беседы</h3><table class="questions-table"><thead><tr><th>№</th><th>Вопрос психолога</th><th>Ответ / наблюдение</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td>________________</td></tr>').join('')+'</tbody></table>':"");
+ return '<div class="blank-toolbar"><h3>Бланк для ученика</h3><button class="btn primary" id="previewBlank">Посмотреть и распечатать бланк ↗</button></div>'+
+  '<p class="privacy-inline">Бланк для печати откроется в новой вкладке. Нажмите там кнопку «Печать».</p>'+
+  materials(m,true)+(d.questions?.length && d.graphic ? '<h3>Протокол беседы</h3><table class="questions-table"><thead><tr><th>№</th><th>Вопрос психолога</th><th>Ответ / наблюдение</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td>________________</td></tr>').join('')+'</tbody></table>':"");
 }
 function viewProcessing(m){
  const d=DETAILS[m.name];if(!d)return viewOverview(m);
@@ -154,8 +178,8 @@ function viewCalculator(m){
  if(!d?.calculator)return '<p>У этой методики нет онлайн-подсчета. Используйте качественное наблюдение и руководство выбранной версии.</p>';
  if(!rows.length) rows=[{name:"",answers:[]}]; if(rowIndex>=rows.length)rowIndex=0;
  const r=rows[rowIndex],count=d.questions.length;
- let head='<div class="calc-mode"><button class="btn '+(calcMode==='one'?'primary':'')+'" data-cmode="one">Один участник</button><button class="btn '+(calcMode==='class'?'primary':'')+'" data-cmode="class">Группа / класс</button></div>';
- if(calcMode==='class')head+='<div class="group-tools"><label>Участник <select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===rowIndex?'selected':'')+'>'+(i+1)+'. '+escapeHTML(x.name||'Участник '+(i+1))+'</option>').join('')+'</select></label><label>Имя (необязательно)<input id="participantName" placeholder="Имя или номер" value="'+escapeHTML(r.name)+'"></label><button class="btn" id="addParticipant">Добавить</button></div><div class="privacy-inline">ФИО не отправляются на сервер и не сохраняются автоматически. При закрытии страницы несохраненные результаты будут потеряны.</div>';
+ let head='<div class="calc-mode"><button class="btn '+(calcMode==='one'?'primary':'')+'" data-cmode="one">Один участник</button><button class="btn '+(calcMode==='class'?'primary':'')+'" data-cmode="class">Целый класс</button></div>';
+ if(calcMode==='class')head+='<div class="group-tools"><label>Участник <select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===rowIndex?'selected':'')+'>'+escapeHTML(x.name||'Участник '+(i+1))+'</option>').join('')+'</select></label><label>Имя (необязательно)<input id="participantName" placeholder="Имя или номер" value="'+escapeHTML(r.name)+'"></label><button class="btn" id="addParticipant">Добавить</button></div><div class="privacy-inline">ФИО не отправляются на сервер и не сохраняются автоматически. При закрытии страницы несохраненные результаты будут потеряны.</div>';
  else head+='<div class="privacy-inline">Подсчет выполняется в браузере. Ответы не отправляются на сервер и не сохраняются между сеансами.</div>';
  const answered=r.answers.filter(x=>x!==''&&x!=null).length;
  let qhtml='<div class="answer-progress"><b>'+answered+' из '+count+'</b><span>Заполнено</span><button class="btn btn-small" id="jumpMissing">К пропуску</button></div><div class="answer-progress-track"><span style="width:'+(100*answered/count)+'%"></span></div><div class="answer-grid">'+d.questions.map((q,i)=>'<label class="answer-card '+(r.answers[i]==null||r.answers[i]===''?'missing':'done')+'" data-q="'+i+'"><strong>'+(i+1)+'. '+escapeHTML(q)+'</strong><input class="answer-input" type="text" inputmode="numeric" maxlength="1" aria-label="Ответ на вопрос '+(i+1)+'" data-n="'+i+'" value="'+escapeHTML(r.answers[i]??'')+'" placeholder="0-'+(d.options.length-1)+'"></label>').join('')+'</div>';
@@ -181,7 +205,7 @@ function bindControls(){
  calcMode=b.dataset.cmode;rows=modeSnapshots[calcMode];rowIndex=modeIndices[calcMode]||0;setTab("score");
 });
  $("#participantSelect")?.addEventListener('change',e=>{rowIndex=+e.target.value;setTab("score")});
- $("#participantName")?.addEventListener('input',e=>{rows[rowIndex].name=e.target.value;const sel=$("#participantSelect");sel.options[rowIndex].text=(rowIndex+1)+'. '+(e.target.value||'Участник '+(rowIndex+1))});
+ $("#participantName")?.addEventListener('input',e=>{rows[rowIndex].name=e.target.value;const sel=$("#participantSelect");sel.options[rowIndex].text=e.target.value||'Участник '+(rowIndex+1)});
  $("#addParticipant")?.addEventListener('click',()=>{rows.push({name:"",answers:[]});rowIndex=rows.length-1;setTab("score")});
  document.querySelectorAll('.answer-input').forEach(inp=>{inp.addEventListener('input',e=>{
    let val=e.target.value.replace(/[^0-9]/g,'');
@@ -202,7 +226,7 @@ function bindControls(){
 }
 function updateGroupTable(d){
  const table=$('.results-table tbody');if(!table)return;
- if(d.graphic==='dictation'){table.innerHTML=rows.map((x,i)=>{const z=getScores(d,x.answers);return '<tr><td>'+escapeHTML(x.name||'Участник '+(i+1))+'</td><td>'+(z?z.raw:'—')+'</td></tr>'}).join('');return;}
+ if(d.graphic==='dictation'){table.innerHTML=rows.map((x,i)=>{const z=getScores(d,x.answers);return '<tr><td>'+escapeHTML(x.name||'Участник '+(i+1))+'</td><td>'+(z?z.raw:'–')+'</td></tr>'}).join('');return;}
 
  table.innerHTML=rows.map((x,i)=>{const z=getScores(d,x.answers);return '<tr><td>'+escapeHTML(x.name||'Участник '+(i+1))+'</td><td>'+(z?z.raw:'–')+'</td>'+(d.options.length===6?'<td>'+(z?z.index:'–')+'</td>':'')+'</tr>'}).join('');
 }
@@ -223,17 +247,22 @@ function exportGroup(d){
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Психотека_результаты.csv';a.click();URL.revokeObjectURL(url);
 }
 function makePrintPage(d,blank){
- const h='<html lang="ru"><head><meta charset="utf-8"><title>Психотека - '+escapeHTML(methodNow.name)+'</title><style>@page{size:A4;margin:13mm}body{font:11pt/1.35 Arial,sans-serif;color:#22372d}h1{font-size:18pt}h2{font-size:13pt}p{margin:7px 0}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #789c87;padding:6px;vertical-align:top;font-size:10pt;overflow-wrap:break-word}tr{break-inside:avoid;page-break-inside:avoid}.questions-table td:first-child{width:38px}.questions-table td:last-child{width:75px}.stimulus-paper svg{max-width:100%;height:auto}.drawing-space{border:1px solid #abc5b3;height:570px}.dictation-grid{break-inside:avoid;margin:5px 0}.dictation-grid svg{width:100%;height:132px}.dictation-grid h4{margin:0}.dictation-script{margin:8px 0;break-inside:avoid}.schulte-grid{display:grid;grid-template-columns:repeat(5,1fr);max-width:430px;margin:25px auto}.schulte-grid div{border:1px solid #698f76;text-align:center;font-size:22pt;padding:15px}.scale-options{margin:15px 0;display:flex;flex-wrap:wrap;gap:9px}.scale-options span{border:1px solid #b8cfbe;padding:8px}.drawing-instruction{margin:15px 0}.blank-instruction{margin:15px 0}button{display:none}'+(d.special?window.PSY_BATCH02.printCSS:'')+'</style></head><body>';
+ const h='<html lang="ru"><head><meta charset="utf-8"><title>Психотека - '+escapeHTML(methodNow.name)+'</title><style>@page{size:A4;margin:13mm}body{font:11pt/1.35 Arial,sans-serif;color:#22372d}h1{font-size:18pt}h2{font-size:13pt}p{margin:7px 0}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #789c87;padding:6px;vertical-align:top;font-size:10pt;overflow-wrap:break-word}tr{break-inside:avoid;page-break-inside:avoid}.questions-table td:first-child{width:34px}.questions-table td:last-child{width:75px}.answers-table th:first-child,.answers-table td:first-child{width:34px}.answers-table th:nth-child(n+3),.answers-table td:nth-child(n+3){width:28px;text-align:center;padding:5px 3px}.answers-table .blank-mark-cell{height:30px}.stimulus-paper svg{max-width:100%;height:auto}.drawing-space{border:1px solid #abc5b3;height:570px}.dictation-grid{break-inside:avoid;margin:5px 0}.dictation-grid svg{width:100%;height:132px}.dictation-grid h4{margin:0}.dictation-script{margin:8px 0;break-inside:avoid}.schulte-grid{display:grid;grid-template-columns:repeat(5,1fr);max-width:430px;margin:25px auto}.schulte-grid div{border:1px solid #698f76;text-align:center;font-size:22pt;padding:15px}.scale-options{margin:15px 0;display:flex;flex-wrap:wrap;gap:9px}.scale-options span{border:1px solid #b8cfbe;padding:8px}.drawing-instruction{margin:15px 0}.blank-instruction{margin:15px 0}button{display:none}'+(d.special?window.PSY_BATCH02.printCSS:'')+'</style></head><body>';
  const base=blank?'<p>Фамилия, имя: ________________________________ Дата: ____________</p>':'<h1>'+escapeHTML(methodNow.name)+'</h1><p>'+escapeHTML(d.author)+' · '+escapeHTML(d.age)+'</p><h2>Цель</h2><p>'+escapeHTML(d.goal)+'</p><h2>Инструкция участнику</h2><p>'+escapeHTML(d.instructions)+'</p>'+(d.special?window.PSY_BATCH02.extraInstructions(d):'');
- return h+base+(blank?materials(methodNow,true):'<h2>Задания и стимулы</h2>'+materials(methodNow,false)+(d.graphic==='dictation'?dictationCommands(d):'')+(d.graphic==='drawing'&&d.questions?.length?'<h2>Протокол беседы</h2><ol>'+d.questions.map(q=>'<li>'+escapeHTML(q)+' — ________________________________</li>').join('')+'</ol>':'')+'<h2>Обработка</h2><p>'+escapeHTML(d.scoring)+'</p><h2>Интерпретация</h2><p>'+escapeHTML(d.interpret)+'</p>')+(d.workflow==='diagnostic'?'<h2>Оригинальный бланк</h2><p><a href="'+escapeHTML(d.officialBlank)+'">'+escapeHTML(d.officialBlank)+'</a></p><p>'+escapeHTML(d.license)+'</p>':'')+'</body></html>';
+ return h+base+(blank?materials(methodNow,true):'<h2>Задания и стимулы</h2>'+materials(methodNow,false)+(d.graphic==='dictation'?dictationCommands(d):'')+(d.graphic==='drawing'&&d.questions?.length?'<h2>Протокол беседы</h2><ol>'+d.questions.map(q=>'<li>'+escapeHTML(q)+' – ________________________________</li>').join('')+'</ol>':'')+'<h2>Обработка</h2><p>'+escapeHTML(d.scoring)+'</p><h2>Интерпретация</h2><p>'+escapeHTML(d.interpret)+'</p>')+(d.workflow==='diagnostic'?'<h2>Оригинальный бланк</h2><p><a href="'+escapeHTML(d.officialBlank)+'">'+escapeHTML(d.officialBlank)+'</a></p><p>'+escapeHTML(d.license)+'</p>':'')+'</body></html>';
 }
 function printMaterial(blank){
  const d=DETAILS[methodNow?.name];if(!d)return;
- const html=makePrintPage(d,blank);
- let f=document.getElementById('psyPrint');if(f)f.remove();
- f=document.createElement('iframe');f.id='psyPrint';f.title='Печать материала';f.style='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
- f.onload=()=>{try{f.contentWindow.focus();f.contentWindow.print()}catch(e){alert('В этом браузере печать недоступна.')}};
- f.contentDocument.open();f.contentDocument.write(html);f.contentDocument.close();
+ if(blank&&(d.workflow==="diagnostic"||d.workflow==="diagnostic03"&&d.diagnosticType==="vanderbilt")){
+  window.open(d.officialBlank,"_blank","noopener,noreferrer");return;
+ }
+ const page=window.open("","_blank");
+ if(!page){alert("Разрешите открытие новой вкладки для просмотра и печати бланка.");return;}
+ const html=makePrintPage(d,blank).replace("</style>",
+  ".print-toolbar{position:sticky;top:0;display:flex;justify-content:flex-end;background:#edf5ef;padding:10px 15px;margin:-8px -8px 18px}.print-toolbar button{display:inline-block;background:#176747;border:0;border-radius:8px;padding:12px 24px;color:#fff;font-size:16px;cursor:pointer}@media print{.print-toolbar{display:none}} </style>")
+  .replace("<body>","<body><div class=\"print-toolbar\"><button type=\"button\" onclick=\"window.print()\">Печать</button></div>");
+ page.document.open();page.document.write("<!doctype html>"+html);page.document.close();
+ page.focus();
 }
 function saveMethodHTML(){
  const d=DETAILS[methodNow?.name];if(!d)return;
@@ -244,6 +273,7 @@ function openMethod(m){
  if(!m)return;
  if(methodNow?.name){methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex}};
  methodNow=m;tabNow='overview';
+ $('#modalBody').scrollTop=0;
  const saved=methodSessions[m.name];
  calcMode=saved?.calcMode||'one';
  modeSnapshots=saved?.modeSnapshots||{one:[{name:"",answers:[]}],class:[{name:"",answers:[]}]};
@@ -253,13 +283,19 @@ function openMethod(m){
  $('#modalBody').innerHTML='';
  const header=$('#modal').querySelector('.modalhead');
  let old=$('#methodTabs');if(old)old.remove();
- const tabs=d?[['overview','Описание'],['instruction','Инструкция'],['materials','Методика и бланк'],['processing','Обработка'],...(d.calculator?[['score','Подсчет']]:[])]:[['overview','Описание']];
+ const tabs=d?[['overview','Портфолио'],['materials','Бланк']]:[['overview','Портфолио']];
  header.insertAdjacentHTML('afterend','<nav class="method-tabs" id="methodTabs">'+tabs.map(([key,title])=>'<button class="modal-tab" data-tab="'+key+'">'+title+'</button>').join('')+'</nav>');
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
- footer.innerHTML='<div class="actions" id="methodButtons">'+(d?'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребёнка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions"><button class="btn" id="closeFooter">Закрыть</button>'+(m.source||d?.source?'<a class="btn primary" target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d?.source||m.source)+'">Первоисточник ↗</a>':'')+'</div>';
+ footer.innerHTML='<div class="actions" id="methodButtons">'+
+  '<button class="btn primary" id="footerPortfolio">Методика / руководство</button>'+
+  (d?'<button class="btn" id="footerBlank">'+(d.special==='memory10'?'Протокол специалиста':'Бланк для ученика')+'</button><button class="btn" id="footerScore">Обработка результатов</button>':'')+
+  '</div><div class="actions" id="footerResetSlot"></div><div class="actions"><button class="btn" id="closeFooter">Закрыть</button>'+
+  (m.source||d?.source?'<a class="btn" target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d?.source||m.source)+'">Первоисточник ↗</a>':'')+'</div>';
  $('#closeFooter').onclick=closeModal;
- if(d){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;if(d.workflow==='diagnostic03'&&d.diagnosticType==='rses')$('#saveBlank').onclick=()=>window.PSY_DIAG03.saveBlank(d);}
+ $('#footerPortfolio').onclick=()=>setTab("overview");
+ $('#footerBlank')?.addEventListener("click",()=>setTab("materials"));
+ $('#footerScore')?.addEventListener("click",()=>setTab(d?.calculator?"score":"processing"));
  $('#modal').hidden=false;$('#shade').hidden=false;setTab('overview');
 }
 window.openMethod=openMethod;

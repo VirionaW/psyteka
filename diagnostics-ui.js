@@ -1,5 +1,5 @@
 "use strict";
-/* Обработка диагностик для существующих карточек SCARED и WHO-5. Данные — только в памяти браузера. */
+/* Обработка диагностик для существующих карточек SCARED и WHO-5. Данные – только в памяти браузера. */
 (function(){
  const escape=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const isWho=d=>d?.name==="Индекс хорошего самочувствия WHO-5"||d?.questions?.length===5&&d?.scoringMax===25;
@@ -26,22 +26,23 @@
  }
  function materials(d,blank){
   if(isWho(d)){
-   const h='<div class="diag-sheet"><h3>WHO-5 · бланк для участника</h3><p>За последние две недели отметьте один ответ напротив каждого утверждения.</p>'+
-   '<p class="diag-options">'+d.options.map((v,i)=>i+' — '+escape(v)).join(' · ')+'</p>';
-   return h+'<table class="diag-questions-table"><thead><tr><th>№</th><th>Утверждение</th><th>Ответ 0–5</th></tr></thead><tbody>'+
-    d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escape(q)+'</td><td>'+(blank?'______':'0 / 1 / 2 / 3 / 4 / 5')+'</td></tr>').join('')+
+   const h='<div class="diag-sheet"><h3>WHO-5 · бланк для участника</h3><p>За последние две недели оцени каждое утверждение и поставь плюс (+) под одной выбранной цифрой.</p>'+
+   '<p class="diag-options">'+d.options.map((v,i)=>i+' - '+escape(v)).join(' · ')+'</p>';
+   return h+'<table class="diag-questions-table numeric-answers"><thead><tr><th>№</th><th>Утверждение</th>'+d.options.map((_,i)=>'<th>'+i+'</th>').join('')+'</tr></thead><tbody>'+
+    d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escape(q)+'</td>'+d.options.map(()=>'<td></td>').join('')+'</tr>').join('')+
     '</tbody></table><p class="diag-attribution">© WHO, WHO-5, 2024 · CC BY-NC-SA 3.0 IGO · Русская форма (1999). Сверяйтесь с официальным PDF ВОЗ.</p></div>';
   }
   return '<div class="diag-sheet"><h3>SCARED · дополнительный лист для переноса ответов</h3>'+
-   '<p class="notice">Это НЕ оригинальная анкета, а технический лист ответов. Для проведения используйте неизменённый официальный PDF SCARED на английском языке.</p>'+
-   '<p>0 — неверно / почти никогда; 1 — иногда; 2 — часто / очень верно.</p><div class="diag-answer-cells">'+
-   d.questions.map((_,i)=>'<span><b>'+(i+1)+'.</b> ○ 0 &nbsp; ○ 1 &nbsp; ○ 2</span>').join('')+'</div>'+
+   '<p class="notice">Это не оригинальная анкета. Для проведения используйте официальный PDF SCARED на английском языке.</p>'+
+   '<p>Поставь плюс (+) под выбранной цифрой: 0 - неверно / почти никогда; 1 - иногда; 2 - часто / очень верно.</p>'+
+   '<table class="diag-questions-table numeric-answers compact-answers"><thead><tr><th>№</th><th>0</th><th>1</th><th>2</th></tr></thead><tbody>'+
+   d.questions.map((_,i)=>'<tr><td>'+(i+1)+'</td><td></td><td></td><td></td></tr>').join('')+'</tbody></table>'+
    '<p class="diag-attribution">Birmaher et al., SCARED, детская версия. Оригинал предоставлен на NC-PAL с разрешения разработчика.</p></div>';
  }
  function instructions(d){
   return '<h3>Проведение для психолога</h3><ol>'+
   (isWho(d)?'<li>Используйте официальный русский бланк ВОЗ; участник оценивает последние две недели.</li><li>Пять ответов оцениваются 0–5 без обратного ключа.</li><li>Перенесите пять цифр в форму обработки и проверьте полноту.</li><li>Индекс равен сумме ×4. При значении ниже 50 обсудите необходимость дальнейшей оценки.</li>':
-   '<li>Скачайте оригинальную детскую форму SCARED на английском языке. Не заменяйте её самодельным переводом.</li><li>Ребёнок оценивает самочувствие за три месяца; детям 8–11 лет обеспечьте помощь в понимании формулировок без наведения на ответ.</li><li>Перенесите 41 ответ 0–2 в том же порядке, что в PDF.</li><li>Обработайте общий балл и пять подшкал. При положительном скрининге проведите дальнейшую квалифицированную оценку.</li>')+
+   '<li>Скачайте оригинальную детскую форму SCARED на английском языке. Не заменяйте ее самодельным переводом.</li><li>Ребенок оценивает самочувствие за три месяца; детям 8–11 лет обеспечьте помощь в понимании формулировок без наведения на ответ.</li><li>Перенесите 41 ответ 0–2 в том же порядке, что в PDF.</li><li>Обработайте общий балл и пять подшкал. При положительном скрининге проведите дальнейшую квалифицированную оценку.</li>')+
   '</ol><p class="notice">Скрининговый порог нельзя интерпретировать как диагноз. Уточняйте ограничения языка, возрастной версии и условий обследования.</p>';
  }
  function processing(d){
@@ -52,7 +53,7 @@
  }
  function results(d,a){
   const n=count(d,a),z=score(d,a);
-  if(!z)return '<section class="diag-output" id="diagOutput"><h3>Результат</h3><p>Заполнено '+n+' из '+d.questions.length+'. Введите все ответы для обработки. Отсутствующий ответ нельзя считать нулём.</p><div class="diag-progress"><span style="width:'+(100*n/d.questions.length)+'%"></span></div></section>';
+  if(!z)return '<section class="diag-output" id="diagOutput"><h3>Результат</h3><p>Заполнено '+n+' из '+d.questions.length+'. Введите все ответы для обработки. Отсутствующий ответ нельзя считать нулем.</p><div class="diag-progress"><span style="width:'+(100*n/d.questions.length)+'%"></span></div></section>';
   let body='<section class="diag-output" id="diagOutput"><h3>Результат</h3><div class="diag-headline">'+
    '<strong>'+z.raw+' / '+z.max+'</strong>'+(isWho(d)?'<span>WHO-5: <b>'+z.index+' / 100</b></span>':'<span>Полный опросник · 41 из 41</span>')+'</div>'+
    '<p class="diag-interpret">'+escape(z.summary)+'</p>';
@@ -63,22 +64,22 @@
  }
  function groupTools(ctx){
   const {rows,rowIndex,calcMode}=ctx;
-  return '<div class="calc-mode"><button class="btn '+(calcMode==='one'?'primary':'')+'" data-cmode="one">Один ребёнок</button><button class="btn '+(calcMode==='class'?'primary':'')+'" data-cmode="class">Группа / класс</button></div>'+
-  (calcMode==="class"?'<div class="group-tools"><label>Участник<select id="participantSelect">'+rows.map((r,i)=>'<option value="'+i+'" '+(i===rowIndex?'selected':'')+'>'+(i+1)+'. '+escape(r.name||"Участник "+(i+1))+'</option>').join('')+'</select></label>'+
-  '<label>Код участника<input id="participantName" value="'+escape(rows[rowIndex].name||"")+'" placeholder="Например, У-01"></label>'+
+  return '<div class="calc-mode"><button class="btn '+(calcMode==='one'?'primary':'')+'" data-cmode="one">Один ученик</button><button class="btn '+(calcMode==='class'?'primary':'')+'" data-cmode="class">Целый класс</button></div>'+
+  (calcMode==="class"?'<div class="group-tools"><label>Участник<select id="participantSelect">'+rows.map((r,i)=>'<option value="'+i+'" '+(i===rowIndex?'selected':'')+'>'+escape(r.name||"Участник "+(i+1))+'</option>').join('')+'</select></label>'+
+  '<label>Код участника (необязательно)<input id="participantName" value="'+escape(rows[rowIndex].name||"")+'" placeholder="Например, У-01"></label>'+
   '<button class="btn" id="addParticipant">Добавить</button></div>':'<div class="diag-code"><label>Код участника (необязательно)<input id="diagSingleCode" placeholder="Например, У-01" value="'+escape(rows[rowIndex].name||"")+'"></label></div>');
  }
  function calc(d,ctx){
   const r=ctx.rows[ctx.rowIndex];
   const options=d.options,progress=count(d,r.answers||[]);
   let out='<section class="diag-calculator">'+intro(d)+groupTools(ctx)+
-   '<h3>Перенос ответов</h3><p class="privacy-inline">Для каждого номера выберите цифру с официального бланка. <strong>0 — это заполненный ответ.</strong></p>'+
+   '<h3>Перенос ответов</h3><p class="privacy-inline">Для каждого номера выберите цифру с официального бланка. <strong>0 – это заполненный ответ.</strong></p>'+
    '<div class="diag-progress"><span style="width:'+(progress/d.questions.length*100)+'%"></span></div>'+
    '<div class="diag-input-grid">';
   d.questions.forEach((q,i)=>{
    out+='<label class="diag-item"><span><b>'+(i+1)+'.</b> '+(isWho(d)?escape(q):'Ответ на пункт '+(i+1))+'</span>'+
-   '<select data-diag-index="'+i+'" aria-label="Ответ на пункт '+(i+1)+'"><option value="">— не заполнено —</option>'+
-   options.map((o,v)=>'<option value="'+v+'" '+(String(r.answers?.[i])===String(v)?'selected':'')+'>'+v+(isWho(d)?' — '+escape(o):'')+'</option>').join('')+
+   '<select data-diag-index="'+i+'" aria-label="Ответ на пункт '+(i+1)+'"><option value="">– не заполнено –</option>'+
+   options.map((o,v)=>'<option value="'+v+'" '+(String(r.answers?.[i])===String(v)?'selected':'')+'>'+v+(isWho(d)?' – '+escape(o):'')+'</option>').join('')+
    '</select></label>';
   });
   out+='</div><div id="diagResultArea">'+results(d,r.answers||[])+'</div>'+
@@ -93,8 +94,8 @@
  function groupTable(d,rows){
   const headers=isWho(d)?["Участник","Сумма /25","Индекс /100","Скрининг ниже 50"]:["Участник","Сумма /82",...d.scales.map(x=>x.name),"Порог 25"];
   return '<table><thead><tr>'+headers.map(x=>'<th>'+escape(x)+'</th>').join('')+'</tr></thead><tbody>'+rows.map((r,i)=>{
-   const z=score(d,r.answers||[]),arr=isWho(d)?[z?.raw??'—',z?.index??'—',z?z.threshold?'Да':'Нет':'—']:
-     [z?.raw??'—',...d.scales.map(s=>z?z.scales.find(x=>x.id===s.id).raw:'—'),z?z.threshold?'Достигнут':'Не достигнут':'—'];
+   const z=score(d,r.answers||[]),arr=isWho(d)?[z?.raw??'–',z?.index??'–',z?z.threshold?'Да':'Нет':'–']:
+     [z?.raw??'–',...d.scales.map(s=>z?z.scales.find(x=>x.id===s.id).raw:'–'),z?z.threshold?'Достигнут':'Не достигнут':'–'];
    return '<tr><td>'+escape(r.name||"Участник "+(i+1))+'</td>'+arr.map(x=>'<td>'+escape(x)+'</td>').join('')+'</tr>';
   }).join('')+'</tbody></table>';
  }
@@ -126,7 +127,7 @@
    (isWho(d)?"<tr><td>Индекс WHO-5</td><td>"+z.index+" / 100</td></tr>":
     z.scales.map(x=>"<tr><td>"+escape(x.name)+"</td><td>"+x.raw+" из "+(x.items.length*2)+"; порог "+x.cutoff+"</td></tr>").join(""))+
    "</tbody></table>";
-  let answerTable='<h2>Введённые ответы</h2><table><thead><tr><th>Пункт</th><th>Балл</th></tr></thead><tbody>'+
+  let answerTable='<h2>Введенные ответы</h2><table><thead><tr><th>Пункт</th><th>Балл</th></tr></thead><tbody>'+
    d.questions.map((_,i)=>'<tr><td>'+(i+1)+'</td><td>'+escape(row.answers[i])+'</td></tr>').join('')+'</tbody></table>';
   return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Психотека · Результат '+escape(d===null?'':(isWho(d)?"WHO-5":"SCARED"))+'</title>'+
    '<style>@page{size:A4;margin:16mm}body{font:15px/1.5 Arial,sans-serif;max-width:850px;margin:auto;color:#253c32;padding:22px}h1{color:#176042}h2{margin-top:30px;font-size:18px}table{border-collapse:collapse;width:100%;margin:12px 0}td,th{border:1px solid #afc9b5;padding:7px;text-align:left}thead{background:#e8f3ea}.note{background:#edf5ef;padding:13px;border-left:4px solid #227855;margin:20px 0}.muted{color:#526b5e;font-size:13px}tr{break-inside:avoid}@media print{body{padding:0}}</style></head><body>'+
