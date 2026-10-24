@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#196c50">
+<meta name="description" content="Психотека - методическая библиотека педагога-психолога: диагностика, коррекция, документы, СПТ и сопровождение.">
+<title>Психотека | Библиотека психолога</title>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="experience.css">
+<link rel="stylesheet" href="site-v2.css"></head>
+<body class="library-page" data-area="school">
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+ <div class="brand"><div class="logo" aria-hidden="true"><svg viewBox="0 0 50 50"><path d="M25 41V12M24 25C8 27 7 11 7 11c18-1 20 14 20 14M25 34c16 1 18-17 18-17-18 1-19 17-19 17" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div><div><strong>Психотека</strong><span>Библиотека психолога</span></div></div>
+ <div class="side-head">Материалы</div>
+ <button class="navgroup" data-view="preschool"><span class="navicon">✿</span> Детский сад</button>
+ <button class="navgroup active" data-view="school" aria-expanded="true" aria-controls="schoolTree"><span class="navicon">▦</span> Школа <span class="nav-chevron" aria-hidden="true">⌄</span></button>
+ <div class="school-tree" id="schoolTree">
+  <button class="section-toggle" data-section="diagnosticsGroup" aria-expanded="true" aria-controls="diagnosticsGroup">Диагностика <span class="nav-chevron" aria-hidden="true">⌄</span></button>
+  <div class="nested" id="diagnosticsGroup"><div id="topics"></div></div>
+  <button class="section-toggle" data-section="correctionGroup" aria-expanded="false" aria-controls="correctionGroup">Коррекционная работа <span class="nav-chevron" aria-hidden="true">⌄</span></button>
+  <div class="nested" id="correctionGroup" hidden><button class="topic-btn" data-topic="Программы">Программы и занятия</button></div>
+ </div>
+ <button class="navgroup" data-view="adults"><span class="navicon">♧</span> Взрослые</button>
+ <div class="side-head second">Дополнительно</div>
+ <button class="navgroup" data-view="documents"><span class="navicon">▤</span> Документация</button>
+ <button class="navgroup" data-view="spt"><span class="navicon">◇</span> СПТ</button>
+ <button class="navgroup" data-view="special"><span class="navicon">✳</span> ОВЗ и сопровождение</button>
+ <p class="sidebar-note">Открытый каталог. Полные тексты диагностических материалов доступны только там, где разрешено распространение.</p>
+</aside>
+<main class="main">
+ <div class="topbar"><button class="mobile-menu" id="menuBtn" aria-label="Открыть меню">☰</button><a class="top-home" href="index.html">← На главную</a><span class="top-spacer">Методическая библиотека · 2026</span><a class="header-avatar" href="profile.html" aria-label="Личный профиль" title="Профиль">С</a><a class="header-gear" href="settings.html" aria-label="Настройки" title="Настройки">⚙</a><button class="theme-switch" id="themeBtn" aria-label="Переключить тему"><svg id="themeIcon" viewBox="0 0 24 24" aria-hidden="true"></svg><span id="themeLabel">Темная тема</span></button></div>
+ <header class="hero"><div><div class="eyebrow">Методики · коррекция · документы · ПМПК</div><h1>Все для работы<br>педагога-психолога</h1><p>Находите материалы по возрасту, направлению и автору. Портфолио методик и проверенные источники в одном месте.</p></div><div class="hero-art" aria-hidden="true"><svg viewBox="0 0 220 220"><path d="M106 208V16" stroke="#a7d5b2" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="65" cy="47" rx="56" ry="25" transform="rotate(29 65 47)" fill="#8ac49d"/><ellipse cx="162" cy="79" rx="61" ry="26" transform="rotate(-28 162 79)" fill="#75b58b"/><ellipse cx="58" cy="126" rx="55" ry="25" transform="rotate(28 58 126)" fill="#6bab85"/><ellipse cx="151" cy="168" rx="60" ry="27" transform="rotate(-29 151 168)" fill="#9dceae"/></svg></div></header>
+ <section id="schoolView"><div class="filters"><label class="search-wrap"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Название методики, автор, направление..." aria-label="Поиск"></label><select id="category"><option value="">Все направления</option></select><select id="format"><option value="">Все виды материалов</option><option value="Опросник">Опросники</option><option value="Проективная">Проективные методики</option><option value="Проба">Диагностические пробы</option><option value="Программа">Программы</option></select></div><div class="subbar"><h2 id="listHeading">Школьные материалы</h2><span id="resultCount"></span></div><div id="catalog" class="catalog"></div></section>
+ <section id="resourceView" hidden><h2 id="resourceTitle"></h2><p id="resourceLead" class="resource-lead"></p><div class="resource-cards" id="resourceCards"></div></section>
+ <footer class="footer">Психотека · Публичная версия · Для профессионального применения · Не используйте открытый сайт для хранения ФИО и результатов обследований детей.</footer>
+</main></div>
+<div class="shade" id="shade" hidden></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden><div class="modalhead"><div><h2 id="modalTitle">Методика</h2><span id="modalAuthor"></span></div><button id="closeModal" class="close" aria-label="Закрыть">×</button></div><div class="modalbody" id="modalBody"></div><div class="modalfoot"><button class="btn" id="closeFooter">Закрыть</button><a class="btn primary" id="sourceLink" target="_blank" rel="noopener noreferrer" hidden>Первоисточник ↗</a></div></div>
+<script src="catalog.js"></script><script src="methods.js"></script><script src="method-batch-02.js"></script><script src="diagnostics-methods.js"></script><script src="diagnostic-batch-03.js"></script><script src="app.js"></script><script src="method-batch-02-ui.js"></script><script src="diagnostics-ui.js"></script><script src="diagnostic-batch-03-ui.js"></script><script src="experience.js"></script><script src="site-v2.js"></script></body>
+</html>

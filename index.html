@@ -1,41 +1,23 @@
-<!doctype html>
-<html lang="ru">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#196c50">
-<meta name="description" content="Психотека - методическая библиотека педагога-психолога: диагностика, коррекция, документы, СПТ и сопровождение.">
-<title>Психотека | Библиотека психолога</title>
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="experience.css">
-</head>
-<body>
-<div class="layout">
-<aside class="sidebar" id="sidebar">
- <div class="brand"><div class="logo" aria-hidden="true"><svg viewBox="0 0 50 50"><path d="M25 41V12M24 25C8 27 7 11 7 11c18-1 20 14 20 14M25 34c16 1 18-17 18-17-18 1-19 17-19 17" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div><div><strong>Психотека</strong><span>Библиотека психолога</span></div></div>
- <div class="side-head">Материалы</div>
- <button class="navgroup" data-view="preschool"><span class="navicon">✿</span> Детский сад</button>
- <button class="navgroup active" data-view="school" aria-expanded="true" aria-controls="schoolTree"><span class="navicon">▦</span> Школа <span class="nav-chevron" aria-hidden="true">⌄</span></button>
- <div class="school-tree" id="schoolTree">
-  <button class="section-toggle" data-section="diagnosticsGroup" aria-expanded="true" aria-controls="diagnosticsGroup">Диагностика <span class="nav-chevron" aria-hidden="true">⌄</span></button>
-  <div class="nested" id="diagnosticsGroup"><div id="topics"></div></div>
-  <button class="section-toggle" data-section="correctionGroup" aria-expanded="false" aria-controls="correctionGroup">Коррекционная работа <span class="nav-chevron" aria-hidden="true">⌄</span></button>
-  <div class="nested" id="correctionGroup" hidden><button class="topic-btn" data-topic="Программы">Программы и занятия</button></div>
- </div>
- <button class="navgroup" data-view="adults"><span class="navicon">♧</span> Взрослые</button>
- <div class="side-head second">Дополнительно</div>
- <button class="navgroup" data-view="documents"><span class="navicon">▤</span> Документация</button>
- <button class="navgroup" data-view="spt"><span class="navicon">◇</span> СПТ</button>
- <button class="navgroup" data-view="special"><span class="navicon">✳</span> ОВЗ и сопровождение</button>
- <p class="sidebar-note">Открытый каталог. Полные тексты диагностических материалов доступны только там, где разрешено распространение.</p>
-</aside>
-<main class="main">
- <div class="topbar"><button class="mobile-menu" id="menuBtn" aria-label="Открыть меню">☰</button><span>Методическая библиотека • 2026</span><button class="theme-switch" id="themeBtn" aria-label="Переключить тему"><svg id="themeIcon" viewBox="0 0 24 24" aria-hidden="true"></svg><span id="themeLabel">Темная тема</span></button></div>
- <header class="hero"><div><div class="eyebrow">Методики · коррекция · документы · ПМПК</div><h1>Все для работы<br>педагога-психолога</h1><p>Находите материалы по возрасту, направлению и автору. Портфолио методик и проверенные источники в одном месте.</p></div><div class="hero-art" aria-hidden="true"><svg viewBox="0 0 220 220"><path d="M106 208V16" stroke="#a7d5b2" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="65" cy="47" rx="56" ry="25" transform="rotate(29 65 47)" fill="#8ac49d"/><ellipse cx="162" cy="79" rx="61" ry="26" transform="rotate(-28 162 79)" fill="#75b58b"/><ellipse cx="58" cy="126" rx="55" ry="25" transform="rotate(28 58 126)" fill="#6bab85"/><ellipse cx="151" cy="168" rx="60" ry="27" transform="rotate(-29 151 168)" fill="#9dceae"/></svg></div></header>
- <section id="schoolView"><div class="filters"><label class="search-wrap"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Название методики, автор, направление..." aria-label="Поиск"></label><select id="category"><option value="">Все направления</option></select><select id="format"><option value="">Все виды материалов</option><option value="Опросник">Опросники</option><option value="Проективная">Проективные методики</option><option value="Проба">Диагностические пробы</option><option value="Программа">Программы</option></select></div><div class="subbar"><h2 id="listHeading">Школьные материалы</h2><span id="resultCount"></span></div><div id="catalog" class="catalog"></div></section>
- <section id="resourceView" hidden><h2 id="resourceTitle"></h2><p id="resourceLead" class="resource-lead"></p><div class="resource-cards" id="resourceCards"></div></section>
- <footer class="footer">Психотека · Публичная версия · Для профессионального применения · Не используйте открытый сайт для хранения ФИО и результатов обследований детей.</footer>
-</main></div>
-<div class="shade" id="shade" hidden></div>
-<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden><div class="modalhead"><div><h2 id="modalTitle">Методика</h2><span id="modalAuthor"></span></div><button id="closeModal" class="close" aria-label="Закрыть">×</button></div><div class="modalbody" id="modalBody"></div><div class="modalfoot"><button class="btn" id="closeFooter">Закрыть</button><a class="btn primary" id="sourceLink" target="_blank" rel="noopener noreferrer" hidden>Первоисточник ↗</a></div></div>
-<script src="catalog.js"></script><script src="methods.js"></script><script src="method-batch-02.js"></script><script src="diagnostics-methods.js"></script><script src="diagnostic-batch-03.js"></script><script src="app.js"></script><script src="method-batch-02-ui.js"></script><script src="diagnostics-ui.js"></script><script src="diagnostic-batch-03-ui.js"></script><script src="experience.js"></script></body>
-</html>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#234e40"><meta name="description" content="Психотека - библиотека методик, бланков и рабочих материалов для психологов и специалистов сопровождения."><title>Психотека - пространство психолога</title><link rel="stylesheet" href="site-v2.css"></head>
+<body class="site-landing">
+<div id="testerGate" class="gate-screen" role="dialog" aria-modal="true" aria-labelledby="gateHeading">
+ <div class="gate-left"><div class="gate-mark">✳ Психотека</div><span class="gate-small">ПРЕДВАРИТЕЛЬНАЯ ВЕРСИЯ</span><h1 id="gateHeading">Мы создаем пространство для психологов.</h1><p>Библиотека методик, руководств, бланков, материалов для занятий и инструментов обработки результатов.</p><div class="gate-rule"></div><p class="gate-caption">Сейчас проект находится в разработке. Доступ к демонстрационной версии открыт тестерам.</p></div>
+ <form id="gateForm" class="gate-form"><div class="gate-symbol">✳</div><h2>Вход для тестеров</h2><p>Введите код, чтобы посмотреть текущую версию «Психотеки».</p><label for="testerCode">Код тестера</label><input type="text" id="testerCode" autocomplete="off" placeholder="Код доступа" required><div id="gateError" class="form-error" role="status" aria-live="polite"></div><button type="submit" class="site-btn primary">Открыть Психотеку →</button><small>Это демонстрационная проверка кода, не защищенная авторизация. Реальных аккаунтов пока нет.</small></form>
+</div>
+<div id="siteHome" hidden>
+<header class="site-header"><a href="index.html" class="site-logo"><span>✳</span> Психотека</a><nav aria-label="Главное меню"><a href="#about">О проекте</a><a href="#sections">Разделы</a><a href="#pricing">Подписки</a><a class="round-link" href="profile.html" title="Профиль" aria-label="Профиль" id="homeAvatar">С</a><a class="round-link" href="settings.html" aria-label="Настройки" title="Настройки">⚙</a><a class="site-btn small" href="library.html">Открыть библиотеку</a></nav></header>
+<main>
+<section class="site-hero"><div class="hero-copy"><span class="site-eyebrow">Профессиональная библиотека · демоверсия</span><h1>Практические материалы. <em>Спокойная</em> работа.</h1><p>«Психотека» объединяет описание методик, руководства, бланки, рекомендации по проведению и обработку результатов. Для педагогов-психологов, психологов, специальных психологов, тьюторов и других специалистов сопровождения.</p><div class="site-buttons"><a class="site-btn light" href="library.html">Перейти к методикам →</a><a class="site-btn ghost" href="#about">Как это устроено</a></div><div class="hero-categories"><span>Детский сад</span><span>Школа</span><span>Взрослые</span><span>ОВЗ и инвалидность</span></div></div>
+<div class="hero-preview" aria-label="Пример оформления каталога"><div class="preview-top"><span>✳ Психотека</span><b>Каталог методик</b></div><div class="preview-search">⌕ &nbsp; Поиск по методикам и авторам</div><div class="preview-pair"><div class="preview-method"><span class="preview-figure">☻</span><div><b>Самооценка</b><small>Описание · бланк · обработка</small></div></div><div class="preview-method"><span class="preview-figure brain">◎</span><div><b>Внимание</b><small>Методика · руководство</small></div></div></div><div class="preview-foot">Каталог с тематическими разделами и проверяемыми источниками</div></div></section>
+<section id="about" class="site-editorial"><div class="kicker">Зачем мы создаем «Психотеку»</div><h2>Меньше поиска по папкам. Больше времени на работу с человеком.</h2><p class="large-text">Когда нужно подготовить обследование, занятие или аналитическую справку, хочется быстро найти понятный материал и знать, откуда он взят. «Психотека» создается как единая рабочая библиотека, где сведения о методике отделены от руководства, бланка и обработки.</p><div class="site-columns"><article><h3>Как провести обследование</h3><p>Проверить автора, адаптацию, возраст, ограничения. Изучить правила проведения, открыть бланк для ученика и подготовить его к печати.</p></article><article><h3>Как обработать результат</h3><p>Перенести ответы, посчитать шкалы по подтвержденному ключу, увидеть распределение результатов по классу и оформить понятную сводку.</p></article><article><h3>Как использовать материалы</h3><p>Подобрать конспект профилактического занятия, памятку или информационный материал. Отдельно сохранять рабочие документы.</p></article></div></section>
+<section id="sections" class="site-sections"><div class="section-head"><div><div class="kicker">Направления</div><h2>Выберите свое рабочее пространство</h2></div><p>Цвет меняется вместе с разделом - в заголовке, боковой панели и элементах навигации.</p></div><div class="section-grid">
+<a href="library.html?area=preschool" class="section-card lilac"><div class="section-icon">✿</div><h3>Детский сад</h3><p>Дошкольный возраст, игровая диагностика, адаптация и сопровождение.</p><span>Перейти →</span></a>
+<a href="library.html?area=school" class="section-card sage"><div class="section-icon">▦</div><h3>Школа</h3><p>Диагностика, коррекционная работа, профилактика и ПМПК.</p><span>Перейти →</span></a>
+<a href="library.html?area=adults" class="section-card blue"><div class="section-icon">◯</div><h3>Взрослые</h3><p>Консультирование, поддержка педагогов и родителей.</p><span>Перейти →</span></a>
+<a href="library.html?area=special" class="section-card ochre"><div class="section-icon">♡</div><h3>ОВЗ и инвалидность</h3><p>Адаптация условий, наблюдение, поддержка и доступность.</p><span>Перейти →</span></a>
+<a href="library.html?area=documents" class="section-card gray"><div class="section-icon">▤</div><h3>Документация</h3><p>Протоколы, справки и профессиональные формы.</p><span>Перейти →</span></a>
+<a href="library.html?area=spt" class="section-card aqua"><div class="section-icon">ⓘ</div><h3>СПТ в России</h3><p>Справочная информация о процедуре, не каталог анкет.</p><span>Перейти →</span></a>
+</div></section>
+<section id="pricing" class="site-pricing"><div class="kicker">Предварительные варианты</div><h2>Планируемые подписки</h2><p>Стоимость пока обсуждается. Регистрация, оплата и списания не работают.</p><div class="pricing-grid"><article><h3>Знакомство</h3><b>0 ₽</b><p>Посмотреть структуру библиотеки.</p></article><article class="chosen"><h3>Специалист</h3><b>390 ₽ <small>/ мес.</small></b><p>Методики, бланки и обработка.</p></article><article><h3>Организация</h3><b>890 ₽ <small>/ мес.</small></b><p>Работа с классами и командой.</p></article></div></section>
+</main><footer class="site-footer"><div><b>Психотека</b><p>Проект находится в разработке. Не загружайте реальные персональные данные детей в демонстрацию.</p></div><div><b>Помощь в России</b><p>Детский телефон доверия: 8 800 2000 122, с мобильного - 124. При непосредственной опасности - 112.</p></div></footer><button class="back-top" id="backTop" type="button" aria-label="Наверх">↑</button></div>
+<script src="site-home.js"></script></body></html>
