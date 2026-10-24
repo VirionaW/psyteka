@@ -67,8 +67,24 @@
    if(card.dataset.siteV2)return;card.dataset.siteV2='1';
    const h=card.querySelector('h3');const label=h?.textContent||'';const icon=card.querySelector('.glyph');
    if(icon){const k=kind(label+' '+(card.textContent||''));icon.innerHTML='<svg viewBox="0 0 50 50" aria-hidden="true">'+shapes[k]+'</svg>'}
+   const kit=/^Социометрическое исследование класса$/i.test(label)?'sociometry':/^Корректурная проба Бурдона - Анфимова$/i.test(label)?'bourdon':null;
+   if(kit){
+    const actions=card.querySelector('.actions');
+    if(actions&&!actions.querySelector('.method-kit-link')){
+     const link=document.createElement('a');
+     link.href='method-kit.html?method='+kit;
+     link.className='btn primary method-kit-link';
+     link.textContent='Руководство · бланк · подсчет';
+     actions.prepend(link);
+    }
+   }
    const issue=alerts.find(([re])=>re.test(label));
-   if(issue){const btn=document.createElement('button');btn.className='method-warning';btn.type='button';btn.textContent='!';btn.setAttribute('aria-label','Важное замечание к методике');btn.title='Есть замечание - посмотреть';btn.addEventListener('click',()=>showWarning(label,issue[1]));card.appendChild(btn)}
+   const incomplete=!kit&&!window.PSY_FULL_METHODS?.[label]&&!issue;
+   if(issue||incomplete){
+    const btn=document.createElement('button');btn.className='method-warning';btn.type='button';btn.textContent='!';btn.setAttribute('aria-label','Замечание к комплекту методики');btn.title='Посмотреть замечание';
+    btn.addEventListener('click',()=>showWarning(label,issue?issue[1]:'В открытом каталоге есть описание методики, но нет проверенного полного комплекта с оригинальным бланком, ключом и условиями использования. Для проведения обратитесь к первоисточнику.'));
+    card.appendChild(btn)
+   }
   });
  }
  function showWarning(name,reason){const overlay=document.createElement('div');overlay.className='warning-overlay';overlay.innerHTML='<section class="warning-dialog" role="dialog" aria-modal="true"><h2>⚠ Замечание к методике</h2><strong></strong><p></p><button type="button">Понятно</button></section>';overlay.querySelector('strong').textContent=name;overlay.querySelector('p').textContent=reason;const close=()=>{overlay.remove();document.removeEventListener('keydown',key)};const key=e=>{if(e.key==='Escape')close()};document.addEventListener('keydown',key);overlay.querySelector('button').onclick=close;overlay.addEventListener('click',e=>{if(e.target===overlay)close()});document.body.appendChild(overlay);overlay.querySelector('button').focus()}

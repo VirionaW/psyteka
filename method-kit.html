@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#206a50"><title>Рабочие комплекты методик | Психотека</title>
+<link rel="stylesheet" href="site-v2.css"><link rel="stylesheet" href="site-mobile.css"><link rel="stylesheet" href="method-kits.css"></head>
+<body class="site-landing kit-body">
+<header class="site-header"><a class="site-logo" href="index.html"><span>✳</span> Психотека</a><nav aria-label="Навигация"><a href="library.html?area=school">Библиотека</a><a class="round-link" href="profile.html" title="Профиль" aria-label="Профиль">С</a><a class="round-link" href="settings.html" title="Настройки" aria-label="Настройки">⚙</a></nav></header>
+<main class="kit-main">
+<div class="kit-backline"><a href="library.html?area=school">← К методикам</a><span>Рабочие комплекты</span></div>
+<header class="kit-hero"><div class="kit-eyebrow">Материалы для практической работы</div><h1>Методики и обработка</h1>
+<p>Описание проведения, подготовленные бланки, протоколы и описательные показатели без выдуманных возрастных нормативов.</p></header>
+<nav class="kit-picker" aria-label="Выбор методики">
+<button type="button" data-kit-tab="sociometry" aria-pressed="true"><span class="kit-tab-icon">◎</span><span><b>Социометрия класса</b><small>Положительные выборы и взаимность</small></span></button>
+<button type="button" data-kit-tab="bourdon" aria-pressed="false"><span class="kit-tab-icon">▦</span><span><b>Корректурная проба</b><small>Бурдон — Анфимов, 5 минут</small></span></button></nav>
+<section class="kit-panel" id="kitSociometry">
+<div class="kit-heading"><div><span class="kit-overline">Методический комплект · общение</span><h2>Социометрическое исследование класса</h2><p>Принципы социометрии Дж. Л. Морено. Школьная рабочая форма с двумя нейтральными критериями; не стандартизированный авторский опросник.</p></div><div class="kit-figure" aria-hidden="true"><svg viewBox="0 0 110 90" fill="none"><circle cx="55" cy="12" r="9"/><circle cx="14" cy="70" r="9"/><circle cx="96" cy="70" r="9"/><path d="M55 23 20 60M55 23l35 37M25 70h60" stroke-linecap="round"/><path d="m30 54-10 6 1-11M86 50l4 10-11-3M75 65l10 5-10 5" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+<div class="kit-facts"><span>Возраст: по ситуации, преимущественно школьники</span><span>До 3 положительных выборов</span><span>Кодированные записи, без ФИО</span></div>
+<div class="kit-inline-warning"><strong>Конфиденциальность.</strong> Используй только обезличенные коды. На этом сайте нет серверного сохранения ответов и нет списка соответствий «код — имя». Не проводи исследование публично, не принуждай к ответам и не сообщай детям индивидуальные ранги.</div>
+<details class="kit-accordion" open><summary>Как проводится</summary><div>
+<ol><li>Определи конкретную цель, условия добровольного участия и соблюдения конфиденциальности. Подготовь отдельный закрытый список соответствий кодов и имен вне сайта.</li>
+<li>Уточни нейтральный критерий — например, совместная работа над проектом. Разные критерии обрабатывай раздельно.</li>
+<li>Попроси назвать до трех разных одноклассников, с которыми хотелось бы сотрудничать. Разрешается выбрать меньше трех или не выбирать никого. Себя выбирать нельзя.</li>
+<li>Перенеси ответы в кодированный протокол. Отметь, какие анкеты получены. Отсутствующая анкета не равна отсутствию выборов.</li>
+<li>Используй показатели для бережного планирования групповой работы, а не для навешивания ярлыков.</li></ol>
+<p class="kit-source">Источник: <a target="_blank" rel="noopener noreferrer" href="https://base.garant.ru/407638778/">Рекомендации Минпросвещения от 28.07.2023 № 07-4251</a> (организация социометрического исследования).</p></div></details>
+<div class="kit-tools"><button type="button" class="kit-btn" data-kit-print="sociometry">Печать бланка</button><button type="button" class="kit-btn kit-btn-outline" data-kit-docx="sociometry">Бланк Word (.docx)</button></div>
+<div class="kit-workspace"><div class="kit-work-top"><h3>Обработка класса</h3><span>Только в текущей вкладке браузера</span></div>
+<div class="kit-columns"><div><label class="kit-label" for="socioRoster">Коды участников, по одному в строке</label><textarea id="socioRoster" rows="8" spellcheck="false" placeholder="У01&#10;У02&#10;У03&#10;У04"></textarea><div class="kit-hint">Коды без пробелов, от 3 до 45 человек. Фамилии и имена сюда не вводи.</div><button type="button" class="kit-btn" id="socioCreate">Создать протокол</button></div>
+<div><label class="kit-label" for="socioCriterion">Критерий</label><select id="socioCriterion"><option value="project">Совместный учебный проект</option><option value="desk">Совместная работа за столом</option></select><p class="kit-hint">В таблице отметь полученные анкеты и введи до трех кодов через запятую. Не используй отрицательные выборы.</p><div class="kit-small-note">Два вопроса в бланке. Для корректного подсчета они не объединяются: переключение критерия показывает отдельные ответы.</div></div></div>
+<div id="socioValidation" role="status" class="kit-validation" aria-live="polite"></div><div id="socioEntry"></div><div id="socioSummary" aria-live="polite"></div>
+</div></section>
+<section class="kit-panel" id="kitBourdon" hidden>
+<div class="kit-heading"><div><span class="kit-overline">Методический комплект · внимание</span><h2>Корректурная проба Бурдона — Анфимова</h2><p>Буквенная рабочая матрица из архива «Психотеки». 28 строк × 36 знаков, 1008 символов; целевые буквы К и Р.</p></div><div class="kit-figure" aria-hidden="true"><svg viewBox="0 0 110 90" fill="none"><rect x="20" y="10" width="70" height="70" rx="8"/><path d="M20 33h70M20 57h70M43 10v70M67 10v70" stroke-linecap="round"/><path d="m26 62 9 10 18-24" stroke-linejoin="round" stroke-linecap="round"/></svg></div></div>
+<div class="kit-facts"><span>Ориентировочно от 8 лет при знании букв</span><span>5 минут</span><span>Без нормативных порогов</span></div>
+<div class="kit-inline-warning"><strong>Условия применимости.</strong> Матрица собрана для архива «Психотеки» и не совпадает с нормированными издательскими версиями. Ее показатели скорости и точности описательные — чужие возрастные нормы не применяются.</div>
+<details class="kit-accordion" open><summary>Процедура и подсчет</summary><div><ol>
+<li>Распечатай неизмененную матрицу с инструкцией: построчно слева направо зачеркивать К и Р.</li>
+<li>Проверь понимание на отдельном примере. Включи секундомер на 5 минут. В конце каждой минуты попроси поставить черту после последнего просмотренного знака.</li>
+<li>На протоколе отметь накопленную позицию (от 0 до 1008), пропуски К/Р и ошибочные зачеркивания прочих букв по минутам.</li>
+<li>Программа посчитает просмотренные знаки, целевые буквы, правильные отметки, точность и динамику по отрезкам. Пропущенные поля означают, что итог не готов.</li></ol>
+<p class="kit-source">Процедурные ориентиры: <a href="https://library.mededtech.ru/rest/documents/Bleikher_patopsik/?anchor=paragraph_gn2j" target="_blank" rel="noopener noreferrer">описание корректурных проб</a>. Лист и подсчет согласованы с рабочим архивом «Психотеки».</p></div></details>
+<div class="kit-tools"><button type="button" class="kit-btn" data-kit-print="bourdon">Печать матрицы</button><button type="button" class="kit-btn kit-btn-outline" data-kit-docx="bourdon">Матрица Word (.docx)</button></div>
+<div class="kit-matrix-view"><div class="kit-matrix-title">Тот же лист, что используется при обработке</div><div id="bourdonMatrix" class="kit-letter-matrix" aria-label="Буквенная матрица"></div></div>
+<div class="kit-workspace"><div class="kit-work-top"><h3>Протокол обработки</h3><span>Ввод по 5 минутным отрезкам</span></div><div class="kit-scroller"><table class="kit-table" id="bourdonTable"><thead><tr><th>Минута</th><th>Позиция с начала</th><th>Пропуски К/Р</th><th>Лишние отметки</th></tr></thead><tbody></tbody></table></div>
+<div class="kit-hint">Пример: завершены две полные строки — накопленная позиция 72. Количество ошибок фиксируется за отдельную минуту, не нарастающим итогом.</div>
+<div id="bourdonValidation" role="status" class="kit-validation" aria-live="polite"></div><button type="button" class="kit-btn" id="bourdonCalculate">Рассчитать показатели</button><div id="bourdonResults" aria-live="polite"></div></div>
+</section>
+<div class="kit-footer"><a href="library.html?area=school">← Вернуться в каталог</a><p>Рабочие формы предназначены для квалифицированного специалиста. Результаты не заменяют наблюдение и профессиональную оценку.</p></div>
+</main><div id="kitPrintRegion" aria-hidden="true" hidden></div><script src="method-kits.js"></script></body></html>
