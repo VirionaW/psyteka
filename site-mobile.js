@@ -32,9 +32,7 @@
  menu.onclick=()=>sidebar.classList.contains('open')?closeNav():openNav();
  if(closeBtn)closeBtn.addEventListener('click',closeNav);
  if(backdrop)backdrop.addEventListener('click',closeNav);
- sidebar.addEventListener('click',e=>{
-  if(e.target.closest('[data-view],[data-topic]'))closeNav();
- });
+ // При выборе направления меню остается открытым: переходы не закрывают навигацию.
  function refreshChoices(){
   choices.forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.mobileArea===body.dataset.area)));
  }
@@ -44,7 +42,6 @@
    const target=sidebar.querySelector('[data-view="'+area+'"]');
    if(target)target.click();
   }
-  closeNav();
   setTimeout(refreshChoices,35);
   window.scrollTo({top:0,behavior:'instant'});
  }));
