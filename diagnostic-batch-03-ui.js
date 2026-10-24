@@ -35,8 +35,8 @@
    summary:"Расчет по скрининговой схеме первого издания NICHQ (2002). Совпадение с порогом НЕ означает диагноз. Для диагностики СДВГ нужны информация из нескольких условий, клиническая оценка и анализ функциональных нарушений."};
  }
  function codeControls(ctx){
-  return '<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один ребенок</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Класс / группа</button></div>'+
-  (ctx.calcMode==="class"?'<div class="group-tools"><label>Участник<select id="participantSelect">'+ctx.rows.map((r,i)=>'<option value="'+i+'" '+(ctx.rowIndex===i?'selected':'')+'>'+E(r.name||"Участник "+(i+1))+'</option>').join('')+'</select></label><label>Код участника<input id="participantName" value="'+E(ctx.rows[ctx.rowIndex].name||"")+'" placeholder="Например, №12"></label><button class="btn" id="addParticipant">Добавить</button></div>':
+  return '<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один ученик</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Целый класс</button></div>'+
+  (ctx.calcMode==="class"?'<div class="group-tools"><label>Участник<select id="participantSelect">'+ctx.rows.map((r,i)=>'<option value="'+i+'" '+(ctx.rowIndex===i?'selected':'')+'>'+E(r.name||"Участник "+(i+1))+'</option>').join('')+'</select></label><label>Код участника (необязательно)<input id="participantName" value="'+E(ctx.rows[ctx.rowIndex].name||"")+'" placeholder="Например, №12"></label><button class="btn" id="addParticipant">Добавить</button></div>':
    '<div class="diag03-code"><label>Код участника (без ФИО)<input id="diag03Code" placeholder="Например, №12" value="'+E(ctx.rows[ctx.rowIndex].name||"")+'"></label></div>');
  }
  function intro(d){
