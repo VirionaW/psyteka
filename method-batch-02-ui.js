@@ -7,8 +7,8 @@
   ["assisted","С помощью специалиста"],["alternative","Иное обоснованное решение"],
   ["unclear","Обоснование не получено"]
  ];
- const groupButtons=(ctx)=>'<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>'+
- (ctx.calcMode==="class"?'<div class="group-tools"><label>Участник<select id="participantSelect">'+ctx.rows.map((r,i)=>'<option value="'+i+'" '+(ctx.rowIndex===i?'selected':'')+'>'+e(r.name||'Участник '+(i+1))+'</option>').join('')+'</select></label><label>Код участника<input id="participantName" placeholder="Например, № 01" value="'+e(ctx.rows[ctx.rowIndex].name)+'"></label><button class="btn" id="addParticipant">Добавить</button></div>':'')+
+ const groupButtons=(ctx)=>'<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Целый класс</button></div>'+
+ (ctx.calcMode==="class"?'<div class="group-tools"><label>Участник<select id="participantSelect">'+ctx.rows.map((r,i)=>'<option value="'+i+'" '+(ctx.rowIndex===i?'selected':'')+'>'+e(r.name||'Участник '+(i+1))+'</option>').join('')+'</select></label><label>Код участника (необязательно)<input id="participantName" placeholder="Например, № 01" value="'+e(ctx.rows[ctx.rowIndex].name)+'"></label><button class="btn" id="addParticipant">Добавить</button></div>':'')+
  '<p class="privacy-inline">Обработка выполняется в браузере без отправки на сервер. Для работы с несовершеннолетними используйте коды, а не ФИО. Несохраненные данные пропадут при закрытии страницы.</p>';
  function memoryScore(answers){
   if(!Array.isArray(answers))answers=[];
