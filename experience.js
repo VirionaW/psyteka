@@ -104,8 +104,8 @@ function viewDictationCalculator(d){
  if(!rows.length)rows=[{name:"",answers:[]}];
  if(rowIndex>=rows.length)rowIndex=0;
  const r=rows[rowIndex];
- let h='<div class="calc-mode"><button class="btn '+(calcMode==='one'?'primary':'')+'" data-cmode="one">Один участник</button><button class="btn '+(calcMode==='class'?'primary':'')+'" data-cmode="class">Группа / класс</button></div>';
- if(calcMode==='class')h+='<div class="group-tools"><label>Участник <select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===rowIndex?'selected':'')+'>'+(i+1)+'. '+escapeHTML(x.name||'Участник '+(i+1))+'</option>').join('')+'</select></label><label>Имя или код <input id="participantName" value="'+escapeHTML(r.name)+'" placeholder="Необязательно"></label><button class="btn" id="addParticipant">Добавить</button></div>';
+ let h='<div class="calc-mode"><button class="btn '+(calcMode==='one'?'primary':'')+'" data-cmode="one">Один участник</button><button class="btn '+(calcMode==='class'?'primary':'')+'" data-cmode="class">Целый класс</button></div>';
+ if(calcMode==='class')h+='<div class="group-tools"><label>Участник <select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===rowIndex?'selected':'')+'>'+escapeHTML(x.name||'Участник '+(i+1))+'</option>').join('')+'</select></label><label>Имя или код <input id="participantName" value="'+escapeHTML(r.name)+'" placeholder="Необязательно"></label><button class="btn" id="addParticipant">Добавить</button></div>';
  h+='<p class="privacy-inline">Оценки вносятся вручную специалистом после проверки бумажного бланка. Данные остаются в этом браузере до закрытия страницы и не отправляются на сервер.</p>';
  h+='<div class="dictation-score-grid"><div><b>Узор</b><b>Под диктовку</b><b>Самостоятельно</b></div>';
  for(let j=0;j<3;j++){
@@ -178,8 +178,8 @@ function viewCalculator(m){
  if(!d?.calculator)return '<p>У этой методики нет онлайн-подсчета. Используйте качественное наблюдение и руководство выбранной версии.</p>';
  if(!rows.length) rows=[{name:"",answers:[]}]; if(rowIndex>=rows.length)rowIndex=0;
  const r=rows[rowIndex],count=d.questions.length;
- let head='<div class="calc-mode"><button class="btn '+(calcMode==='one'?'primary':'')+'" data-cmode="one">Один участник</button><button class="btn '+(calcMode==='class'?'primary':'')+'" data-cmode="class">Группа / класс</button></div>';
- if(calcMode==='class')head+='<div class="group-tools"><label>Участник <select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===rowIndex?'selected':'')+'>'+(i+1)+'. '+escapeHTML(x.name||'Участник '+(i+1))+'</option>').join('')+'</select></label><label>Имя (необязательно)<input id="participantName" placeholder="Имя или номер" value="'+escapeHTML(r.name)+'"></label><button class="btn" id="addParticipant">Добавить</button></div><div class="privacy-inline">ФИО не отправляются на сервер и не сохраняются автоматически. При закрытии страницы несохраненные результаты будут потеряны.</div>';
+ let head='<div class="calc-mode"><button class="btn '+(calcMode==='one'?'primary':'')+'" data-cmode="one">Один участник</button><button class="btn '+(calcMode==='class'?'primary':'')+'" data-cmode="class">Целый класс</button></div>';
+ if(calcMode==='class')head+='<div class="group-tools"><label>Участник <select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===rowIndex?'selected':'')+'>'+escapeHTML(x.name||'Участник '+(i+1))+'</option>').join('')+'</select></label><label>Имя (необязательно)<input id="participantName" placeholder="Имя или номер" value="'+escapeHTML(r.name)+'"></label><button class="btn" id="addParticipant">Добавить</button></div><div class="privacy-inline">ФИО не отправляются на сервер и не сохраняются автоматически. При закрытии страницы несохраненные результаты будут потеряны.</div>';
  else head+='<div class="privacy-inline">Подсчет выполняется в браузере. Ответы не отправляются на сервер и не сохраняются между сеансами.</div>';
  const answered=r.answers.filter(x=>x!==''&&x!=null).length;
  let qhtml='<div class="answer-progress"><b>'+answered+' из '+count+'</b><span>Заполнено</span><button class="btn btn-small" id="jumpMissing">К пропуску</button></div><div class="answer-progress-track"><span style="width:'+(100*answered/count)+'%"></span></div><div class="answer-grid">'+d.questions.map((q,i)=>'<label class="answer-card '+(r.answers[i]==null||r.answers[i]===''?'missing':'done')+'" data-q="'+i+'"><strong>'+(i+1)+'. '+escapeHTML(q)+'</strong><input class="answer-input" type="text" inputmode="numeric" maxlength="1" aria-label="Ответ на вопрос '+(i+1)+'" data-n="'+i+'" value="'+escapeHTML(r.answers[i]??'')+'" placeholder="0-'+(d.options.length-1)+'"></label>').join('')+'</div>';
@@ -205,7 +205,7 @@ function bindControls(){
  calcMode=b.dataset.cmode;rows=modeSnapshots[calcMode];rowIndex=modeIndices[calcMode]||0;setTab("score");
 });
  $("#participantSelect")?.addEventListener('change',e=>{rowIndex=+e.target.value;setTab("score")});
- $("#participantName")?.addEventListener('input',e=>{rows[rowIndex].name=e.target.value;const sel=$("#participantSelect");sel.options[rowIndex].text=(rowIndex+1)+'. '+(e.target.value||'Участник '+(rowIndex+1))});
+ $("#participantName")?.addEventListener('input',e=>{rows[rowIndex].name=e.target.value;const sel=$("#participantSelect");sel.options[rowIndex].text=e.target.value||'Участник '+(rowIndex+1)});
  $("#addParticipant")?.addEventListener('click',()=>{rows.push({name:"",answers:[]});rowIndex=rows.length-1;setTab("score")});
  document.querySelectorAll('.answer-input').forEach(inp=>{inp.addEventListener('input',e=>{
    let val=e.target.value.replace(/[^0-9]/g,'');
@@ -247,7 +247,7 @@ function exportGroup(d){
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Психотека_результаты.csv';a.click();URL.revokeObjectURL(url);
 }
 function makePrintPage(d,blank){
- const h='<html lang="ru"><head><meta charset="utf-8"><title>Психотека - '+escapeHTML(methodNow.name)+'</title><style>@page{size:A4;margin:13mm}body{font:11pt/1.35 Arial,sans-serif;color:#22372d}h1{font-size:18pt}h2{font-size:13pt}p{margin:7px 0}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #789c87;padding:6px;vertical-align:top;font-size:10pt;overflow-wrap:break-word}tr{break-inside:avoid;page-break-inside:avoid}.questions-table td:first-child{width:38px}.questions-table td:last-child{width:75px}.stimulus-paper svg{max-width:100%;height:auto}.drawing-space{border:1px solid #abc5b3;height:570px}.dictation-grid{break-inside:avoid;margin:5px 0}.dictation-grid svg{width:100%;height:132px}.dictation-grid h4{margin:0}.dictation-script{margin:8px 0;break-inside:avoid}.schulte-grid{display:grid;grid-template-columns:repeat(5,1fr);max-width:430px;margin:25px auto}.schulte-grid div{border:1px solid #698f76;text-align:center;font-size:22pt;padding:15px}.scale-options{margin:15px 0;display:flex;flex-wrap:wrap;gap:9px}.scale-options span{border:1px solid #b8cfbe;padding:8px}.drawing-instruction{margin:15px 0}.blank-instruction{margin:15px 0}button{display:none}'+(d.special?window.PSY_BATCH02.printCSS:'')+'</style></head><body>';
+ const h='<html lang="ru"><head><meta charset="utf-8"><title>Психотека - '+escapeHTML(methodNow.name)+'</title><style>@page{size:A4;margin:13mm}body{font:11pt/1.35 Arial,sans-serif;color:#22372d}h1{font-size:18pt}h2{font-size:13pt}p{margin:7px 0}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #789c87;padding:6px;vertical-align:top;font-size:10pt;overflow-wrap:break-word}tr{break-inside:avoid;page-break-inside:avoid}.questions-table td:first-child{width:34px}.questions-table td:last-child{width:75px}.answers-table th:first-child,.answers-table td:first-child{width:34px}.answers-table th:nth-child(n+3),.answers-table td:nth-child(n+3){width:28px;text-align:center;padding:5px 3px}.answers-table .blank-mark-cell{height:30px}.stimulus-paper svg{max-width:100%;height:auto}.drawing-space{border:1px solid #abc5b3;height:570px}.dictation-grid{break-inside:avoid;margin:5px 0}.dictation-grid svg{width:100%;height:132px}.dictation-grid h4{margin:0}.dictation-script{margin:8px 0;break-inside:avoid}.schulte-grid{display:grid;grid-template-columns:repeat(5,1fr);max-width:430px;margin:25px auto}.schulte-grid div{border:1px solid #698f76;text-align:center;font-size:22pt;padding:15px}.scale-options{margin:15px 0;display:flex;flex-wrap:wrap;gap:9px}.scale-options span{border:1px solid #b8cfbe;padding:8px}.drawing-instruction{margin:15px 0}.blank-instruction{margin:15px 0}button{display:none}'+(d.special?window.PSY_BATCH02.printCSS:'')+'</style></head><body>';
  const base=blank?'<p>Фамилия, имя: ________________________________ Дата: ____________</p>':'<h1>'+escapeHTML(methodNow.name)+'</h1><p>'+escapeHTML(d.author)+' · '+escapeHTML(d.age)+'</p><h2>Цель</h2><p>'+escapeHTML(d.goal)+'</p><h2>Инструкция участнику</h2><p>'+escapeHTML(d.instructions)+'</p>'+(d.special?window.PSY_BATCH02.extraInstructions(d):'');
  return h+base+(blank?materials(methodNow,true):'<h2>Задания и стимулы</h2>'+materials(methodNow,false)+(d.graphic==='dictation'?dictationCommands(d):'')+(d.graphic==='drawing'&&d.questions?.length?'<h2>Протокол беседы</h2><ol>'+d.questions.map(q=>'<li>'+escapeHTML(q)+' – ________________________________</li>').join('')+'</ol>':'')+'<h2>Обработка</h2><p>'+escapeHTML(d.scoring)+'</p><h2>Интерпретация</h2><p>'+escapeHTML(d.interpret)+'</p>')+(d.workflow==='diagnostic'?'<h2>Оригинальный бланк</h2><p><a href="'+escapeHTML(d.officialBlank)+'">'+escapeHTML(d.officialBlank)+'</a></p><p>'+escapeHTML(d.license)+'</p>':'')+'</body></html>';
 }
@@ -273,6 +273,7 @@ function openMethod(m){
  if(!m)return;
  if(methodNow?.name){methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex}};
  methodNow=m;tabNow='overview';
+ $('#modalBody').scrollTop=0;
  const saved=methodSessions[m.name];
  calcMode=saved?.calcMode||'one';
  modeSnapshots=saved?.modeSnapshots||{one:[{name:"",answers:[]}],class:[{name:"",answers:[]}]};
@@ -288,7 +289,7 @@ function openMethod(m){
  const footer=$('#modal').querySelector('.modalfoot');
  footer.innerHTML='<div class="actions" id="methodButtons">'+
   '<button class="btn primary" id="footerPortfolio">Методика / руководство</button>'+
-  (d?'<button class="btn" id="footerBlank">Бланк для ученика</button><button class="btn" id="footerScore">Обработка результатов</button>':'')+
+  (d?'<button class="btn" id="footerBlank">'+(d.special==='memory10'?'Протокол специалиста':'Бланк для ученика')+'</button><button class="btn" id="footerScore">Обработка результатов</button>':'')+
   '</div><div class="actions" id="footerResetSlot"></div><div class="actions"><button class="btn" id="closeFooter">Закрыть</button>'+
   (m.source||d?.source?'<a class="btn" target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d?.source||m.source)+'">Первоисточник ↗</a>':'')+'</div>';
  $('#closeFooter').onclick=closeModal;
