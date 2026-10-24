@@ -46,6 +46,10 @@ function setTab(name){
   name==="instruction"?viewInstruction(methodNow):
   name==="materials"?viewMaterials(methodNow):
   name==="processing"?viewProcessing(methodNow):viewCalculator(methodNow));
+ if(name==="score"&&calcMode==="class"){
+  const group=body.querySelector(".group-tools");
+  if(group)group.insertAdjacentHTML("afterend",'<details class="bulk-participants"><summary>Добавить список учеников сразу</summary><p>Имя или код указывать необязательно. Если указываете, напишите каждого ученика с новой строки.</p><textarea id="bulkParticipants" rows="5" placeholder="Иванова Анна&#10;Петров Максим&#10;Ученик 3"></textarea><button class="btn primary" id="addBulkParticipants">Добавить учеников</button></details>');
+ }
  body.scrollTop=previous===name?oldScroll:0;
  const reset=body.querySelector("#resetParticipant"),slot=$("#footerResetSlot");
  if(slot){slot.replaceChildren();if(name==="score"&&reset){reset.textContent="Сбросить ответы";const parent=reset.parentElement;slot.appendChild(reset);if(parent?.classList.contains("class-actions")&&!parent.children.length)parent.remove();}}
@@ -54,6 +58,14 @@ function setTab(name){
  $("#footerScore")?.classList.toggle("primary",name==="score"||name==="processing");
  $("#backToPortfolio")?.addEventListener("click",()=>setTab("overview"));
  $("#previewBlank")?.addEventListener("click",()=>printMaterial(true));
+ $("#addBulkParticipants")?.addEventListener("click",()=>{
+  const names=($("#bulkParticipants")?.value||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  if(!names.length)return;
+  if(rows.length===1&&!rows[0].name&&(!rows[0].answers||!rows[0].answers.some(x=>x!==""&&x!=null)))rows.shift();
+  names.forEach(name=>rows.push({name,answers:[]}));
+  rowIndex=Math.max(0,rows.length-names.length);
+  setTab("score");
+ });
  bindControls();
 }
 function viewOverview(m){
@@ -124,7 +136,7 @@ function materials(m,blank){
  if(d.graphic==='schulte')return '<div class="stimulus-paper"><h3>Найди числа от 1 до 25 по порядку</h3><div class="schulte-grid">'+schulteNumbers.map(n=>'<div>'+n+'</div>').join('')+'</div></div>';
  if(d.graphic==='drawing')return '<div class="stimulus-paper drawing"><div class="drawing-instruction">'+escapeHTML(d.instructions)+'</div><div class="drawing-space"></div></div>';
  if(Array.isArray(d.questions)&&d.questions.length){
-  return '<div class="blank-instruction">'+escapeHTML(d.instructions)+'</div><div class="scale-options">'+d.options.map((x,i)=>'<span><b>'+i+'</b> '+escapeHTML(x)+'</span>').join('')+'</div><table class="questions-table"><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td class="blank-cell">'+(blank?'_____':d.options.map((_,k)=>k).join(' / '))+'</td></tr>').join('')+'</tbody></table>';
+  return '<div class="blank-instruction">'+escapeHTML(d.instructions)+'</div><p class="blank-mark-instruction"><b>Как отвечать:</b> поставь плюс (+) в одной клетке под выбранной цифрой.</p><div class="scale-options">'+d.options.map((x,i)=>'<span><b>'+i+'</b> - '+escapeHTML(x)+'</span>').join('')+'</div><table class="questions-table answers-table"><thead><tr><th>№</th><th>Утверждение</th>'+d.options.map((_,i)=>'<th>'+i+'</th>').join('')+'</tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td>'+d.options.map(()=>'<td class="blank-mark-cell"></td>').join('')+'</tr>').join('')+'</tbody></table>';
  }
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
