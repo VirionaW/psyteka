@@ -35,7 +35,7 @@
   return '<div class="diag-sheet"><h3>SCARED · дополнительный лист для переноса ответов</h3>'+
    '<p class="notice">Это не оригинальная анкета. Для проведения используйте официальный PDF SCARED на английском языке.</p>'+
    '<p>Поставь плюс (+) под выбранной цифрой: 0 - неверно / почти никогда; 1 - иногда; 2 - часто / очень верно.</p>'+
-   '<table class="diag-questions-table numeric-answers"><thead><tr><th>№</th><th>0</th><th>1</th><th>2</th></tr></thead><tbody>'+
+   '<table class="diag-questions-table numeric-answers compact-answers"><thead><tr><th>№</th><th>0</th><th>1</th><th>2</th></tr></thead><tbody>'+
    d.questions.map((_,i)=>'<tr><td>'+(i+1)+'</td><td></td><td></td><td></td></tr>').join('')+'</tbody></table>'+
    '<p class="diag-attribution">Birmaher et al., SCARED, детская версия. Оригинал предоставлен на NC-PAL с разрешения разработчика.</p></div>';
  }
