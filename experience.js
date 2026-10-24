@@ -28,8 +28,11 @@ function render(){
  $("#listHeading").textContent=state.topic||"Школьные материалы";
  $("#catalog").innerHTML=filtered.map(m=>{
  const d=DETAILS[m.name],age=d?.age||m.age;
+ const description=m.summary||d?.goal||m.goal||'Описание методики';
  const kind=d?.workflow==='diagnostic03'?'scale':d?.special==='memory10'?'memory':d?.special==='odd4'?'cognitive':(d?.graphic==='drawing'||d?.graphic==='sociogram')?'drawing':(d?.graphic==='dictation'||d?.graphic==='schulte'||d?.graphic==='dembo'||d?.graphic==='ladder')?'graphic':(d?.calculator?'scale':'other');
- return '<article class="method" data-kind="'+kind+'"><div class="head"><div class="glyph">'+iconSvg(m.theme)+'</div><div><h3>'+escapeHTML(m.name)+'</h3><small>'+escapeHTML(d?.author||m.author)+'</small></div></div><div class="tags"><span class="tag">'+escapeHTML(m.theme)+'</span><span class="tag">'+escapeHTML(age)+'</span></div><p>'+escapeHTML(d?.goal||m.goal)+'</p><div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">'+(d?'Открыть методику':'Подробнее')+'</button>'+(d?.calculator?'<button class="btn" data-score="'+escapeHTML(m.id)+'">Обработка</button>':'')+'</div></article>';
+ const author=(d?.author||m.author||'');
+ const credited=author&&!/сведения об авторе уточняются/i.test(author)?'<p class="method-card-author">Автор / основа: '+escapeHTML(author)+'</p>':'';
+ return '<article class="method" data-kind="'+kind+'"><div class="head"><div class="glyph">'+iconSvg(m.theme)+'</div><div><h3>'+escapeHTML(m.name)+'</h3><small class="method-card-summary">'+escapeHTML(description)+'</small></div></div><div class="tags"><span class="tag">'+escapeHTML(m.format)+'</span><span class="tag">'+escapeHTML(age)+'</span></div>'+credited+'<div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">'+(d?'Открыть методику':'Подробнее')+'</button>'+(d?.calculator?'<button class="btn" data-score="'+escapeHTML(m.id)+'">Обработка</button>':'')+'</div></article>';
  }).join("") || '<p>Не найдено материалов по выбранным параметрам.</p>';
  document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openMethod(C.find(m=>m.id===b.dataset.open)));
  document.querySelectorAll('[data-score]').forEach(b=>b.onclick=()=>{openMethod(C.find(m=>m.id===b.dataset.score));setTab("score")});
@@ -48,7 +51,11 @@ function setTab(name){
 }
 function viewOverview(m){
  const d=DETAILS[m.name];
- if(!d) return '<div class="portfolio-note"><div class="method-facts"><span><b>Автор</b>'+escapeHTML(m.author)+'</span><span><b>Возраст</b>'+escapeHTML(m.age)+'</span></div><h3>Назначение</h3><p>'+escapeHTML(m.goal)+'</p><h3>Вид материала</h3><p>'+escapeHTML(m.format)+'</p>'+(m.source?'<p><a href="'+escapeHTML(m.source)+'" target="_blank" rel="noopener noreferrer">Материалы первоисточника ↗</a></p>':'')+'</div>';
+ if(!d){
+  const author=(m.author||'');
+  const knownAuthor=author&&!/сведения об авторе уточняются/i.test(author);
+  return '<div class="portfolio-note"><h3>Портфолио методики</h3><div class="method-facts">'+(knownAuthor?'<span><b>Автор / основа</b>'+escapeHTML(author)+'</span>':'')+'<span><b>Возраст</b>'+escapeHTML(m.age)+'</span><span><b>Вид материала</b>'+escapeHTML(m.format)+'</span></div><h3>Для чего используется</h3><p>'+escapeHTML(m.summary||m.goal)+'</p><h3>Проведение и интерпретация</h3><p>Перед применением необходимо сверить авторскую версию, инструкцию, права на использование, возрастную применимость и методические ограничения. Не переносите интерпретационные пороги из других версий.</p>'+(m.source?'<p><a href="'+escapeHTML(m.source)+'" target="_blank" rel="noopener noreferrer">Открыть материалы первоисточника ↗</a></p>':'')+'</div>';
+ }
  return '<div class="method-facts"><span><b>Автор</b>'+escapeHTML(d.author)+'</span><span><b>Возраст</b>'+escapeHTML(d.age)+'</span><span><b>Объем</b>'+escapeHTML(d.count)+'</span><span><b>Вид</b>'+escapeHTML(d.kind)+'</span></div><h3>Цель методики</h3><p>'+escapeHTML(d.goal)+'</p><h3>Что исследует</h3><div class="notice">'+escapeHTML(d.interpret)+'</div><h3>Происхождение и условия</h3><p>'+escapeHTML(d.license||'Профессиональная проба: интерпретация по выбранному руководству, без самодельных возрастных норм.')+'</p>'+(d.workflow==='diagnostic'?'<div class="notice">Рабочий цикл: откройте официальный бланк, проведите обследование, перенесите ответы на вкладке «Подсчёт» и скачайте результат.</div><p><a class="btn primary" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Официальный бланк PDF ↗</a></p>':d.workflow==='diagnostic03'?'<div class="notice">Рабочий цикл: бланк → проведение → ввод ответов → подсчёт → скачивание результата.</div><p><a href="'+escapeHTML(d.source)+'" target="_blank" rel="noopener noreferrer">Первоисточник и ключ ↗</a></p>':'');
 }
 function viewInstruction(m){

@@ -68,13 +68,14 @@
    const h=card.querySelector('h3');const label=h?.textContent||'';const icon=card.querySelector('.glyph');
    if(icon){const k=kind(label+' '+(card.textContent||''));icon.innerHTML='<svg viewBox="0 0 50 50" aria-hidden="true">'+shapes[k]+'</svg>'}
    const kit=/^Социометрическое исследование класса$/i.test(label)?'sociometry':/^Корректурная проба Бурдона - Анфимова$/i.test(label)?'bourdon':null;
-   if(kit){
+   const selfesteem=label==='Лесенка'?'ladder':/^Самооценка Дембо - Рубинштейн$/i.test(label)?'dembo':null;
+   if(kit||selfesteem){
     const actions=card.querySelector('.actions');
     if(actions&&!actions.querySelector('.method-kit-link')){
      const link=document.createElement('a');
-     link.href='method-kit.html?method='+kit;
+     link.href=kit?'method-kit.html?method='+kit:'selfesteem-kit.html?method='+selfesteem;
      link.className='btn primary method-kit-link';
-     link.textContent='Руководство · бланк · подсчет';
+     link.textContent='Портфолио · бланк · обработка';
      actions.prepend(link);
     }
    }
