@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#246849">
+<title>Внимание и память — рабочие комплекты | Психотека</title>
+<link rel="stylesheet" href="site-v2.css"><link rel="stylesheet" href="site-mobile.css"><link rel="stylesheet" href="cognitive-kit.css"></head>
+<body class="site-landing cognitive-page">
+<header class="site-header"><a class="site-logo" href="index.html"><span>✳</span> Психотека</a><nav aria-label="Навигация"><a href="library.html?area=school">Библиотека</a><a class="round-link" href="profile.html" title="Профиль" aria-label="Профиль">С</a><a class="round-link" href="settings.html" title="Настройки" aria-label="Настройки">⚙</a></nav></header>
+<main class="ck-main">
+<div class="ck-back"><a href="library.html?area=school">← Каталог методик</a><span>Внимание и память · рабочие комплекты</span></div>
+<header class="ck-hero"><span class="ck-eyebrow">Психотека / методические комплекты</span><h1>Исследование внимания и памяти</h1><p>Бланки из рабочего архива, подробное проведение и описательная обработка. Результат — материал для профессионального анализа, не самостоятельный диагноз.</p></header>
+<nav class="ck-choose" aria-label="Выбор методики"><button type="button" data-ck-method="schulte" aria-pressed="true"><span class="ck-icon">▦</span><span><b>Таблицы Шульте</b><small>Пять таблиц 5 × 5, время и ошибки</small></span></button><button type="button" data-ck-method="memory" aria-pressed="false"><span class="ck-icon">◎</span><span><b>Заучивание 10 слов</b><small>Проба А. Р. Лурии, кривая воспроизведения</small></span></button></nav>
+<section class="ck-panel" id="ckSchulte">
+<div class="ck-heading"><div><span class="ck-eyebrow dark">Портфолио · зрительный поиск</span><h2>Таблицы Шульте</h2><p>Наблюдение темпа и устойчивости зрительного поиска при последовательном нахождении чисел от 1 до 25.</p></div><div class="ck-art" aria-hidden="true"><svg viewBox="0 0 98 98"><rect x="13" y="13" width="72" height="72" rx="9"/><path d="M37 13v72M61 13v72M13 37h72M13 61h72"/><text x="23" y="31">1</text><text x="47" y="55">5</text><text x="69" y="78">9</text></svg></div></div>
+<div class="ck-facts"><span><b>Версия</b> рабочие матрицы из архива</span><span><b>Возраст</b> примерно от 7 лет, по применимости</span><span><b>Объем</b> 5 таблиц по 25 чисел</span><span><b>Подсчет</b> секунды и число ошибок</span></div>
+<div class="ck-caution">Матрицы перенесены из архива без замены чисел. <strong>Возрастные нормы не установлены для этих рабочих таблиц.</strong> Результаты можно описывать, сравнивать внутри серии и использовать вместе с другими данными обследования.</div>
+<details class="ck-details" open><summary>Проведение и ограничения</summary><div><ol><li>Проводите индивидуально в спокойном помещении. Подготовьте бумажный комплект одинакового размера и секундомер.</li><li>Покажите одну таблицу. Предложите найти и показать числа от 1 до 25 по порядку как можно быстрее, не пропуская чисел.</li><li>Засеките время отдельно для каждой из пяти таблиц, отмечайте ошибки, повторные поиски и особенности стратегии. Таблицы предъявляйте последовательно.</li><li>Сравните время первой и последней таблицы, колебания темпа и наблюдения. Не называйте результат «низким», «нормальным» или «высоким» без подтвержденного нормативного руководства.</li></ol><p>Тренировочный вариант на экране может отличаться от печатного предъявления по размеру, яркости и способу указания. Для сопоставимых измерений предпочтительна единая бумажная процедура.</p></div></details>
+<div class="ck-source"><b>Источник / рабочая версия</b> Пять таблиц из «Таблицы Шульте.docx» архива «Психотеки». <a href="https://mgppu.ru/project/473/info/7293" rel="noopener noreferrer" target="_blank">Указанный в архиве справочный источник ↗</a></div>
+<div class="ck-actions"><button type="button" data-ck-print="schulte">Распечатать таблицы</button><button type="button" data-ck-word="schulte" class="outline">Скачать Word (.docx)</button></div>
+<div class="ck-grid-head"><h3>Пять исходных таблиц</h3><span>Переключение не меняет расположение чисел</span></div>
+<div class="ck-table-pager" id="ckSchultePager" aria-label="Выбор таблицы"></div>
+<div class="ck-matrix" id="ckSchulteMatrix" aria-label="Матрица Шульте"></div>
+<div class="ck-work">
+ <div class="ck-work-title"><h3>Протокол пяти таблиц</h3><span>Без ФИО и облачного хранения</span></div>
+ <p>Введите фактически измеренное время в секундах и число ошибок. Незаполненные таблицы не считаются нулевыми результатами.</p>
+ <div class="ck-scroll"><table class="ck-record"><thead><tr><th>Таблица</th><th>Время, сек.</th><th>Ошибки</th><th>Наблюдение</th></tr></thead><tbody id="ckSchulteRows"></tbody></table></div>
+ <div class="ck-actions"><button type="button" id="ckSchulteCalc">Показать сводку</button><button type="button" id="ckSchulteReset" class="outline">Очистить протокол</button></div><div id="ckSchulteResult" class="ck-result" role="status" aria-live="polite"></div>
+</div>
+</section>
+<section class="ck-panel" id="ckMemory" hidden>
+<div class="ck-heading"><div><span class="ck-eyebrow dark">Портфолио · слухоречевая память</span><h2>Заучивание 10 слов</h2><p>Классическая проба А. Р. Лурии: пять предъявлений и отдельная отсроченная проба на том же списке слов.</p></div><div class="ck-art" aria-hidden="true"><svg viewBox="0 0 98 98"><rect x="24" y="11" width="50" height="74" rx="6"/><path d="M34 28h30M34 39h30M34 50h30M34 61h21"/><path d="m31 71 5 5 10-11"/></svg></div></div>
+<div class="ck-facts"><span><b>Основа</b> А. Р. Лурия</span><span><b>Возраст</b> ориентировочно от 6 лет</span><span><b>Материал</b> 10 слов, 5 повторений + отсрочка</span><span><b>Тип</b> слухоречевая проба</span></div>
+<div class="ck-caution">Здесь приведен <strong>рабочий список из архива</strong>, а не стандартизированный набор с подтвержденными возрастными нормативами. Между версиями различаются длительности отсрочки: записывайте фактическое число минут и применяйте правила выбранного руководства. Автоматические диагностические уровни не назначаются.</div>
+<details class="ck-details" open><summary>Инструкция и проведение</summary><div><ol><li>Подготовьте протокол для психолога. Не показывайте ребенку список слов или отметки.</li><li>С одинаковым темпом прочитайте все десять слов. Предложите повторить все запомнившиеся слова в любом порядке.</li><li>Повторите предъявление того же списка еще четыре раза. На каждом этапе фиксируйте произнесенные слова, повторы и посторонние включения.</li><li>После запланированной отсрочки без нового зачитывания попросите повторить слова. Укажите фактическое время отсрочки в минутах.</li><li>Оцените динамику запоминания, верные слова, привнесения и особенности выполнения, а не только одну сумму.</li></ol><blockquote>«Я прочитаю тебе десять слов. Послушай внимательно, а затем повтори те слова, которые запомнишь, в любом порядке. Потом я повторю те же слова еще несколько раз».</blockquote><p>Подбор слов и порядок предъявлений должны быть одинаковыми на протяжении всей процедуры.</p></div></details>
+<div class="ck-source"><b>Источник / рабочая версия</b> «Заучивание 10 слов — А. Р. Лурия.docx» и «рабочий протокол.docx» архива «Психотеки». Нормативные выводы по этому списку не предусмотрены.</div>
+<div class="ck-actions"><button type="button" data-ck-print="memory">Распечатать протокол</button><button type="button" data-ck-word="memory" class="outline">Скачать Word (.docx)</button></div>
+<div class="ck-work">
+ <div class="ck-work-title"><h3>Протокол воспроизведения</h3><span>Психолог отмечает услышанные слова</span></div>
+ <p>Отмечайте каждое правильно названное слово в соответствующей колонке. В графах ниже отдельно фиксируются посторонние включения и повторы. Для незавершенного этапа оставьте колонку незаполненной.</p>
+ <div class="ck-scroll"><table class="ck-record memory-record"><thead><tr><th>Слово</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>Отср.</th></tr></thead><tbody id="ckMemoryRows"></tbody></table></div>
+ <div class="ck-memory-notes"><label for="ckDelay">Фактическая отсрочка, минут</label><input id="ckDelay" type="number" inputmode="numeric" min="1" max="240" step="1" placeholder="Например, 30"><label for="ckExtra">Посторонние включения и повторы по этапам (без имен и идентификаторов)</label><textarea id="ckExtra" rows="3" maxlength="650" placeholder="Например: 2-й этап — одно привнесенное слово; 4-й — повтор"></textarea></div>
+ <div class="ck-actions"><button type="button" id="ckMemoryCalc">Показать кривую запоминания</button><button type="button" id="ckMemoryReset" class="outline">Очистить протокол</button></div>
+ <div id="ckMemoryResult" class="ck-result" role="status" aria-live="polite"></div>
+</div>
+</section>
+<footer class="ck-footer"><a href="library.html?area=school">← Вернуться к каталогу</a><p>Рабочие материалы «Психотеки». Используйте подтвержденную авторскую версию и учитывайте конфиденциальность обследования.</p></footer>
+</main><div id="ckPrint" hidden aria-hidden="true"></div><script src="cognitive-kit.js"></script></body></html>

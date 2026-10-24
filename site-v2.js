@@ -58,6 +58,7 @@
  const alerts=[
  [/прихожан|шкала личностной тревожности/i,'Для нормативной интерпретации нужно сверить таблицы перевода сырых баллов в стены с подтвержденным источником.'],
  [/таблицы шульте/i,'Возрастные нормативы в текущем комплекте не подтверждены.'],
+ [/^заучивание 10 слов$/i,'Рабочий список слов не является стандартизированным нормативным комплектом. Не переносите возрастные пороги и указывайте фактическую отсрочку.'],
  [/CMAS|явной тревожности/i,'Для проведения необходим полный оригинальный стимульный материал и проверенные возрастные нормы.'],
  [/SCARED/i,'Для проведения требуется оригинальная форма соответствующей версии.'],
  [/кубики косса|прогрессивные матрицы/i,'Нужно проверить оригинальный комплект стимульных материалов и условия использования.']
@@ -69,11 +70,12 @@
    if(icon){const k=kind(label+' '+(card.textContent||''));icon.innerHTML='<svg viewBox="0 0 50 50" aria-hidden="true">'+shapes[k]+'</svg>'}
    const kit=/^Социометрическое исследование класса$/i.test(label)?'sociometry':/^Корректурная проба Бурдона - Анфимова$/i.test(label)?'bourdon':null;
    const selfesteem=label==='Лесенка'?'ladder':/^Самооценка Дембо - Рубинштейн$/i.test(label)?'dembo':null;
-   if(kit||selfesteem){
+   const cognitive=label==='Таблицы Шульте'?'schulte':label==='Заучивание 10 слов'?'memory':null;
+   if(kit||selfesteem||cognitive){
     const actions=card.querySelector('.actions');
     if(actions&&!actions.querySelector('.method-kit-link')){
      const link=document.createElement('a');
-     link.href=kit?'method-kit.html?method='+kit:'selfesteem-kit.html?method='+selfesteem;
+     link.href=kit?'method-kit.html?method='+kit:selfesteem?'selfesteem-kit.html?method='+selfesteem:'cognitive-kit.html?method='+cognitive;
      link.className='btn primary method-kit-link';
      link.textContent='Портфолио · бланк · обработка';
      actions.prepend(link);
