@@ -64,9 +64,9 @@
  }
  function groupTools(ctx){
   const {rows,rowIndex,calcMode}=ctx;
-  return '<div class="calc-mode"><button class="btn '+(calcMode==='one'?'primary':'')+'" data-cmode="one">Один ребенок</button><button class="btn '+(calcMode==='class'?'primary':'')+'" data-cmode="class">Группа / класс</button></div>'+
+  return '<div class="calc-mode"><button class="btn '+(calcMode==='one'?'primary':'')+'" data-cmode="one">Один ученик</button><button class="btn '+(calcMode==='class'?'primary':'')+'" data-cmode="class">Целый класс</button></div>'+
   (calcMode==="class"?'<div class="group-tools"><label>Участник<select id="participantSelect">'+rows.map((r,i)=>'<option value="'+i+'" '+(i===rowIndex?'selected':'')+'>'+escape(r.name||"Участник "+(i+1))+'</option>').join('')+'</select></label>'+
-  '<label>Код участника<input id="participantName" value="'+escape(rows[rowIndex].name||"")+'" placeholder="Например, У-01"></label>'+
+  '<label>Код участника (необязательно)<input id="participantName" value="'+escape(rows[rowIndex].name||"")+'" placeholder="Например, У-01"></label>'+
   '<button class="btn" id="addParticipant">Добавить</button></div>':'<div class="diag-code"><label>Код участника (необязательно)<input id="diagSingleCode" placeholder="Например, У-01" value="'+escape(rows[rowIndex].name||"")+'"></label></div>');
  }
  function calc(d,ctx){
