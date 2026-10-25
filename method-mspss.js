@@ -98,37 +98,72 @@
  }
  const csvCell=v=>{let s=String(v??"");if(/^\s*[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};
  function csv(rows){return "\uFEFF"+rows.map(r=>r.map(csvCell).join(";")).join("\r\n")}
+
+ function openReport(person){
+  const z=score(d,person?.answers);
+  if(!z)return false;
+  window.PSY_MSPSS.pendingReport={
+    name:String(person.name||"ФИО не указано").slice(0,120),
+    date:new Date().toLocaleDateString("ru-RU"),
+    raw:z.raw,overall:z.mean,
+    subscales:z.subscales.map(x=>({name:x.name,mean:x.mean,raw:x.raw})),
+    answers:z.answers,questions:STUDENT_ITEMS,interpret:d.interpret
+  };
+  const popup=window.open("downloads/mspss_report.html","_blank");
+  if(!popup){alert("Разрешите открытие новой вкладки для просмотра отчета.");return false;}
+  return true;
+ }
  function bind(data,ctx){
   const rows=ctx.rows||[],r=rows[ctx.rowIndex];if(!r)return;
-  document.getElementById("mspssSingleCode")?.addEventListener("input",e=>{r.name=e.target.value});
-  const inputs=[...document.querySelectorAll("input[data-mspss]")];
-  const refresh=()=>{const out=document.getElementById("mspssResult");if(out)out.innerHTML=result(r.answers);const g=document.getElementById("mspssGroup");if(g)g.innerHTML=group(rows);};
-  inputs.forEach((el,i)=>{
-   el.addEventListener("input",()=>{
-    const v=el.value.replace(/[^1-7]/g,"").slice(0,1);
-    el.value=v;r.answers[Number(el.dataset.mspss)]=v?Number(v):"";
-    el.classList.toggle("psy-mspss-invalid",false);
-    refresh();
-    if(v&&i<inputs.length-1)inputs[i+1].focus();
-   });
-   el.addEventListener("keydown",ev=>{
-    if(ev.key==="Backspace"&&!el.value&&i>0){ev.preventDefault();inputs[i-1].focus();inputs[i-1].select();}
-    if(ev.key==="ArrowRight"&&i<inputs.length-1){ev.preventDefault();inputs[i+1].focus();}
-    if(ev.key==="ArrowLeft"&&i>0){ev.preventDefault();inputs[i-1].focus();}
-   });
-   el.addEventListener("focus",()=>el.select());
+  const updateFooter=()=>{
+    const btn=document.getElementById("mspssReportBottom");
+    if(btn){const complete=!!score(data,r.answers);btn.disabled=!complete;btn.classList.toggle("psy-mspss-waiting",!complete);}
+  };
+  const refresh=()=>{
+    const out=document.getElementById("mspssResult");if(out)out.innerHTML=result(r.answers);
+    const g=document.getElementById("mspssGroup");if(g)g.innerHTML=group(rows);
+    const progress=document.getElementById("mspssProgress");if(progress)progress.textContent="Заполнено "+done(r.answers)+" из 12";
+    const status=document.querySelector(".psy-mspss-person.active small");if(status)status.textContent=done(r.answers)+"/12";
+    updateFooter();
+  };
+  document.getElementById("mspssCurrentName")?.addEventListener("input",e=>{
+    r.name=e.target.value;
+    const selected=document.querySelector(".psy-mspss-person.active span");if(selected)selected.textContent=r.name||"Участник";
   });
-  document.getElementById("mspssSave")?.addEventListener("click",()=>{
-   const z=score(data,r.answers);
-   if(!z){alert("Для отчета нужно заполнить все 12 ответов.");return}
-   const code=esc(r.name||"Без персональных данных");
-   const body='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>MSPSS - результат</title><style>@page{size:A4;margin:15mm}body{font:14px/1.6 Arial,sans-serif;color:#233b2d;max-width:800px;margin:25px auto}h1{font-size:23px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #adc6b1;padding:10px;text-align:left}.muted{font-size:12px;color:#607464}</style></head><body><h1>MSPSS · Индивидуальный протокол</h1><p>Код: '+code+'</p><p>Дата: '+new Date().toLocaleDateString("ru-RU")+'</p><p>Средний общий показатель: <b>'+z.mean.toFixed(2)+' / 7</b></p><table><tr><th>Источник поддержки</th><th>Средний показатель</th></tr>'+z.subscales.map(s=>'<tr><td>'+esc(s.name)+'</td><td>'+s.mean.toFixed(2)+' / 7</td></tr>').join("")+'</table><p>'+esc(d.interpret)+'</p><p class="muted">Источник: '+esc(PDF)+' · Учитывайте возраст и использованный язык формы. Не диагноз.</p></body></html>';
-   download("MSPSS_результат.html",body,"text/html;charset=utf-8");
+  document.querySelectorAll("[data-mspss-person]").forEach(el=>{
+    el.addEventListener("click",()=>ctx.onSelect?.(Number(el.dataset.mspssPerson)));
+  });
+  document.getElementById("mspssAddNames")?.addEventListener("click",()=>{
+    const box=document.getElementById("mspssBulkNames");
+    const names=(box?.value||"").split(/[\r\n]+/).map(x=>x.trim()).filter(Boolean);
+    if(names.length)ctx.onBulkAdd?.(names);else box?.focus();
+  });
+  document.getElementById("mspssSort")?.addEventListener("click",()=>ctx.onSort?.());
+  document.getElementById("mspssNext")?.addEventListener("click",()=>ctx.onNext?.());
+  const inputs=[...document.querySelectorAll("input[data-mspss]")];
+  inputs.forEach((el,i)=>{
+    el.addEventListener("input",()=>{
+      const v=el.value.replace(/[^1-7]/g,"").slice(0,1);
+      el.value=v;r.answers[Number(el.dataset.mspss)]=v?Number(v):"";
+      refresh();
+      if(v&&i<inputs.length-1)inputs[i+1].focus();
+    });
+    el.addEventListener("keydown",ev=>{
+      if(ev.key==="Backspace"&&!el.value&&i>0){ev.preventDefault();inputs[i-1].focus();inputs[i-1].select();}
+      if(ev.key==="ArrowRight"&&i<inputs.length-1){ev.preventDefault();inputs[i+1].focus();}
+      if(ev.key==="ArrowLeft"&&i>0){ev.preventDefault();inputs[i-1].focus();}
+    });
+    el.addEventListener("focus",()=>el.select());
   });
   document.getElementById("mspssCSV")?.addEventListener("click",()=>{
-   const table=[["Код","Всего 1-7","Значимый человек","Семья","Друзья","Ответов"],...rows.map((x,i)=>{const z=score(data,x.answers);return [x.name||"У-"+(i+1),z?z.mean.toFixed(2):"",...SUB.map(s=>z?z.subscales.find(y=>y.id===s.id).mean.toFixed(2):""),done(x.answers)];})];
-   download("MSPSS_группа.csv",csv(table),"text/csv;charset=utf-8");
+    const ordered=alphabet(rows);
+    const table=[["ФИО","Общий показатель","Значимый человек","Семья","Друзья","Ответов"],...ordered.map((p,i)=>{
+      const z=score(data,p.answers);
+      return [p.name||"Участник "+(i+1),z?z.mean.toFixed(2):"",...SUB.map(x=>z?z.subscales.find(y=>y.id===x.id).mean.toFixed(2):""),done(p.answers)];
+    })];
+    download("MSPSS_ведомость_класса.csv",csv(table),"text/csv;charset=utf-8");
   });
+  updateFooter();
  }
- window.PSY_MSPSS={score,done,instruction,materials,processing,calculator,bind};
+ window.PSY_MSPSS={score,done,instruction,materials,processing,calculator,bind,openReport,pendingReport:null};
 })();
