@@ -1,10 +1,10 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MSPSS - Бланк ученика</title><style>@page{size:A4;margin:12mm}
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Бланк ученика</title><style>@page{size:A4;margin:12mm}
 *{box-sizing:border-box}html{color-scheme:light}
 body{font:16px/1.5 Arial,"Liberation Sans",sans-serif;margin:0;color:#243a2e;background:#f4f7f3}
 .toolbar{position:sticky;top:0;z-index:2;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;background:#fff;padding:14px max(18px,calc((100vw - 1020px)/2));border-bottom:1px solid #d5e3d9}
 .toolbar strong{font-size:15px;color:#1e4934}.buttons{display:flex;gap:9px;flex-wrap:wrap}
 .buttons a,.buttons button{appearance:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:#267853;color:#fff;text-decoration:none;border:1px solid #267853;border-radius:9px;padding:11px 17px;font:700 14px Arial}
-.buttons a.secondary{background:#fff;color:#266749}
+.buttons a.secondary,.buttons button.secondary{background:#fff;color:#266749}
 .sheet{max-width:1010px;margin:25px auto 60px;padding:35px 44px;background:#fff;border:1px solid #d7e4d9;border-radius:14px;box-shadow:0 6px 26px rgba(20,69,44,.05)}
 h1{font-size:27px;line-height:1.23;color:#193f2e;margin:0 0 12px}h2{font-size:21px;color:#246b4a;margin:29px 0 12px}h3{font-size:16px;color:#264a39;margin:14px 0 8px}
 p{margin:10px 0;line-height:1.55}.muted{font-size:13px;color:#56705f}
@@ -21,11 +21,11 @@ table tr{break-inside:avoid;page-break-inside:avoid}
 @media(max-width:780px){.sheet{margin:0;padding:17px;border-radius:0}.toolbar{padding:12px 15px}.sheet h1{font-size:22px}table td:nth-child(2){font-size:14px}table th:nth-child(n+3),table td:nth-child(n+3){width:25px;padding:5px 1px}.scale>div{font-size:14px}}
 @media print{html,body{background:#fff}.toolbar{display:none!important}.sheet{margin:0;padding:0;border:none;border-radius:0;box-shadow:none;max-width:none}h1{font-size:19pt}h2{font-size:14pt}p{font-size:10.5pt}table th{font-size:9pt}table td:nth-child(2){font-size:10.5pt}table td{padding:7px 5px}table th:nth-child(n+3),table td:nth-child(n+3){width:26px}table td:nth-child(n+3) span{width:15px;height:15px}.scale{margin:9px 0 12px}.scale>div{font-size:10pt;min-height:25px;padding:3px 8px}.meta{font-size:10pt;margin:9px 0}.muted{font-size:9pt}h2{break-after:avoid}a{text-decoration:none;color:inherit}}
 </style></head><body>
-<header class="toolbar"><strong>Бланк ученика · MSPSS</strong><div class="buttons"><a class="secondary" href="mspss_student_sheet.docx" download>Скачать Word</a><button type="button" onclick="window.print()">Распечатать / сохранить PDF</button></div></header>
-<main class="sheet"><h1>Шкала воспринимаемой социальной поддержки</h1><p class="muted">Ученический бланк · 12 утверждений</p>
-<div class="meta"><span>Код участника: __________________</span><span>Класс: _________</span><span>Дата: ____________</span></div>
-<p><strong>Инструкция.</strong> Прочитай каждое предложение. Подумай, согласен ли ты с ним. Выбери одну цифру от 1 до 7 и отметь кружок под ней.</p>
-<div class="scale" aria-label="Значения ответов"><div><b>1</b><span>Совершенно не согласен</span></div><div><b>2</b><span>Сильно не согласен</span></div><div><b>3</b><span>Скорее не согласен</span></div><div><b>4</b><span>Ни согласен, ни не согласен</span></div><div><b>5</b><span>Скорее согласен</span></div><div><b>6</b><span>Сильно согласен</span></div><div><b>7</b><span>Полностью согласен</span></div></div>
+<header class="toolbar"><strong>Бланк ученика</strong><div class="buttons"><button class="secondary" type="button" onclick="forceWord('mspss_student_sheet.docx','Бланк_ученика.docx')">Скачать Word</button><button type="button" onclick="window.print()">Распечатать / сохранить PDF</button></div></header>
+<main class="sheet"><h1>Анкета</h1><p class="muted">Прочитай предложения и выбери подходящие ответы.</p>
+<div class="meta"><span>Фамилия, имя: ______________________________</span><span>Класс: _________</span><span>Дата: ____________</span></div>
+<p><strong>Инструкция.</strong> Прочитай предложения. Для каждого выбери одну цифру, которая больше подходит к твоему ответу. Отметь кружок под этой цифрой.</p>
+<div class="scale" aria-label="Значения ответов"><div><b>1</b><span>Совсем не согласен</span></div><div><b>2</b><span>Не согласен</span></div><div><b>3</b><span>Скорее не согласен</span></div><div><b>4</b><span>Не знаю</span></div><div><b>5</b><span>Скорее согласен</span></div><div><b>6</b><span>Согласен</span></div><div><b>7</b><span>Полностью согласен</span></div></div>
 <table><thead><tr><th>№</th><th style="text-align:left">Утверждение</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr></thead><tbody>
 <tr><td>1</td><td>Когда мне нужна помощь, рядом есть особенный для меня человек.</td><td><span title="Ответ 1" aria-label="Ответ 1"></span></td><td><span title="Ответ 2" aria-label="Ответ 2"></span></td><td><span title="Ответ 3" aria-label="Ответ 3"></span></td><td><span title="Ответ 4" aria-label="Ответ 4"></span></td><td><span title="Ответ 5" aria-label="Ответ 5"></span></td><td><span title="Ответ 6" aria-label="Ответ 6"></span></td><td><span title="Ответ 7" aria-label="Ответ 7"></span></td></tr>
 <tr><td>2</td><td>Есть особенный для меня человек, с которым я могу разделить радость и печаль.</td><td><span title="Ответ 1" aria-label="Ответ 1"></span></td><td><span title="Ответ 2" aria-label="Ответ 2"></span></td><td><span title="Ответ 3" aria-label="Ответ 3"></span></td><td><span title="Ответ 4" aria-label="Ответ 4"></span></td><td><span title="Ответ 5" aria-label="Ответ 5"></span></td><td><span title="Ответ 6" aria-label="Ответ 6"></span></td><td><span title="Ответ 7" aria-label="Ответ 7"></span></td></tr>
@@ -39,4 +39,14 @@ table tr{break-inside:avoid;page-break-inside:avoid}
 <tr><td>10</td><td>В моей жизни есть особенный человек, которому небезразличны мои чувства.</td><td><span title="Ответ 1" aria-label="Ответ 1"></span></td><td><span title="Ответ 2" aria-label="Ответ 2"></span></td><td><span title="Ответ 3" aria-label="Ответ 3"></span></td><td><span title="Ответ 4" aria-label="Ответ 4"></span></td><td><span title="Ответ 5" aria-label="Ответ 5"></span></td><td><span title="Ответ 6" aria-label="Ответ 6"></span></td><td><span title="Ответ 7" aria-label="Ответ 7"></span></td></tr>
 <tr><td>11</td><td>Члены моей семьи готовы помогать мне принимать решения.</td><td><span title="Ответ 1" aria-label="Ответ 1"></span></td><td><span title="Ответ 2" aria-label="Ответ 2"></span></td><td><span title="Ответ 3" aria-label="Ответ 3"></span></td><td><span title="Ответ 4" aria-label="Ответ 4"></span></td><td><span title="Ответ 5" aria-label="Ответ 5"></span></td><td><span title="Ответ 6" aria-label="Ответ 6"></span></td><td><span title="Ответ 7" aria-label="Ответ 7"></span></td></tr>
 <tr><td>12</td><td>Я могу рассказывать друзьям о своих проблемах.</td><td><span title="Ответ 1" aria-label="Ответ 1"></span></td><td><span title="Ответ 2" aria-label="Ответ 2"></span></td><td><span title="Ответ 3" aria-label="Ответ 3"></span></td><td><span title="Ответ 4" aria-label="Ответ 4"></span></td><td><span title="Ответ 5" aria-label="Ответ 5"></span></td><td><span title="Ответ 6" aria-label="Ответ 6"></span></td><td><span title="Ответ 7" aria-label="Ответ 7"></span></td></tr>
-</tbody></table></main></body></html>
+</tbody></table></main><script>
+async function forceWord(path,name){
+  try{
+   const response=await fetch(path,{cache:"no-store"});
+   if(!response.ok)throw new Error("Не удалось получить файл");
+   const blob=await response.blob(),url=URL.createObjectURL(blob),a=document.createElement("a");
+   a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),8000);
+  }catch(err){alert("Не удалось скачать Word-файл. Попробуйте еще раз.");}
+}
+</script></body></html>
