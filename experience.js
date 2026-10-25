@@ -51,16 +51,66 @@ function setTab(name){
  name==="materials"?viewMaterials(methodNow):
  name==="processing"?viewProcessing(methodNow):viewCalculator(methodNow);
  body.scrollTop=0;
+ const bottom=$("#bottomProcessing");
+ if(bottom){
+  const insideProcessing=name==="score"||name==="processing";
+  bottom.textContent=insideProcessing?"← Вернуться к портфолио":"Обработка результатов →";
+  bottom.classList.toggle("primary",!insideProcessing);
+ }
  bindControls();
 }
-function viewOverview(m){
- const d=DETAILS[m.name];
- if(!d){
-  const author=(m.author||'');
-  const knownAuthor=author&&!/сведения об авторе уточняются/i.test(author);
-  return '<div class="portfolio-note"><h3>Портфолио методики</h3><div class="method-facts">'+(knownAuthor?'<span><b>Автор / основа</b>'+escapeHTML(author)+'</span>':'')+'<span><b>Возраст</b>'+escapeHTML(m.age)+'</span><span><b>Вид материала</b>'+escapeHTML(m.format)+'</span></div><h3>Для чего используется</h3><p>'+escapeHTML(m.summary||m.goal)+'</p><h3>Проведение и интерпретация</h3><p>Перед применением необходимо сверить авторскую версию, инструкцию, права на использование, возрастную применимость и методические ограничения. Не переносите интерпретационные пороги из других версий.</p>'+(m.source?'<p><a href="'+escapeHTML(m.source)+'" target="_blank" rel="noopener noreferrer">Открыть материалы первоисточника ↗</a></p>':'')+'</div>';
+
+const PORTFOLIO_FIELDS={
+ "Шкала личностной тревожности":{title:"Шкалы тревожности",items:["Школьная","Самооценочная","Межличностная","Магическая"]},
+ "Шкала самооценки Розенберга (RSES)":{title:"Основной показатель",items:["Общая самооценка"]},
+ "Школа зверей":{title:"Области беседы",items:["Представления о школе","Персонажи и их взаимодействие","Объяснение рисунка ребенком"]},
+ "Что мне нравится в школе":{title:"Области беседы",items:["Значимые школьные ситуации","Отношение к изображенному","Слова ребенка о рисунке"]},
+ "Дерево (Человечки на дереве)":{title:"Области беседы",items:["Выбранная фигура","Объяснение выбора","Переживания и контекст ситуации"]},
+ "Рисунок семьи":{title:"Области наблюдения",items:["Сюжет и состав изображения","Пояснения ребенка","Взаимодействие персонажей"]},
+ "Кинетический рисунок семьи":{title:"Области наблюдения",items:["Действия членов семьи","Сюжет взаимодействия","Пояснения ребенка"]},
+ "Семейная социограмма":{title:"Области беседы",items:["Расположение членов семьи","Объяснение размеров и расстояний","Субъективное восприятие отношений"]},
+ "Шкала воспринимаемой социальной поддержки (MSPSS)":{title:"Шкалы поддержки",items:["Семья","Друзья","Значимый другой"]},
+ "Сильные стороны и трудности (SDQ)":{title:"Шкалы",items:["Эмоциональные симптомы","Проблемы поведения","Гиперактивность / невнимательность","Отношения со сверстниками","Просоциальное поведение"]},
+ "SNAP-IV-26":{title:"Шкалы наблюдения",items:["Невнимательность","Гиперактивность / импульсивность","Оппозиционное поведение"]},
+ "Заучивание 10 слов":{title:"Показатели",items:["Непосредственное воспроизведение","Динамика пяти предъявлений","Отсроченное воспроизведение","Ошибки и повторы"]},
+ "Таблицы Шульте":{title:"Показатели",items:["Время выполнения","Ошибки","Динамика по таблицам"]},
+ "Лесенка":{title:"Показатели беседы",items:["Положение себя на ступени","Обоснование выбора","Предполагаемая оценка взрослых"]},
+ "Самооценка Дембо - Рубинштейн":{title:"Показатели",items:["Самооценка","Уровень притязаний","Расхождение между показателями"]},
+ "Социометрическое исследование класса":{title:"Показатели",items:["Полученные выборы","Взаимные выборы","Матрица взаимоотношений"]},
+ "Тест школьной тревожности":{title:"Факторы тревожности",items:["Общая тревожность в школе","Социальный стресс","Фрустрация потребности в успехе","Страх самовыражения","Страх проверки знаний","Страх не соответствовать ожиданиям","Низкая физиологическая сопротивляемость стрессу","Проблемы и страхи в отношениях с учителями"]},
+ "Индекс хорошего самочувствия WHO-5":{title:"Основной показатель",items:["Субъективное психологическое благополучие"]}
+};
+function portfolioIndicators(m,d){
+ const manual=PORTFOLIO_FIELDS[m.name];
+ if(Array.isArray(d?.scales)&&d.scales.length){
+  const names=d.scales.map(x=>typeof x==="string"?x:x?.name).filter(x=>typeof x==="string"&&x.trim());
+  if(names.length)return {title:manual?.title||"Шкалы и показатели",items:names};
  }
- return '<div class="method-facts"><span><b>Автор</b>'+escapeHTML(d.author)+'</span><span><b>Возраст</b>'+escapeHTML(d.age)+'</span><span><b>Объем</b>'+escapeHTML(d.count)+'</span><span><b>Вид</b>'+escapeHTML(d.kind)+'</span></div><h3>Цель методики</h3><p>'+escapeHTML(d.goal)+'</p><h3>Что исследует</h3><div class="notice">'+escapeHTML(d.interpret)+'</div><h3>Происхождение и условия</h3><p>'+escapeHTML(d.license||'Профессиональная проба: интерпретация по выбранному руководству, без самодельных возрастных норм.')+'</p>'+(d.workflow==='diagnostic'?'<div class="notice">Рабочий цикл: откройте официальный бланк, проведите обследование, перенесите ответы на вкладке «Подсчет» и скачайте результат.</div><p><a class="btn primary" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Официальный бланк PDF ↗</a></p>':d.workflow==='diagnostic03'?'<div class="notice">Рабочий цикл: бланк → проведение → ввод ответов → подсчет → скачивание результата.</div><p><a href="'+escapeHTML(d.source)+'" target="_blank" rel="noopener noreferrer">Первоисточник и ключ ↗</a></p>':'');
+ if(manual)return manual;
+ if(Array.isArray(d?.groups)&&d.groups.length){
+  const names=d.groups.map(x=>x?.name||x).filter(x=>typeof x==="string"&&x.trim());
+  if(names.length)return {title:"Шкалы и показатели",items:names};
+ }
+ if(d?.graphic==="drawing"||/рисуночн/i.test(m.format||""))return {title:"Области наблюдения",items:["Содержание изображения","Объяснения ребенка","Контекст проведения"]};
+ if(d?.graphic==="dictation")return {title:"Показатели",items:["Выполнение по инструкции","Самостоятельное продолжение","Ошибки"]};
+ return {title:"Шкалы и показатели",items:[]};
+}
+function viewOverview(m){
+ const d=DETAILS[m.name]||{};
+ const name=m.name;
+ const author=d.author||m.author||"";
+ const verifiedAuthor=author&&!/сведения об авторе уточняются/i.test(author)?author:"Не указан в проверенном источнике";
+ const age=d.age||m.age||"Не уточнен";
+ const kind=d.kind||m.format||"Не уточнен";
+ const count=d.count||m.count||"Не уточнено";
+ const description=d.goal||m.summary||m.goal||"Описание уточняется по первоисточнику.";
+ const source=d.source||m.source||"";
+ const fields=[["Методика",name],["Автор",verifiedAuthor],["Возраст",age],["Вид",kind],["Количество вопросов / заданий",count]];
+ const fieldHtml=fields.map(([label,value])=>'<div class="psy-profile-row"><strong>'+escapeHTML(label)+'</strong><span>'+escapeHTML(value)+'</span></div>').join("");
+ const indicators=portfolioIndicators(m,d);
+ const indicatorHtml=indicators.items.length?'<div class="psy-profile-indicators">'+indicators.items.map((t,i)=>'<div class="psy-profile-indicator"><span class="psy-indicator-number" aria-hidden="true">'+(i+1)+'</span><span>'+escapeHTML(t)+'</span></div>').join("")+'</div>':'<p class="psy-profile-muted">Перечень шкал для этой редакции пока не подтвержден.</p>';
+ const sourceHtml=source?'<a href="'+escapeHTML(source)+'" target="_blank" rel="noopener noreferrer">Открыть первоисточник ↗</a>':'<span class="psy-profile-muted">Проверенная ссылка на первоисточник пока не добавлена.</span>';
+ return '<section class="psy-portfolio-reference"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div><h3>'+escapeHTML(indicators.title)+'</h3>'+indicatorHtml+'<h3>Краткое описание</h3><p class="psy-profile-description">'+escapeHTML(description)+'</p><h3>Первоисточник</h3><p class="psy-profile-source">'+sourceHtml+'</p></section>';
 }
 function viewInstruction(m){
  const d=DETAILS[m.name];
@@ -260,16 +310,16 @@ function openMethod(m){
  modeSnapshots=saved?.modeSnapshots||{one:[{name:"",answers:[]}],class:[{name:"",answers:[]}]};
  modeIndices=saved?.modeIndices||{one:0,class:0};
  rows=saved?.rows||modeSnapshots[calcMode];rowIndex=saved?.rowIndex||0;
- const d=DETAILS[m.name];$('#modalTitle').textContent=m.name;$('#modalAuthor').textContent=d?.author||m.author;
+ const d=DETAILS[m.name];$('#modalTitle').textContent=m.name;$('#modalAuthor').textContent='Сведения о методике';
  $('#modalBody').innerHTML='';
  const header=$('#modal').querySelector('.modalhead');
  let old=$('#methodTabs');if(old)old.remove();
- const tabs=[['overview','Портфолио'],['instruction','Методика / руководство'],['materials','Бланк'],['processing','Обработка результатов'],...(d?.calculator?[['score','Ввод и подсчет']]:[])];
+ const tabs=[['overview','Портфолио'],['instruction','Методика / руководство'],['materials','Бланк']];
  header.insertAdjacentHTML('afterend','<nav class="method-tabs" id="methodTabs">'+tabs.map(([key,title])=>'<button class="modal-tab" data-tab="'+key+'">'+title+'</button>').join('')+'</nav>');
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
- footer.innerHTML='<div class="actions" id="methodButtons">'+(d?'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions"><button class="btn" id="closeFooter">Закрыть</button>'+(m.source||d?.source?'<a class="btn primary" target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d?.source||m.source)+'">Первоисточник ↗</a>':'')+'</div>';
- $('#closeFooter').onclick=closeModal;
+ footer.innerHTML='<div class="actions" id="methodButtons">'+(d?'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions psy-footer-main"><button class="btn psy-footer-close" id="closeFooter">Закрыть</button>'+(d?'<button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button>':'')+'</div>';
+ $('#closeFooter').onclick=closeModal; if(d)$('#bottomProcessing').onclick=()=>setTab(tabNow==='score'||tabNow==='processing'?'overview':d.calculator?'score':'processing');
  if(d){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;if(d.workflow==='diagnostic03'&&d.diagnosticType==='rses')$('#saveBlank').onclick=()=>window.PSY_DIAG03.saveBlank(d);}
  $('#modal').hidden=false;$('#shade').hidden=false;setTab('overview');
 }
