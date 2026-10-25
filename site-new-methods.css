@@ -33,3 +33,14 @@
  .psy-new-soc-lines{border-color:#999}
  .psy-new-soc-lines p{margin-bottom:12mm}
 }
+/* Word classification: psychologist's calculator and student worksheet */
+.psy-class-worksheet{border-collapse:collapse;width:100%;max-width:680px;margin:12px 0 18px}
+.psy-class-worksheet th,.psy-class-worksheet td{border-bottom:1px solid #cbd7cc;padding:6px 9px;text-align:left;font-size:13px}
+.psy-class-worksheet th:first-child,.psy-class-worksheet td:first-child{width:38px}
+.psy-class-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:10px}
+.psy-class-item{display:grid;grid-template-columns:minmax(0,1fr);gap:7px;padding:11px 12px;border:1px solid var(--stroke,#d5e1d7);border-radius:9px;background:var(--panel-soft,#f6f9f6);color:var(--text,#263a2e)}
+.psy-class-item span{display:block}
+.psy-class-item small{display:block;font-size:11px;color:var(--muted,#637166);margin-top:3px}
+.psy-class-item select{max-width:100%;width:100%;box-sizing:border-box;padding:9px;border:1px solid #a9c1b1;border-radius:7px;background:var(--input-bg,#fff);color:var(--text,#183126);font:inherit}
+@media(max-width:650px){.psy-class-list{grid-template-columns:minmax(0,1fr)}.psy-new-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media print{.psy-class-worksheet tr{break-inside:avoid}.psy-class-worksheet td,.psy-class-worksheet th{font-size:9.5pt;padding:3px 8px}.psy-new-print{break-inside:auto}}
