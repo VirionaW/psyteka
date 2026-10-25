@@ -19,42 +19,62 @@ table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}th{text-a
 .footnote{font-size:13px;color:#576b5f}
 @media(max-width:670px){.page{margin:0;padding:20px;border:0;border-radius:0}.scales{grid-template-columns:1fr}.toolbar{padding:12px 15px}h1{font-size:23px}}
 @media print{html,body{background:white}.toolbar{display:none}.page{padding:0;margin:0;border:0;max-width:none}h1{font-size:20pt}h2{font-size:14pt;break-after:avoid}.scales{grid-template-columns:repeat(3,1fr)}.scale{print-color-adjust:exact;-webkit-print-color-adjust:exact}.value{print-color-adjust:exact;-webkit-print-color-adjust:exact}tr{break-inside:avoid}table{font-size:10pt}p{font-size:10.5pt}}
-</style></head><body><header class="toolbar"><strong>Индивидуальный отчёт</strong><div class="actions"><button class="secondary" id="word" disabled>Скачать Word</button><button onclick="window.print()" id="print" disabled>Распечатать / PDF</button></div></header>
+</style></head><body><header class="toolbar"><strong>Индивидуальный отчет</strong><div class="actions"><button class="secondary" id="word" disabled>Скачать Word</button><button onclick="window.print()" id="print" disabled>Распечатать</button></div></header>
 <main class="page" id="report"><p>Загрузка результата...</p></main>
 <script>
 (function(){
 "use strict";
 const data=window.opener && window.opener.PSY_MSPSS && window.opener.PSY_MSPSS.pendingReport;
+const category=x=>{const r=Math.round(x*10)/10;return r<=2.9?"Низкая":r<=5?"Умеренная":"Высокая";};
 const E=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-if(!data){document.getElementById("report").innerHTML='<h1>Результат не найден</h1><p>Откройте отчёт из раздела «Обработка» в Психотеке.</p>';return;}
+if(!data){document.getElementById("report").innerHTML='<h1>Результат не найден</h1><p>Откройте отчет из раздела «Обработка» в Психотеке.</p>';return;}
 document.getElementById("report").innerHTML='<h1>Результаты обследования</h1>'+
  '<p>Шкала воспринимаемой социальной поддержки (MSPSS)</p><div class="meta"><span><strong>ФИО:</strong> '+E(data.name)+'</span><span><strong>Дата:</strong> '+E(data.date)+'</span></div>'+
- '<section class="value"><div>Общий средний показатель</div><strong>'+data.overall.toFixed(2)+' / 7</strong><div>Сумма ответов: '+data.raw+' из 84</div></section>'+
+ '<section class="value"><div>Общий средний показатель</div><strong>'+data.overall.toFixed(2)+' / 7</strong><div>Сумма ответов: '+data.raw+' из 84</div><div><b>Ориентир: '+category(data.overall).toLowerCase()+' воспринимаемая поддержка</b></div></section>'+
  '<h2>Шкалы</h2><div class="scales">'+data.subscales.map((s,i)=>'<div class="scale '+["other","family","friends"][i]+'"><h3>'+E(s.name)+'</h3><strong>'+s.mean.toFixed(2)+' / 7</strong></div>').join("")+'</div>'+
  '<h2>Индивидуальные ответы</h2><table><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+
  data.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(q)+'</td><td>'+data.answers[i]+'</td></tr>').join("")+'</tbody></table>'+
- '<h2>Интерпретация</h2><p>'+E(data.interpret)+'</p>'+
- '<p class="footnote">Результат описательный. Для рабочего русского перевода нет собственных возрастных норм или диагностических порогов.</p>'+
- '<h2>Заключение психолога</h2><p>_________________________________________________________________________</p><p>_________________________________________________________________________</p>';
+ '<h2>Интерпретация</h2><p>Средний балл 1,0-2,9 - низкая, 3,0-5,0 - умеренная, 5,1-7,0 - высокая воспринимаемая поддержка.</p><p>'+E(data.interpret)+'</p>'+
+ '<p class="footnote">Границы уровней являются ориентирами разработчика, а не популяционными или возрастными нормами.</p>'+
+ '';
 document.getElementById("word").disabled=false;document.getElementById("print").disabled=false;
 function X(x){return String(x??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
-function paragraph(t,bold=false,sz=22){
-return '<w:p><w:pPr><w:spacing w:after="110"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="'+sz+'"/>'+(bold?'<w:b/>':'')+'</w:rPr><w:t xml:space="preserve">'+X(t)+'</w:t></w:r></w:p>';
+function paragraph(t,bold=false,sz=22,opt={}){
+ const color=opt.color||"243C30",bg=opt.bg||"";
+ return '<w:p><w:pPr><w:spacing w:after="'+(opt.after??135)+'" w:before="'+(opt.before??0)+'"/><w:keepTogether/>'+(opt.keepNext?'<w:keepNext/>':'')+(bg?'<w:shd w:fill="'+bg+'"/>':'')+'</w:pPr><w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:color w:val="'+color+'"/><w:sz w:val="'+sz+'"/>'+(bold?'<w:b/>':'')+'</w:rPr><w:t xml:space="preserve">'+X(t)+'</w:t></w:r></w:p>';
 }
 function table(headers,rows){
-const widths=[650,7600,1550];
-const cell=(str,i,b)=>'<w:tc><w:tcPr><w:tcW w:w="'+widths[i]+'" w:type="dxa"/>'+(b?'<w:shd w:fill="EAF3EC"/>':'')+'</w:tcPr>'+paragraph(str,b,19)+'</w:tc>';
-const row=(items,b)=>'<w:tr>'+items.map((x,i)=>cell(x,i,b)).join("")+'</w:tr>';
-return '<w:tbl><w:tblPr><w:tblW w:w="9800" w:type="dxa"/><w:tblBorders>'+["top","left","bottom","right","insideH","insideV"].map(k=>'<w:'+k+' w:val="single" w:sz="4" w:color="B8CEBE"/>').join("")+'</w:tblBorders></w:tblPr><w:tblGrid>'+widths.map(n=>'<w:gridCol w:w="'+n+'"/>').join("")+'</w:tblGrid>'+row(headers,true)+rows.map(r=>row(r,false)).join("")+'</w:tbl>';
+ const widths=[560,7740,1370];
+ const cell=(str,i,header,k)=>'<w:tc><w:tcPr><w:tcW w:w="'+widths[i]+'" w:type="dxa"/><w:shd w:fill="'+(header?"E5F0E7":k%2?"F8FBF9":"FFFFFF")+'"/><w:vAlign w:val="center"/><w:tcMar><w:top w:w="70" w:type="dxa"/><w:bottom w:w="70" w:type="dxa"/><w:left w:w="90" w:type="dxa"/><w:right w:w="90" w:type="dxa"/></w:tcMar></w:tcPr>'+paragraph(str,header,19,{after:0,color:header?"205B40":"263E32"})+'</w:tc>';
+ const row=(items,h,i)=>'<w:tr><w:trPr><w:cantSplit/>'+(h?'<w:tblHeader w:val="true"/>':'')+'</w:trPr>'+items.map((x,j)=>cell(x,j,h,i)).join("")+'</w:tr>';
+ return '<w:tbl><w:tblPr><w:tblW w:w="9670" w:type="dxa"/><w:tblLayout w:type="fixed"/><w:tblBorders>'+["top","left","bottom","right","insideH","insideV"].map(k=>'<w:'+k+' w:val="single" w:sz="4" w:color="BBD4C5"/>').join("")+'</w:tblBorders></w:tblPr><w:tblGrid>'+widths.map(n=>'<w:gridCol w:w="'+n+'"/>').join("")+'</w:tblGrid>'+row(headers,true,-1)+rows.map((r,i)=>row(r,false,i)).join("")+'</w:tbl>';
+}
+function scaleCards(items){
+ const colors=["F0E7F7","E5F2E7","E5EFFA"],textColors=["713F91","287349","285B96"];
+ const cell=(item,i)=>'<w:tc><w:tcPr><w:tcW w:w="3223" w:type="dxa"/><w:shd w:fill="'+colors[i]+'"/><w:tcMar><w:top w:w="170" w:type="dxa"/><w:bottom w:w="145" w:type="dxa"/><w:left w:w="155" w:type="dxa"/><w:right w:w="155" w:type="dxa"/></w:tcMar></w:tcPr>'+paragraph(item.name,true,20,{after:65,color:textColors[i]})+paragraph(item.mean.toFixed(2)+" / 7",true,30,{after:45,color:textColors[i]})+'</w:tc>';
+ return '<w:tbl><w:tblPr><w:tblW w:w="9669" w:type="dxa"/><w:tblBorders><w:insideV w:val="single" w:sz="28" w:color="FFFFFF"/></w:tblBorders></w:tblPr><w:tblGrid><w:gridCol w:w="3223"/><w:gridCol w:w="3223"/><w:gridCol w:w="3223"/></w:tblGrid><w:tr><w:trPr><w:cantSplit/></w:trPr>'+items.map(cell).join("")+'</w:tr></w:tbl>';
+}
+function summaryCard(){
+ return '<w:tbl><w:tblPr><w:tblW w:w="9670" w:type="dxa"/></w:tblPr><w:tblGrid><w:gridCol w:w="9670"/></w:tblGrid><w:tr><w:tc><w:tcPr><w:tcW w:w="9670" w:type="dxa"/><w:shd w:fill="ECF6EE"/><w:tcMar><w:top w:w="175" w:type="dxa"/><w:bottom w:w="175" w:type="dxa"/><w:left w:w="210" w:type="dxa"/><w:right w:w="180" w:type="dxa"/></w:tcMar></w:tcPr>'+
+ paragraph("Общий средний показатель",false,20,{color:"335A43",after:90})+
+ paragraph(data.overall.toFixed(2)+" / 7",true,36,{color:"217D51",after:70})+
+ paragraph("Сумма: "+data.raw+" из 84. "+category(data.overall)+" воспринимаемая поддержка.",false,20,{after:0,color:"335A43"})+'</w:tc></w:tr></w:tbl>';
 }
 function buildWord(){
-const xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+
- paragraph("Результаты обследования MSPSS",true,30)+paragraph("ФИО: "+data.name)+paragraph("Дата: "+data.date)+
- paragraph("Общий показатель: "+data.overall.toFixed(2)+" / 7",true,25)+
- paragraph("Результаты по шкалам",true,25)+data.subscales.map(s=>paragraph(s.name+": "+s.mean.toFixed(2)+" / 7")).join("")+
- paragraph("Ответы участника",true,25)+table(["№","Утверждение","Ответ"],data.questions.map((q,i)=>[String(i+1),q,String(data.answers[i])]))+
- paragraph("Интерпретация",true,24)+paragraph(data.interpret)+paragraph("Заключение психолога: ____________________________________________")+
- '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:right="850" w:bottom="850" w:left="850"/></w:sectPr></w:body></w:document>';
+ const xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+
+ paragraph("Результаты обследования",true,34,{color:"1C4B36",after:125})+
+ paragraph("Шкала воспринимаемой социальной поддержки (MSPSS)",false,20,{after:150,color:"4C6859"})+
+ paragraph("ФИО: "+data.name+"     Дата: "+data.date,true,19,{after:170})+
+ summaryCard()+
+ paragraph("Результаты по шкалам",true,26,{before:230,after:115,color:"25754B"})+
+ scaleCards(data.subscales)+
+ paragraph("Индивидуальные ответы",true,26,{before:230,after:115,color:"25754B"})+
+ table(["№","Утверждение","Ответ"],data.questions.map((q,i)=>[String(i+1),q,String(data.answers[i])]))+
+ paragraph("Интерпретация",true,26,{before:230,after:100,color:"25754B"})+
+ paragraph("Ориентиры разработчика: 1,0-2,9 - низкая; 3,0-5,0 - умеренная; 5,1-7,0 - высокая воспринимаемая поддержка.",false,20,{after:100})+
+ paragraph(data.interpret,false,20,{after:100})+
+ paragraph("Это не возрастные или популяционные нормы.",false,18,{color:"697A70",after:75})+
+ '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="820" w:right="860" w:bottom="820" w:left="860"/></w:sectPr></w:body></w:document>';
 const enc=new TextEncoder();
 const entries=[
 ["[Content_Types].xml",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>'],
