@@ -1,0 +1,24 @@
+/* GAD-7 method-specific interface */
+.library-page #modal .psy-gad-note{border-left:4px solid #b1a16d;background:var(--soft);color:var(--ink)}
+.library-page #modal .psy-gad-links,.library-page #modal .psy-gad-tools{display:flex;flex-wrap:wrap;gap:9px;margin:17px 0}
+.library-page #modal .psy-gad-links .btn{display:inline-flex;min-height:44px;align-items:center}
+.library-page #modal .psy-gad-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:18px 0}
+.library-page #modal .psy-gad-item{display:flex;flex-direction:column;justify-content:space-between;gap:12px;min-width:0;padding:14px;border:1px solid var(--line);background:var(--soft);border-radius:11px}
+.library-page #modal .psy-gad-item span{font-size:14px;line-height:1.4}
+.library-page #modal .psy-gad-item b{color:var(--green)}
+.library-page #modal .psy-gad-item select,.library-page #modal .psy-gad-impact select,.library-page #modal .psy-gad-code input{width:100%;min-width:0;padding:11px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:9px;font:600 14px system-ui}
+.library-page #modal .psy-gad-code,.library-page #modal .psy-gad-impact{display:grid;gap:7px;margin:15px 0;max-width:590px}
+.library-page #modal .psy-gad-result{border:1px solid var(--line);background:var(--paper);border-radius:13px;padding:19px;margin:17px 0}
+.library-page #modal .psy-gad-main{background:var(--soft);border-radius:11px;padding:15px;margin:13px 0}
+.library-page #modal .psy-gad-main small,.library-page #modal .psy-gad-main strong{display:block}
+.library-page #modal .psy-gad-main strong{font-size:30px;color:var(--green);margin:7px 0}
+.library-page #modal .psy-gad-main strong span{font-size:16px;color:var(--muted)}
+.library-page #modal .psy-gad-bar{height:10px;overflow:hidden;border-radius:20px;background:var(--line);margin:11px 0}
+.library-page #modal .psy-gad-bar>span{display:block;height:100%;background:var(--green)}
+.library-page #modal .psy-gad-muted{font-size:13px;line-height:1.6;color:var(--muted)}
+.library-page #modal .psy-gad-scroll{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.library-page #modal .psy-gad-scroll table{min-width:590px;width:100%;border-collapse:collapse}
+.library-page #modal .psy-gad-scroll td,.library-page #modal .psy-gad-scroll th{padding:10px;text-align:left;border:1px solid var(--line)}
+.library-page #modal .psy-gad-itemlist{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+.library-page #modal .psy-gad-itemlist>div{padding:12px;background:var(--soft);border-radius:9px;border:1px solid var(--line)}
+@media(max-width:690px){.library-page #modal .psy-gad-grid,.library-page #modal .psy-gad-itemlist{grid-template-columns:1fr}.library-page #modal .psy-gad-tools,.library-page #modal .psy-gad-links{flex-direction:column}.library-page #modal .psy-gad-tools .btn,.library-page #modal .psy-gad-links .btn{width:100%}}
