@@ -116,11 +116,17 @@
  function csv(data){return "\uFEFF"+data.map(row=>row.map(cell).join(";")).join("\r\n")}
  function bind(data,ctx){
   const rows=ctx.rows||[],r=rows[ctx.rowIndex];if(!r)return;
-  const role=variantOf(r);
+  let role=variantOf(r);
   r.snapForms ||= {parent:[],teacher:[]};r.snapForms[role] ||= [];
   const refresh=()=>{const s=document.getElementById("snapScore");if(s)s.innerHTML=result(answersOf(r,role),raterName(role));const g=document.getElementById("snapGroup");if(g)g.innerHTML=formTable(rows)};
   document.getElementById("snapSingleCode")?.addEventListener("input",e=>{r.name=e.target.value});
-  document.getElementById("snapRater")?.addEventListener("change",e=>{r.snapRater=e.target.value;document.querySelector('[data-tab="score"]')?.click()});
+  document.getElementById("snapRater")?.addEventListener("change",e=>{
+    role=e.target.value==="teacher"?"teacher":"parent";r.snapRater=role;r.snapForms[role] ||= [];
+    const a=answersOf(r,role);
+    document.querySelectorAll("[data-snap-answer]").forEach(el=>{const v=a[Number(el.dataset.snapAnswer)];el.value=valid(v)?String(v):"";el.setAttribute("aria-label",raterName(role)+" - ответ на пункт "+(Number(el.dataset.snapAnswer)+1))});
+    const b=document.getElementById("snapClear");if(b)b.textContent="Очистить "+(role==="parent"?"родительскую":"педагогическую")+" форму";
+    refresh();
+  });
   document.querySelectorAll("[data-snap-answer]").forEach(el=>el.addEventListener("change",()=>{
     r.snapForms[role][Number(el.dataset.snapAnswer)]=el.value===""?"":Number(el.value);refresh();
   }));
