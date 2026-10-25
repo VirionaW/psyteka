@@ -23,3 +23,45 @@
 .library-page #modal .psy-mspss-scroll td,.library-page #modal .psy-mspss-scroll th{border:1px solid var(--line);padding:9px}
 .library-page #modal .psy-mspss-table td:last-child{min-width:218px;font-size:11px;white-space:nowrap}
 @media(max-width:780px){.library-page #modal .psy-mspss-grid,.library-page #modal .psy-mspss-scales{grid-template-columns:1fr}.library-page #modal .psy-mspss-links{flex-direction:column}.library-page #modal .psy-mspss-actions .btn{width:100%}}
+/* MSPSS-only pilot: all navigation stays in the four top tabs. */
+.library-page #modal.psy-mspss-example .modalfoot{display:none!important}
+.library-page #modal.psy-mspss-example .modalbody{padding-bottom:34px}
+.library-page #modal.psy-mspss-example .modal-tab{min-height:46px}
+.library-page #modal.psy-mspss-example .psy-mspss-section{max-width:1110px;margin:0 auto}
+.library-page #modal.psy-mspss-example .psy-mspss-section h3{font-size:19px;color:var(--green);margin:25px 0 12px}
+.library-page #modal.psy-mspss-example .psy-mspss-section h3:first-child{margin-top:0}
+.library-page #modal.psy-mspss-example .psy-mspss-section p{line-height:1.65}
+.library-page #modal.psy-mspss-example .psy-mspss-section ol{padding-left:24px}
+.library-page #modal.psy-mspss-example .psy-mspss-section ol li{margin-bottom:9px;line-height:1.65}
+.library-page #modal.psy-mspss-example .psy-mspss-download{margin:25px 0 10px}
+.library-page #modal.psy-mspss-example .psy-mspss-download .btn{display:inline-flex;align-items:center;min-height:44px}
+.library-page #modal.psy-mspss-example .psy-mspss-blank-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin:0 0 18px}
+.library-page #modal.psy-mspss-example .psy-mspss-blank-head h3{margin:0 0 4px}
+.library-page #modal.psy-mspss-example .psy-mspss-blank-head p{margin:0}
+.library-page #modal.psy-mspss-example .psy-mspss-blank-head .btn{display:inline-flex;align-items:center;min-height:43px}
+.library-page #modal.psy-mspss-example .psy-mspss-blank-scroll,
+.library-page #modal.psy-mspss-example .psy-mspss-key-wrap{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin:15px 0 18px}
+.library-page #modal.psy-mspss-example .psy-mspss-key,
+.library-page #modal.psy-mspss-example .psy-mspss-blank-table{width:100%;border-collapse:collapse;text-align:left;color:var(--ink);font-size:14px}
+.library-page #modal.psy-mspss-example .psy-mspss-key th,
+.library-page #modal.psy-mspss-example .psy-mspss-key td,
+.library-page #modal.psy-mspss-example .psy-mspss-blank-table th,
+.library-page #modal.psy-mspss-example .psy-mspss-blank-table td{border-bottom:1px solid var(--line);padding:11px 10px;vertical-align:middle}
+.library-page #modal.psy-mspss-example .psy-mspss-key th,
+.library-page #modal.psy-mspss-example .psy-mspss-blank-table th{background:var(--soft);font-weight:700}
+.library-page #modal.psy-mspss-example .psy-mspss-blank-table th:first-child,
+.library-page #modal.psy-mspss-example .psy-mspss-blank-table td:first-child{width:37px;text-align:center}
+.library-page #modal.psy-mspss-example .psy-mspss-blank-table th:nth-child(n+3),
+.library-page #modal.psy-mspss-example .psy-mspss-blank-table td:nth-child(n+3){width:35px;min-width:31px;padding:8px 4px;text-align:center}
+.library-page #modal.psy-mspss-example .psy-mspss-blank-table td:nth-child(n+3){font-size:22px;line-height:1;color:var(--muted)}
+.library-page #modal.psy-mspss-example .psy-mspss-fields{margin:14px 0}
+.library-page #modal.psy-mspss-example .psy-mspss-scale{padding:12px 14px;border:1px solid var(--line);border-radius:9px;background:var(--soft);font-size:13px}
+@media(max-width:720px){
+ .library-page #modal.psy-mspss-example .method-tabs{gap:2px}
+ .library-page #modal.psy-mspss-example .modal-tab{font-size:13px;padding:10px 12px;min-height:42px}
+ .library-page #modal.psy-mspss-example .psy-mspss-blank-head{align-items:stretch;flex-direction:column}
+ .library-page #modal.psy-mspss-example .psy-mspss-blank-head .btn{width:100%;justify-content:center}
+ .library-page #modal.psy-mspss-example .psy-mspss-blank-table{min-width:700px}
+ .library-page #modal.psy-mspss-example .psy-mspss-key{min-width:450px}
+ .library-page #modal.psy-mspss-example .psy-mspss-section h3{font-size:18px}
+}
