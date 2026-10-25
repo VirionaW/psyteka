@@ -70,7 +70,7 @@
  }
  const alphabet=(rows)=>rows.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||"","ru",{sensitivity:"base"}));
  function group(rows){
-  const ordered=alphabet(rows);
+  const ordered=alphabet(rows).filter(r=>r.name?.trim()||score(d,r.answers));
   return '<section class="psy-mspss-group"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>ФИО</th><th>Общий / 7</th><th>Семья</th><th>Друзья</th><th>Значимый человек</th></tr></thead><tbody>'+
   ordered.map((r,i)=>{const z=score(d,r.answers);const v=id=>z?z.subscales.find(s=>s.id===id).mean.toFixed(2):"—";return '<tr><td>'+esc(r.name||"Не указан")+'</td><td>'+(z?z.mean.toFixed(2):"Не участвовал")+'</td><td>'+v("family")+'</td><td>'+v("friends")+'</td><td>'+v("other")+'</td></tr>'}).join("")+
   '</tbody></table></div><p class="psy-mspss-small">Отсутствующие результаты не учитываются при подсчете класса.</p></section>';
@@ -83,7 +83,7 @@
       '<label class="psy-mspss-label" for="mspssBulkNames">Добавить участников</label><textarea id="mspssBulkNames" rows="5" placeholder="Иванов Иван&#10;Петрова Мария"></textarea>'+
       '<button type="button" class="btn primary psy-mspss-add" id="mspssAddNames">Добавить в список</button>'+
       '<button type="button" class="btn psy-mspss-sort" id="mspssSort">По алфавиту А - Я</button>'+
-      '<div class="psy-mspss-person-list">'+rows.map((u,i)=>'<div class="psy-mspss-person-row '+(i===ctx.rowIndex?"active":"")+'"><button type="button" class="psy-mspss-person '+(i===ctx.rowIndex?"active":"")+'" data-mspss-person="'+i+'"><span>'+esc(u.name||"Участник без ФИО")+'</span><small>'+done(u.answers)+'/12</small></button><button type="button" class="psy-mspss-delete-person" title="Удалить участника" aria-label="Удалить '+esc(u.name||"участника")+'" data-mspss-delete="'+i+'">×</button></div>').join("")+'</div>'+
+      '<div class="psy-mspss-person-list">'+rows.map((u,i)=>(u.name?.trim()||done(u.answers))?'<div class="psy-mspss-person-row '+(i===ctx.rowIndex?"active":"")+'"><button type="button" class="psy-mspss-person '+(i===ctx.rowIndex?"active":"")+'" data-mspss-person="'+i+'"><span>'+esc(u.name||"Участник без ФИО")+'</span><small>'+done(u.answers)+'/12</small></button><button type="button" class="psy-mspss-delete-person" title="Удалить участника" aria-label="Удалить '+esc(u.name||"участника")+'" data-mspss-delete="'+i+'">×</button></div>':'').join("")+'</div>'+
       '<button type="button" class="btn psy-mspss-delete-all" id="mspssDeleteAll">Удалить всех участников</button>'+
       '</aside><div class="psy-mspss-entry">';
   }else h+='<div class="psy-mspss-entry">';
@@ -153,6 +153,7 @@
   document.getElementById("mspssCurrentName")?.addEventListener("input",e=>{
     r.name=e.target.value;
     const selected=document.querySelector(".psy-mspss-person.active span");if(selected)selected.textContent=r.name||"Участник";
+    updateFooter();
   });
   document.querySelectorAll("[data-mspss-person]").forEach(el=>{
     el.addEventListener("click",()=>ctx.onSelect?.(Number(el.dataset.mspssPerson)));
