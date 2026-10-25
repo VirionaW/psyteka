@@ -1,0 +1,30 @@
+/* Лесенка В. Г. Щур — единство портфолио и наблюдения */
+.library-page #modal .psy-ladder-links{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0 22px}
+.library-page #modal .psy-ladder-links a{display:inline-flex;align-items:center;justify-content:center;min-height:43px}
+.library-page #modal .psy-ladder-warning{border-left:4px solid #d9a439!important;background:color-mix(in srgb,#ffdf91 20%,var(--paper));color:var(--ink)}
+.library-page #modal .psy-ladder-paper{margin:18px auto;border:1px solid #d0e1d4;border-radius:15px;max-width:800px;padding:15px;background:#fff}
+.library-page #modal .psy-ladder-paper svg{display:block;width:100%;height:auto}
+.library-page #modal .psy-ladder-selector{max-width:620px;margin:12px auto;padding:12px;border:1px solid #c6d9ce;border-radius:14px;background:#fff}
+.library-page #modal .psy-ladder-selector svg{display:block;width:100%;height:auto}
+.library-page #modal .psy-ladder-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:17px 0 23px}
+.library-page #modal .psy-ladder-facts>div{display:flex;flex-direction:column;gap:6px;padding:15px;background:var(--soft);border:1px solid var(--line);border-radius:12px}
+.library-page #modal .psy-ladder-facts b{color:var(--green);font-size:23px}
+.library-page #modal .psy-ladder-facts span{font-size:12px;color:var(--muted)}
+.library-page #modal .psy-ladder-selects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:15px 0 20px}
+.library-page #modal .psy-ladder-choice{display:flex;flex-direction:column;gap:8px;background:var(--soft);border:1px solid var(--line);padding:15px;border-radius:13px}
+.library-page #modal .psy-ladder-choice strong{font-size:15px;color:var(--ink)}
+.library-page #modal .psy-ladder-choice small{color:var(--muted);font-size:12px}
+.library-page #modal .psy-ladder-choice select,.library-page #modal .psy-ladder-notes select,.library-page #modal .psy-ladder-notes textarea{width:100%;min-width:0;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);padding:11px;font:500 14px system-ui}
+.library-page #modal .psy-ladder-choice select:focus-visible,.library-page #modal .psy-ladder-notes textarea:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.library-page #modal .psy-ladder-notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0 19px}
+.library-page #modal .psy-ladder-notes label{display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--ink)}
+.library-page #modal .psy-ladder-notes label:first-child{grid-column:span 2}
+.library-page #modal .psy-ladder-notes textarea{min-height:90px;resize:vertical}
+.library-page #modal .psy-ladder-result{border:1px solid var(--line);border-radius:15px;background:var(--paper);padding:19px;margin:18px 0}
+.library-page #modal .psy-ladder-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:15px 0}
+.library-page #modal .psy-ladder-stat{border:1px solid var(--line);border-radius:11px;background:var(--soft);padding:12px;display:flex;flex-direction:column;gap:6px}
+.library-page #modal .psy-ladder-stat span,.library-page #modal .psy-ladder-stat small{font-size:12px;color:var(--muted)}
+.library-page #modal .psy-ladder-stat strong{font-size:22px;color:var(--green)}
+.library-page #modal .psy-ladder-actions{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0}
+@media(max-width:850px){.library-page #modal .psy-ladder-selects,.library-page #modal .psy-ladder-notes,.library-page #modal .psy-ladder-facts{grid-template-columns:1fr}.library-page #modal .psy-ladder-notes label:first-child{grid-column:span 1}.library-page #modal .psy-ladder-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.library-page #modal .psy-ladder-stats{grid-template-columns:1fr}.library-page #modal .psy-ladder-links{flex-direction:column}.library-page #modal .psy-ladder-paper{padding:7px}}
