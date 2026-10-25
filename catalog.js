@@ -21,6 +21,7 @@ const descriptors={"Дерево (Человечки на дереве)":"Выб
 const sources={"Дерево (Человечки на дереве)":"https://psyjournals.ru/journals/bppe/archive/2017_n1/Dontsov_Dontsov","Vanderbilt Assessment Scales":"https://nichq.org/downloadable/nichq-vanderbilt-assessment-scales/","Оценка школьной мотивации":"https://psy.1sept.ru/article.php?ID=200100907","SCARED":"https://www.pediatricbipolar.pitt.edu/resources/instruments","RCADS-47":"https://rcads.ucla.edu/","Сильные стороны и трудности (SDQ)":"https://www.sdqinfo.org/","Шкала самооценки Розенберга (RSES)":"https://socy.umd.edu/about-us/rosenberg-self-esteem-scale","Индекс хорошего самочувствия WHO-5":"https://www.who.int/publications/m/item/WHO-UCN-MSD-MHE-2024.01"};
 
 const verifiedFormats={
+ "Корректурная проба Бурдона - Анфимова":"Диагностическая буквенная проба",
  "Школа зверей":"Рисуночная методика",
  "Что мне нравится в школе":"Рисуночная методика",
  "Рисунок семьи":"Проективная рисуночная методика",
@@ -45,6 +46,7 @@ const verifiedFormats={
 };
 const knownTaskCounts={
  "Дерево (Человечки на дереве)":"1 стимульный рисунок, 2 выбора",
+ "Корректурная проба Бурдона - Анфимова":"900 знаков, 5 минут",
  "Школа зверей":"1 рисунок",
  "Что мне нравится в школе":"1 рисунок",
  "Рисунок семьи":"1 рисунок",
