@@ -84,7 +84,7 @@ function calculator(data,ctx){
  let html='<div class="notice psy-soc-warning">Только положительные выборы для совместной работы. Вводите коды, а не ФИО. Все данные находятся в текущей вкладке браузера и не отправляются на сервер.</div>'+
  '<div class="psy-soc-manage"><label>Текущий участник<select id="participantSelect">'+rows.map((r,i)=>'<option value="'+i+'" '+(i===selected?'selected':'')+'>'+esc(safeCode(r,i))+'</option>').join('')+'</select></label>'+
  '<label>Код участника<input id="participantName" maxlength="36" value="'+esc(row.name||"")+'" placeholder="'+esc(safeCode(row,selected))+'"></label>'+
- '<button class="btn" id="addParticipant">Добавить ученика</button></div>'+
+ '<button class="btn" id="addParticipant">Добавить ученика</button></div><details class="psy-soc-bulk"><summary>Быстро добавить список кодов класса</summary><p>Укажите коды участников, по одному на строке. Можно использовать У-01, У-02 и так далее. ФИО здесь не требуются.</p><textarea id="socioBulkCodes" rows="5" placeholder="У-01&#10;У-02&#10;У-03"></textarea><button class="btn" id="socioBulkAdd">Добавить коды из списка</button></details>'+ 
  '<p class="psy-soc-small">Добавьте полный список класса. Для каждого полученного бланка установите отметку ниже; если бланка нет, оставьте ее снятой.</p>';
  if(n){
   html+='<div class="psy-soc-editor"><label class="psy-soc-toggle"><input type="checkbox" id="socioResponded" '+(row.responded===true?'checked':'')+'> Бланк этого ученика получен</label>'+
@@ -103,6 +103,17 @@ function bind(data,ctx){
  const rows=ctx.rows||[],selected=ctx.rowIndex||0,row=rows[selected];
  if(!row)return;
  const refresh=()=>{const el=document.getElementById("socioSummary");if(el)el.innerHTML=summary(current(rows))};
+ document.getElementById("socioBulkAdd")?.addEventListener("click",()=>{
+  const raw=document.getElementById("socioBulkCodes")?.value||"";
+  const codes=raw.split(/[\n,;]+/).map(x=>x.trim()).filter(Boolean);
+  if(!codes.length)return;
+  const currentCodes=new Set(rows.map((r,i)=>safeCode(r,i)));
+  if(rows.length===1&&!rows[0].name&&!rows[0].responded&&!rows[0].answers?.length){rows.splice(0,1);currentCodes.clear()}
+  let added=0;
+  for(const c of codes){const code=c.slice(0,36);if(currentCodes.has(code))continue;rows.push({name:code,answers:[],responded:false});currentCodes.add(code);added++}
+  if(!added){alert("Новых кодов нет. Проверьте совпадения.");return}
+  document.getElementById("participantSelect")?.dispatchEvent(new Event("change",{bubbles:true}));
+ });
  const alertEl=document.getElementById("socioAlert");
  document.getElementById("socioResponded")?.addEventListener("change",e=>{
   row.responded=!!e.target.checked;
@@ -131,10 +142,10 @@ function bind(data,ctx){
   document.querySelectorAll("[data-socio-choice]").forEach(x=>{x.value="";x.disabled=true});refresh();
  });
  document.getElementById("socioCSV")?.addEventListener("click",()=>{
-  const z=current(rows);download("Социометрия_сводка.csv",csv([["Код","Бланк получен","Получено выборов","Сделано выборов","Взаимных партнеров"],...z.codes.map((c,i)=>[c,rows[i].responded===true?"Да":"Нет",z.received[i],rows[i].responded===true?z.sent[i]:"",z.mutual[i]])]),"text/csv;charset=utf-8");
+  const z=current(rows);if(z.errors.length){alert("Исправьте повторяющиеся коды и ошибки выборов.");return}download("Социометрия_сводка.csv",csv([["Код","Бланк получен","Получено выборов","Сделано выборов","Взаимных партнеров"],...z.codes.map((c,i)=>[c,rows[i].responded===true?"Да":"Нет",z.received[i],rows[i].responded===true?z.sent[i]:"",z.mutual[i]])]),"text/csv;charset=utf-8");
  });
  document.getElementById("socioMatrix")?.addEventListener("click",()=>{
-  const z=current(rows);download("Социометрия_матрица.csv",csv([["От / к",...z.codes],...z.codes.map((c,i)=>[c,...z.arcs[i].map((v,j)=>i===j?"":v)])]),"text/csv;charset=utf-8");
+  const z=current(rows);if(z.errors.length){alert("Исправьте повторяющиеся коды и ошибки выборов.");return}download("Социометрия_матрица.csv",csv([["От / к",...z.codes],...z.codes.map((c,i)=>[c,...z.arcs[i].map((v,j)=>i===j?"":v)])]),"text/csv;charset=utf-8");
  });
  document.getElementById("socioReport")?.addEventListener("click",()=>{
   const z=current(rows);if(z.errors.length){alert("Исправьте ошибки кодов и выборов перед выгрузкой.");return}
