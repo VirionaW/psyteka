@@ -1,0 +1,56 @@
+/* Психотека: текстовая навигация и бесшовные иллюстрации разделов.
+   Не затрагиваем иллюстрации методик из архивов. */
+.library-page #sidebar .navgroup > .navicon,
+.library-page #sidebar .info-tree .navicon,
+.library-page #sidebar .psy-art-topic,
+.library-page #sidebar .info-link > span[aria-hidden="true"]{display:none!important}
+.library-page #sidebar .navgroup{gap:0!important;min-height:46px;align-items:center}
+.library-page #sidebar .navgroup .nav-chevron{margin-left:auto}
+.library-page #sidebar .topic-btn{gap:0!important}
+.library-page #sidebar .info-tree .topic-btn{gap:0!important}
+.library-page #sidebar .navgroup,
+.library-page #sidebar .section-toggle{padding-left:13px!important;padding-right:11px!important}
+.library-page #sidebar .info-tree .navgroup,
+.library-page #sidebar .info-tree .topic-btn{padding-left:9px!important}
+.library-page .hero{isolation:isolate;align-items:center!important}
+.library-page .hero .hero-art{
+  flex:0 0 clamp(225px,26vw,345px)!important;
+  width:clamp(225px,26vw,345px)!important;
+  height:clamp(225px,26vw,345px)!important;
+  background-color:transparent!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  outline:0!important;
+  background-size:300% 200%!important;
+  opacity:.98!important;
+  mix-blend-mode:multiply!important;
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 54%,rgba(0,0,0,.9) 63%,transparent 83%);
+  mask-image:radial-gradient(ellipse at center,#000 54%,rgba(0,0,0,.9) 63%,transparent 83%);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  animation:none!important;transform:none!important;
+}
+.library-page .hero .hero-art:hover{animation:none!important;transform:none!important}
+html.dark .library-page .hero .hero-art{
+ background-color:transparent!important;
+ border:0!important;box-shadow:none!important;
+ mix-blend-mode:screen!important;
+ opacity:.88!important;
+}
+@media(max-width:850px){
+ .library-page .hero .hero-art{
+  flex-basis:clamp(160px,24vw,245px)!important;
+  width:clamp(160px,24vw,245px)!important;
+  height:clamp(160px,24vw,245px)!important;
+ }
+}
+@media(max-width:650px){
+ .library-page .hero{gap:4px!important}
+ .library-page .hero .hero-art{
+  flex-basis:clamp(105px,32vw,175px)!important;
+  width:clamp(105px,32vw,175px)!important;
+  height:clamp(105px,32vw,175px)!important;
+  margin:0 -16px 0 -6px!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .library-page .hero .hero-art{animation:none!important;transition:none!important}
+}
