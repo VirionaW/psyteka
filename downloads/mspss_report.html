@@ -1,0 +1,82 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Результаты обследования — MSPSS</title>
+<style>
+@page{size:A4;margin:15mm}
+*{box-sizing:border-box}body{margin:0;background:#f4f8f5;color:#243c2f;font:16px/1.58 Arial,"Liberation Sans",sans-serif}
+.toolbar{position:sticky;top:0;z-index:3;background:white;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px max(20px,calc((100vw - 1020px)/2));border-bottom:1px solid #d5e2d8}
+.toolbar strong{color:#20593d}.actions{display:flex;gap:10px;flex-wrap:wrap}
+.actions button{appearance:none;background:#267c56;border:1px solid #267c56;color:white;font:700 14px Arial;padding:11px 19px;border-radius:9px;cursor:pointer}
+.actions .secondary{color:#257750;background:white}
+.page{max-width:990px;margin:23px auto 70px;padding:39px 46px;background:white;border:1px solid #d6e6da;border-radius:14px}
+h1{font-size:27px;line-height:1.25;color:#1c4c36;margin:0 0 12px}h2{font-size:21px;color:#27774c;margin:29px 0 11px}
+.meta{display:flex;gap:27px;flex-wrap:wrap;margin:15px 0}
+.value{background:#eff7f1;border:1px solid #d5e7da;padding:19px;border-radius:12px;margin:18px 0}
+.value strong{font-size:31px;color:#1f7b50}
+.scales{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-top:19px}
+.scale{padding:14px 16px;border-radius:11px;border:1px solid #d5e2d8}
+.scale h3{font-size:15px;margin:0 0 9px}.scale strong{font-size:24px}
+.scale.other{background:#f1eafb;color:#603892}.scale.family{background:#e8f4e7;color:#297246}.scale.friends{background:#e7f1ff;color:#275b99}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}th{text-align:left;background:#e9f3eb}th,td{padding:9px 11px;border:1px solid #cbdcd0}
+.footnote{font-size:13px;color:#576b5f}
+@media(max-width:670px){.page{margin:0;padding:20px;border:0;border-radius:0}.scales{grid-template-columns:1fr}.toolbar{padding:12px 15px}h1{font-size:23px}}
+@media print{html,body{background:white}.toolbar{display:none}.page{padding:0;margin:0;border:0;max-width:none}h1{font-size:20pt}h2{font-size:14pt;break-after:avoid}.scales{grid-template-columns:repeat(3,1fr)}.scale{print-color-adjust:exact;-webkit-print-color-adjust:exact}.value{print-color-adjust:exact;-webkit-print-color-adjust:exact}tr{break-inside:avoid}table{font-size:10pt}p{font-size:10.5pt}}
+</style></head><body><header class="toolbar"><strong>Индивидуальный отчёт</strong><div class="actions"><button class="secondary" id="word" disabled>Скачать Word</button><button onclick="window.print()" id="print" disabled>Распечатать / PDF</button></div></header>
+<main class="page" id="report"><p>Загрузка результата...</p></main>
+<script>
+(function(){
+"use strict";
+const data=window.opener && window.opener.PSY_MSPSS && window.opener.PSY_MSPSS.pendingReport;
+const E=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+if(!data){document.getElementById("report").innerHTML='<h1>Результат не найден</h1><p>Откройте отчёт из раздела «Обработка» в Психотеке.</p>';return;}
+document.getElementById("report").innerHTML='<h1>Результаты обследования</h1>'+
+ '<p>Шкала воспринимаемой социальной поддержки (MSPSS)</p><div class="meta"><span><strong>ФИО:</strong> '+E(data.name)+'</span><span><strong>Дата:</strong> '+E(data.date)+'</span></div>'+
+ '<section class="value"><div>Общий средний показатель</div><strong>'+data.overall.toFixed(2)+' / 7</strong><div>Сумма ответов: '+data.raw+' из 84</div></section>'+
+ '<h2>Шкалы</h2><div class="scales">'+data.subscales.map((s,i)=>'<div class="scale '+["other","family","friends"][i]+'"><h3>'+E(s.name)+'</h3><strong>'+s.mean.toFixed(2)+' / 7</strong></div>').join("")+'</div>'+
+ '<h2>Индивидуальные ответы</h2><table><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+
+ data.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(q)+'</td><td>'+data.answers[i]+'</td></tr>').join("")+'</tbody></table>'+
+ '<h2>Интерпретация</h2><p>'+E(data.interpret)+'</p>'+
+ '<p class="footnote">Результат описательный. Для рабочего русского перевода нет собственных возрастных норм или диагностических порогов.</p>'+
+ '<h2>Заключение психолога</h2><p>_________________________________________________________________________</p><p>_________________________________________________________________________</p>';
+document.getElementById("word").disabled=false;document.getElementById("print").disabled=false;
+function X(x){return String(x??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function paragraph(t,bold=false,sz=22){
+return '<w:p><w:pPr><w:spacing w:after="110"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="'+sz+'"/>'+(bold?'<w:b/>':'')+'</w:rPr><w:t xml:space="preserve">'+X(t)+'</w:t></w:r></w:p>';
+}
+function table(headers,rows){
+const widths=[650,7600,1550];
+const cell=(str,i,b)=>'<w:tc><w:tcPr><w:tcW w:w="'+widths[i]+'" w:type="dxa"/>'+(b?'<w:shd w:fill="EAF3EC"/>':'')+'</w:tcPr>'+paragraph(str,b,19)+'</w:tc>';
+const row=(items,b)=>'<w:tr>'+items.map((x,i)=>cell(x,i,b)).join("")+'</w:tr>';
+return '<w:tbl><w:tblPr><w:tblW w:w="9800" w:type="dxa"/><w:tblBorders>'+["top","left","bottom","right","insideH","insideV"].map(k=>'<w:'+k+' w:val="single" w:sz="4" w:color="B8CEBE"/>').join("")+'</w:tblBorders></w:tblPr><w:tblGrid>'+widths.map(n=>'<w:gridCol w:w="'+n+'"/>').join("")+'</w:tblGrid>'+row(headers,true)+rows.map(r=>row(r,false)).join("")+'</w:tbl>';
+}
+function buildWord(){
+const xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+
+ paragraph("Результаты обследования MSPSS",true,30)+paragraph("ФИО: "+data.name)+paragraph("Дата: "+data.date)+
+ paragraph("Общий показатель: "+data.overall.toFixed(2)+" / 7",true,25)+
+ paragraph("Результаты по шкалам",true,25)+data.subscales.map(s=>paragraph(s.name+": "+s.mean.toFixed(2)+" / 7")).join("")+
+ paragraph("Ответы участника",true,25)+table(["№","Утверждение","Ответ"],data.questions.map((q,i)=>[String(i+1),q,String(data.answers[i])]))+
+ paragraph("Интерпретация",true,24)+paragraph(data.interpret)+paragraph("Заключение психолога: ____________________________________________")+
+ '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:right="850" w:bottom="850" w:left="850"/></w:sectPr></w:body></w:document>';
+const enc=new TextEncoder();
+const entries=[
+["[Content_Types].xml",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>'],
+["_rels/.rels",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'],
+["word/document.xml",xml]];
+const bytes=[],dirs=[];
+const put16=(arr,n)=>arr.push(n&255,(n>>>8)&255);
+const put32=(arr,n)=>arr.push(n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255);
+function crc(bin){let c=-1;for(const v of bin){c^=v;for(let j=0;j<8;j++)c=(c>>>1)^((c&1)?0xedb88320:0)}return (c^(-1))>>>0;}
+for(const [name,content] of entries){
+const n=enc.encode(name),v=enc.encode(content),check=crc(v),offset=bytes.length;
+put32(bytes,0x04034b50);put16(bytes,20);put16(bytes,0);put16(bytes,0);put16(bytes,0);put16(bytes,0);
+put32(bytes,check);put32(bytes,v.length);put32(bytes,v.length);put16(bytes,n.length);put16(bytes,0);bytes.push(...n,...v);
+put32(dirs,0x02014b50);put16(dirs,20);put16(dirs,20);put16(dirs,0);put16(dirs,0);put16(dirs,0);put16(dirs,0);
+put32(dirs,check);put32(dirs,v.length);put32(dirs,v.length);put16(dirs,n.length);put16(dirs,0);put16(dirs,0);put16(dirs,0);put16(dirs,0);put32(dirs,0);put32(dirs,offset);dirs.push(...n);
+}
+const start=bytes.length;bytes.push(...dirs);put32(bytes,0x06054b50);put16(bytes,0);put16(bytes,0);put16(bytes,entries.length);put16(bytes,entries.length);put32(bytes,dirs.length);put32(bytes,start);put16(bytes,0);
+const blob=new Blob([new Uint8Array(bytes)],{type:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+const url=URL.createObjectURL(blob),a=document.createElement("a");
+a.href=url;a.download="MSPSS_отчет_"+data.name.replace(/[\\/:*?"<>|]/g,"_").slice(0,60)+".docx";
+document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+document.getElementById("word").addEventListener("click",buildWord);
+})();
+</script></body></html>
