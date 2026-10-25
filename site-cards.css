@@ -1,4 +1,4 @@
-/* Карточки методик — краткое предметное описание непосредственно под названием */
+/* Карточки методик – краткое предметное описание непосредственно под названием */
 .library-page .method .head{gap:14px;align-items:flex-start}
 .library-page .method .head>div:last-child{min-width:0;flex:1}
 .library-page .method h3{font-weight:800;line-height:1.25;margin:0 0 7px;overflow-wrap:anywhere}

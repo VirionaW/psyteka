@@ -150,7 +150,7 @@ html.dark .method[data-kind="cognitive"] .glyph{background:linear-gradient(145de
 html.dark .stimulus-paper .word-matrix,.stimulus-paper .odd-print-item{color:#264a35}
 @media(max-width:720px){.memory-stages{grid-template-columns:repeat(2,1fr)}.memory-intrusions,.odd-entry-fields,.odd-results{grid-template-columns:1fr}.odd-entry{padding:13px}.special-score-feedback{padding:14px}}
 
-/* Полный диагностический рабочий цикл — существующие карточки SCARED / WHO-5 */
+/* Полный диагностический рабочий цикл – существующие карточки SCARED / WHO-5 */
 .diagnostic-intro{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin:10px 0 20px}
 .diagnostic-intro .btn{margin:8px 0}
 .diag-code{max-width:365px;margin:14px 0}

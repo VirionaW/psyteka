@@ -9,7 +9,7 @@
  [4,21,2,19,24,5,20,3,25,9,10,16,11,7,15,17,13,14,1,6,12,18,22,23,8],
  [12,4,25,2,1,10,5,9,20,18,3,21,16,11,22,23,8,7,24,19,15,13,6,17,14]
  ];
- const WORDS=["лес","хлеб","окно","стул","вода","брат","конь","гриб","игла","мёд"];
+ const WORDS=["лес","хлеб","окно","стул","вода","брат","конь","гриб","игла","мед"];
  const STAGES=["1","2","3","4","5","Отср."];
  if(TABLES.length!==5||TABLES.some(t=>t.length!==25||new Set(t).size!==25||t.some(x=>x<1||x>25)))throw Error("Ошибка исходных таблиц");
  function schulteStats(rows){
@@ -19,7 +19,7 @@
    if(!time&&!errors){if(note)problems.push("Таблица "+(i+1)+": указано наблюдение, но нет времени и ошибок.");return}
    const t=Number(time),e=Number(errors);
    if(!time||!errors||!Number.isFinite(t)||t<=0||t>1800||!Number.isInteger(e)||e<0||e>25){
-    problems.push("Таблица "+(i+1)+": введите время от 0,1 до 1800 секунд и число ошибок 0–25.");return
+    problems.push("Таблица "+(i+1)+": введите время от 0,1 до 1800 секунд и число ошибок 0-25.");return
    }
    completed.push({table:i+1,time:t,errors:e,note});
   });
@@ -69,7 +69,7 @@
    showStat("Среднее время (сек.)",fmt(r.mean)),
    showStat("Ошибок всего",r.mistakes),
    showStat("Время серии (сек.)",fmt(r.total)),
-   showStat("Таблица 5 минус таблица 1 (сек.)",r.difference===null?"—":(r.difference>=0?"+":"")+fmt(r.difference))
+   showStat("Таблица 5 минус таблица 1 (сек.)",r.difference===null?"–":(r.difference>=0?"+":"")+fmt(r.difference))
   ].join("");
   const rows=r.completed.map(o=>"<tr><td>"+o.table+"</td><td>"+fmt(o.time)+"</td><td>"+o.errors+"</td><td>"+esc(o.note)+"</td></tr>").join("");
   target.innerHTML='<h4>Сводка по таблицам Шульте</h4><div class="ck-stats">'+stats+'</div><div class="ck-scroll"><table class="ck-record"><thead><tr><th>№</th><th>Сек.</th><th>Ошибки</th><th>Наблюдение</th></tr></thead><tbody>'+rows+'</tbody></table></div><p>'+(r.full?"Проведена вся серия из пяти таблиц.":"Это частичный протокол: среднее рассчитано только для заполненных таблиц.")+' Изменение времени описывает динамику в данной серии, но не является автоматической мерой утомляемости или клиническим уровнем.</p><button type="button" id="ckCopySchulte" class="ck-copy">Скопировать обезличенную сводку</button>';
@@ -90,7 +90,7 @@
  }
  $("ckMemoryCalc").onclick=()=>{
   const r=memoryStats(readMemory(),$("ckDelay").value),target=$("ckMemoryResult");if(r.error){target.textContent=r.error;return}
-  const stats=[showStat("Этапов проведено",r.stages.length+" / 6"),showStat("Среднее из проведенных 1–5",r.mean===null?"—":fmt(r.mean)),showStat("После отсрочки",r.delayed?r.stages.find(x=>x.step===6).count+" из 10":"не проведено")].join("");
+  const stats=[showStat("Этапов проведено",r.stages.length+" / 6"),showStat("Среднее из проведенных 1-5",r.mean===null?"–":fmt(r.mean)),showStat("После отсрочки",r.delayed?r.stages.find(x=>x.step===6).count+" из 10":"не проведено")].join("");
   const list=r.stages.map(x=>"<tr><td>"+esc(STAGES[x.step-1])+"</td><td>"+x.count+" из 10</td></tr>").join("");
   const observations=$("ckExtra").value.trim();
   target.innerHTML='<h4>Кривая воспроизведения</h4><div class="ck-stats">'+stats+'</div>'+curveSVG(r.stages)+'<div class="ck-scroll"><table class="ck-record"><thead><tr><th>Этап</th><th>Верных слов</th></tr></thead><tbody>'+list+'</tbody></table></div>'+(r.delayed?'<p>Фактическая отсрочка: '+r.minutes+' мин.</p>':'')+(observations?'<p><b>Посторонние включения и повторы:</b> '+esc(observations)+'</p>':'')+'<p>'+(r.full?"Шесть этапов зафиксированы.":"Часть этапов не отмечена как проведенная; это не нулевые результаты.")+' Используйте описательную динамику, ошибки и наблюдение. Универсальные нормативные пороги для этого рабочего списка не применяются.</p><button type="button" id="ckCopyMemory" class="ck-copy">Скопировать обезличенную сводку</button>';
@@ -118,9 +118,9 @@
  function buildDoc(type){
   let parts="";
   if(type==="memory"){
-   parts=p("Заучивание 10 слов — рабочий протокол",true)+p("Основа: А. Р. Лурия. Список из архива «Психотеки» не нормирован.")+p("Код участника ____________  Дата ____________  Отсрочка ______ минут")+p("Психолог читает одинаковый список слов 5 раз, отмечает воспроизведенные слова, затем проводит отсроченную пробу.")+wtable([["Слово",...STAGES],...WORDS.map(w=>[w,...STAGES.map(()=>"□")]),["Верно",...STAGES.map(()=>"____")],["Привнесения",...STAGES.map(()=>"____")]])+p("Наблюдения: __________________________________________________________");
+   parts=p("Заучивание 10 слов – рабочий протокол",true)+p("Основа: А. Р. Лурия. Список из архива «Психотеки» не нормирован.")+p("Код участника ____________  Дата ____________  Отсрочка ______ минут")+p("Психолог читает одинаковый список слов 5 раз, отмечает воспроизведенные слова, затем проводит отсроченную пробу.")+wtable([["Слово",...STAGES],...WORDS.map(w=>[w,...STAGES.map(()=>"□")]),["Верно",...STAGES.map(()=>"____")],["Привнесения",...STAGES.map(()=>"____")]])+p("Наблюдения: __________________________________________________________");
   }else{
-   parts=p("Таблицы Шульте — рабочий комплект",true)+p("Пять исходных рабочих матриц «Психотеки». Каждая содержит числа 1–25. Записывайте время и ошибки отдельно.");
+   parts=p("Таблицы Шульте – рабочий комплект",true)+p("Пять исходных рабочих матриц «Психотеки». Каждая содержит числа 1-25. Записывайте время и ошибки отдельно.");
    TABLES.forEach((nums,i)=>{
     if(i)parts+=pageBreak();
     parts+=p("Таблица "+(i+1),true)+p("Код ________  Время ______ сек.  Ошибки ______")+wtable(Array.from({length:5},(_,r)=>nums.slice(r*5,r*5+5).map(String)))+p("Наблюдения: _______________________________________________");

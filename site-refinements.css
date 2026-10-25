@@ -1,4 +1,4 @@
-/* Психотека · единый светлый/тёмный интерфейс, версия 26.10.2026 */
+/* Психотека · единый светлый/темный интерфейс, версия 26.10.2026 */
 :root{color-scheme:light}
 html.dark{color-scheme:dark}
 .site-hero{width:100%!important;max-width:none!important;margin:0!important;border-radius:0!important;padding:0!important;min-height:0!important;display:block!important;isolation:isolate}
@@ -64,7 +64,7 @@ html.dark{color-scheme:dark}
 .library-page .method[data-visual-kind=scale]{border-top:3px solid #65a383}
 .library-page .method[data-visual-kind=scale] .glyph,.library-page .method[data-visual-kind=scale] .tag{background:#e7f3ec!important;color:#2b7753!important}
 .library-page .method[data-visual-kind=scale] .glyph svg{stroke:#2b7753}
-/* Высококонтрастная тёмная тема */
+/* Высококонтрастная темная тема */
 html.dark body.site-landing{background:#10221e!important;color:#eaf4ed!important}
 html.dark .site-header{background:#192e29!important;color:#eaf4ed!important;border-color:#375347!important}
 html.dark .site-header nav a:not(.site-btn){color:#eef6ef!important}
@@ -217,7 +217,7 @@ html.dark .library-page .resource-hub .resource-deck{color:#bfd9c9!important}
 html.dark .site-account .kicker{color:#a6ddaf!important}
 html.dark .account-card .account-actions a.site-btn{background:#315e48!important;border-color:#6da47b!important;color:#fff!important}
 
-/* Специализированные методические комплекты: тёмный режим без белых островков */
+/* Специализированные методические комплекты: темный режим без белых островков */
 html.dark body.kit-body,html.dark body.kit-page,html.dark body.cognitive-page,html.dark body.family-page{
  background:#10221d!important;color:#edf7ef!important
 }
@@ -289,4 +289,72 @@ html.dark .ck-mini-chart circle{fill:#a8e5ba}
  html.dark :is(.kit-print-region,.ck-paper-card,#kitPrintRegion,#skPrint,#ckPrint,#familyPrint){
  background:#fff!important;color:#111!important
  }
+}
+
+/* Единая палитра: главный сайт и библиотека используют одинаковые фоны и акценты */
+:root{
+ --psy-light-bg:#f7faf6;
+ --psy-dark-bg:#12251f;
+ --psy-dark-surface:#1d372f;
+ --psy-dark-border:#446654;
+ --psy-dark-ink:#edf7ef;
+}
+html.dark body.site-landing,
+html.dark body.library-page{background:var(--psy-dark-bg)!important;color:var(--psy-dark-ink)!important}
+html.dark :is(.site-editorial,.site-sections,.site-account){background:var(--psy-dark-bg)!important}
+html.dark :is(.site-editorial,.site-sections) article:not(.section-card),
+html.dark .site-account .account-card{background:var(--psy-dark-surface)!important;border-color:var(--psy-dark-border)!important}
+html.dark .site-header{background:#192e29!important;border-bottom:1px solid var(--psy-dark-border)!important}
+html.dark .site-header :is(a,button):focus-visible,
+html.dark .library-page :is(a,button,input,select):focus-visible{outline:3px solid #d2b27c!important;outline-offset:3px}
+/* Контрастный логотип: знак всегда на светлой подложке, подпись в футере светлая */
+.site-footer .psy-footer-brand{display:flex;align-items:center;gap:13px}
+.site-footer .psy-footer-brand .psy-brand-mark{
+ display:block;width:46px!important;height:46px!important;min-width:46px;object-fit:contain;
+ background:#f7faf4;border:1px solid #c5d9cb;border-radius:12px;padding:5px;
+ filter:none!important;box-shadow:0 0 0 1px #ffffff18
+}
+.site-footer .psy-footer-brand .psy-wordmark,
+.site-footer .psy-footer-brand .psy-wordmark span{color:#f8faf5!important;background:none!important;
+ display:inline!important;width:auto!important;height:auto!important;font-size:24px!important;line-height:1.25!important;
+ border:0!important;padding:0!important;margin:0!important}
+.site-footer .psy-footer-brand .psy-wordmark .psy-word-end{color:#ddc6a4!important}
+html.dark .site-footer{background:#0c201a!important}
+html.dark .site-footer p{color:#c9dfd0!important}
+html.dark .site-logo .psy-brand-mark,
+html.dark .psy-library-brand .psy-brand-mark,
+html.dark .gate-top-logo .psy-brand-mark{
+ background:#f7faf4!important;border-radius:12px!important;padding:4px!important;filter:none!important;
+ box-shadow:0 0 0 1px #829d8b55!important
+}
+html.dark .site-logo .psy-wordmark,.dark .site-logo .psy-wordmark span{color:#f7faf3!important}
+html.dark .site-logo .psy-wordmark .psy-word-end{color:#e2c7aa!important}
+/* Кнопка темы - крайний элемент навигации. Повторяет палитру переключателя в библиотеке */
+.site-header nav{display:flex!important;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:10px!important}
+.site-header .site-theme-btn{margin-left:4px;order:9;padding:10px 14px;border-radius:13px;
+ border:1px solid #c7dfce;background:#f1f7f2;color:#235640;min-height:43px;
+ font:750 13px/1.3 system-ui;white-space:nowrap;box-shadow:none}
+.site-header .site-theme-btn:hover{background:#e3f0e6;border-color:#81ae8d}
+.site-header .site-theme-icon{font-size:19px}
+html.dark .site-header .site-theme-btn{
+ background:#203b31!important;border:1px solid #668e72!important;
+ color:#f2f8f2!important
+}
+html.dark .site-header .site-theme-btn:hover{background:#2b503b!important}
+html.dark .site-header .site-btn.small{background:#34825d;border-color:#469a73;color:#fff!important}
+html.dark .library-page .theme-switch{background:#203b31!important;color:#f2f8f2!important;border-color:#668e72!important}
+html.dark .library-page .theme-switch #themeLabel{color:#f2f8f2!important}
+/* Светлые поля и контрастный текст в темных карточках */
+html.dark .library-page .method :is(p,small,.method-card-author,.method-card-summary){color:#cde4d2!important}
+html.dark .library-page .method h3{color:#fff!important}
+html.dark .library-page .tag{background:#314d40!important;color:#dbf0df!important}
+/* Подсветки из локального архива: рубрики сохраняют собственные оттенки */
+html.dark .library-page .method[data-visual-kind="draw"]{border-top-color:#dcaa91!important}
+html.dark .library-page .method[data-visual-kind="graph"]{border-top-color:#a3c9ed!important}
+html.dark .library-page .method[data-visual-kind="scale"]{border-top-color:#a5d5ae!important}
+@media(max-width:760px){
+ .site-header nav{gap:7px!important}
+ .site-header .site-theme-btn{order:9}
+ .site-header .site-theme-label{display:none!important}
+ .site-header .site-theme-btn{padding:0;width:43px;height:43px;min-width:43px;min-height:43px}
 }

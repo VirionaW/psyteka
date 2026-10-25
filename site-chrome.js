@@ -6,10 +6,10 @@
   const dark=root.classList.contains("dark");
   doc.querySelectorAll(".site-theme-btn").forEach(btn=>{
    btn.setAttribute("aria-pressed",String(dark));
-   btn.setAttribute("aria-label",dark?"Включить светлую тему":"Включить тёмную тему");
+   btn.setAttribute("aria-label",dark?"Включить светлую тему":"Включить темную тему");
    const icon=btn.querySelector(".site-theme-icon"),label=btn.querySelector(".site-theme-label");
    if(icon)icon.textContent=dark?"☀":"☾";
-   if(label)label.textContent=dark?"Светлая тема":"Тёмная тема";
+   if(label)label.textContent=dark?"Светлая тема":"Темная тема";
   });
   const meta=doc.querySelector('meta[name="theme-color"]');
   if(meta)meta.content=dark?"#152826":"#28534a";

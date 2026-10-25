@@ -123,7 +123,7 @@ body.site-landing{background:#f7faf6;color:#173e31}
 .library-page .method .glyph svg{width:53px;height:53px}
 .library-page .method .actions .btn{font-size:14px;min-height:46px;padding:10px 14px}
 .library-page .tag{font-size:12px!important}
-/* Привязка палитры к текущему разделу, без зелёного фона в ОВЗ/детском саду */
+/* Привязка палитры к текущему разделу, без зеленого фона в ОВЗ/детском саду */
 .library-page .sidebar{border-right-color:var(--area-border)!important}
 .library-page .navgroup.active,.library-page .topic-btn.active{box-shadow:inset 3px 0 var(--area)}
 .library-page .hero{background:linear-gradient(107deg,var(--area-hero1),var(--area-hero2))!important}
@@ -179,7 +179,7 @@ body.site-landing{background:#f7faf6;color:#173e31}
 }
 @media print{.psy-brand-mark{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
 
-/* Старые стили логотипа оформляли каждый span как зелёную квадратную иконку.
+/* Старые стили логотипа оформляли каждый span как зеленую квадратную иконку.
    Переопределяем их для новой словесной части эмблемы во всех шапках. */
 .site-logo .psy-wordmark,.library-page .brand .psy-wordmark{
  display:inline-flex!important;align-items:baseline!important;flex-wrap:nowrap!important;

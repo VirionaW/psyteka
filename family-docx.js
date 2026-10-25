@@ -11,7 +11,7 @@
  }
  function documentXML(type){
   const form=document.getElementById(type+"Form");
-  let body=paragraph(names[type]+" — качественный протокол",true);
+  let body=paragraph(names[type]+" – качественный протокол",true);
   body+=paragraph("Материал «Психотеки» на основе рабочего комплекта архива. Не вводить персональные данные несовершеннолетних.");
   body+=paragraph("Код участника: __________________   Дата: __________   Возраст: ______");
   for(const [key,label] of fields[type]){

@@ -54,7 +54,7 @@
    e.preventDefault();
    const data={};
    Object.entries(fields).forEach(([id,key])=>{const el=qs("#"+id);data[key]=el?el.value.trim():""});
-   flash(save(PROFILE,data)?"Профиль сохранён на этом устройстве.":"Браузер запретил локальное сохранение.");
+   flash(save(PROFILE,data)?"Профиль сохранен на этом устройстве.":"Браузер запретил локальное сохранение.");
    drawAvatar();window.dispatchEvent(new Event("psy-profile-change"));
   });
  }else if(page==="settings"){

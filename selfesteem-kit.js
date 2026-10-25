@@ -25,7 +25,7 @@
  };
  $('skLadderClear').onclick=()=>{marks={self:null,adult:null,wish:null};$('skLadderNote').value='';$('skLadderResult').innerHTML='';drawLadder()};
  const table=$('skDemboRows');
- table.innerHTML=labels.map((name,i)=>'<tr data-scale="'+i+'"><td>'+escapeHTML(name)+(i===0?' <small>(тренировочная)</small>':'')+'</td><td><input inputmode="numeric" type="number" min="0" max="100" step="1" aria-label="Сейчас: '+escapeHTML(name)+'" placeholder="0–100"></td><td><input inputmode="numeric" type="number" min="0" max="100" step="1" aria-label="Хочу: '+escapeHTML(name)+'" placeholder="0–100"></td><td class="sk-difference">—</td></tr>').join('');
+ table.innerHTML=labels.map((name,i)=>'<tr data-scale="'+i+'"><td>'+escapeHTML(name)+(i===0?' <small>(тренировочная)</small>':'')+'</td><td><input inputmode="numeric" type="number" min="0" max="100" step="1" aria-label="Сейчас: '+escapeHTML(name)+'" placeholder="0-100"></td><td><input inputmode="numeric" type="number" min="0" max="100" step="1" aria-label="Хочу: '+escapeHTML(name)+'" placeholder="0-100"></td><td class="sk-difference">–</td></tr>').join('');
  function readScales(){
   return [...table.querySelectorAll('tr')].map((tr,i)=>{
    const inputs=[...tr.querySelectorAll('input')];
@@ -39,7 +39,7 @@
  }
  table.addEventListener('input',()=>{
   const rows=readScales();
-  [...table.querySelectorAll('tr')].forEach((tr,i)=>{const r=rows[i];tr.querySelector('.sk-difference').textContent=r.invalid?'Проверьте':'—';if(r.delta!==null&&r.delta!==undefined)tr.querySelector('.sk-difference').textContent=(r.delta>=0?'+':'')+r.delta});
+  [...table.querySelectorAll('tr')].forEach((tr,i)=>{const r=rows[i];tr.querySelector('.sk-difference').textContent=r.invalid?'Проверьте':'–';if(r.delta!==null&&r.delta!==undefined)tr.querySelector('.sk-difference').textContent=(r.delta>=0?'+':'')+r.delta});
   $('skDemboResult').innerHTML='';
  });
  $('skDemboResultBtn').onclick=()=>{
@@ -49,21 +49,21 @@
   const completed=vals.filter(x=>x.now!==null);
   if(!completed.length){$('skDemboResult').textContent='Введите хотя бы одну заполненную шкалу.';return}
   const analytical=completed.filter(x=>x.index!==0);
-  const avg=k=>analytical.length?(analytical.reduce((sum,r)=>sum+r[k],0)/analytical.length).toFixed(1).replace('.',','):'—';
+  const avg=k=>analytical.length?(analytical.reduce((sum,r)=>sum+r[k],0)/analytical.length).toFixed(1).replace('.',','):'–';
   const all=analytical.length===6;
   const summary='<h4>Сырые показатели</h4><div class="sk-result-grid"><div><b>'+analytical.length+' / 6</b><span>Заполнено основных шкал (без «Здоровья»)</span></div><div><b>'+avg('now')+'</b><span>Средняя самооценка (мм)</span></div><div><b>'+avg('want')+'</b><span>Средний уровень притязаний (мм)</span></div><div><b>'+avg('delta')+'</b><span>Средняя разница (мм)</span></div></div>';
   const rows=completed.map(r=>'<tr><td>'+escapeHTML(r.name)+'</td><td>'+r.now+'</td><td>'+r.want+'</td><td>'+(r.delta>=0?'+':'')+r.delta+'</td></tr>').join('');
   $('skDemboResult').innerHTML=summary+'<div class="sk-tablebox"><table class="sk-table"><thead><tr><th>Шкала</th><th>Сейчас</th><th>Хочу</th><th>Разница</th></tr></thead><tbody>'+rows+'</tbody></table></div><p>'+(all?'Заполнены все шесть основных шкал.':'Профиль частичный: средние рассчитаны только по введенным основным шкалам.')+' Уровни «низкий», «норма», «высокий» не присваиваются без подтвержденных возрастных нормативов выбранной версии.</p><button type="button" class="sk-inline-copy">Скопировать сводку</button>';
-  $('skDemboResult').querySelector('.sk-inline-copy').onclick=()=>copyText('Дембо — Рубинштейн. '+completed.map(r=>r.name+': сейчас '+r.now+', хочу '+r.want+', разница '+r.delta).join('; ')+'. Основных шкал: '+analytical.length+'/6. Средние сырые: '+avg('now')+' / '+avg('want')+' / '+avg('delta')+'. Без нормативной интерпретации.');
+  $('skDemboResult').querySelector('.sk-inline-copy').onclick=()=>copyText('Дембо – Рубинштейн. '+completed.map(r=>r.name+': сейчас '+r.now+', хочу '+r.want+', разница '+r.delta).join('; ')+'. Основных шкал: '+analytical.length+'/6. Средние сырые: '+avg('now')+' / '+avg('want')+' / '+avg('delta')+'. Без нормативной интерпретации.');
  };
- $('skDemboClear').onclick=()=>{table.querySelectorAll('input').forEach(x=>x.value='');table.querySelectorAll('.sk-difference').forEach(x=>x.textContent='—');$('skDemboResult').innerHTML=''};
+ $('skDemboClear').onclick=()=>{table.querySelectorAll('input').forEach(x=>x.value='');table.querySelectorAll('.sk-difference').forEach(x=>x.textContent='–');$('skDemboResult').innerHTML=''};
  function copyText(text){
   if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).catch(()=>fallbackCopy(text));return}
   fallbackCopy(text);
  }
  function fallbackCopy(text){const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();try{document.execCommand('copy')}catch(_){}t.remove()}
- const ladderPaper=()=>'<h1>«Лесенка» · бланк</h1><p>Код участника: __________  Возраст: _____  Дата: __________</p><p>Покажи, где ты поставил(а) бы себя на лесенке. Психолог записывает пояснения отдельно.</p><div class="sk-paper-ladder">'+Array.from({length:7},(_,i)=>'<div class="sk-paper-step" style="height:'+(15+(i+1)*12)+'%">'+(i+1)+'</div>').join('')+'</div><h2>Протокол беседы для психолога</h2><p>На какую ступеньку поставил себя: _______</p><p>Куда, по мнению ребенка, поставил бы его взрослый: _______</p><p>Желаемая позиция (если спрашивали): _______</p><p>Почему ребенок сделал такой выбор:</p><div class="sk-paper-line"></div><div class="sk-paper-line"></div><p class="sk-paper-note">Рабочий бланк «Психотеки». Нумерация: 1 — нижняя, 7 — верхняя. Уровни не определяются автоматически.</p>';
- const demboPaper=()=>'<h1>Дембо — Рубинштейн · рабочий бланк</h1><p>Код участника: __________  Возраст: _____  Дата: __________</p><p>На каждой шкале короткой чертой отметь, как оцениваешь себя сейчас, знаком × — желаемый уровень. Верх — 100, низ — 0.</p><div class="sk-paper-lines">'+labels.map(x=>'<div class="sk-paper-item"><div class="sk-paper-stick"></div><span class="sk-paper-label">'+escapeHTML(x)+'</span></div>').join('')+'</div><p class="sk-paper-note">Семь линий по 100 мм при печати A4 100% без подгонки. Первая шкала «Здоровье» может использоваться как тренировочная.</p>';
+ const ladderPaper=()=>'<h1>«Лесенка» · бланк</h1><p>Код участника: __________  Возраст: _____  Дата: __________</p><p>Покажи, где ты поставил(а) бы себя на лесенке. Психолог записывает пояснения отдельно.</p><div class="sk-paper-ladder">'+Array.from({length:7},(_,i)=>'<div class="sk-paper-step" style="height:'+(15+(i+1)*12)+'%">'+(i+1)+'</div>').join('')+'</div><h2>Протокол беседы для психолога</h2><p>На какую ступеньку поставил себя: _______</p><p>Куда, по мнению ребенка, поставил бы его взрослый: _______</p><p>Желаемая позиция (если спрашивали): _______</p><p>Почему ребенок сделал такой выбор:</p><div class="sk-paper-line"></div><div class="sk-paper-line"></div><p class="sk-paper-note">Рабочий бланк «Психотеки». Нумерация: 1 – нижняя, 7 – верхняя. Уровни не определяются автоматически.</p>';
+ const demboPaper=()=>'<h1>Дембо – Рубинштейн · рабочий бланк</h1><p>Код участника: __________  Возраст: _____  Дата: __________</p><p>На каждой шкале короткой чертой отметь, как оцениваешь себя сейчас, знаком × – желаемый уровень. Верх – 100, низ – 0.</p><div class="sk-paper-lines">'+labels.map(x=>'<div class="sk-paper-item"><div class="sk-paper-stick"></div><span class="sk-paper-label">'+escapeHTML(x)+'</span></div>').join('')+'</div><p class="sk-paper-note">Семь линий по 100 мм при печати A4 100% без подгонки. Первая шкала «Здоровье» может использоваться как тренировочная.</p>';
  document.querySelectorAll('[data-sk-print]').forEach(b=>b.onclick=()=>{
   const box=$('skPrint');box.innerHTML=b.dataset.skPrint==='dembo'?demboPaper():ladderPaper();
   box.hidden=false;box.setAttribute('aria-hidden','false');
@@ -96,7 +96,7 @@
  document.querySelectorAll('[data-sk-word]').forEach(b=>b.onclick=()=>{
   const ladder=b.dataset.skWord==='ladder';
   if(ladder)makeWord('psyteka_lesenka_rabochiy_protokol',paragraph('Лесенка · рабочий протокол',true)+paragraph('В. Г. Щур. Рисунок с 7 ступенями распечатайте кнопкой «Распечатать бланк» на сайте.')+paragraph('Код _______ Возраст _______ Дата _______')+paragraph('Ступенька ребенка _______ / 7; как оценил бы взрослый (со слов ребенка) _______ / 7; желаемая _______ / 7')+paragraph('Аргументация и наблюдения:')+paragraph('____________________________________________________________')+paragraph('____________________________________________________________')+paragraph('____________________________________________________________')+paragraph('Показатели качественные. Интерпретируйте по проверенному руководству выбранной версии.'));
-  else makeWord('psyteka_dembo_protokol',paragraph('Дембо — Рубинштейн · рабочий протокол',true)+paragraph('Модификация А. М. Прихожан. Для графического бланка с линиями по 100 мм используйте «Распечатать семь шкал» на сайте.')+paragraph('Код _________ Возраст _________ Дата __________')+paragraph('Для каждой шкалы: текущая оценка, притязания и разность; первая шкала «Здоровье» может быть тренировочной.')+wTable(labels)+paragraph('Наблюдения: _______________________________________________________')+paragraph('Не присваивайте возрастные нормативные категории без руководства выбранной версии.'));
+  else makeWord('psyteka_dembo_protokol',paragraph('Дембо – Рубинштейн · рабочий протокол',true)+paragraph('Модификация А. М. Прихожан. Для графического бланка с линиями по 100 мм используйте «Распечатать семь шкал» на сайте.')+paragraph('Код _________ Возраст _________ Дата __________')+paragraph('Для каждой шкалы: текущая оценка, притязания и разность; первая шкала «Здоровье» может быть тренировочной.')+wTable(labels)+paragraph('Наблюдения: _______________________________________________________')+paragraph('Не присваивайте возрастные нормативные категории без руководства выбранной версии.'));
  });
  currentTab(new URLSearchParams(location.search).get('method'));
 })();

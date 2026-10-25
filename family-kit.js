@@ -19,7 +19,7 @@
   return definitions[name].fields.map(([id,label])=>({id,label,value:form.querySelector('[name="'+id+'"]').value.trim()}));
  }
  function protocol(name){
-  return ["ПСИХОТЕКА — КАЧЕСТВЕННЫЙ ПРОТОКОЛ",definitions[name].title,"Рабочая версия. Без ФИО и автоматической диагностики.","",...fieldData(name).flatMap(({label,value})=>[label+":",value||"Не заполнено",""]),"Не интерпретировать отдельные элементы рисунка как диагноз. Дополнительная беседа и проверка гипотез обязательны."].join("\n");
+  return ["ПСИХОТЕКА – КАЧЕСТВЕННЫЙ ПРОТОКОЛ",definitions[name].title,"Рабочая версия. Без ФИО и автоматической диагностики.","",...fieldData(name).flatMap(({label,value})=>[label+":",value||"Не заполнено",""]),"Не интерпретировать отдельные элементы рисунка как диагноз. Дополнительная беседа и проверка гипотез обязательны."].join("\n");
  }
  function feedback(name,msg){const p=document.querySelector('[data-feedback="'+name+'"]');if(p)p.textContent=msg}
  function fallbackCopy(txt){const t=document.createElement("textarea");t.value=txt;document.body.appendChild(t);t.select();let ok=false;try{ok=document.execCommand("copy")}catch(_){}t.remove();return ok}
@@ -43,10 +43,10 @@
   const cfg=definitions[kind];
   if(mode==="blank"){
    return kind==="sociogram"?
-    '<div class="fp-sheet"><h1>Семейная социограмма — бланк</h1><p>Код участника ___________ Дата ___________</p><p>'+esc(cfg.prompt)+'</p><div class="fp-circle" aria-label="Пустой круг диаметром 110 мм"></div><div class="fp-footer">Круг диаметром 110 мм при печати в масштабе 100%. Используйте указанные условия предъявления.</div></div>':
-    '<div class="fp-sheet"><h1>Рисунок семьи — бланк</h1><p>Код участника ___________ Дата ___________</p><p>'+esc(cfg.prompt)+'</p><div class="fp-drawing"></div><div class="fp-footer">Рисунок сопровождается беседой. Поле остается пустым — ничего не навязывается.</div></div>';
+    '<div class="fp-sheet"><h1>Семейная социограмма – бланк</h1><p>Код участника ___________ Дата ___________</p><p>'+esc(cfg.prompt)+'</p><div class="fp-circle" aria-label="Пустой круг диаметром 110 мм"></div><div class="fp-footer">Круг диаметром 110 мм при печати в масштабе 100%. Используйте указанные условия предъявления.</div></div>':
+    '<div class="fp-sheet"><h1>Рисунок семьи – бланк</h1><p>Код участника ___________ Дата ___________</p><p>'+esc(cfg.prompt)+'</p><div class="fp-drawing"></div><div class="fp-footer">Рисунок сопровождается беседой. Поле остается пустым – ничего не навязывается.</div></div>';
   }
-  return '<div class="fp-sheet"><h1>'+esc(cfg.title)+' — протокол</h1><p>Код участника ___________ Возраст ______ Дата ___________</p>'+cfg.fields.map(([,label])=>'<div class="fp-prompt">'+esc(label)+'</div><div class="fp-line"></div>').join("")+'<p class="fp-footer">Качественная фиксация, без нормативных оценок. Наблюдения отдельно от гипотез.</p></div>';
+  return '<div class="fp-sheet"><h1>'+esc(cfg.title)+' – протокол</h1><p>Код участника ___________ Возраст ______ Дата ___________</p>'+cfg.fields.map(([,label])=>'<div class="fp-prompt">'+esc(label)+'</div><div class="fp-line"></div>').join("")+'<p class="fp-footer">Качественная фиксация, без нормативных оценок. Наблюдения отдельно от гипотез.</p></div>';
  }
  function printNow(kind,mode){
   region.innerHTML=printContent(kind,mode);
