@@ -1,0 +1,93 @@
+/* Психотека | две качественные рисуночные методики школьной адаптации */
+.ad-page{background:#f7faf6;color:#1b4435}
+.ad-main{max-width:1180px;margin:0 auto;padding:28px 25px 65px}
+.ad-breadcrumb{display:flex;gap:14px;align-items:center;flex-wrap:wrap;color:#6a8172;font-size:13px;font-weight:750;margin:0 0 19px}
+.ad-breadcrumb a{color:#2b7952;text-decoration:none}
+.ad-breadcrumb a:hover{text-decoration:underline}
+.ad-hero{display:flex;align-items:center;justify-content:space-between;gap:25px;border-radius:23px;
+background:linear-gradient(109deg,#1b4d3b,#367c5e);padding:37px 42px;min-height:210px;color:#fff;overflow:hidden}
+.ad-eyebrow,.ad-overline{font-size:12px;font-weight:850;text-transform:uppercase;letter-spacing:1.25px}
+.ad-eyebrow{color:#d1e5d4}
+.ad-hero h1{font-size:clamp(31px,4vw,48px);line-height:1.12;max-width:780px;margin:11px 0 14px}
+.ad-hero p{font-size:16px;color:#e1f0e5;line-height:1.65;max-width:730px;margin:0}
+.ad-hero-symbol{width:150px;height:140px;flex:none;color:#bee2c8;opacity:.8}
+.ad-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:22px 0}
+.ad-tabs button{display:flex;align-items:center;gap:15px;min-height:87px;text-align:left;padding:16px 18px;
+border:1px solid #d1e2d5;border-radius:15px;background:#fff;color:#24513b;cursor:pointer}
+.ad-tabs button[aria-pressed=true]{background:#ecf5ee;border-color:#4f9870;box-shadow:inset 0 0 0 1px #4f9870}
+.ad-tabs button strong{font-size:17px;display:block;line-height:1.35}
+.ad-tabs button small{font-size:12px;display:block;color:#607c68;margin-top:5px}
+.ad-tab-num{flex:none;color:#9c7d58;border:1px solid #dfcbb1;background:#fcf7f0;
+width:45px;height:45px;display:grid;place-items:center;border-radius:13px;font-size:16px;font-weight:850}
+.ad-section{border-radius:22px;border:1px solid #d3e5d8;background:#fff;padding:30px}
+.ad-section[hidden]{display:none!important}
+.ad-title-row{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}
+.ad-title-row h2{font-size:clamp(29px,3vw,40px);margin:10px 0 9px;color:#204933;line-height:1.2}
+.ad-title-row p{max-width:710px;font-size:15px;line-height:1.7;color:#56715e;margin:0}
+.ad-overline{color:#28764e}
+.ad-age{flex:none;border-radius:11px;padding:8px 13px;background:#f5efe6;color:#80664a;font-size:13px;font-weight:750}
+.ad-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0}
+.ad-facts>div{padding:15px 17px;border:1px solid #d7e6da;border-radius:12px;background:#f4f9f4}
+.ad-facts span{display:block;color:#62816f;font-size:12px;margin-bottom:7px}
+.ad-facts b{display:block;color:#23563e;font-size:15px}
+.ad-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.ad-panel{border:1px solid #d9e7db;border-radius:14px;padding:20px;background:#fff}
+.ad-panel:nth-child(2){border-top:3px solid #b79b78}
+.ad-panel h3,.ad-workhead h3{font-size:22px;line-height:1.3;color:#234f3b;margin:2px 0 14px}
+.ad-panel ol,.ad-panel ul{margin:0;padding-left:21px}
+.ad-panel li{font-size:14px;line-height:1.69;color:#4d6a57;margin-bottom:9px}
+.ad-notice{background:#f7f0e7;color:#725940;border:1px solid #e7d3b9;border-radius:13px;
+padding:17px 19px;margin:18px 0;line-height:1.7;font-size:14px}
+.ad-workspace{border:1px solid #d4e3d8;border-radius:17px;overflow:hidden;background:#f9fbf8;margin-top:20px}
+.ad-workhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#edf5ef;border-bottom:1px solid #d5e5d8;padding:19px 22px}
+.ad-workhead h3{margin:6px 0 0}
+.ad-form{padding:22px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.ad-form>label{grid-column:1/-1}
+.ad-form label{display:block;color:#2b5943;font-size:13px;font-weight:750;line-height:1.45}
+.ad-form input,.ad-form textarea{box-sizing:border-box;display:block;width:100%;font:inherit;
+ border:1px solid #cddfd1;border-radius:10px;padding:11px 12px;background:#fff;color:#193c2d;resize:vertical;margin-top:7px}
+.ad-form input:focus,.ad-form textarea:focus{outline:2px solid #8cb99a;outline-offset:1px}
+.ad-actions{display:flex;grid-column:1/-1;flex-wrap:wrap;gap:9px}
+.ad-btn{border:1px solid #2f8159;border-radius:10px;background:#2b7d54;color:#fff;font:750 13px system-ui;
+padding:11px 15px;min-height:42px;cursor:pointer}
+.ad-btn:hover{filter:brightness(.94)}
+.ad-btn.secondary{color:#265f42;background:#fff;border-color:#a2c8ae}
+.ad-btn.quiet{color:#795a3c;background:#fcf9f5;border-color:#d7c2a8}
+.ad-feedback{grid-column:1/-1;color:#31724e;font-size:12px;margin:0}
+.ad-source{border-left:3px solid #b69a73;background:#faf7f2;padding:17px 18px;border-radius:10px;margin-top:20px}
+.ad-source b{color:#6b5036}
+.ad-source p{font-size:13px;line-height:1.68;color:#6d695b}
+.ad-source a{color:#226f48;text-underline-offset:3px}
+.ad-footer{padding:22px 0;display:flex;justify-content:space-between;gap:15px;align-items:center;font-size:12px;color:#617a66}
+.ad-footer a{color:#24794f;text-decoration:none;font-weight:750}
+.ad-footer p{max-width:590px}
+.ad-print-sheet{display:none}
+html.dark .ad-page{background:#12251f!important;color:#ecf6ed!important}
+html.dark .ad-section,html.dark .ad-tabs button,html.dark .ad-panel{background:#20382e!important;color:#eff8f1!important;border-color:#507560!important}
+html.dark .ad-tabs button[aria-pressed=true]{background:#2c533d!important;border-color:#81b491!important}
+html.dark .ad-tabs button strong,html.dark .ad-title-row h2,html.dark .ad-panel h3,html.dark .ad-workhead h3{color:#f1f9f1!important}
+html.dark .ad-title-row p,html.dark .ad-panel li,html.dark .ad-tabs button small{color:#c6ddca!important}
+html.dark .ad-facts>div{background:#2a4937!important;border-color:#597a60!important}
+html.dark .ad-facts :is(span,b){color:#d6e8d9!important}
+html.dark .ad-workspace{background:#1b3228!important;border-color:#4c7255!important}
+html.dark .ad-workhead{background:#2a4a37!important;border-color:#5b8167!important}
+html.dark .ad-form label{color:#edf6ee!important}
+html.dark .ad-form :is(input,textarea){background:#10251c!important;color:#eff9f0!important;border-color:#61886b!important}
+html.dark .ad-notice,html.dark .ad-source{background:#3b3024!important;border-color:#8a7455!important;color:#efdfc7!important}
+html.dark .ad-source :is(b,p){color:#e6d5bb!important}
+html.dark .ad-source a{color:#b2e0bf!important}
+html.dark .ad-btn.secondary{background:#234734!important;color:#f3faf4!important;border-color:#769c80!important}
+html.dark .ad-btn.quiet{background:#483a2a!important;color:#f4e0c3!important;border-color:#8a6d4a!important}
+html.dark .ad-tab-num{background:#43372a;border-color:#7e674e;color:#ead0a4}
+@media(max-width:780px){.ad-main{padding:17px 13px 38px}.ad-hero{padding:27px 22px}.ad-hero-symbol{width:90px}.ad-columns{grid-template-columns:1fr}.ad-section{padding:18px}.ad-facts{grid-template-columns:1fr}.ad-tabs{grid-template-columns:1fr}.ad-form{padding:14px;grid-template-columns:1fr}.ad-workhead{padding:14px}.ad-footer{flex-direction:column;align-items:flex-start}}
+@media(max-width:470px){.ad-hero-symbol{display:none}.ad-title-row{flex-direction:column;gap:10px}.ad-workhead h3{font-size:19px}}
+@page{size:A4 portrait;margin:0}
+@media print{
+ html,body{background:#fff!important;color:#111!important;padding:0!important;margin:0!important}
+ .site-header,.ad-main{display:none!important}
+ .ad-print-sheet{display:block!important;box-sizing:border-box;background:#fff!important;color:#111!important;
+  height:297mm;width:210mm;max-width:210mm;padding:15mm 15mm 14mm;position:relative;page-break-inside:avoid}
+ .ad-print-meta{font-size:11pt;border-bottom:1px solid #888;padding-bottom:8mm}
+ .ad-print-sheet h2{font:700 19pt system-ui,Arial,sans-serif;color:#111;text-align:center;margin:8mm 0 5mm}
+ .ad-print-sheet p{font:12pt system-ui,Arial,sans-serif;color:#333;margin:0}
+}
