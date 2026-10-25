@@ -1,0 +1,28 @@
+/* SEL-WORK-20-2026: original, non-standard questionnaire */
+.library-page #modal .psy-sel-caution{border-left:4px solid #bd954c;background:var(--soft)}
+.library-page #modal .psy-sel-links,.library-page #modal .psy-sel-actions{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.library-page #modal .psy-sel-links .btn,.library-page #modal .psy-sel-actions .btn{display:inline-flex;justify-content:center;align-items:center;min-height:43px}
+.library-page #modal .psy-sel-scroll{width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.library-page #modal .psy-sel-table,.library-page #modal .psy-sel-key,.library-page #modal .psy-sel-group table{width:100%;border-collapse:collapse;font-size:13px}
+.library-page #modal .psy-sel-table th,.library-page #modal .psy-sel-table td,.library-page #modal .psy-sel-key th,.library-page #modal .psy-sel-key td,.library-page #modal .psy-sel-group th,.library-page #modal .psy-sel-group td{padding:9px;border:1px solid var(--line);vertical-align:middle}
+.library-page #modal .psy-sel-table td:nth-child(n+3),.library-page #modal .psy-sel-table th:nth-child(n+3){text-align:center;min-width:35px}
+.library-page #modal .psy-sel-key th,.library-page #modal .psy-sel-group th{text-align:left;background:var(--soft)}
+.library-page #modal .psy-sel-group table{min-width:790px}
+.library-page #modal .psy-sel-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:16px 0 22px}
+.library-page #modal .psy-sel-question{display:flex;flex-direction:column;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:14px;min-width:0}
+.library-page #modal .psy-sel-question>span{font-size:14px;line-height:1.5}
+.library-page #modal .psy-sel-question b{color:var(--green)}
+.library-page #modal .psy-sel-question select,.library-page #modal .psy-sel-code input{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font-size:14px}
+.library-page #modal .psy-sel-code{display:grid;gap:7px;max-width:400px;margin:15px 0}
+.library-page #modal .psy-sel-small{font-size:13px;color:var(--muted);line-height:1.5}
+.library-page #modal .psy-sel-result{border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:20px;margin:21px 0}
+.library-page #modal .psy-sel-total{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;margin:11px 0 18px}
+.library-page #modal .psy-sel-total b{font-size:27px;color:var(--green)}
+.library-page #modal .psy-sel-total span{color:var(--muted)}
+.library-page #modal .psy-sel-scale-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.library-page #modal .psy-sel-scale{border:1px solid var(--line);border-radius:10px;background:var(--soft);padding:11px}
+.library-page #modal .psy-sel-scale>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:7px;font-size:13px}
+.library-page #modal .psy-sel-scale b{white-space:nowrap;color:var(--green)}
+.library-page #modal .psy-sel-meter{height:9px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:9px}
+.library-page #modal .psy-sel-meter span{display:block;height:100%;background:var(--green)}
+@media(max-width:780px){.library-page #modal .psy-sel-grid,.library-page #modal .psy-sel-scale-list{grid-template-columns:1fr}.library-page #modal .psy-sel-links{flex-direction:column}.library-page #modal .psy-sel-actions .btn{width:100%}.library-page #modal .psy-sel-table{min-width:530px}}
