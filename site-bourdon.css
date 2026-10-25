@@ -1,0 +1,33 @@
+/* Корректурная проба Бурдона - Анфимова: единый рабочий комплект */
+.library-page #modal .psy-bourdon-alert{border-left:4px solid #d8a33a;background:color-mix(in srgb,#f8d686 18%,var(--paper))}
+.library-page #modal .psy-bourdon-links{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 19px}
+.library-page #modal .psy-bourdon-links>.btn{min-height:43px;display:inline-flex;align-items:center;justify-content:center}
+.library-page #modal .psy-bourdon-paper{background:#fff;color:#153426;border:1px solid #c2d4c8;border-radius:13px;padding:13px 20px;overflow-x:auto;max-width:900px}
+.library-page #modal .psy-bourdon-paper>p{font-size:12px;color:#285942;margin:0 0 12px}
+.library-page #modal .psy-bourdon-line{display:flex;align-items:center;gap:7px;height:23px;min-width:650px}
+.library-page #modal .psy-bourdon-line>span{color:#648574;min-width:29px;font-size:12px;text-align:right}
+.library-page #modal .psy-bourdon-line>div{display:grid;grid-template-columns:repeat(30,minmax(0,1fr));flex:1}
+.library-page #modal .psy-bourdon-line b{font:700 13px/21px "DejaVu Sans Mono","Courier New",monospace;text-align:center}
+.library-page #modal .psy-bourdon-key{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 23px}
+.library-page #modal .psy-bourdon-key>div{display:flex;flex-direction:column;min-width:135px;flex:1;border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:15px}
+.library-page #modal .psy-bourdon-key b{font-size:24px;color:var(--green)}
+.library-page #modal .psy-bourdon-key span{font-size:13px;color:var(--muted)}
+.library-page #modal .psy-bourdon-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0}
+.library-page #modal .psy-bourdon-minute{background:var(--soft);border:1px solid var(--line);border-radius:15px;padding:17px 18px}
+.library-page #modal .psy-bourdon-minute h4{font-size:18px;margin:0 0 14px;color:var(--green)}
+.library-page #modal .psy-bourdon-minute label{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:7px 0;color:var(--ink);font-size:13px}
+.library-page #modal .psy-bourdon-minute input{width:104px;min-width:0;border:1px solid var(--line);padding:9px;border-radius:9px;background:var(--paper);color:var(--ink);font-size:15px}
+.library-page #modal .psy-bourdon-minute input:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.library-page #modal .psy-bourdon-summary{margin:20px 0;padding:18px;border:1px solid var(--line);border-radius:15px}
+.library-page #modal .psy-bourdon-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.library-page #modal .psy-bourdon-stat{display:flex;flex-direction:column;gap:4px;padding:15px;background:var(--soft);border-radius:13px}
+.library-page #modal .psy-bourdon-stat span{font-size:12px;color:var(--muted)}
+.library-page #modal .psy-bourdon-stat strong{font-size:24px;color:var(--green)}
+.library-page #modal .psy-bourdon-stat small{font-size:12px;color:var(--muted)}
+.library-page #modal .psy-bourdon-bars>div{display:grid;grid-template-columns:64px minmax(80px,1fr) 72px 120px;align-items:center;gap:9px;margin:10px 0;font-size:12px}
+.library-page #modal .psy-bourdon-track{height:12px;background:var(--line);border-radius:15px;overflow:hidden}
+.library-page #modal .psy-bourdon-track i{display:block;height:100%;background:linear-gradient(90deg,#77b6bb,#3d9972);max-width:100%}
+.library-page #modal .psy-bourdon-bars small{color:var(--muted)}
+.library-page #modal .psy-bourdon-actions{display:flex;flex-wrap:wrap;gap:8px;margin:19px 0}
+@media(max-width:800px){.library-page #modal .psy-bourdon-inputs,.library-page #modal .psy-bourdon-stats{grid-template-columns:1fr}.library-page #modal .psy-bourdon-links{flex-direction:column}.library-page #modal .psy-bourdon-minute label{font-size:14px}.library-page #modal .psy-bourdon-bars>div{grid-template-columns:55px minmax(75px,1fr) 61px;gap:6px}.library-page #modal .psy-bourdon-bars small{grid-column:2/4}}
+@media print{.psy-bourdon-paper .psy-bourdon-line{break-inside:avoid}}
