@@ -430,7 +430,7 @@ function bindControls(){
       if(!rows.length)rows.push({name:'',answers:[]});
       const current=rows[rowIndex];
       rows.sort((a,b)=>(a.name||'').localeCompare(b.name||'','ru',{sensitivity:'base'}));
-      rowIndex=Math.max(0,rows.indexOf(current));modeIndices.class=rowIndex;setTab('score');
+      rowIndex=names?.length?0:Math.max(0,rows.indexOf(current));modeIndices.class=rowIndex;setTab('score');
     },
     onDelete:i=>{
       rows.splice(i,1);
