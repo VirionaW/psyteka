@@ -1,0 +1,76 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Результаты класса — MSPSS</title>
+<style>
+@page{size:A4 landscape;margin:13mm}*{box-sizing:border-box}
+body{margin:0;background:#f4f8f5;color:#213e30;font:16px/1.55 Arial,"Liberation Sans",sans-serif}
+.toolbar{position:sticky;top:0;z-index:2;padding:13px max(20px,calc((100vw - 1100px)/2));display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px;border-bottom:1px solid #d2e2d8;background:#fff}
+.toolbar strong{color:#225d41}.actions{display:flex;gap:10px}.actions button{cursor:pointer;background:#287e56;color:#fff;border:1px solid #287e56;border-radius:9px;padding:11px 19px;font:700 14px Arial}.actions .secondary{background:#fff;color:#23744d}
+.sheet{max-width:1100px;margin:24px auto 60px;background:white;border:1px solid #d9e7dc;border-radius:14px;padding:35px 40px}
+h1{font-size:28px;color:#1c4936;margin:0 0 6px}h2{font-size:20px;color:#25754b;margin:25px 0 14px}
+.subtitle{color:#607568;margin:0}.stats{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}
+.stat{flex:1 1 150px;background:#edf6ef;border:1px solid #d1e7d7;border-radius:10px;padding:13px 17px}.stat b{display:block;font-size:24px;color:#26794f}.stat span{font-size:13px;color:#476653}
+table{width:100%;border-collapse:collapse;line-height:1.35}th,td{padding:12px;border:1px solid #cfdfd4;text-align:left}th{background:#e6f0e9;font-size:14px;color:#214b37}th:nth-child(3){background:#eee4f5;color:#674089}th:nth-child(4){background:#e4f3e6;color:#276a43}th:nth-child(5){background:#e5effb;color:#305b92}tbody tr:nth-child(even){background:#f8fbf9}td:first-child{font-weight:700}.absent{color:#99662b;background:#fff3dc}
+.note{font-size:13px;color:#586d5e;margin-top:16px}
+@media(max-width:670px){.sheet{margin:0;padding:16px;border:0}.table-scroll{overflow-x:auto}table{min-width:730px}.toolbar{padding:10px 15px}}
+@media print{body{background:white}.toolbar{display:none}.sheet{margin:0;padding:0;border:0;max-width:none}.stat,th{print-color-adjust:exact;-webkit-print-color-adjust:exact}.stats{margin:16px 0}table{font-size:10pt}th,td{padding:7px}tr{break-inside:avoid}h1{font-size:20pt}}
+</style></head><body>
+<header class="toolbar"><strong>Отчет класса · MSPSS</strong><div class="actions"><button type="button" class="secondary" id="word" disabled>Скачать Word</button><button type="button" id="print" disabled onclick="window.print()">Распечатать</button></div></header>
+<main class="sheet" id="view"><h1>Результаты класса</h1><p>Для просмотра откройте отчет из обработки MSPSS.</p></main>
+<script>
+(function(){
+"use strict";
+const data=window.opener?.PSY_MSPSS?.pendingClassReport;
+const X=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+if(!data||!Array.isArray(data.entries)){return;}
+const people=data.entries,done=people.filter(x=>x.complete),avg=field=>done.length?(done.reduce((a,x)=>a+x[field],0)/done.length).toFixed(2):"—";
+const value=(p,k)=>p.complete?p[k].toFixed(2):"—";
+document.getElementById("view").innerHTML='<h1>Результаты класса</h1><p class="subtitle">Шкала воспринимаемой социальной поддержки (MSPSS) · '+X(data.date)+'</p>'+
+ '<div class="stats"><div class="stat"><b>'+people.length+'</b><span>Всего участников в списке</span></div><div class="stat"><b>'+done.length+'</b><span>Заполнили опросник</span></div><div class="stat"><b>'+avg("mean")+'</b><span>Общий средний показатель участвовавших</span></div></div>'+
+ '<h2>Сводные результаты</h2><div class="table-scroll"><table><thead><tr><th>ФИО</th><th>Общий / 7</th><th>Значимый человек</th><th>Семья</th><th>Друзья</th></tr></thead><tbody>'+
+ people.map(p=>'<tr><td>'+X(p.name)+'</td><td '+(p.complete?'':'class="absent"')+'>'+(p.complete?value(p,"mean"):"Не участвовал")+'</td><td>'+value(p,"other")+'</td><td>'+value(p,"family")+'</td><td>'+value(p,"friends")+'</td></tr>').join("")+'</tbody></table></div>'+
+ '<p class="note">Средние показатели рассчитываются только для участников со всеми 12 ответами. Пропущенные обследования не включаются в средний показатель класса.</p>';
+document.getElementById("word").disabled=false;document.getElementById("print").disabled=false;
+function para(t,opt={}){
+ const size=opt.size||21,color=opt.color||"294636",bold=opt.bold||false;
+ return '<w:p><w:pPr><w:spacing w:before="'+(opt.before||0)+'" w:after="'+(opt.after??125)+'"/><w:keepTogether/>'+(opt.keepNext?'<w:keepNext/>':'')+'</w:pPr><w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="'+size+'"/><w:color w:val="'+color+'"/>'+(bold?'<w:b/>':'')+'</w:rPr><w:t xml:space="preserve">'+X(t)+'</w:t></w:r></w:p>';
+}
+function makeTable(){
+ const widths=[3650,1350,1850,1350,1350];
+ const heads=["ФИО","Общий / 7","Значимый человек","Семья","Друзья"];
+ const fill=["E7F0EA","E7F0EA","EEE5F6","E5F2E8","E8F0FA"];
+ const cell=(v,j,header,i)=>'<w:tc><w:tcPr><w:tcW w:w="'+widths[j]+'" w:type="dxa"/><w:shd w:fill="'+(header?fill[j]:i%2?"F7FBF8":"FFFFFF")+'"/><w:vAlign w:val="center"/><w:tcMar><w:top w:w="105" w:type="dxa"/><w:bottom w:w="105" w:type="dxa"/><w:left w:w="100" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tcMar></w:tcPr>'+para(v,{size:19,bold:header,after:0,color:header?"265D42":"294636"})+'</w:tc>';
+ const row=(a,header,i)=>'<w:tr><w:trPr><w:cantSplit/>'+(header?'<w:tblHeader w:val="true"/>':'')+'</w:trPr>'+a.map((x,j)=>cell(x,j,header,i)).join("")+'</w:tr>';
+ return '<w:tbl><w:tblPr><w:tblW w:w="9550" w:type="dxa"/><w:tblBorders>'+["top","bottom","left","right","insideH","insideV"].map(k=>'<w:'+k+' w:val="single" w:sz="4" w:color="BFD4C5"/>').join("")+'</w:tblBorders></w:tblPr><w:tblGrid>'+widths.map(n=>'<w:gridCol w:w="'+n+'"/>').join("")+'</w:tblGrid>'+row(heads,true,-1)+people.map((p,i)=>row([p.name,p.complete?value(p,"mean"):"Не участвовал",value(p,"other"),value(p,"family"),value(p,"friends")],false,i)).join("")+'</w:tbl>';
+}
+function downloadWord(){
+ const xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+
+  para("Результаты класса", {size:32,bold:true,color:"205F42",after:80})+
+  para("Шкала воспринимаемой социальной поддержки (MSPSS) · "+data.date,{size:19,after:160})+
+  para("Участников в списке: "+people.length+"     Заполнили: "+done.length+"     Средний показатель: "+avg("mean"),{size:22,bold:true,after:200,color:"217A50"})+
+  para("Сводные результаты",{size:25,bold:true,color:"267A51",after:140})+makeTable()+
+  para("В расчет среднего включены только полностью заполненные анкеты.",{size:18,before:145,color:"637A69"})+
+ '<w:sectPr><w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="730" w:right="770" w:bottom="730" w:left="770"/></w:sectPr></w:body></w:document>';
+ const en=new TextEncoder();
+ const entries=[
+ ["[Content_Types].xml",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>'],
+ ["_rels/.rels",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'],
+ ["word/document.xml",xml]
+ ];
+ const bytes=[],central=[];
+ const p16=(a,n)=>a.push(n&255,(n>>>8)&255),p32=(a,n)=>a.push(n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255);
+ function crc(a){let c=-1;for(const b of a){c^=b;for(let j=0;j<8;j++)c=(c>>>1)^((c&1)?0xedb88320:0)}return(c^(-1))>>>0}
+ for(const [name,contents] of entries){
+  const n=en.encode(name),body=en.encode(contents),check=crc(body),start=bytes.length;
+  p32(bytes,0x04034b50);p16(bytes,20);p16(bytes,0);p16(bytes,0);p16(bytes,0);p16(bytes,0);p16(bytes,0);
+  p32(bytes,check);p32(bytes,body.length);p32(bytes,body.length);p16(bytes,n.length);p16(bytes,0);bytes.push(...n,...body);
+  p32(central,0x02014b50);p16(central,20);p16(central,20);p16(central,0);p16(central,0);p16(central,0);p16(central,0);
+  p32(central,check);p32(central,body.length);p32(central,body.length);p16(central,n.length);p16(central,0);p16(central,0);p16(central,0);p16(central,0);p32(central,0);p32(central,start);central.push(...n);
+ }
+ const offset=bytes.length;bytes.push(...central);p32(bytes,0x06054b50);p16(bytes,0);p16(bytes,0);p16(bytes,entries.length);p16(bytes,entries.length);p32(bytes,central.length);p32(bytes,offset);p16(bytes,0);
+ const blob=new Blob([new Uint8Array(bytes)],{type:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+ const url=URL.createObjectURL(blob),anchor=document.createElement("a");
+ anchor.href=url;anchor.download="MSPSS_отчет_класса.docx";document.body.appendChild(anchor);anchor.click();anchor.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),6000);
+}
+document.getElementById("word").addEventListener("click",downloadWord);
+})();
+</script></body></html>
