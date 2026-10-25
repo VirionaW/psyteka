@@ -167,6 +167,7 @@ function viewOverview(m){
 }
 
 function viewInstruction(m){
+ if(DETAILS[m.name]?.workflow==='colorRelations8')return window.PSY_COLOR_RELATIONS.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='independentLiving12')return window.PSY_INDEPENDENT_LIVING.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='motivationInterview')return window.PSY_MOTIVATION_INTERVIEW.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='schoolAdaptObserve')return window.PSY_SCHOOL_ADAPT.instruction(DETAILS[m.name]);
@@ -286,6 +287,7 @@ function materials(m,blank){
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
 function viewMaterials(m){
+ if(DETAILS[m.name]?.workflow==='colorRelations8')return window.PSY_COLOR_RELATIONS.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='independentLiving12')return window.PSY_INDEPENDENT_LIVING.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='motivationInterview')return window.PSY_MOTIVATION_INTERVIEW.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='schoolAdaptObserve')return window.PSY_SCHOOL_ADAPT.materials(DETAILS[m.name]);
@@ -310,6 +312,7 @@ function viewMaterials(m){
  return '<h3>Стимульный материал и бланк</h3>'+materials(m,false)+(d.questions?.length && d.graphic ? '<h3>Протокол беседы</h3><table class="questions-table"><thead><tr><th>№</th><th>Вопрос психолога</th><th>Ответ / наблюдение</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td>________________</td></tr>').join('')+'</tbody></table>':"");
 }
 function viewProcessing(m){
+ if(DETAILS[m.name]?.workflow==='colorRelations8')return window.PSY_COLOR_RELATIONS.processing(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='independentLiving12')return window.PSY_INDEPENDENT_LIVING.processing(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='motivationInterview')return window.PSY_MOTIVATION_INTERVIEW.processing(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='schoolAdaptObserve')return window.PSY_SCHOOL_ADAPT.processing(DETAILS[m.name]);
@@ -379,6 +382,7 @@ function getScores(d,answers){
  return {raw,index:null,max:n*(d.options.length-1),caption:'Сырая сумма'};
 }
 function viewCalculator(m){
+ if(DETAILS[m.name]?.workflow==='colorRelations8')return window.PSY_COLOR_RELATIONS.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  if(DETAILS[m.name]?.workflow==='independentLiving12')return window.PSY_INDEPENDENT_LIVING.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  if(DETAILS[m.name]?.workflow==='motivationInterview')return window.PSY_MOTIVATION_INTERVIEW.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  if(DETAILS[m.name]?.workflow==='schoolAdaptObserve')return window.PSY_SCHOOL_ADAPT.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
@@ -431,6 +435,7 @@ function viewCalculator(m){
  return head+'<div class="notice">Ответы вводятся цифрами от 0 до '+(d.options.length-1)+'. После ввода курсор переходит к следующему полю.</div>'+qhtml+results+'<div class="class-actions"><button class="btn" id="resetParticipant">Сбросить ответы участника</button></div>';
 }
 function bindControls(){
+ if(DETAILS[methodNow.name]?.workflow==='colorRelations8')window.PSY_COLOR_RELATIONS.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  if(DETAILS[methodNow.name]?.workflow==='independentLiving12')window.PSY_INDEPENDENT_LIVING.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  if(DETAILS[methodNow.name]?.workflow==='motivationInterview')window.PSY_MOTIVATION_INTERVIEW.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  if(DETAILS[methodNow.name]?.workflow==='schoolAdaptObserve')window.PSY_SCHOOL_ADAPT.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
@@ -541,6 +546,7 @@ function makePrintPage(d,blank){
 }
 function printMaterial(blank){
  const d=DETAILS[methodNow?.name];if(!d)return;
+ if(d.workflow==='colorRelations8'){window.open(blank?d.answerFile:d.guideFile,'_blank','noopener');return;}
  const html=makePrintPage(d,blank);
  let f=document.getElementById('psyPrint');if(f)f.remove();
  f=document.createElement('iframe');f.id='psyPrint';f.title='Печать материала';f.style='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
@@ -549,6 +555,7 @@ function printMaterial(blank){
 }
 function saveMethodHTML(){
  const d=DETAILS[methodNow?.name];if(!d)return;
+ if(d.workflow==='colorRelations8'){window.open(d.guideFile,'_blank','noopener');return;}
  const data='<!doctype html>'+makePrintPage(d,false),url=URL.createObjectURL(new Blob([data],{type:'text/html;charset=utf-8'}));
  const a=document.createElement('a');a.href=url;a.download=methodNow.name.replace(/[\\/:*?"<>|]+/g,'_')+'.html';a.click();URL.revokeObjectURL(url);
 }
@@ -568,7 +575,7 @@ function openMethod(m){
  const mspssPilot=d?.workflow==='mspss';
  $('#modal').classList.toggle('psy-mspss-example',mspssPilot);
  const tabs=[['overview','Портфолио'],['instruction','Методика / руководство'],['materials','Бланк']];
- if(['independentLiving12','motivationInterview','schoolAdaptObserve'].includes(d?.workflow)){
+ if(['independentLiving12','motivationInterview','schoolAdaptObserve','colorRelations8'].includes(d?.workflow)){
    tabs.push(['processing','Обработка'],['score',d.workflow==='independentLiving12'?'Подсчёт':'Протокол']);
  }
  // MSPSS: processing is reached using the original green bottom action.
