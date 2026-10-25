@@ -1,0 +1,135 @@
+/* Этапы 1-2: аккуратный возврат исходных иллюстраций, управление меню с самой панели, расширенная главная */
+.library-page .sidebar-collapse-row{
+ display:flex;align-items:center;justify-content:flex-end;
+ margin:-8px 4px 10px;padding:0 2px 12px;border-bottom:1px solid var(--area-border,#d6e6db);
+}
+.library-page .sidebar-collapse-row .desktop-sidebar-toggle{
+ display:inline-flex!important;align-items:center;justify-content:center;gap:7px;
+ width:auto!important;min-width:0!important;height:36px!important;min-height:36px!important;
+ font-size:12px!important;font-weight:700!important;letter-spacing:0!important;
+ padding:6px 11px!important;border-radius:11px!important;
+ background:#ffffffb8!important;color:#315f49!important;border:1px solid #c9dfd0!important;
+}
+.library-page .sidebar-collapse-row .desktop-sidebar-toggle>span{font-size:21px;line-height:.5}
+.library-page .topbar .desktop-sidebar-open{display:none!important;min-height:43px;gap:8px;align-items:center;
+ padding:9px 13px;font:700 13px system-ui;white-space:nowrap;
+ border-radius:12px;background:#fff;color:#245b40;border:1px solid #d0e2d3;cursor:pointer;
+}
+.library-page .topbar .desktop-sidebar-open>span{font-size:17px}
+@media(min-width:821px){
+ .library-page.sidebar-collapsed .layout{grid-template-columns:minmax(0,1fr)!important}
+ .library-page.sidebar-collapsed #sidebar{display:none!important}
+ .library-page.sidebar-collapsed .main{width:100%;max-width:none}
+ .library-page.sidebar-collapsed .topbar .desktop-sidebar-open{display:inline-flex!important}
+}
+@media(max-width:820px){
+ .library-page .sidebar-collapse-row{display:none!important}
+ .library-page .topbar .desktop-sidebar-open{display:none!important}
+}
+/* Illustrations from the owner's earlier illustrated banner archive, not the new stick-figure SVGs.
+   Keep each full original image intact, static and without inaccurate transparency masking. */
+.library-page .hero{align-items:center!important;gap:24px!important;overflow:hidden}
+.library-page .hero .hero-art{
+ position:relative!important;flex:0 0 clamp(175px,22vw,264px)!important;
+ width:clamp(175px,22vw,264px)!important;height:clamp(175px,22vw,264px)!important;
+ padding:0!important;margin:0!important;
+ background-color:#f7faf5!important;opacity:1!important;
+ background-image:url("assets/psyteka-banner-illustrations.webp?v=20261025j")!important;
+ background-size:300% 200%!important;background-repeat:no-repeat!important;
+ border:1px solid #ffffff93!important;border-radius:23px!important;
+ box-shadow:0 8px 23px #123d3429!important;
+ animation:none!important;transform:none!important;mix-blend-mode:normal!important;
+ filter:none!important;overflow:hidden!important;
+}
+.library-page[data-area=special] .hero .hero-art{background-position:0% 0%!important}
+.library-page[data-area=preschool] .hero .hero-art{background-position:50% 0%!important}
+.library-page[data-area=school] .hero .hero-art{background-position:100% 0%!important}
+.library-page[data-area=prevention] .hero .hero-art{background-position:0% 100%!important}
+.library-page[data-area=adults] .hero .hero-art{background-position:50% 100%!important}
+.library-page[data-area=documents] .hero .hero-art{background-position:100% 100%!important}
+.library-page[data-area=spt] .hero .hero-art{display:none!important}
+.library-page .hero .hero-art>img,.library-page .hero .hero-art>.psy-scene{display:none!important}
+html.dark .library-page .hero .hero-art{
+ background-color:#f7faf5!important;border-color:#e2ebe1!important;
+ opacity:1!important;filter:none!important
+}
+@media(max-width:650px){
+ .library-page .hero{flex-direction:row!important;align-items:center!important;gap:8px!important}
+ .library-page .hero .hero-art{
+  flex:0 0 clamp(100px,27vw,150px)!important;
+  width:clamp(100px,27vw,150px)!important;height:clamp(100px,27vw,150px)!important;
+  border-radius:15px!important;margin-right:-10px!important;
+ }
+}
+/* More deliberate brand use - forest and warm sand */
+.site-hero .psy-hero-shot.primary{border-color:#eadac5!important}
+.site-hero .psy-shot-menu{border-bottom-color:#d8c7b2!important}
+.site-hero .psy-shot-tile{border-color:#dcc7aa!important}
+.site-editorial .site-columns article:nth-child(3n){border-top-color:#b59169!important}
+.site-pricing .pricing-grid article.chosen{border-color:#b59169!important}
+.site-sections .section-card.ochre{background:#f4ebe0;border-color:#ddc9b0}
+.site-sections .section-card.blue{background:#eaf1f8;border-color:#c2d5e7}
+.site-sections .section-card.lilac{background:#f1eaf6;border-color:#d9c5e7}
+html.dark .library-page .sidebar-collapse-row .desktop-sidebar-toggle,
+html.dark .library-page .topbar .desktop-sidebar-open{
+ background:#274436!important;color:#eff7f0!important;border-color:#678474!important
+}
+/* Responsive information previews and journey */
+.psy-home-journey{max-width:1280px;margin:0 auto;padding:46px 30px 60px}
+.psy-home-journey h2{font-size:clamp(28px,3.3vw,42px);line-height:1.19;color:#204b39;max-width:840px;margin:10px 0 12px}
+.psy-home-journey>p{max-width:760px;font-size:16px;color:#637e6c;line-height:1.7;margin-bottom:22px}
+.psy-journey-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.psy-journey-grid article{padding:24px;border-radius:18px;border:1px solid #d6e4d9;background:#fff;min-width:0}
+.psy-journey-grid article:nth-child(2){background:#f2f5fa;border-color:#d9e3ee}
+.psy-journey-grid article:nth-child(3){background:#f8f3eb;border-color:#e6d8c5}
+.psy-journey-num{font-size:13px;font-weight:850;color:#866e54;letter-spacing:1px}
+.psy-journey-grid h3{color:#244b3a;font-size:21px;margin:12px 0}
+.psy-journey-grid p{color:#597165;font-size:14px;line-height:1.62;margin:0 0 16px}
+.psy-journey-grid a{font-weight:800;color:#246d4c;text-decoration:underline;text-underline-offset:4px}
+.psy-journey-icon{width:78px;height:65px;display:flex;align-items:center;justify-content:center;position:relative;margin:4px 0 12px}
+.psy-journey-icon svg{max-width:78px;height:66px;stroke:#417560;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.psy-journey-grid article:nth-child(2) svg{stroke:#678eac}
+.psy-journey-grid article:nth-child(3) svg{stroke:#a7845c}
+.psy-preview-section{max-width:1280px;margin:auto;padding:50px 30px}
+.psy-preview-wrap{background:#fff;border:1px solid #d6e4db;border-radius:22px;display:grid;grid-template-columns:minmax(0,.78fr) minmax(350px,1.22fr);gap:28px;padding:30px;align-items:center}
+.psy-preview-section h2{font-size:clamp(27px,3vw,39px);line-height:1.18;color:#214b38;margin:10px 0 16px}
+.psy-preview-section p{color:#5d7668;font-size:15px;line-height:1.72}
+.psy-preview-screen{border:1px solid #cedfd3;border-radius:17px;background:#f8fbf7;overflow:hidden;box-shadow:0 14px 35px #183c2920}
+.psy-preview-screen-head{background:#eaf3eb;display:flex;gap:7px;align-items:center;padding:12px 15px;border-bottom:1px solid #d5e6d9}
+.psy-preview-screen-head i{display:block;width:9px;height:9px;border-radius:50%;background:#c69d79}
+.psy-preview-screen-head i:nth-child(2){background:#b6c6a8}
+.psy-preview-screen-head i:nth-child(3){background:#91b3aa}
+.psy-preview-screen-head strong{margin-left:14px;color:#315a44;font-size:11px}
+.psy-preview-screen-body{display:grid;grid-template-columns:125px 1fr;min-height:244px}
+.psy-preview-side{background:#eaf2e9;border-right:1px solid #d6e5d8;padding:17px 11px}
+.psy-preview-side strong{color:#265a41;font-size:12px}
+.psy-preview-side span{display:block;font-size:10px;color:#5e7766;margin-top:12px}
+.psy-preview-main{padding:15px}
+.psy-preview-main h4{font-size:17px;color:#214a38;margin:2px 0 13px}
+.psy-preview-card{border:1px solid #d6e7d9;background:#fff;border-radius:12px;padding:11px;margin-top:9px;display:flex;align-items:center;gap:10px}
+.psy-preview-card em{width:37px;height:37px;border-radius:9px;background:#e8f2eb;display:block;flex:none;position:relative}
+.psy-preview-card em:after{content:"";position:absolute;inset:9px;border:3px solid #729f85;border-radius:50%}
+.psy-preview-card strong{font-size:12px;color:#274a38}.psy-preview-card small{display:block;font-size:10px;color:#678372}
+.psy-preview-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.psy-preview-meta span{border-radius:6px;background:#eaf3eb;padding:3px 6px;font-size:9px;color:#3d6d52}
+html.dark .psy-home-journey h2,html.dark .psy-preview-section h2{color:#eff8ee}
+html.dark .psy-home-journey>p,html.dark .psy-preview-section p{color:#c6d8c9}
+html.dark .psy-journey-grid article,html.dark .psy-preview-wrap{background:#1d372f!important;border-color:#466958!important;color:#f2f8f3}
+html.dark .psy-journey-grid h3{color:#eff7ef}
+html.dark .psy-journey-grid p{color:#cadccc}
+html.dark .psy-journey-grid a{color:#b3e0bd}
+html.dark .psy-journey-grid article:nth-child(2){background:#253645!important;border-color:#496c86!important}
+html.dark .psy-journey-grid article:nth-child(3){background:#3c352e!important;border-color:#806d58!important}
+@media(max-width:850px){
+ .psy-journey-grid{grid-template-columns:1fr}
+ .psy-preview-wrap{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+ .psy-home-journey,.psy-preview-section{padding:30px 18px}
+ .psy-preview-wrap{padding:17px;gap:18px}
+ .psy-preview-screen-body{grid-template-columns:100px 1fr}
+ .psy-preview-side{padding:13px 7px}
+ .psy-preview-main{padding:10px}
+ .psy-preview-card strong{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){.psy-journey-grid article,.psy-preview-section *{animation:none!important}}
