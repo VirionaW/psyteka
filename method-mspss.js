@@ -53,7 +53,7 @@
   return '<section class="psy-mspss-section psy-mspss-student">'+
    '<div class="psy-mspss-blank-head"><div><h3>Бланк ученика</h3><p>Анкета для самостоятельного заполнения.</p></div><a class="btn primary psy-mspss-view" href="'+STUDENT+'" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать ↗</a></div>'+
    '<p><strong>Инструкция.</strong> Прочитай предложения. Для каждого выбери одну цифру, которая больше подходит к твоему ответу. Отметь кружок под этой цифрой.</p>'+
-   '<div class="psy-mspss-rating">'+["Совсем не согласен","Не согласен","Скорее не согласен","Не знаю","Скорее согласен","Согласен","Полностью согласен"].map((o,i)=>'<div><strong>'+(i+1)+'</strong><span>'+o+'</span></div>').join("")+'</div>'+
+   '<div class="psy-mspss-rating">'+["Совсем не согласен","Не согласен","Скорее не согласен","Ни согласен, ни не согласен","Скорее согласен","Согласен","Полностью согласен"].map((o,i)=>'<div><strong>'+(i+1)+'</strong><span>'+o+'</span></div>').join("")+'</div>'+
    '<div class="psy-mspss-blank-scroll"><table class="psy-mspss-blank-table"><thead><tr><th>№</th><th>Утверждение</th>'+
    Array.from({length:7},(_,j)=>'<th>'+(j+1)+'</th>').join("")+'</tr></thead><tbody>'+
    STUDENT_ITEMS.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(q)+'</td>'+Array.from({length:7},()=>'<td aria-hidden="true">○</td>').join("")+'</tr>').join("")+
