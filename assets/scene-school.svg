@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 350" role="img" aria-label="Иллюстрация раздела" preserveAspectRatio="xMidYMid meet"><style>
+:root{color-scheme:light}
+.line{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:15}
+.fine{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:9}
+.green{stroke:#2C6E60}.sage{stroke:#7FA890}.blue{stroke:#739AB5}.coral{stroke:#CA8B79}.sand{stroke:#DDB463}.lilac{stroke:#A78DB7}.ink{stroke:#28564B}
+.head-blue{stroke:#739AB5;fill:none;stroke-width:15}.head-coral{stroke:#CA8B79;fill:none;stroke-width:15}
+.head-sand{stroke:#DDB463;fill:none;stroke-width:15}.head-green{stroke:#2C6E60;fill:none;stroke-width:15}
+.motion{transform-box:fill-box;transform-origin:center;animation-duration:5.2s;animation-timing-function:ease-in-out;animation-iteration-count:infinite}
+.wave{animation-name:wave}.page{animation-name:page}.glow{animation-name:glow}.nod{animation-name:nod}
+@keyframes wave{0%,100%{transform:rotate(0)}40%{transform:rotate(-8deg)}65%{transform:rotate(3deg)}}
+@keyframes page{0%,100%{transform:rotate(0)}52%{transform:rotate(-6deg)}}
+@keyframes glow{0%,100%{opacity:.83;transform:scale(.97)}50%{opacity:1;transform:scale(1.07)}}
+@keyframes nod{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+@media(prefers-reduced-motion:reduce){.motion{animation:none!important}}
+</style><g>
+<!-- Guide and school child -->
+<circle cx="127" cy="93" r="32" class="head-sand"/><circle cx="347" cy="110" r="29" class="head-blue"/>
+<path d="M69 245v-65c0-27 22-47 49-47h20c30 0 48 21 48 50v35" class="line green"/>
+<path d="M288 249v-71c0-26 24-42 51-42h18c32 0 53 20 53 49v67" class="line blue"/>
+<g class="motion wave"><path d="M185 185q33-36 70-33" class="line green"/><path d="M255 152l-1-20m1 20 17-13" class="fine green"/></g>
+<path d="M292 206q-32 17-52 37" class="line blue"/>
+<path d="M174 260q31-12 66 8 32-17 66-8v54q-33-8-66 9-30-17-66-9z" fill="none" stroke="#DAB26D" stroke-width="12" stroke-linejoin="round"/>
+<path d="M240 270v51" class="fine sand"/>
+<g class="motion page"><path d="M248 266q26-10 51-7" class="fine coral"/></g>
+<path d="M110 291h40M328 290h33" class="fine sage"/>
+</g></svg>

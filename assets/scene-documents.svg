@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 350" role="img" aria-label="Иллюстрация раздела" preserveAspectRatio="xMidYMid meet"><style>
+:root{color-scheme:light}
+.line{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:15}
+.fine{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:9}
+.green{stroke:#2C6E60}.sage{stroke:#7FA890}.blue{stroke:#739AB5}.coral{stroke:#CA8B79}.sand{stroke:#DDB463}.lilac{stroke:#A78DB7}.ink{stroke:#28564B}
+.head-blue{stroke:#739AB5;fill:none;stroke-width:15}.head-coral{stroke:#CA8B79;fill:none;stroke-width:15}
+.head-sand{stroke:#DDB463;fill:none;stroke-width:15}.head-green{stroke:#2C6E60;fill:none;stroke-width:15}
+.motion{transform-box:fill-box;transform-origin:center;animation-duration:5.2s;animation-timing-function:ease-in-out;animation-iteration-count:infinite}
+.wave{animation-name:wave}.page{animation-name:page}.glow{animation-name:glow}.nod{animation-name:nod}
+@keyframes wave{0%,100%{transform:rotate(0)}40%{transform:rotate(-8deg)}65%{transform:rotate(3deg)}}
+@keyframes page{0%,100%{transform:rotate(0)}52%{transform:rotate(-6deg)}}
+@keyframes glow{0%,100%{opacity:.83;transform:scale(.97)}50%{opacity:1;transform:scale(1.07)}}
+@keyframes nod{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+@media(prefers-reduced-motion:reduce){.motion{animation:none!important}}
+</style><g>
+<!-- Professional preparing a clipboard and checking documents -->
+<circle cx="133" cy="92" r="32" class="head-blue"/>
+<path d="M70 258v-82c0-33 21-51 53-51h18c34 0 57 20 57 52v81" class="line green"/>
+<g class="motion wave"><path d="M193 204q37-30 59-20" class="line green"/></g>
+<rect x="242" y="99" width="156" height="215" rx="12" fill="none" stroke="#739AB5" stroke-width="14"/>
+<path d="M298 93h47v16h-47z" fill="#DDB463"/>
+<g class="motion page"><path d="M273 151l10 11 20-23M273 208l10 11 20-23" class="fine coral"/></g>
+<path d="M318 155h47M318 211h47M275 269h91" class="fine lilac"/>
+<path d="M117 291h81" class="fine sage"/>
+</g></svg>

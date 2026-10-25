@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 350" role="img" aria-label="Иллюстрация раздела" preserveAspectRatio="xMidYMid meet"><style>
+:root{color-scheme:light}
+.line{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:15}
+.fine{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:9}
+.green{stroke:#2C6E60}.sage{stroke:#7FA890}.blue{stroke:#739AB5}.coral{stroke:#CA8B79}.sand{stroke:#DDB463}.lilac{stroke:#A78DB7}.ink{stroke:#28564B}
+.head-blue{stroke:#739AB5;fill:none;stroke-width:15}.head-coral{stroke:#CA8B79;fill:none;stroke-width:15}
+.head-sand{stroke:#DDB463;fill:none;stroke-width:15}.head-green{stroke:#2C6E60;fill:none;stroke-width:15}
+.motion{transform-box:fill-box;transform-origin:center;animation-duration:5.2s;animation-timing-function:ease-in-out;animation-iteration-count:infinite}
+.wave{animation-name:wave}.page{animation-name:page}.glow{animation-name:glow}.nod{animation-name:nod}
+@keyframes wave{0%,100%{transform:rotate(0)}40%{transform:rotate(-8deg)}65%{transform:rotate(3deg)}}
+@keyframes page{0%,100%{transform:rotate(0)}52%{transform:rotate(-6deg)}}
+@keyframes glow{0%,100%{opacity:.83;transform:scale(.97)}50%{opacity:1;transform:scale(1.07)}}
+@keyframes nod{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+@media(prefers-reduced-motion:reduce){.motion{animation:none!important}}
+</style><g>
+<!-- Adult and preschool child building colored blocks -->
+<circle cx="121" cy="109" r="29" class="head-coral"/><circle cx="354" cy="89" r="34" class="head-sand"/>
+<path d="M59 248v-64c0-30 24-45 53-45h19c29 0 52 15 52 45v40" class="line sage"/>
+<path d="M293 235v-63c0-27 24-43 52-43h20c33 0 53 23 53 56v63" class="line lilac"/>
+<g class="motion wave"><path d="M181 198q24-26 54-31" class="line sage"/></g>
+<path d="M292 195q-22-19-42-27" class="line lilac"/>
+<rect x="168" y="245" width="68" height="66" rx="8" fill="none" stroke="#739AB5" stroke-width="12"/>
+<rect x="236" y="245" width="68" height="66" rx="8" fill="none" stroke="#DDB463" stroke-width="12"/>
+<rect x="203" y="184" width="68" height="61" rx="8" fill="none" stroke="#CA8B79" stroke-width="12"/>
+<g class="motion glow"><circle cx="236" cy="162" r="7" fill="#DDB463"/></g>
+<path d="M108 281h39M328 281h48" class="fine sage"/>
+</g></svg>

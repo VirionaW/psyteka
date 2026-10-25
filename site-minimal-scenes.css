@@ -1,0 +1,52 @@
+/* Единые векторные персонажи - не атлас, без фона и кадров */
+.library-page .hero{position:relative;display:flex!important;gap:clamp(16px,3vw,38px)!important;align-items:center!important;overflow:hidden}
+.library-page .hero>div:first-child{flex:1;min-width:0;position:relative;z-index:2}
+.library-page .hero-art.psy-minimal-host{
+ position:relative!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 clamp(235px,30vw,390px)!important;width:clamp(235px,30vw,390px)!important;
+ height:clamp(205px,24vw,290px)!important;
+ margin:0!important;padding:0!important;overflow:visible!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;filter:none!important;mix-blend-mode:normal!important;
+ transform:none!important;animation:none!important;opacity:1!important
+}
+.library-page .hero-art.psy-minimal-host[hidden]{display:none!important}
+.library-page .hero-art .psy-minimal-figure{
+ width:100%!important;height:100%!important;max-width:none!important;object-fit:contain!important;
+ object-position:center!important;display:block!important;
+ border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+ filter:none!important;opacity:1!important;animation:none!important;transform:none!important
+}
+.library-page .hero .psy-minimal-figure{position:relative;z-index:2}
+html.dark .library-page .hero-art.psy-minimal-host,
+html.dark .library-page .hero-art .psy-minimal-figure{
+ background:transparent!important;border:none!important;box-shadow:none!important;filter:none!important;opacity:1!important
+}
+@media(max-width:970px){
+ .library-page .hero-art.psy-minimal-host{flex-basis:230px!important;width:230px!important;height:210px!important}
+}
+@media(max-width:670px){
+ .library-page .hero{flex-direction:row!important;gap:7px!important}
+ .library-page .hero-art.psy-minimal-host{
+  flex:0 0 clamp(110px,31vw,180px)!important;
+  width:clamp(110px,31vw,180px)!important;
+  height:clamp(110px,28vw,170px)!important;
+  margin-right:-12px!important;
+ }
+ .library-page .hero h1{font-size:clamp(24px,5.5vw,33px)!important;line-height:1.18!important}
+ .library-page .hero p{font-size:12px!important;line-height:1.5!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .psy-minimal-figure{animation:none!important;transition:none!important}
+}
+/* Главная использует макет работающей библиотеки, но НЕ дублирует изображения разделов */
+.site-hero .psy-hero-showcase:not(.psy-showcase-with-scenes) .psy-hero-shot{
+ background:#f9fcf8;color:#204a38;border:1px solid #d7e5d9
+}
+.site-hero .psy-hero-showcase:not(.psy-showcase-with-scenes) .psy-float-card{background:#f9fcf8;color:#295140}
+html.dark .site-hero .psy-hero-showcase .psy-hero-shot{
+ background:#f4f8f5!important;color:#214832!important
+}
+html.dark .site-hero .psy-hero-showcase .psy-float-card{
+ background:#f3f8f4!important;color:#214832!important
+}

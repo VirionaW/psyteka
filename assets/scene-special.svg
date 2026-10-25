@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 350" role="img" aria-label="Иллюстрация раздела" preserveAspectRatio="xMidYMid meet"><style>
+:root{color-scheme:light}
+.line{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:15}
+.fine{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:9}
+.green{stroke:#2C6E60}.sage{stroke:#7FA890}.blue{stroke:#739AB5}.coral{stroke:#CA8B79}.sand{stroke:#DDB463}.lilac{stroke:#A78DB7}.ink{stroke:#28564B}
+.head-blue{stroke:#739AB5;fill:none;stroke-width:15}.head-coral{stroke:#CA8B79;fill:none;stroke-width:15}
+.head-sand{stroke:#DDB463;fill:none;stroke-width:15}.head-green{stroke:#2C6E60;fill:none;stroke-width:15}
+.motion{transform-box:fill-box;transform-origin:center;animation-duration:5.2s;animation-timing-function:ease-in-out;animation-iteration-count:infinite}
+.wave{animation-name:wave}.page{animation-name:page}.glow{animation-name:glow}.nod{animation-name:nod}
+@keyframes wave{0%,100%{transform:rotate(0)}40%{transform:rotate(-8deg)}65%{transform:rotate(3deg)}}
+@keyframes page{0%,100%{transform:rotate(0)}52%{transform:rotate(-6deg)}}
+@keyframes glow{0%,100%{opacity:.83;transform:scale(.97)}50%{opacity:1;transform:scale(1.07)}}
+@keyframes nod{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+@media(prefers-reduced-motion:reduce){.motion{animation:none!important}}
+</style><g>
+<!-- Child using wheelchair, interacting with an equal-height companion -->
+<circle cx="160" cy="92" r="29" class="head-green"/><circle cx="365" cy="91" r="30" class="head-sand"/>
+<path d="M145 139v86h77" class="line green"/><path d="M146 197h-42v49" class="fine green"/>
+<circle cx="149" cy="261" r="49" class="head-blue"/><circle cx="149" cy="261" r="9" fill="#739AB5"/>
+<path d="M206 221l19 34h37" class="fine blue"/><circle cx="267" cy="265" r="11" fill="none" stroke="#739AB5" stroke-width="8"/>
+<g class="motion wave"><path d="M166 153q26-23 58-38" class="line green"/><path d="M225 115l-2-20m2 20 17-9" class="fine green"/></g>
+<path d="M309 247v-69c0-34 22-48 52-48h11c31 0 52 18 52 52v65" class="line coral"/>
+<path d="M310 198q-27-15-49-13" class="line coral"/>
+<rect x="244" y="174" width="53" height="64" rx="6" fill="none" stroke="#A78DB7" stroke-width="10"/>
+<path d="M254 195h32M254 214h19" class="fine lilac"/>
+</g></svg>
