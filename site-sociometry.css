@@ -1,0 +1,26 @@
+/* Социометрия - рабочий комплект */
+.library-page #modal .psy-soc-warning{border-left:4px solid #ce9b40;background:var(--soft)}
+.library-page #modal .psy-soc-links,.library-page #modal .psy-soc-buttons{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0}
+.library-page #modal .psy-soc-links .btn{display:inline-flex;align-items:center;min-height:42px}
+.library-page #modal .psy-soc-paper{padding:22px;border:1px solid var(--line);border-radius:12px;background:var(--paper);line-height:2}
+.library-page #modal .psy-soc-small{font-size:13px;color:var(--muted);line-height:1.5}
+.library-page #modal .psy-soc-manage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:11px;align-items:end;margin:21px 0}
+.library-page #modal .psy-soc-manage label,.library-page #modal .psy-soc-choices label{display:grid;gap:7px;font-size:13px;font-weight:600}
+.library-page #modal .psy-soc-manage input,.library-page #modal .psy-soc-manage select,.library-page #modal .psy-soc-choices select{min-width:0;width:100%;padding:11px;border-radius:10px;color:var(--ink);border:1px solid var(--line);background:var(--paper);font:500 14px system-ui}
+.library-page #modal .psy-soc-editor{background:var(--soft);border:1px solid var(--line);padding:19px;border-radius:13px;margin:18px 0}
+.library-page #modal .psy-soc-toggle{display:flex;gap:11px;align-items:center;font-weight:700}
+.library-page #modal .psy-soc-toggle input{width:19px;height:19px;accent-color:var(--green)}
+.library-page #modal .psy-soc-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:15px 0}
+.library-page #modal .psy-soc-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:18px 0}
+.library-page #modal .psy-soc-stats div{border:1px solid var(--line);border-radius:10px;background:var(--soft);padding:15px}
+.library-page #modal .psy-soc-stats strong{font-size:26px;display:block;color:var(--green)}
+.library-page #modal .psy-soc-stats span{font-size:12px;color:var(--muted)}
+.library-page #modal .psy-soc-matrix-wrap{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin:12px 0}
+.library-page #modal .psy-soc-matrix-wrap table{border-collapse:collapse;width:100%;white-space:nowrap;font-size:12px}
+.library-page #modal .psy-soc-matrix-wrap th,.library-page #modal .psy-soc-matrix-wrap td{border:1px solid var(--line);padding:7px;text-align:center}
+.library-page #modal .psy-soc-matrix-wrap th:first-child,.library-page #modal .psy-soc-table td:first-child{text-align:left}
+.library-page #modal .psy-soc-matrix td.mutual{background:color-mix(in srgb,var(--green) 22%,var(--paper));font-weight:700}
+.library-page #modal .psy-soc-matrix td.positive{font-weight:700;color:var(--green)}
+.library-page #modal .psy-soc-matrix td.diagonal{color:var(--muted);background:var(--soft)}
+.library-page #modal #socioAlert{font-size:13px;color:#aa6030}
+@media(max-width:780px){.library-page #modal .psy-soc-manage{grid-template-columns:1fr}.library-page #modal .psy-soc-choices{grid-template-columns:1fr}.library-page #modal .psy-soc-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.library-page #modal .psy-soc-links{flex-direction:column}.library-page #modal .psy-soc-buttons .btn{width:100%}}
