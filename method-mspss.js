@@ -66,22 +66,32 @@
   return '<div class="psy-mspss-result"><h3>Средняя воспринимаемая поддержка</h3><strong class="psy-mspss-mean">'+z.mean.toFixed(2)+' <small>/ 7</small></strong><p>Сумма '+z.raw+' из 84. Показатели ниже - средние баллы по четырем вопросам каждой подшкалы.</p>'+
   '<div class="psy-mspss-scales">'+z.subscales.map(s=>'<div><b>'+esc(s.name)+'</b><strong>'+s.mean.toFixed(2)+' / 7</strong><div class="psy-mspss-track"><span style="width:'+(s.mean/7*100)+'%"></span></div></div>').join("")+'</div><p class="psy-mspss-small">'+esc(d.interpret)+'</p></div>';
  }
+ const alphabet=(rows)=>rows.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||"","ru",{sensitivity:"base"}));
  function group(rows){
-  return '<div class="psy-mspss-group"><h3>Результаты группы</h3><div class="psy-mspss-scroll"><table><thead><tr><th>Код</th><th>Общий / 7</th><th>Семья</th><th>Друзья</th><th>Значимый человек</th><th>Ответов</th></tr></thead><tbody>'+
-  rows.map((r,i)=>{const z=score(d,r.answers);const by=id=>z?z.subscales.find(s=>s.id===id).mean.toFixed(2):"—";return '<tr><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td><td>'+(z?z.mean.toFixed(2):"—")+'</td><td>'+by("family")+'</td><td>'+by("friends")+'</td><td>'+by("other")+'</td><td>'+done(r.answers)+'/12</td></tr>'}).join("")+
-  '</tbody></table></div><p class="psy-mspss-small">Таблица не присваивает участникам диагнозы или уровни нормы.</p></div>';
+  const ordered=alphabet(rows);
+  return '<section class="psy-mspss-group"><h3>Сводная ведомость класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>ФИО</th><th>Общий / 7</th><th>Семья</th><th>Друзья</th><th>Значимый человек</th><th>Ответов</th></tr></thead><tbody>'+
+  ordered.map((r,i)=>{const z=score(d,r.answers);const v=id=>z?z.subscales.find(s=>s.id===id).mean.toFixed(2):"—";return '<tr><td>'+esc(r.name||"Участник "+(i+1))+'</td><td>'+(z?z.mean.toFixed(2):"—")+'</td><td>'+v("family")+'</td><td>'+v("friends")+'</td><td>'+v("other")+'</td><td>'+done(r.answers)+'/12</td></tr>'}).join("")+
+  '</tbody></table></div><div class="psy-mspss-actions"><button type="button" class="btn" id="mspssCSV">Скачать ведомость класса · CSV</button></div></section>';
  }
  function calculator(data,ctx){
   const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],a=r.answers||[];
-  let html='<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>'+
-  '<p class="psy-mspss-small">Перенесите ответы из заполненного бланка по порядку пунктов и используйте условный код участника.</p>';
-  if(ctx.calcMode==="class")html+='<div class="group-tools"><label>Участник<select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+esc(x.name||"У-"+String(i+1).padStart(2,"0"))+'</option>').join("")+'</select></label><label>Код<input id="participantName" maxlength="40" value="'+esc(r.name||"")+'" placeholder="У-01 (без ФИО)"></label><button class="btn" id="addParticipant">Добавить</button></div>';
-  else html+='<label class="psy-mspss-code">Код (необязательно)<input id="mspssSingleCode" maxlength="40" value="'+esc(r.name||"")+'" placeholder="Без ФИО"></label>';
-  html+='<p class="psy-mspss-small">Заполнено '+done(a)+' из 12.</p>'+
-  '<div class="psy-mspss-grid">'+TOPICS.map((q,i)=>'<label class="psy-mspss-item"><span><b>'+(i+1)+'.</b> '+esc(q)+'</span><input class="psy-mspss-score-input" type="text" inputmode="numeric" autocomplete="off" maxlength="1" data-mspss="'+i+'" aria-label="Ответ на пункт '+(i+1)+' (цифра от 1 до 7)" placeholder="1-7" value="'+esc(a[i]??"")+'"></label>').join("")+'</div>'+
-  '<div id="mspssResult">'+result(a)+'</div><div class="psy-mspss-actions"><button class="btn primary" id="mspssSave">Скачать отчет участника (HTML)</button></div>';
-  if(ctx.calcMode==="class")html+='<div id="mspssGroup">'+group(rows)+'</div><div class="psy-mspss-actions"><button class="btn" id="nextParticipant">Следующий участник</button><button class="btn primary" id="mspssCSV">Скачать группу CSV</button></div>';
-  return html;
+  let h='<section class="psy-mspss-calculator"><div class="calc-mode psy-mspss-modes"><button type="button" class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button type="button" class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>';
+  if(ctx.calcMode==="class"){
+   h+='<div class="psy-mspss-workspace"><aside class="psy-mspss-sidebar"><h3>Список учащихся</h3><p>Введите ФИО по одному в строке.</p>'+
+      '<label class="psy-mspss-label" for="mspssBulkNames">Добавить участников</label><textarea id="mspssBulkNames" rows="5" placeholder="Иванов Иван&#10;Петрова Мария"></textarea>'+
+      '<button type="button" class="btn primary psy-mspss-add" id="mspssAddNames">Добавить в список</button>'+
+      '<button type="button" class="btn psy-mspss-sort" id="mspssSort">По алфавиту А - Я</button>'+
+      '<div class="psy-mspss-person-list">'+rows.map((u,i)=>'<button type="button" class="psy-mspss-person '+(i===ctx.rowIndex?"active":"")+'" data-mspss-person="'+i+'"><span>'+esc(u.name||"Новый участник "+(i+1))+'</span><small>'+done(u.answers)+'/12</small></button>').join("")+'</div>'+
+      '</aside><div class="psy-mspss-entry">';
+  }else h+='<div class="psy-mspss-entry">';
+  h+='<label class="psy-mspss-name-field" for="mspssCurrentName"><span>Фамилия и имя</span><input id="mspssCurrentName" type="text" autocomplete="off" maxlength="120" value="'+esc(r.name||"")+'" placeholder="Введите ФИО"></label>'+
+    '<p class="psy-mspss-progress" id="mspssProgress">Заполнено '+done(a)+' из 12</p>'+
+    '<div class="psy-mspss-grid">'+TOPICS.map((q,i)=>'<label class="psy-mspss-item"><span><b>'+(i+1)+'.</b> '+esc(q)+'</span><input class="psy-mspss-score-input" type="text" inputmode="numeric" autocomplete="off" maxlength="1" data-mspss="'+i+'" aria-label="Ответ на пункт '+(i+1)+'" placeholder="1-7" value="'+esc(a[i]??"")+'"></label>').join("")+'</div>';
+  if(ctx.calcMode==="class")h+='<div class="psy-mspss-after-questions"><button type="button" class="btn primary" id="mspssNext">Следующий участник →</button></div>';
+  h+='<div id="mspssResult">'+result(a)+'</div></div>';
+  if(ctx.calcMode==="class")h+='</div>'+group(rows);
+  h+='</section>';
+  return h;
  }
  function download(name,text,type){
   const u=URL.createObjectURL(new Blob([text],{type})),a=document.createElement("a");a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);
