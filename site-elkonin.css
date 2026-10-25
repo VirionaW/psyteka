@@ -1,0 +1,32 @@
+/* Психотека · Графический диктант Д. Б. Эльконина */
+.library-page #modal .psy-elkonin-links{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0 22px}
+.library-page #modal .psy-elkonin-links .btn{display:inline-flex;align-items:center;justify-content:center;min-height:43px}
+.library-page #modal .psy-elkonin-alert{border-left:4px solid #d6a031!important;background:color-mix(in srgb,#ffdfa0 17%,var(--paper));color:var(--ink)}
+.library-page #modal .psy-elkonin-command{border:1px solid var(--line);border-radius:12px;padding:13px 16px;margin:11px 0;background:var(--soft)}
+.library-page #modal .psy-elkonin-command h4{font-size:16px;color:var(--green);margin:0 0 7px}
+.library-page #modal .psy-elkonin-command p{font-size:14px;line-height:1.75;margin:0}
+.library-page #modal .psy-elkonin-command p>span{white-space:nowrap}
+.library-page #modal .psy-elkonin-student{max-width:640px;margin:17px auto;padding:10px;background:#fff;border:1px solid #a8c2b3;border-radius:11px}
+.library-page #modal .psy-elkonin-student svg{display:block;width:100%;height:auto}
+.library-page #modal .psy-elkonin-rubric{display:grid;gap:8px;margin:13px 0 18px}
+.library-page #modal .psy-elkonin-rubric>div{display:flex;align-items:center;gap:15px;border:1px solid var(--line);border-radius:11px;background:var(--soft);padding:11px 14px}
+.library-page #modal .psy-elkonin-rubric b{width:31px;height:31px;display:grid;place-items:center;background:var(--paper);color:var(--green);border:1px solid var(--line);border-radius:9px}
+.library-page #modal .psy-elkonin-marks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:18px 0}
+.library-page #modal .psy-elkonin-mark{padding:16px;border:1px solid var(--line);border-radius:15px;background:var(--soft);display:flex;flex-direction:column;gap:12px}
+.library-page #modal .psy-elkonin-mark h4{margin:0;font-size:19px;color:var(--green)}
+.library-page #modal .psy-elkonin-mark label{display:flex;flex-direction:column;gap:7px;color:var(--ink);font-size:13px;font-weight:650}
+.library-page #modal .psy-elkonin-mark select{width:100%;min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px 8px;background:var(--paper);color:var(--ink);font:500 13px system-ui}
+.library-page #modal .psy-elkonin-mark select:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.library-page #modal .psy-elkonin-outcome{border:1px solid var(--line);border-radius:15px;background:var(--paper);padding:17px 19px;margin:17px 0}
+.library-page #modal .psy-elkonin-track{height:12px;border-radius:20px;overflow:hidden;background:var(--line);margin:9px 0}
+.library-page #modal .psy-elkonin-track>i{display:block;height:100%;background:linear-gradient(90deg,#83adc1,#3d9671);border-radius:20px}
+.library-page #modal .psy-elkonin-score{border:1px solid var(--line);border-radius:13px;background:var(--soft);padding:15px 18px;margin:15px 0}
+.library-page #modal .psy-elkonin-score>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.library-page #modal .psy-elkonin-score b{font-size:28px;color:var(--green)}
+.library-page #modal .psy-elkonin-score p{margin:9px 0 0;font-weight:750}
+.library-page #modal .psy-elkonin-components{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:13px 0}
+.library-page #modal .psy-elkonin-components>div{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--soft);gap:10px}
+.library-page #modal .psy-elkonin-components strong{white-space:nowrap;color:var(--green);font-size:20px}
+.library-page #modal .psy-elkonin-actions{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0}
+@media(max-width:950px){.library-page #modal .psy-elkonin-marks{grid-template-columns:1fr}}
+@media(max-width:700px){.library-page #modal .psy-elkonin-components{grid-template-columns:1fr}.library-page #modal .psy-elkonin-links{flex-direction:column}.library-page #modal .psy-elkonin-score>div:first-child{align-items:flex-start}.library-page #modal .psy-elkonin-actions .btn{flex:1 1 160px}}
