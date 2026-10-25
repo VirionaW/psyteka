@@ -61,6 +61,8 @@ function setTab(name){
 }
 
 const PORTFOLIO_FIELDS={
+ "GAD-7 - краткая шкала тревожных симптомов":{title:"Основной показатель",items:["Выраженность тревожных симптомов (7 пунктов)"]},
+ "Краткий опросник PHQ-4":{title:"Шкалы и показатели",items:["Тревожные симптомы (GAD-2)","Депрессивные симптомы (PHQ-2)","Общий показатель дистресса"]},
  "Шкала личностной тревожности":{title:"Шкалы тревожности",items:["Школьная","Самооценочная","Межличностная","Магическая"]},
  "Шкала самооценки Розенберга (RSES)":{title:"Основной показатель",items:["Общая самооценка"]},
  "Школа зверей":{title:"Области беседы",items:["Представления о школе","Персонажи и их взаимодействие","Объяснение рисунка ребенком"]},
@@ -166,7 +168,8 @@ function materials(m,blank){
  const d=DETAILS[m.name];
  if(!d)return '<p>Полный материал доступен только у правообладателя.</p>';
  if(d.special)return window.PSY_BATCH02.materials(d,blank);
- if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.materials(d,blank);
+ if(d.workflow==='diagnostic04')return window.PSY_DIAG04.materials(d,blank);
+  if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.materials(d,blank);
  if(d.workflow==='diagnostic03')return window.PSY_DIAG03.materials(d,blank);
  if(d.graphic==='dembo')return '<div class="stimulus-paper"><h3>Отметь свое нынешнее и желаемое положение</h3>'+demboSvg()+'</div>';
  if(d.graphic==='sociogram')return '<div class="stimulus-paper"><h3>Размести членов семьи внутри круга</h3>'+sociogramSvg()+'</div>';
@@ -185,12 +188,14 @@ function viewMaterials(m){
 }
 function viewProcessing(m){
  const d=DETAILS[m.name];if(!d)return '<div class="notice">Подтвержденный ключ и обработка выбранной версии пока не добавлены. Диагностические результаты здесь не рассчитываются.</div>';
- if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.processing(d);
+ if(d.workflow==='diagnostic04')return window.PSY_DIAG04.processing(d);
+  if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.processing(d);
  if(d.workflow==='diagnostic03')return window.PSY_DIAG03.processing(d);
  return '<h3>Подсчет / фиксация</h3><p>'+escapeHTML(d.scoring)+'</p><h3>Интерпретация</h3><p>'+escapeHTML(d.interpret)+'</p>'+(d.source?'<p>Источник: <a target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d.source)+'">'+escapeHTML(d.source)+'</a></p>':'');
 }
 function getScores(d,answers){
- if(d.workflow==='diagnostic03')return window.PSY_DIAG03.score(d,{answers});
+ if(d.workflow==='diagnostic04')return window.PSY_DIAG04.score(d,answers);
+  if(d.workflow==='diagnostic03')return window.PSY_DIAG03.score(d,{answers});
  if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.score(d,answers);
  if(d.special)return window.PSY_BATCH02.score(d,answers);
  if(d.graphic==='dictation'){
@@ -208,7 +213,8 @@ function getScores(d,answers){
 }
 function viewCalculator(m){
  const d=DETAILS[m.name];
- if(d?.workflow==='diagnostic03')return window.PSY_DIAG03.calculator(d,{rows,rowIndex,calcMode});
+ if(d?.workflow==='diagnostic04')return window.PSY_DIAG04.calculator(d,{rows,rowIndex,calcMode});
+  if(d?.workflow==='diagnostic03')return window.PSY_DIAG03.calculator(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.calculator(d,{rows,rowIndex,calcMode});
  if(d?.special)return window.PSY_BATCH02.calculator(d,{rows,rowIndex,calcMode,getScores});
  if(d?.graphic==='dictation')return viewDictationCalculator(d);
@@ -232,7 +238,8 @@ function viewCalculator(m){
 }
 function bindControls(){
  const d=DETAILS[methodNow.name];
- if(d?.workflow==='diagnostic03')window.PSY_DIAG03.bind(d,{rows,rowIndex,calcMode},()=>setTab('score'));
+ if(d?.workflow==='diagnostic04')window.PSY_DIAG04.bind(d,{rows,rowIndex,calcMode});
+  if(d?.workflow==='diagnostic03')window.PSY_DIAG03.bind(d,{rows,rowIndex,calcMode},()=>setTab('score'));
  if(d?.workflow==='diagnostic')window.PSY_DIAGNOSTICS.bind(d,{rows,rowIndex,calcMode});
  if(d?.special)window.PSY_BATCH02.bind(d,{rows,rowIndex,calcMode,getScores});
  document.querySelectorAll('.dict-score-select').forEach(el=>el.addEventListener('change',()=>{rows[rowIndex].answers[+el.dataset.dictN]=el.value;setTab('score')}));
