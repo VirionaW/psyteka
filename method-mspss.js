@@ -123,5 +123,5 @@
    download("MSPSS_группа.csv",csv(table),"text/csv;charset=utf-8");
   });
  }
- window.PSY_MSPSS={score,done,links,instruction,materials,processing,calculator,bind};
+ window.PSY_MSPSS={score,done,instruction,materials,processing,calculator,bind};
 })();
