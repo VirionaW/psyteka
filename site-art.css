@@ -1,74 +1,70 @@
-/* Иллюстрации Психотеки из двух пользовательских архивов, 79 изображений.
-   Общий WebP 640x512: 60 методик + 19 тем панели, оригинальные подписи не отображаются. */
-.psy-sprite{display:block;flex:none;width:100%;height:100%;
- background-image:url("assets/psyteka-icons-79.webp");
- background-repeat:no-repeat;
- background-size:1000% 800%;
- background-position:var(--sprite-x) var(--sprite-y);
- border-radius:inherit;
+/* Психотека. Четкое соответствие оригинальным иллюстрациям из архивов.
+   20 индивидуальных методик - 940x752, 188px на иллюстрацию.
+   19 разделов панели - 580x464, 116px на иллюстрацию.
+   Без обобщающих картинок и повторов в карточках методик. */
+.psy-picture{
+ display:block!important;flex:none!important;width:100%!important;height:100%!important;
+ border-radius:inherit;background-repeat:no-repeat!important;
+ background-position:var(--art-x) var(--art-y)!important;
+ background-size:500% 400%!important;
+ image-rendering:auto!important;filter:none!important;
 }
-.library-page .glyph.psy-illustrated{
- width:80px!important;height:80px!important;min-width:80px!important;
- display:grid;place-items:center;overflow:hidden!important;
- padding:4px!important;background:#f9fcf8!important;
- border:1px solid #cfdfd2!important;border-radius:15px!important;
+.psy-picture-method{background-image:url("assets/psyteka-methods-hq.webp")!important}
+.psy-picture-panel{background-image:url("assets/psyteka-panel-hq.webp")!important}
+.library-page .method .glyph.psy-art-glyph{
+ width:82px!important;height:82px!important;min-width:82px!important;max-width:82px!important;
+ display:flex!important;align-items:center;justify-content:center;
+ background:#f9fbf8!important;border:1px solid #d1e4d7!important;
+ padding:3px!important;border-radius:14px!important;overflow:hidden!important;
 }
-.library-page .glyph.psy-illustrated .psy-sprite{width:70px;height:70px;border-radius:12px;}
-.library-page .navgroup .navicon:has(.psy-sprite){
- display:inline-flex!important;align-items:center;justify-content:center;
- width:34px!important;height:34px!important;min-width:34px!important;
- background:#f7faf6;border:1px solid #d4e4d9;border-radius:10px;
- font-size:0!important;overflow:hidden;padding:2px;
+.library-page .method .glyph.psy-art-glyph .psy-picture{width:74px!important;height:74px!important;border-radius:10px!important}
+.library-page .method.psy-no-art .head{gap:0!important}
+.library-page .navgroup .navicon.psy-art-navicon,
+.library-page .info-tree .navicon.psy-art-navicon{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:36px!important;height:36px!important;min-width:36px!important;max-width:36px!important;
+ border:1px solid #d2e4d7!important;background:#f9fbf8!important;
+ border-radius:10px!important;padding:2px!important;font-size:0!important;overflow:hidden!important
 }
-.library-page .navgroup .navicon .psy-sprite{width:29px;height:29px;border-radius:8px}
-.library-page .topic-btn:has(.psy-topic-icon){
- display:flex!important;align-items:center;gap:9px;min-height:45px;
+.library-page .navicon.psy-art-navicon .psy-picture{width:30px!important;height:30px!important;border-radius:7px!important}
+.library-page .topic-btn:has(>.psy-art-topic){display:flex!important;gap:9px!important;align-items:center!important;min-height:44px!important}
+.library-page .psy-art-topic{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 30px!important;width:30px!important;height:30px!important;
+ background:#f9fbf8!important;border:1px solid #d4e4d9!important;border-radius:9px!important;
+ padding:1px!important;overflow:hidden!important
 }
-.library-page .psy-topic-icon{
- display:inline-flex;align-items:center;justify-content:center;flex:none;
- width:30px;height:30px;background:#f7faf6;
- border:1px solid #d5e8d8;border-radius:9px;
- padding:1px;
-}
-.library-page .psy-topic-icon .psy-sprite{width:26px;height:26px;border-radius:6px}
+.library-page .psy-art-topic .psy-picture{width:26px!important;height:26px!important;border-radius:7px!important}
 .library-page .info-parent{
- display:flex!important;align-items:center;gap:11px;
- background:var(--area-sidebar)!important;
- border-left:3px solid #b69a70;
+ display:flex!important;align-items:center!important;gap:11px!important;
+ border-left:3px solid #b69a70!important
 }
 .library-page .info-parent .nav-chevron{margin-left:auto}
 .library-page .info-tree{padding:6px 4px 10px 14px;margin-left:13px;border-left:1px solid #b8cfc0}
 .library-page .info-tree .topic-btn{
- width:100%;display:flex;gap:8px;align-items:center;
- text-align:left;border-radius:11px;
- color:var(--ink);font-size:14px;line-height:1.4;
- background:transparent;border:0;cursor:pointer;
- padding:9px 8px;min-height:41px;text-decoration:none
+ display:flex!important;gap:8px!important;align-items:center!important;
+ width:100%;text-align:left;border-radius:11px;line-height:1.4;
+ background:transparent;border:0;cursor:pointer;padding:9px 8px;min-height:41px;text-decoration:none
 }
-.library-page .info-tree .topic-btn:hover,.library-page .info-tree .topic-btn.active{
- background:#e4f1e6;color:#27634a
+.library-page .info-tree .topic-btn:hover,.library-page .info-tree .topic-btn.active{background:#e4f1e6;color:#27634a}
+.library-page .info-tree[hidden]{display:none!important}
+/* Авторские цвета сохраняются на светлой подложке в обеих темах. */
+html.dark .library-page .method .glyph.psy-art-glyph,
+html.dark .library-page .navgroup .navicon.psy-art-navicon,
+html.dark .library-page .info-tree .navicon.psy-art-navicon,
+html.dark .library-page .psy-art-topic{
+ background:#f9fbf8!important;border-color:#98b5a4!important;
+ filter:none!important;opacity:1!important
 }
-.library-page .info-tree .topic-btn .navicon{width:21px;height:21px;min-width:21px;display:inline-flex;align-items:center;justify-content:center}
-.library-page .info-tree .topic-btn .navicon:has(.psy-sprite){width:30px;min-width:30px;height:30px;padding:1px;border-radius:9px}
-.library-page .info-tree .topic-btn .navicon .psy-sprite{width:26px;height:26px}
-/* В темной теме не перекрашиваем собственные цвета авторских иллюстраций:
-   помещаем их на светлую контрастную подложку. */
-html.dark .library-page .glyph.psy-illustrated,
-html.dark .library-page .navgroup .navicon:has(.psy-sprite),
-html.dark .library-page .psy-topic-icon{
- background:#f5f8f1!important;border-color:#9eb6a7!important;
- color:#254a35!important;filter:none!important
-}
-html.dark .library-page .psy-sprite{filter:none!important;opacity:1!important}
-html.dark .library-page .info-parent{background:#203b30!important;color:#eef6ef!important;border-color:#cfb18a}
-html.dark .library-page .info-tree{border-color:#597363}
-html.dark .library-page .info-tree .topic-btn{color:#eff6ee!important}
+html.dark .library-page .psy-picture{filter:none!important;opacity:1!important}
+html.dark .library-page .info-parent{background:#203b30!important;color:#eff8ef!important;border-color:#cfb18a!important}
+html.dark .library-page .info-tree{border-color:#597363!important}
+html.dark .library-page .info-tree .topic-btn{color:#f2faf2!important}
 html.dark .library-page .info-tree .topic-btn:hover,
 html.dark .library-page .info-tree .topic-btn.active{background:#315541!important;color:#fff!important}
-.library-page .info-tree[hidden]{display:none!important}
 @media(max-width:820px){
- .library-page .glyph.psy-illustrated{width:69px!important;height:69px!important;min-width:69px!important}
- .library-page .glyph.psy-illustrated .psy-sprite{width:61px;height:61px}
- .library-page .navgroup .navicon:has(.psy-sprite){width:35px!important;height:35px!important}
- .library-page .topic-btn:has(.psy-topic-icon){min-height:49px}
+ .library-page .method .glyph.psy-art-glyph{width:70px!important;height:70px!important;min-width:70px!important}
+ .library-page .method .glyph.psy-art-glyph .psy-picture{width:62px!important;height:62px!important}
+ .library-page .navgroup .navicon.psy-art-navicon{width:36px!important;height:36px!important;min-width:36px!important}
+ .library-page .topic-btn:has(>.psy-art-topic){min-height:47px!important}
 }
