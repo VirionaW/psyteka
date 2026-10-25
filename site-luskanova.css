@@ -1,0 +1,30 @@
+/* Психотека · школьная мотивация Лускановой */
+.library-page #modal .psy-lus-doclinks{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 22px}
+.library-page #modal .psy-lus-doclinks .btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.library-page #modal .psy-lus-warning{border-left:4px solid #d69b2c!important;background:color-mix(in srgb,#ffd875 18%,var(--paper));color:var(--ink)}
+.library-page #modal .psy-lus-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:20px 0}
+.library-page #modal .psy-lus-inputs label{display:flex;flex-direction:column;justify-content:space-between;gap:12px;background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:14px 17px;min-width:0}
+.library-page #modal .psy-lus-inputs span{font-size:15px;color:var(--ink);line-height:1.45}
+.library-page #modal .psy-lus-inputs b{color:var(--green)}
+.library-page #modal .psy-lus-inputs select{width:100%;min-width:0;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:600 14px system-ui;padding:11px;border-radius:10px}
+.library-page #modal .psy-lus-tools{display:flex;gap:9px;flex-wrap:wrap;margin:17px 0}
+.library-page #modal .psy-lus-result{border:1px solid var(--line);border-radius:16px;background:var(--paper);padding:18px 20px;margin-top:24px}
+.library-page #modal .psy-lus-bar{height:13px;background:var(--line);border-radius:20px;overflow:hidden}
+.library-page #modal .psy-lus-bar>i{display:block;background:linear-gradient(90deg,#86b8bb,#438f70);height:100%;transition:width .2s}
+.library-page #modal .psy-lus-total{background:var(--soft);border-radius:13px;margin:20px 0;padding:17px 19px}
+.library-page #modal .psy-lus-total>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}
+.library-page #modal .psy-lus-total strong{font-size:15px}
+.library-page #modal .psy-lus-total b{font-size:25px;color:var(--green)}
+.library-page #modal .psy-lus-total p{font-size:16px;font-weight:700;margin:12px 0 0}
+.library-page #modal .psy-lus-method-note{font-size:13px;color:var(--muted)}
+.library-page #modal .psy-lus-bands{display:grid;gap:8px;margin:12px 0 24px}
+.library-page #modal .psy-lus-bands>div{display:grid;grid-template-columns:90px 1fr;gap:10px;align-items:center;padding:10px 13px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}
+.library-page #modal .psy-lus-bands b{color:var(--green)}
+.library-page #modal .psy-lus-answers td:last-child{width:200px;white-space:nowrap}
+.library-page #modal .psy-lus-key td{text-align:center}
+@media(max-width:780px){
+ .library-page #modal .psy-lus-inputs{grid-template-columns:1fr}
+ .library-page #modal .psy-lus-doclinks{flex-direction:column}
+ .library-page #modal .psy-lus-answers td:last-child{width:125px;font-size:12px}
+ .library-page #modal .psy-lus-inputs label{min-height:0}
+}
