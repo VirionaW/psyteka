@@ -1,0 +1,27 @@
+/* SCARED-41 child/parent screens */
+.library-page #modal .psy-sc-warning{border-left:4px solid #bf9b50;background:var(--soft);color:var(--ink)}
+.library-page #modal .psy-sc-links,.library-page #modal .psy-sc-actions{display:flex;flex-wrap:wrap;gap:9px;margin:17px 0}
+.library-page #modal .psy-sc-links .btn{display:inline-flex;min-height:44px;align-items:center}
+.library-page #modal .psy-sc-code,.library-page #modal .psy-sc-role label{display:grid;gap:6px;max-width:420px}
+.library-page #modal .psy-sc-code input,.library-page #modal .psy-sc-role select,.library-page #modal .psy-sc-item select{border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:11px;border-radius:9px;width:100%;min-width:0;font:600 14px system-ui}
+.library-page #modal .psy-sc-role{display:flex;gap:15px;align-items:end;flex-wrap:wrap;background:var(--soft);border:1px solid var(--line);padding:14px 16px;border-radius:12px;margin:18px 0}
+.library-page #modal .psy-sc-role label{width:220px}.library-page #modal .psy-sc-role span{font-size:13px;color:var(--muted)}
+.library-page #modal .psy-sc-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:17px 0}
+.library-page #modal .psy-sc-item{display:grid;gap:8px;min-width:0;padding:11px;border:1px solid var(--line);border-radius:11px;background:var(--soft)}
+.library-page #modal .psy-sc-item span{font-size:13px}.library-page #modal .psy-sc-item b{font-size:17px;color:var(--green)}
+.library-page #modal .psy-sc-results{border:1px solid var(--line);background:var(--paper);border-radius:13px;margin:17px 0;padding:18px}
+.library-page #modal .psy-sc-track{height:9px;background:var(--line);border-radius:20px;overflow:hidden;margin:9px 0}
+.library-page #modal .psy-sc-track>span{display:block;height:100%;background:var(--green)}
+.library-page #modal .psy-sc-total{display:flex;gap:12px;flex-wrap:wrap;align-items:center;background:var(--soft);padding:13px;border-radius:11px;margin:12px 0}
+.library-page #modal .psy-sc-total b{font-size:25px;color:var(--green)}
+.library-page #modal .psy-sc-total span:last-child{font-size:12px;color:var(--muted)}
+.library-page #modal .psy-sc-factors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}
+.library-page #modal .psy-sc-factor{background:var(--soft);padding:12px;border-radius:11px;border:1px solid var(--line);min-width:0}
+.library-page #modal .psy-sc-factor>div:first-child{display:flex;gap:8px;justify-content:space-between;align-items:start}
+.library-page #modal .psy-sc-factor>div span{font-size:13px}.library-page #modal .psy-sc-factor b{font-size:14px;white-space:nowrap;color:var(--green)}
+.library-page #modal .psy-sc-factor small,.library-page #modal .psy-sc-muted{font-size:12px;color:var(--muted)}
+.library-page #modal .psy-sc-scroll{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:9px}
+.library-page #modal .psy-sc-scroll table{min-width:700px;width:100%;border-collapse:collapse;font-size:13px}
+.library-page #modal .psy-sc-scroll th,.library-page #modal .psy-sc-scroll td{border:1px solid var(--line);padding:9px;text-align:left}
+@media(max-width:950px){.library-page #modal .psy-sc-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:680px){.library-page #modal .psy-sc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.library-page #modal .psy-sc-factors{grid-template-columns:1fr}.library-page #modal .psy-sc-links,.library-page #modal .psy-sc-actions{flex-direction:column}.library-page #modal .psy-sc-links .btn,.library-page #modal .psy-sc-actions .btn{width:100%}}
