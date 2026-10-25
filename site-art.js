@@ -71,28 +71,15 @@
    card.classList.remove("psy-no-art");
   });
  }
+
  function drawSidebar(){
-  document.querySelectorAll(".sidebar .navgroup[data-view]>.navicon, .sidebar .info-tree [data-view]>.navicon").forEach(icon=>{
-   if(icon.dataset.psyArtReady==="1")return;
-   const index=areaIndex.get(icon.parentElement.dataset.view);
-   if(index===undefined)return;
-   icon.replaceChildren(sprite("panel",index));
-   icon.classList.add("psy-art-navicon");
-   icon.dataset.psyArtReady="1";
-  });
-  document.querySelectorAll(".sidebar [data-topic]").forEach(btn=>{
-   if(btn.dataset.psyArtReady==="1")return;
-   btn.dataset.psyArtReady="1";
-   const index=topicIndex.get(btn.dataset.topic);
-   if(index===undefined)return; // 'Программы': нет отдельного изображения в архиве.
-   const icon=document.createElement("span");
-   icon.className="psy-art-topic";
-   icon.appendChild(sprite("panel",index));
-   btn.prepend(icon);
-  });
+  // Панель разделов намеренно текстовая. Иллюстрации сохраняются только в карточках методик.
+  const panel=document.querySelector(".sidebar");
+  if(!panel)return;
+  panel.querySelectorAll(".navicon, .psy-art-topic, .info-link > span[aria-hidden='true']").forEach(el=>el.remove());
  }
  function draw(){drawSidebar();drawCards();}
- window.PSY_ART={matchingMethods:methodIndex.size,panelPictures:19,decorate:draw};
+ window.PSY_ART={matchingMethods:methodIndex.size,panelPictures:0,decorate:draw};
  draw();
  const list=document.getElementById("catalog"),topics=document.getElementById("topics");
  if(list)new MutationObserver(drawCards).observe(list,{childList:true});
