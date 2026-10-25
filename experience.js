@@ -61,6 +61,7 @@ function setTab(name){
 }
 
 const PORTFOLIO_FIELDS={
+ "Оценка школьной мотивации":{title:"Основной показатель",items:["Уровень школьной мотивации · 10 вопросов"]},
  "GAD-7 - краткая шкала тревожных симптомов":{title:"Основной показатель",items:["Выраженность тревожных симптомов (7 пунктов)"]},
  "Краткий опросник PHQ-4":{title:"Шкалы и показатели",items:["Тревожные симптомы (GAD-2)","Депрессивные симптомы (PHQ-2)","Общий показатель дистресса"]},
  "Шкала личностной тревожности":{title:"Шкалы тревожности",items:["Школьная","Самооценочная","Межличностная","Магическая"]},
@@ -112,11 +113,12 @@ function viewOverview(m){
  const indicators=portfolioIndicators(m,d);
  const indicatorHtml=indicators.items.length?'<div class="psy-profile-indicators">'+indicators.items.map((t,i)=>'<div class="psy-profile-indicator"><span class="psy-indicator-number" aria-hidden="true">'+(i+1)+'</span><span>'+escapeHTML(t)+'</span></div>').join("")+'</div>':'<p class="psy-profile-muted">Перечень шкал для этой редакции пока не подтвержден.</p>';
  const sourceHtml=source?'<a href="'+escapeHTML(source)+'" target="_blank" rel="noopener noreferrer">Открыть первоисточник ↗</a>':'<span class="psy-profile-muted">Проверенная ссылка на первоисточник пока не добавлена.</span>';
- return '<section class="psy-portfolio-reference"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div><h3>'+escapeHTML(indicators.title)+'</h3>'+indicatorHtml+'<h3>Краткое описание</h3><p class="psy-profile-description">'+escapeHTML(description)+'</p><h3>Первоисточник</h3><p class="psy-profile-source">'+sourceHtml+'</p></section>';
+ return '<section class="psy-portfolio-reference"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div><h3>'+escapeHTML(indicators.title)+'</h3>'+indicatorHtml+'<h3>Краткое описание</h3><p class="psy-profile-description">'+escapeHTML(description)+'</p>'+(d.warning?'<div class="notice psy-lus-warning">'+escapeHTML(d.warning)+'</div>':'')+'<h3>Первоисточник</h3><p class="psy-profile-source">'+sourceHtml+'</p></section>';
 }
 function viewInstruction(m){
  const d=DETAILS[m.name];
- if(!d)return '<div class="notice">Полный текст руководства для данной версии пока не подтвержден. Используйте проверенный первоисточник, а не описание карточки вместо инструкции.</div>';
+ if(d?.workflow==='luskanova')return window.PSY_LUSKANOVA.instruction(d);
+  if(!d)return '<div class="notice">Полный текст руководства для данной версии пока не подтвержден. Используйте проверенный первоисточник, а не описание карточки вместо инструкции.</div>';
  return '<h3>Инструкция для участника</h3><blockquote class="kid-instruction">'+escapeHTML(d.instructions)+'</blockquote><h3>Порядок проведения для психолога</h3><ol><li>Проверьте соответствие возраста и цели.</li><li>Объясните добровольность и порядок работы.</li><li>Предъявите стимульный материал без подсказок.</li><li>Зафиксируйте ответы, длительность и существенные наблюдения.</li><li>Проводите интерпретацию в пределах применимых методических норм.</li></ol>'+(d.graphic==='dictation'?dictationCommands(d):'')+(d.special?window.PSY_BATCH02.extraInstructions(d):'')+(d.workflow==='diagnostic'?window.PSY_DIAGNOSTICS.instructions(d):'')+(d.workflow==='diagnostic03'?window.PSY_DIAG03.instructions(d):'');
 }
 function ladderSvg(){let s='<svg width="500" height="250" viewBox="0 0 500 250" aria-label="Лестница из семи ступеней"><path d="M16 224 H485" stroke="#42765c" stroke-width="3"/>';for(let i=0;i<7;i++){let h=23*(i+1);s+='<rect x="'+(50+i*59)+'" y="'+(224-h)+'" width="56" height="'+h+'" fill="'+(i%2?'#b4dbb9':'#d8ecd7')+'" stroke="#41795c" stroke-width="2"/><text x="'+(77+i*59)+'" y="'+(216-h)+'" text-anchor="middle" font-size="15" fill="#28553f">'+(i+1)+'</text>'}return s+'</svg>'}
@@ -168,7 +170,8 @@ function materials(m,blank){
  const d=DETAILS[m.name];
  if(!d)return '<p>Полный материал доступен только у правообладателя.</p>';
  if(d.special)return window.PSY_BATCH02.materials(d,blank);
- if(d.workflow==='diagnostic04')return window.PSY_DIAG04.materials(d,blank);
+ if(d.workflow==='luskanova')return window.PSY_LUSKANOVA.materials(d);
+  if(d.workflow==='diagnostic04')return window.PSY_DIAG04.materials(d,blank);
   if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.materials(d,blank);
  if(d.workflow==='diagnostic03')return window.PSY_DIAG03.materials(d,blank);
  if(d.graphic==='dembo')return '<div class="stimulus-paper"><h3>Отметь свое нынешнее и желаемое положение</h3>'+demboSvg()+'</div>';
@@ -183,18 +186,21 @@ function materials(m,blank){
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
 function viewMaterials(m){
- const d=DETAILS[m.name];if(!d)return '<div class="notice">Проверенный авторский бланк этой методики пока не добавлен. Применять карточку как готовую форму нельзя.</div>';
+ const d=DETAILS[m.name];if(d?.workflow==='luskanova')return window.PSY_LUSKANOVA.materials(d);
+  if(!d)return '<div class="notice">Проверенный авторский бланк этой методики пока не добавлен. Применять карточку как готовую форму нельзя.</div>';
  return '<h3>Стимульный материал и бланк</h3>'+materials(m,false)+(d.questions?.length && d.graphic ? '<h3>Протокол беседы</h3><table class="questions-table"><thead><tr><th>№</th><th>Вопрос психолога</th><th>Ответ / наблюдение</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td>________________</td></tr>').join('')+'</tbody></table>':"");
 }
 function viewProcessing(m){
  const d=DETAILS[m.name];if(!d)return '<div class="notice">Подтвержденный ключ и обработка выбранной версии пока не добавлены. Диагностические результаты здесь не рассчитываются.</div>';
- if(d.workflow==='diagnostic04')return window.PSY_DIAG04.processing(d);
+ if(d.workflow==='luskanova')return window.PSY_LUSKANOVA.processing(d);
+  if(d.workflow==='diagnostic04')return window.PSY_DIAG04.processing(d);
   if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.processing(d);
  if(d.workflow==='diagnostic03')return window.PSY_DIAG03.processing(d);
  return '<h3>Подсчет / фиксация</h3><p>'+escapeHTML(d.scoring)+'</p><h3>Интерпретация</h3><p>'+escapeHTML(d.interpret)+'</p>'+(d.source?'<p>Источник: <a target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d.source)+'">'+escapeHTML(d.source)+'</a></p>':'');
 }
 function getScores(d,answers){
- if(d.workflow==='diagnostic04')return window.PSY_DIAG04.score(d,answers);
+ if(d.workflow==='luskanova')return window.PSY_LUSKANOVA.score(d,answers);
+  if(d.workflow==='diagnostic04')return window.PSY_DIAG04.score(d,answers);
   if(d.workflow==='diagnostic03')return window.PSY_DIAG03.score(d,{answers});
  if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.score(d,answers);
  if(d.special)return window.PSY_BATCH02.score(d,answers);
@@ -213,7 +219,8 @@ function getScores(d,answers){
 }
 function viewCalculator(m){
  const d=DETAILS[m.name];
- if(d?.workflow==='diagnostic04')return window.PSY_DIAG04.calculator(d,{rows,rowIndex,calcMode});
+ if(d?.workflow==='luskanova')return window.PSY_LUSKANOVA.calculator(d,{rows,rowIndex,calcMode});
+  if(d?.workflow==='diagnostic04')return window.PSY_DIAG04.calculator(d,{rows,rowIndex,calcMode});
   if(d?.workflow==='diagnostic03')return window.PSY_DIAG03.calculator(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.calculator(d,{rows,rowIndex,calcMode});
  if(d?.special)return window.PSY_BATCH02.calculator(d,{rows,rowIndex,calcMode,getScores});
@@ -238,7 +245,8 @@ function viewCalculator(m){
 }
 function bindControls(){
  const d=DETAILS[methodNow.name];
- if(d?.workflow==='diagnostic04')window.PSY_DIAG04.bind(d,{rows,rowIndex,calcMode});
+ if(d?.workflow==='luskanova')window.PSY_LUSKANOVA.bind(d,{rows,rowIndex,calcMode});
+  if(d?.workflow==='diagnostic04')window.PSY_DIAG04.bind(d,{rows,rowIndex,calcMode});
   if(d?.workflow==='diagnostic03')window.PSY_DIAG03.bind(d,{rows,rowIndex,calcMode},()=>setTab('score'));
  if(d?.workflow==='diagnostic')window.PSY_DIAGNOSTICS.bind(d,{rows,rowIndex,calcMode});
  if(d?.special)window.PSY_BATCH02.bind(d,{rows,rowIndex,calcMode,getScores});
@@ -325,9 +333,9 @@ function openMethod(m){
  header.insertAdjacentHTML('afterend','<nav class="method-tabs" id="methodTabs">'+tabs.map(([key,title])=>'<button class="modal-tab" data-tab="'+key+'">'+title+'</button>').join('')+'</nav>');
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
- footer.innerHTML='<div class="actions" id="methodButtons">'+(d?'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions psy-footer-main"><button class="btn psy-footer-close" id="closeFooter">Закрыть</button>'+(d?'<button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button>':'')+'</div>';
+ footer.innerHTML='<div class="actions" id="methodButtons">'+(d?.workflow==='luskanova'?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" download>Бланк</a><a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Первоисточник PDF ↗</a>':d?'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions psy-footer-main"><button class="btn psy-footer-close" id="closeFooter">Закрыть</button>'+(d?'<button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button>':'')+'</div>';
  $('#closeFooter').onclick=closeModal; if(d)$('#bottomProcessing').onclick=()=>setTab(tabNow==='score'||tabNow==='processing'?'overview':d.calculator?'score':'processing');
- if(d){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;if(d.workflow==='diagnostic03'&&d.diagnosticType==='rses')$('#saveBlank').onclick=()=>window.PSY_DIAG03.saveBlank(d);}
+ if(d&&d.workflow!=='luskanova'){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;if(d.workflow==='diagnostic03'&&d.diagnosticType==='rses')$('#saveBlank').onclick=()=>window.PSY_DIAG03.saveBlank(d);}
  $('#modal').hidden=false;$('#shade').hidden=false;setTab('overview');
 }
 window.openMethod=openMethod;
