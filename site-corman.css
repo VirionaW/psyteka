@@ -1,0 +1,25 @@
+/* Рисунок семьи в концепции Л. Кормана */
+.library-page #modal .psy-corman-links{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0 20px}
+.library-page #modal .psy-corman-links>a{display:inline-flex;align-items:center;justify-content:center;min-height:43px}
+.library-page #modal .psy-corman-warn{border-left:4px solid #d5a337!important;background:color-mix(in srgb,#ffdf9a 19%,var(--paper));color:var(--ink)}
+.library-page #modal .psy-corman-paper{min-height:320px;border-radius:13px;border:1px solid #c7daca;background:#fff;display:flex;justify-content:flex-end;align-items:flex-end;padding:13px;color:#aebfaf;font-size:11px;margin:18px auto;max-width:680px}
+.library-page #modal .psy-corman-criteria{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}
+.library-page #modal .psy-corman-criteria>div{background:var(--soft);border:1px solid var(--line);padding:15px;border-radius:12px;display:flex;flex-direction:column;gap:8px}
+.library-page #modal .psy-corman-criteria strong{color:var(--green);font-size:15px}
+.library-page #modal .psy-corman-criteria span{color:var(--muted);font-size:12px}
+.library-page #modal .psy-corman-counts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:17px 0}
+.library-page #modal .psy-corman-counts label{background:var(--soft);border-radius:12px;border:1px solid var(--line);padding:13px;display:flex;flex-direction:column;gap:8px;font-weight:650;font-size:13px}
+.library-page #modal .psy-corman-counts input,.library-page #modal .psy-corman-counts select,.library-page #modal .psy-corman-notes textarea{min-width:0;width:100%;border:1px solid var(--line);border-radius:9px;padding:10px;background:var(--paper);color:var(--ink);font:500 14px system-ui}
+.library-page #modal .psy-corman-notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.library-page #modal .psy-corman-notes>label{display:flex;flex-direction:column;gap:7px;background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:13px}
+.library-page #modal .psy-corman-notes strong{color:var(--green)}
+.library-page #modal .psy-corman-notes small{font-size:12px;color:var(--muted)}
+.library-page #modal .psy-corman-notes textarea{min-height:82px;resize:vertical}
+.library-page #modal .psy-corman-report{background:var(--paper);border-radius:14px;border:1px solid var(--line);padding:17px;margin:17px 0}
+.library-page #modal .psy-corman-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.library-page #modal .psy-corman-stats>div{display:flex;flex-direction:column;background:var(--soft);border-radius:12px;padding:14px;gap:7px}
+.library-page #modal .psy-corman-stats span{font-size:12px;color:var(--muted)}
+.library-page #modal .psy-corman-stats strong{font-size:19px;color:var(--green)}
+.library-page #modal .psy-corman-actions{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0}
+@media(max-width:800px){.library-page #modal .psy-corman-criteria,.library-page #modal .psy-corman-notes,.library-page #modal .psy-corman-counts{grid-template-columns:1fr}}
+@media(max-width:600px){.library-page #modal .psy-corman-stats{grid-template-columns:1fr}.library-page #modal .psy-corman-links{flex-direction:column}}
