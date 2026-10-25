@@ -401,6 +401,7 @@ function viewCalculator(m){
  return head+'<div class="notice">Ответы вводятся цифрами от 0 до '+(d.options.length-1)+'. После ввода курсор переходит к следующему полю.</div>'+qhtml+results+'<div class="class-actions"><button class="btn" id="resetParticipant">Сбросить ответы участника</button></div>';
 }
 function bindControls(){
+ if(DETAILS[methodNow.name]?.workflow==='schoolAdaptObserve')window.PSY_SCHOOL_ADAPT.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  const d=DETAILS[methodNow.name];
  if(d?.workflow==='objectClass16')window.PSY_OBJECT_CLASSIFY.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='schoolDrawingL')window.PSY_SCHOOL_DRAWING.bind(d,{rows,rowIndex,calcMode});
