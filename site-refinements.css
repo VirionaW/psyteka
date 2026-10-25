@@ -216,3 +216,77 @@ html.dark .library-page .portfolio-note,html.dark .library-page .portfolio-note 
 html.dark .library-page .resource-hub .resource-deck{color:#bfd9c9!important}
 html.dark .site-account .kicker{color:#a6ddaf!important}
 html.dark .account-card .account-actions a.site-btn{background:#315e48!important;border-color:#6da47b!important;color:#fff!important}
+
+/* Специализированные методические комплекты: тёмный режим без белых островков */
+html.dark body.kit-body,html.dark body.kit-page,html.dark body.cognitive-page,html.dark body.family-page{
+ background:#10221d!important;color:#edf7ef!important
+}
+html.dark :is(.kit-panel,.sk-panel,.ck-panel,.fk-panel,.kit-workspace,.sk-workspace,.ck-work,.fk-form){
+ background:#1b342a!important;border-color:#476e56!important;color:#ebf6ed!important
+}
+html.dark :is(.kit-hero,.sk-hero,.ck-hero,.fk-hero){
+ background:linear-gradient(113deg,#173e2f,#2a684b)!important;color:#f7fbf6!important
+}
+html.dark :is(.kit-main,.sk-container,.ck-main,.fk-container) :is(h1,h2,h3,h4,.kit-work-top,.sk-workhead,.ck-work-title,.fk-form-header){color:#f0f9f2}
+html.dark :is(.kit-main,.sk-container,.ck-main,.fk-container) :is(p,small,.kit-hint,.kit-work-top span,.sk-footer,.ck-footer,.fk-footer){
+ color:#c6dccb
+}
+html.dark :is(.kit-picker button,.sk-tabs button,.ck-choose button,.fk-picker button,.kit-accordion,.sk-details,.ck-details,.fk-accordion,.kit-matrix-view,.sk-circle-panel,.fk-circle-panel,.ck-results,.kit-results,.sk-result,.ck-result,.fk-result){
+ background:#213c30!important;color:#edf7ee!important;border-color:#557866!important
+}
+html.dark :is(.kit-picker button,.sk-tabs button,.ck-choose button,.fk-picker button)[aria-pressed=true]{
+ background:#305e44!important;box-shadow:inset 0 0 0 1px #89c29a!important;border-color:#8dbf95!important
+}
+html.dark :is(.kit-picker b,.sk-tabs b,.ck-choose b,.fk-picker b,.kit-accordion summary,.sk-details summary,.ck-details summary,.fk-accordion summary){
+ color:#f0faf1!important
+}
+html.dark :is(.kit-heading p,.sk-heading p,.ck-heading p,.fk-heading p,.sk-details>div,.ck-details>div,.fk-accordion>div,.kit-accordion>div){
+ color:#d1e2d5!important
+}
+html.dark :is(.kit-facts span,.sk-facts span,.ck-facts span,.fk-facts>div,.kit-stats div,.sk-result-grid>div,.ck-stat,.kit-info-grid>div){
+ background:#2a4938!important;border-color:#5d7e68!important;color:#eaf7ed!important
+}
+html.dark :is(.kit-facts b,.sk-facts b,.ck-facts b,.fk-facts b,.ck-stat span,.sk-result-grid span,.kit-stats span){
+ color:#bfe0c4!important
+}
+html.dark :is(.kit-inline-warning,.sk-notice,.ck-caution,.fk-warning){
+ background:#473928!important;color:#f6e4c7!important;border-color:#d2aa64!important
+}
+html.dark :is(.kit-workspace input,.kit-workspace select,.kit-columns textarea,.sk-workspace input,.sk-workspace textarea,.ck-work input,.ck-work textarea,.fk-form textarea){
+ background:#122820!important;color:#f5fbf6!important;border-color:#70947b!important
+}
+html.dark :is(.kit-table,.sk-table,.ck-record){
+ background:#1c362c!important;color:#eff8f1!important;border-color:#5b806a!important
+}
+html.dark :is(.kit-table th,.sk-table th,.ck-record th){
+ background:#2d5640!important;color:#f3f9f3!important;border-color:#6d9279!important
+}
+html.dark :is(.kit-table td,.sk-table td,.ck-record td){
+ background:#1b362b!important;color:#f3f9f3!important;border-color:#587b64!important
+}
+html.dark :is(.kit-table input,.sk-table input,.ck-record input){
+ background:#102820!important;color:#f6faf6!important;border-color:#688b75!important
+}
+html.dark :is(.kit-matrix-view,.ck-matrix,.sk-ladder){
+ background:#173328!important;color:#f6faf6!important
+}
+html.dark .ck-matrix span{background:#274438!important;color:#eff8f1!important;border-color:#72917a!important}
+html.dark .sk-ladder button{background:#355944;color:#f0f8f0;border-color:#769b7b}
+html.dark .fk-circle-preview{border-color:#b7d7be}
+html.dark :is(.kit-btn-outline,.ck-actions button.outline,.sk-actions button.sk-outline,.fk-actions button.outline,.ck-table-pager button,.sk-segment button){
+ background:#274939!important;color:#f0faf2!important;border-color:#75a283!important
+}
+html.dark :is(.sk-segment button,.ck-table-pager button)[aria-pressed=true]{
+ background:#397452!important;color:#fff!important
+}
+html.dark :is(.kit-source,.ck-source,.sk-source,.fk-source,.kit-backline,.sk-breadcrumb,.ck-back,.fk-breadcrumb){color:#cbdccd!important}
+html.dark :is(.kit-source,.ck-source,.sk-source,.fk-source,.kit-backline,.sk-breadcrumb,.ck-back,.fk-breadcrumb) a{color:#b2ebc1!important}
+html.dark .ck-mini-chart text{fill:#cfe4d5!important}
+html.dark .ck-mini-chart .axis{stroke:#7fa38b}
+html.dark .ck-mini-chart .line{stroke:#9edbb3}
+html.dark .ck-mini-chart circle{fill:#a8e5ba}
+@media print{
+ html.dark :is(.kit-print-region,.ck-paper-card,#kitPrintRegion,#skPrint,#ckPrint,#familyPrint){
+ background:#fff!important;color:#111!important
+ }
+}
