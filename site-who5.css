@@ -1,0 +1,26 @@
+/* WHO-5: well-being questionnaire within Psyteka */
+.library-page #modal .psy-who-note{border-left:4px solid #8baf96;background:var(--soft);color:var(--ink)}
+.library-page #modal .psy-who-links,.library-page #modal .psy-who-actions{display:flex;flex-wrap:wrap;gap:9px;margin:17px 0}
+.library-page #modal .psy-who-links .btn{display:inline-flex;min-height:44px;align-items:center}
+.library-page #modal .psy-who-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.library-page #modal .psy-who-item{display:flex;flex-direction:column;justify-content:space-between;gap:14px;min-width:0;padding:15px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
+.library-page #modal .psy-who-item span{font-size:15px;line-height:1.45}
+.library-page #modal .psy-who-item b{color:var(--green)}
+.library-page #modal .psy-who-item select,.library-page #modal .psy-who-code input{width:100%;min-width:0;padding:11px 12px;border:1px solid var(--line);border-radius:9px;font:600 14px system-ui;color:var(--ink);background:var(--paper)}
+.library-page #modal .psy-who-code{display:grid;gap:8px;margin:16px 0;max-width:420px}
+.library-page #modal .psy-who-result{background:var(--paper);border:1px solid var(--line);padding:20px;border-radius:13px;margin:18px 0}
+.library-page #modal .psy-who-score{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:16px 0}
+.library-page #modal .psy-who-score>div{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:15px}
+.library-page #modal .psy-who-score small,.library-page #modal .psy-who-score strong{display:block}
+.library-page #modal .psy-who-score strong{font-size:28px;color:var(--green);margin-top:6px}
+.library-page #modal .psy-who-score strong span{font-size:16px;color:var(--muted)}
+.library-page #modal .psy-who-track{height:10px;background:var(--line);border-radius:14px;overflow:hidden;margin:12px 0}
+.library-page #modal .psy-who-track>span{height:100%;display:block;background:var(--green)}
+.library-page #modal .psy-who-scoretrack{height:14px}
+.library-page #modal .psy-who-muted{font-size:13px;line-height:1.6;color:var(--muted)}
+.library-page #modal .psy-who-scale{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:16px 0}
+.library-page #modal .psy-who-scale>span{padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--soft)}
+.library-page #modal .psy-who-scroll{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:9px}
+.library-page #modal .psy-who-scroll table{min-width:550px;width:100%;border-collapse:collapse}
+.library-page #modal .psy-who-scroll td,.library-page #modal .psy-who-scroll th{border:1px solid var(--line);padding:10px;text-align:left}
+@media(max-width:680px){.library-page #modal .psy-who-grid,.library-page #modal .psy-who-score,.library-page #modal .psy-who-scale{grid-template-columns:1fr}.library-page #modal .psy-who-links,.library-page #modal .psy-who-actions{flex-direction:column}.library-page #modal .psy-who-links .btn,.library-page #modal .psy-who-actions .btn{width:100%}}
