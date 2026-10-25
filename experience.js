@@ -144,7 +144,14 @@ function viewOverview(m){
  const kind=profileText(o.kind||d.kind||m.format||"");
  const count=profileText(o.count||d.count||m.count||"");
  const name=profileText(m.name);
- const fields=[["Методика",name],["Автор",verifiedAuthor],["Возраст",age],["Вид",kind]];
+ const isProgram=m.theme==="Программы";
+ const isRegister=isProgram&&/реестр/i.test(kind);
+ const fields=[
+   [isRegister?"Материал":isProgram?"Программа":"Методика",name],
+   [isRegister?"Составитель":isProgram?"Разработчик":"Автор",verifiedAuthor],
+   [isProgram?"Целевая аудитория":"Возраст",age],
+   ["Вид",kind]
+ ];
  if(count&&count!=="Не уточнено")fields.push(["Количество вопросов / заданий",count]);
  const fieldHtml=fields.filter(([,v])=>!!v).map(([label,value])=>'<div class="psy-profile-row"><strong>'+escapeHTML(label)+'</strong><span>'+escapeHTML(value)+'</span></div>').join("");
  const description=profileText(profileGoal(m,d,o));
