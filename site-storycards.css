@@ -1,0 +1,29 @@
+/* Психотека · Последовательные картинки: новые не-нормативные сюжетные серии */
+.library-page #modal .psy-story-links{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0 22px}
+.library-page #modal .psy-story-links a{min-height:43px;display:inline-flex;align-items:center;justify-content:center}
+.library-page #modal .psy-story-series{margin:23px 0;border:1px solid var(--line);border-radius:15px;padding:18px;background:var(--paper)}
+.library-page #modal .psy-story-series h4{margin:0 0 10px;color:var(--green);font-size:19px}
+.library-page #modal .psy-story-gallery{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:13px 0 20px}
+.library-page #modal .psy-story-card{position:relative;background:#f9fbf7;border:1px solid #bad1c3;border-radius:14px;padding:7px;min-width:0;box-shadow:0 2px 7px rgba(39,87,59,.06)}
+.library-page #modal .psy-story-card svg{display:block;width:100%;height:auto;min-width:0}
+.library-page #modal .psy-story-card>b{position:absolute;top:9px;left:9px;width:29px;height:29px;border-radius:8px;background:white;border:1px solid #b7d5c4;display:grid;place-items:center;color:#235842;z-index:1;font-size:14px}
+.library-page #modal .psy-story-work{padding:20px 19px;margin:20px 0;background:var(--paper);border:1px solid var(--line);border-radius:16px}
+.library-page #modal .psy-story-work h3{color:var(--green)}
+.library-page #modal .psy-story-work h4{margin:10px 0 11px;font-size:16px;color:var(--ink)}
+.library-page #modal .psy-story-picks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0 21px}
+.library-page #modal .psy-story-picks label{display:flex;flex-direction:column;gap:7px;border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--soft)}
+.library-page #modal .psy-story-picks label span{font-size:13px;color:var(--muted)}
+.library-page #modal .psy-story-picks select,.library-page #modal .psy-story-fields select,.library-page #modal .psy-story-fields input,.library-page #modal .psy-story-fields textarea{width:100%;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px;font:500 15px system-ui;min-width:0}
+.library-page #modal .psy-story-picks select{font-weight:800;text-align:center}
+.library-page #modal .psy-story-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-bottom:16px}
+.library-page #modal .psy-story-fields>label{display:flex;flex-direction:column;gap:7px;font-size:13px;color:var(--muted)}
+.library-page #modal .psy-story-fields>label:first-child{grid-column:span 2}
+.library-page #modal .psy-story-fields textarea{resize:vertical;min-height:100px}
+.library-page #modal .psy-story-outcome{padding:13px 16px;border-radius:12px;background:var(--soft);border:1px solid var(--line)}
+.library-page #modal .psy-story-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.library-page #modal .psy-story-metrics div{display:flex;flex-direction:column;gap:4px}
+.library-page #modal .psy-story-metrics strong{font-size:22px;color:var(--green)}
+.library-page #modal .psy-story-metrics small,.library-page #modal .psy-story-muted{font-size:12px;color:var(--muted)}
+.library-page #modal .psy-story-actions{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0}
+@media(max-width:850px){.library-page #modal .psy-story-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.library-page #modal .psy-story-picks{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.library-page #modal .psy-story-work,.library-page #modal .psy-story-series{padding:12px}.library-page #modal .psy-story-fields{grid-template-columns:1fr}.library-page #modal .psy-story-fields>label:first-child{grid-column:span 1}.library-page #modal .psy-story-links{flex-direction:column}.library-page #modal .psy-story-actions .btn{flex:1 1 160px}}
