@@ -1,4 +1,4 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Результаты класса — MSPSS</title>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Результаты класса - MSPSS</title>
 <style>
 @page{size:A4 landscape;margin:13mm}*{box-sizing:border-box}
 body{margin:0;background:#f4f8f5;color:#213e30;font:16px/1.55 Arial,"Liberation Sans",sans-serif}
@@ -21,8 +21,8 @@ table{width:100%;border-collapse:collapse;line-height:1.35}th,td{padding:12px;bo
 const data=window.opener?.PSY_MSPSS?.pendingClassReport;
 const X=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 if(!data||!Array.isArray(data.entries)){return;}
-const people=data.entries,done=people.filter(x=>x.complete),avg=field=>done.length?(done.reduce((a,x)=>a+x[field],0)/done.length).toFixed(2):"—";
-const value=(p,k)=>p.complete?p[k].toFixed(2):"—";
+const people=data.entries,done=people.filter(x=>x.complete),avg=field=>done.length?(done.reduce((a,x)=>a+x[field],0)/done.length).toFixed(2):"-";
+const value=(p,k)=>p.complete?p[k].toFixed(2):"-";
 document.getElementById("view").innerHTML='<h1>Результаты класса</h1><p class="subtitle">Шкала воспринимаемой социальной поддержки (MSPSS) · '+X(data.date)+'</p>'+
  '<div class="stats"><div class="stat"><b>'+people.length+'</b><span>Всего участников в списке</span></div><div class="stat"><b>'+done.length+'</b><span>Заполнили опросник</span></div><div class="stat"><b>'+avg("mean")+'</b><span>Общий средний показатель участвовавших</span></div></div>'+
  '<h2>Сводные результаты</h2><div class="table-scroll"><table><thead><tr><th>ФИО</th><th>Общий / 7</th><th>Значимый человек</th><th>Семья</th><th>Друзья</th></tr></thead><tbody>'+
