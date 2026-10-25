@@ -1,0 +1,35 @@
+.psy-new-print{color:#21362b;max-width:100%;font-size:14px;line-height:1.5}
+.psy-new-print h3{font-size:18px;margin:8px 0 12px}
+.psy-new-print p{margin:8px 0 14px}
+.psy-new-letters{background:#fff;color:#0c2017;border:1px solid #d5dfd6;border-radius:8px;padding:10px 12px;overflow-x:auto}
+.psy-new-letters>div{display:flex;align-items:baseline;gap:12px;margin:2px 0;white-space:nowrap}
+.psy-new-letters small{font:10px/1.55 Consolas,monospace;color:#65746a;min-width:20px}
+.psy-new-letters span{font:600 15px/1.55 "Courier New",Consolas,monospace;letter-spacing:2px}
+.psy-new-soc-lines{padding:10px 16px;border:1px solid #d5dfd6;border-radius:8px;margin:16px 0}
+.psy-new-soc-lines p{margin:16px 0 28px}
+.psy-new-micro{font-size:12px;color:#536557}
+.psy-new-work{display:grid;gap:14px}
+.psy-new-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.psy-new-fields label,.psy-new-textarea{display:grid;gap:7px;font-weight:600}
+.psy-new-fields input,.psy-new-textarea textarea{width:100%;max-width:100%;box-sizing:border-box;background:var(--input-bg,#fff);color:var(--text,#1e2f26);border:1px solid #bacbc1;border-radius:8px;padding:10px 12px;font:inherit}
+.psy-new-textarea textarea{font-family:Consolas,"Courier New",monospace;font-weight:400;resize:vertical;min-height:110px}
+.psy-new-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px;margin:6px 0}
+.psy-new-metrics>span{display:grid;gap:6px;background:var(--panel-soft,#f5f8f4);border:1px solid var(--stroke,#d8e4dc);padding:12px;border-radius:9px;font-size:13px}
+.psy-new-metrics b{font-size:19px}
+.psy-new-error{border-left:3px solid #b78533;background:#fbf4e9;padding:12px;color:#624c28}
+.psy-new-work .results-table{overflow:auto}
+.psy-new-work table{width:100%;border-collapse:collapse}
+.psy-new-work table th,.psy-new-work table td{padding:7px;border-bottom:1px solid #d9e4da;text-align:left;font-size:13px}
+@media(max-width:650px){.psy-new-letters{padding:8px}.psy-new-letters span{font-size:11px;letter-spacing:1px}.psy-new-letters>div{gap:5px}.psy-new-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media print{
+ @page{size:A4;margin:12mm}
+ .psy-new-print{color:#000!important;font-size:10pt}
+ .psy-new-print h3{font-size:14pt}
+ .psy-new-letters{border:0;padding:0;overflow:visible}
+ .psy-new-letters>div{margin:0.7mm 0;gap:3mm;break-inside:avoid}
+ .psy-new-letters span{font-size:12pt;line-height:1.24;letter-spacing:2.15mm}
+ .psy-new-letters small{font-size:7pt}
+ .psy-new-micro{font-size:8pt}
+ .psy-new-soc-lines{border-color:#999}
+ .psy-new-soc-lines p{margin-bottom:12mm}
+}
