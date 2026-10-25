@@ -160,3 +160,8 @@
  .library-page #modal.psy-mspss-example .psy-mspss-manual-actions{justify-content:flex-start}
  .library-page #modal.psy-mspss-example .psy-mspss-manual-actions .btn{flex:1}
 }
+
+/* MSPSS footer position */
+.library-page #modal.psy-mspss-example .modalfoot{justify-content:flex-end!important}
+.library-page #modal.psy-mspss-example .psy-mspss-footer{display:flex!important;width:100%!important;flex:1 1 100%!important;justify-content:flex-end!important}
+.library-page #modal.psy-mspss-example #bottomProcessing{margin-left:auto!important;margin-right:0!important}
