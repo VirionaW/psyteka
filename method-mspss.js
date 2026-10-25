@@ -116,15 +116,36 @@
   if(!popup){alert("Разрешите открытие новой вкладки для просмотра отчета.");return false;}
   return true;
  }
+ function openClassReport(rows){
+   const sorted=alphabet(rows).filter(p=>p.name?.trim()||score(d,p.answers));
+   if(!sorted.length)return false;
+   window.PSY_MSPSS.pendingClassReport={
+     date:new Date().toLocaleDateString("ru-RU"),
+     entries:sorted.map(p=>{
+       const z=score(d,p.answers);
+       return {name:String(p.name||"ФИО не указано").slice(0,120),complete:!!z,
+         mean:z?z.mean:null,
+         family:z?z.subscales.find(x=>x.id==="family").mean:null,
+         friends:z?z.subscales.find(x=>x.id==="friends").mean:null,
+         other:z?z.subscales.find(x=>x.id==="other").mean:null};
+     })
+   };
+   const tab=window.open("downloads/mspss_group_report.html","_blank");
+   if(!tab){alert("Разрешите открытие отдельной вкладки для отчета класса.");return false;}
+   return true;
+ }
  function bind(data,ctx){
   const rows=ctx.rows||[],r=rows[ctx.rowIndex];if(!r)return;
   const updateFooter=()=>{
     const btn=document.getElementById("mspssReportBottom");
-    if(btn){const complete=!!score(data,r.answers);btn.disabled=!complete;btn.classList.toggle("psy-mspss-waiting",!complete);}
+    if(btn){
+      const available=ctx.calcMode==="class"?rows.some(p=>p.name?.trim()||score(data,p.answers)):!!score(data,r.answers);
+      btn.disabled=!available;btn.classList.toggle("psy-mspss-waiting",!available);
+    }
   };
   const refresh=()=>{
     const out=document.getElementById("mspssResult");if(out)out.innerHTML=result(r.answers);
-    const g=document.getElementById("mspssGroup");if(g){g.innerHTML=group(rows);document.getElementById("mspssCSV")?.addEventListener("click",downloadCsv);}
+    const g=document.getElementById("mspssGroup");if(g)g.innerHTML=group(rows);
     const progress=document.getElementById("mspssProgress");if(progress)progress.textContent="Заполнено "+done(r.answers)+" из 12";
     const status=document.querySelector(".psy-mspss-person.active small");if(status)status.textContent=done(r.answers)+"/12";
     updateFooter();
@@ -141,7 +162,19 @@
     const names=(box?.value||"").split(/[\r\n]+/).map(x=>x.trim()).filter(Boolean);
     if(names.length)ctx.onBulkAdd?.(names);else box?.focus();
   });
-  document.getElementById("mspssSort")?.addEventListener("click",()=>ctx.onSort?.());
+  document.getElementById("mspssSort")?.addEventListener("click",()=>{
+    const box=document.getElementById("mspssBulkNames");
+    const names=(box?.value||"").split(/[\r\n]+/).map(x=>x.trim()).filter(Boolean);
+    ctx.onSort?.(names);
+  });
+  document.querySelectorAll("[data-mspss-delete]").forEach(el=>el.addEventListener("click",ev=>{
+    ev.preventDefault();ev.stopPropagation();
+    const index=Number(el.dataset.mspssDelete),name=rows[index]?.name||"участника";
+    if(confirm("Удалить "+name+" из списка вместе с результатами?"))ctx.onDelete?.(index);
+  }));
+  document.getElementById("mspssDeleteAll")?.addEventListener("click",()=>{
+    if(confirm("Удалить всех участников класса и введенные результаты?"))ctx.onDeleteAll?.();
+  });
   document.getElementById("mspssNext")?.addEventListener("click",()=>ctx.onNext?.());
   const inputs=[...document.querySelectorAll("input[data-mspss]")];
   inputs.forEach((el,i)=>{
@@ -160,16 +193,7 @@
     });
     el.addEventListener("focus",()=>el.select());
   });
-  function downloadCsv(){
-    const ordered=alphabet(rows);
-    const table=[["ФИО","Общий показатель","Значимый человек","Семья","Друзья","Ответов"],...ordered.map((p,i)=>{
-      const z=score(data,p.answers);
-      return [p.name||"Участник "+(i+1),z?z.mean.toFixed(2):"",...SUB.map(x=>z?z.subscales.find(y=>y.id===x.id).mean.toFixed(2):""),done(p.answers)];
-    })];
-    download("MSPSS_ведомость_класса.csv",csv(table),"text/csv;charset=utf-8");
-  }
-  document.getElementById("mspssCSV")?.addEventListener("click",downloadCsv);
   updateFooter();
  }
- window.PSY_MSPSS={score,done,instruction,materials,processing,calculator,bind,openReport,pendingReport:null};
+ window.PSY_MSPSS={score,done,instruction,materials,processing,calculator,bind,openReport,openClassReport,pendingReport:null,pendingClassReport:null};
 })();
