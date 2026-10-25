@@ -8,16 +8,15 @@
  const SUB=[{id:"other",name:"Значимый человек",items:[1,2,5,10]},{id:"family",name:"Семья",items:[3,4,8,11]},{id:"friends",name:"Друзья",items:[6,7,9,12]}];
  const d={
   author:"Г. Д. Зимет, Н. Далем, С. Зимет, Г. Фарли (G. D. Zimet et al., 1988)",
-  age:"Подростки примерно от 12 лет и взрослые; выбор возрастной и языковой версии уточнить",
+  age:"Подростки и взрослые",
   kind:"Опросник воспринимаемой социальной поддержки",
-  count:"12 пунктов, 3 подшкалы, ответы от 1 до 7",
-  goal:"Определение субъективной оценки доступности поддержки со стороны семьи, друзей и значимого человека.",
+  count:"12 утверждений, 3 шкалы",
+  goal:"Оценка субъективно воспринимаемой социальной поддержки с выделением трех ее источников: семьи, друзей и значимого человека.",
   instructions:"Предъявите официальную форму MSPSS из источника автора. По каждому из 12 утверждений испытуемый выбирает один ответ от 1 (Very strongly disagree) до 7 (Very strongly agree). Перенесите числа на сайт строго по номерам оригинала.",
   questions:TOPICS,
   options:["Очень сильно не согласен","Сильно не согласен","Скорее не согласен","Нейтрально","Скорее согласен","Сильно согласен","Очень сильно согласен"],
   scoring:"Подшкалы: значимый человек 1,2,5,10; семья 3,4,8,11; друзья 6,7,9,12. Для каждой подшкалы сумма четырех ответов делится на 4; общий показатель - сумма 12 ответов, деленная на 12. Диапазон средних значений 1-7. Пропуски и ответы вне 1-7 исключают расчет; обратных пунктов нет.",
-  interpret:"Выше балл - сильнее субъективно воспринимаемая поддержка. Авторы не установили универсальных популяционных норм: автоматические категории «низкая/средняя/высокая», диагнозы или клинические пороги не выдаются. При интерпретации учитывайте возраст, языковую версию и контекст.",
-  warning:"Русский ученический бланк - рабочий перевод, а не валидизированная русскоязычная форма MSPSS. Подсчет выполняется по авторскому ключу, но возрастные нормы, диагностические пороги и выводы по одному опроснику применять нельзя. Для стандартизированного обследования нужна проверенная возрастная и языковая версия.",
+  interpret:"Более высокий средний балл соответствует более высокой субъективной оценке доступности социальной поддержки. Три подшкалы позволяют описать вклад разных источников поддержки. При интерпретации учитываются возраст, условия обследования и социальный контекст.",
   source:SOURCE,sourceScoring:PDF,officialBlank:PDF,
   guideFile:GUIDE,answerFile:BLANK,studentFile:STUDENT,workflow:"mspss",calculator:true,scales:SUB,
   license:"Разработчик Г. Зимет разрешает бесплатное использование MSPSS с указанием исходной публикации. В Психотеке размещены авторские служебные метки для регистрации и расчета, а исходный английский бланк доступен по ссылке разработчика."
@@ -49,16 +48,16 @@
    SUB.map(s=>'<tr><td>'+esc(s.name)+'</td><td>'+s.items.join(", ")+'</td><td>Сумма / 4</td></tr>').join("")+
    '<tr><td>Общая поддержка</td><td>1-12</td><td>Сумма / 12</td></tr></tbody></table></div>'+
    '<p>'+esc(d.interpret)+'</p>'+
-   '<div class="notice psy-mspss-warning">'+esc(d.warning)+'</div>'+
+
    '<h3>Конфиденциальность</h3><p>Используйте коды вместо ФИО. Данные обрабатываются локально в браузере и автоматически не отправляются на сервер сайта.</p>'+
    '<div class="psy-mspss-download"><a class="btn primary" href="'+GUIDE+'" download>Скачать руководство в Word</a></div>'+
    '</section>';
  }
  function materials(){
   return '<section class="psy-mspss-section psy-mspss-student">'+
-   '<div class="psy-mspss-blank-head"><div><h3>Бланк ученика</h3><p class="psy-mspss-small">MSPSS - 12 утверждений; ответы от 1 до 7</p></div>'+
+   '<div class="psy-mspss-blank-head"><div><h3>Бланк ученика</h3><p class="psy-mspss-small">Опросник для самостоятельного заполнения</p></div>'+
    '<a class="btn primary" href="'+STUDENT+'" target="_blank" rel="noopener noreferrer">Открыть для печати А4</a></div>'+
-   '<div class="notice psy-mspss-warning">Русский текст ниже - рабочий, невалидизированный перевод. Он предназначен для ознакомления и не заменяет проверенную языковую версию методики.</div>'+
+
    '<p class="psy-mspss-fields">Код: _____________________ &nbsp;&nbsp; Класс / возраст: __________ &nbsp;&nbsp; Дата: __________</p>'+
    '<p><strong>Инструкция:</strong> прочитай каждое утверждение и отметь один ответ от 1 до 7. Правильных или неправильных ответов нет.</p>'+
    '<p class="psy-mspss-scale"><strong>1</strong> - совершенно не согласен; <strong>2</strong> - сильно не согласен; <strong>3</strong> - скорее не согласен; <strong>4</strong> - нейтрально; <strong>5</strong> - скорее согласен; <strong>6</strong> - сильно согласен; <strong>7</strong> - полностью согласен.</p>'+
@@ -88,10 +87,10 @@
  function calculator(data,ctx){
   const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],a=r.answers||[];
   let html='<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>'+
-  '<div class="notice psy-mspss-warning">Введите числа из оригинального бланка на английском или из проверенной переводной формы. Нельзя заменять пункты тематическими описаниями. 0 не является ответом MSPSS.</div>';
+  '<p class="psy-mspss-small">Перенесите ответы из заполненного бланка по порядку пунктов и используйте условный код участника.</p>';
   if(ctx.calcMode==="class")html+='<div class="group-tools"><label>Участник<select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+esc(x.name||"У-"+String(i+1).padStart(2,"0"))+'</option>').join("")+'</select></label><label>Код<input id="participantName" maxlength="40" value="'+esc(r.name||"")+'" placeholder="У-01 (без ФИО)"></label><button class="btn" id="addParticipant">Добавить</button></div>';
   else html+='<label class="psy-mspss-code">Код (необязательно)<input id="mspssSingleCode" maxlength="40" value="'+esc(r.name||"")+'" placeholder="Без ФИО"></label>';
-  html+='<p class="psy-mspss-small">Заполнено '+done(a)+' из 12. Ответы не сохраняются между посещениями.</p>'+
+  html+='<p class="psy-mspss-small">Заполнено '+done(a)+' из 12.</p>'+
   '<div class="psy-mspss-grid">'+TOPICS.map((q,i)=>'<label class="psy-mspss-item"><span><b>'+(i+1)+'.</b> '+esc(q)+'</span><select data-mspss="'+i+'" aria-label="Ответ на пункт '+(i+1)+'"><option value="">— не заполнено —</option>'+
   Array.from({length:7},(_,j)=>'<option value="'+(j+1)+'" '+(String(a[i])===String(j+1)?"selected":"")+'>'+(j+1)+'</option>').join("")+'</select></label>').join("")+'</div>'+
   '<div id="mspssResult">'+result(a)+'</div><div class="psy-mspss-actions"><button class="btn" id="resetParticipant">Очистить ответы</button><button class="btn primary" id="mspssSave">Скачать отчет участника (HTML)</button></div>';
