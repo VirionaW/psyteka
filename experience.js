@@ -159,6 +159,7 @@ function viewOverview(m){
 }
 
 function viewInstruction(m){
+ if(DETAILS[m.name]?.workflow==='independentLiving12')return window.PSY_INDEPENDENT_LIVING.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='motivationInterview')return window.PSY_MOTIVATION_INTERVIEW.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='schoolAdaptObserve')return window.PSY_SCHOOL_ADAPT.instruction(DETAILS[m.name]);
  const d=DETAILS[m.name];
@@ -277,6 +278,7 @@ function materials(m,blank){
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
 function viewMaterials(m){
+ if(DETAILS[m.name]?.workflow==='independentLiving12')return window.PSY_INDEPENDENT_LIVING.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='motivationInterview')return window.PSY_MOTIVATION_INTERVIEW.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='schoolAdaptObserve')return window.PSY_SCHOOL_ADAPT.materials(DETAILS[m.name]);
  const d=DETAILS[m.name];if(d?.workflow==='objectClass16')return window.PSY_OBJECT_CLASSIFY.materials(d);if(d?.workflow==='schoolDrawingL')return window.PSY_SCHOOL_DRAWING.materials(d);if(d?.workflow==='cormanFamily')return window.PSY_CORMAN.materials(d);if(d?.workflow==='kfdBurns72')return window.PSY_KFD.materials(d);if(d?.workflow==='luria10x5')return window.PSY_LURIA.materials(d);if(d?.workflow==='familySocio110')return window.PSY_FAMILY_SOCIO.materials(d);if(d?.workflow==='schulte5')return window.PSY_SCHULTE.materials(d);if(d?.workflow==='ladder7')return window.PSY_LADDER.materials(d);
@@ -300,6 +302,7 @@ function viewMaterials(m){
  return '<h3>Стимульный материал и бланк</h3>'+materials(m,false)+(d.questions?.length && d.graphic ? '<h3>Протокол беседы</h3><table class="questions-table"><thead><tr><th>№</th><th>Вопрос психолога</th><th>Ответ / наблюдение</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td>________________</td></tr>').join('')+'</tbody></table>':"");
 }
 function viewProcessing(m){
+ if(DETAILS[m.name]?.workflow==='independentLiving12')return window.PSY_INDEPENDENT_LIVING.processing(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='motivationInterview')return window.PSY_MOTIVATION_INTERVIEW.processing(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='schoolAdaptObserve')return window.PSY_SCHOOL_ADAPT.processing(DETAILS[m.name]);
  const d=DETAILS[m.name];if(d?.workflow==='objectClass16')return window.PSY_OBJECT_CLASSIFY.processing(d);if(d?.workflow==='schoolDrawingL')return window.PSY_SCHOOL_DRAWING.processing(d);if(d?.workflow==='cormanFamily')return window.PSY_CORMAN.processing(d);if(d?.workflow==='kfdBurns72')return window.PSY_KFD.processing(d);if(d?.workflow==='luria10x5')return window.PSY_LURIA.processing(d);if(d?.workflow==='familySocio110')return window.PSY_FAMILY_SOCIO.processing(d);if(d?.workflow==='schulte5')return window.PSY_SCHULTE.processing(d);if(!d)return '<div class="notice">Подтвержденный ключ и обработка выбранной версии пока не добавлены. Диагностические результаты здесь не рассчитываются.</div>';
@@ -368,6 +371,7 @@ function getScores(d,answers){
  return {raw,index:null,max:n*(d.options.length-1),caption:'Сырая сумма'};
 }
 function viewCalculator(m){
+ if(DETAILS[m.name]?.workflow==='independentLiving12')return window.PSY_INDEPENDENT_LIVING.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  if(DETAILS[m.name]?.workflow==='motivationInterview')return window.PSY_MOTIVATION_INTERVIEW.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  if(DETAILS[m.name]?.workflow==='schoolAdaptObserve')return window.PSY_SCHOOL_ADAPT.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  const d=DETAILS[m.name];
@@ -419,6 +423,7 @@ function viewCalculator(m){
  return head+'<div class="notice">Ответы вводятся цифрами от 0 до '+(d.options.length-1)+'. После ввода курсор переходит к следующему полю.</div>'+qhtml+results+'<div class="class-actions"><button class="btn" id="resetParticipant">Сбросить ответы участника</button></div>';
 }
 function bindControls(){
+ if(DETAILS[methodNow.name]?.workflow==='independentLiving12')window.PSY_INDEPENDENT_LIVING.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  if(DETAILS[methodNow.name]?.workflow==='motivationInterview')window.PSY_MOTIVATION_INTERVIEW.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  if(DETAILS[methodNow.name]?.workflow==='schoolAdaptObserve')window.PSY_SCHOOL_ADAPT.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  const d=DETAILS[methodNow.name];
