@@ -24,6 +24,7 @@ Object.assign(d,{
  warning:WARNING,
  source:REF,
  sourcePDF:REF_PDF,
+ officialBlank:REF_PDF,
  guideFile:"downloads/elkonin_graphic_dictation_guide.docx",
  answerFile:"downloads/elkonin_graphic_dictation_student.html",
  sourceVersion:"Четыре узора; оценивание 0-4 за диктовку и продолжение; итог 0-16.",
