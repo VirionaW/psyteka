@@ -75,16 +75,7 @@
    const cognitive=label==='Таблицы Шульте'?'schulte':label==='Заучивание 10 слов'?'memory':null;
    const family=label==='Рисунок семьи'?'drawing':label==='Семейная социограмма'?'sociogram':null;
    const adaptation=label==='Школа зверей'?'animals':label==='Что мне нравится в школе'?'likes':null;
-   if(kit||selfesteem||cognitive||family||adaptation){
-    const actions=card.querySelector('.actions');
-    if(actions&&!actions.querySelector('.method-kit-link')){
-     const link=document.createElement('a');
-     link.href=adaptation?'adaptation-drawing.html?method='+adaptation:kit?'method-kit.html?method='+kit:selfesteem?'selfesteem-kit.html?method='+selfesteem:cognitive?'cognitive-kit.html?method='+cognitive:'family-kit.html?method='+family;
-     link.className='btn primary method-kit-link';
-     link.textContent=adaptation?'Портфолио · бланк · протокол':'Портфолио · бланк · обработка';
-     actions.prepend(link);
-    }
-   }
+   // Методику открываем внутри библиотеки, не создавая переход к отдельной странице.
    const issue=alerts.find(([re])=>re.test(label));
    const incomplete=!kit&&!selfesteem&&!cognitive&&!family&&!adaptation&&!window.PSY_FULL_METHODS?.[label]&&!issue;
    if(issue||incomplete){
