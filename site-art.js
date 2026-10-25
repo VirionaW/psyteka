@@ -90,6 +90,12 @@
   });
  }
  window.PSY_ART={matchingMethods:index.size,panelPictures:19,totalPictures:79,decorate:()=>{decorateSidebar();decorateCards()}};
+ if(new URLSearchParams(location.search).get("area")==="spt"){
+  const tree=document.getElementById("informationGroup");
+  const button=document.querySelector('[data-section="informationGroup"]');
+  if(tree)tree.hidden=false;
+  if(button)button.setAttribute("aria-expanded","true");
+ }
  decorateSidebar();
  decorateCards();
  const catalog=document.getElementById("catalog");
