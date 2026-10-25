@@ -165,3 +165,17 @@
 .library-page #modal.psy-mspss-example .modalfoot{justify-content:flex-end!important}
 .library-page #modal.psy-mspss-example .psy-mspss-footer{display:flex!important;width:100%!important;flex:1 1 100%!important;justify-content:flex-end!important}
 .library-page #modal.psy-mspss-example #bottomProcessing{margin-left:auto!important;margin-right:0!important}
+
+.library-page #modal.psy-mspss-example .modalbody{padding-left:20px!important;padding-right:20px!important}
+.library-page #modal.psy-mspss-example .psy-portfolio-reference{max-width:none!important;width:100%!important;margin:0!important}
+.library-page #modal.psy-mspss-example .psy-profile-lines{max-width:none!important;font-size:17px!important;line-height:1.6!important}
+.library-page #modal.psy-mspss-example .psy-profile-description{font-size:17px!important;line-height:1.65!important}
+.library-page #modal.psy-mspss-example .psy-portfolio-reference h3{font-size:22px!important}
+.library-page #modal.psy-mspss-example .psy-mspss-section{max-width:none!important;width:100%!important}
+.library-page #modal.psy-mspss-example .psy-mspss-section p,.library-page #modal.psy-mspss-example .psy-mspss-section ol li{font-size:17px;line-height:1.62}
+.library-page #modal.psy-mspss-example .psy-mspss-person-row{display:flex;gap:5px;align-items:stretch}
+.library-page #modal.psy-mspss-example .psy-mspss-person-row .psy-mspss-person{flex:1;min-width:0}
+.library-page #modal.psy-mspss-example .psy-mspss-delete-person{font-size:23px;width:39px;min-width:39px;border-radius:8px;background:#fff0f0;border:1px solid #e9b2b7;color:#a42d37;cursor:pointer}
+.library-page #modal.psy-mspss-example .psy-mspss-delete-all{margin-top:12px;width:100%;min-height:42px;background:#fff0f0;border:1px solid #e9b2b7;color:#a42d37}
+.library-page #modal.psy-mspss-example #mspssNext:disabled{background:#e8eeea!important;border-color:#cbd9d0!important;color:#64776c!important;cursor:not-allowed}
+@media(max-width:690px){.library-page #modal.psy-mspss-example .modalbody{padding-left:12px!important;padding-right:12px!important}}
