@@ -1,0 +1,34 @@
+"use strict";
+(function(){
+const NAME="Исследование мотивационной сферы";
+const ITEMS=[
+["Интерес","Что из школьных занятий тебе по-настоящему интересно? Приведи пример."],
+["Смысл учёбы","Для чего тебе может пригодиться то, чему ты учишься?"],
+["Успех","Вспомни задание, с которым справился. Что помогло?"],
+["Трудности","Как ты обычно поступаешь, если задание не получается?"],
+["Самостоятельность","Когда ты можешь сам выбрать способ выполнить задание? Как это происходит?"],
+["Поддержка","К кому ты обращаешься за помощью в учёбе и что именно помогает?"],
+["Внешние ожидания","Что для тебя важнее всего, когда учитель или близкие оценивают твою работу?"],
+["Следующий шаг","Чему хотелось бы научиться в ближайшее время и с чего начнёшь?"]
+];
+const E=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const D=window.PSY_FULL_METHODS||{};
+D[NAME]={
+ author:"Редакционный качественный протокол Психотеки; не стандартизированная авторская методика",
+ age:"Ориентировочно 9–17 лет; адаптировать лексику под возраст и потребности",
+ kind:"Полуструктурированная диагностическая беседа",
+ count:"8 открытых вопросов",goal:"Исследовать индивидуальные смыслы учения, интересы, самостоятельность, способы преодоления трудностей и доступную поддержку.",
+ instructions:"Мы поговорим о том, что тебе интересно в учёбе, что помогает и что бывает сложным. Здесь нет правильных ответов. Можешь не отвечать на вопрос или попросить пояснить его.",
+ questions:ITEMS.map(x=>x[1]),options:[],
+ scoring:"Ответы не сводятся к количественному баллу. По восьми темам фиксируются дословные фразы, конкретные примеры, условия и потребность в помощи.",
+ interpret:"Сопоставляйте сильные стороны, интересы, ощущение самостоятельности и барьеры в различных ситуациях. Отдельно описывайте гипотезы и контекст; не приписывайте диагностические уровни или нормы.",
+ license:"Оригинальные вопросы редакции Психотеки. Не является адаптацией теста Шмальта, Лускановой или другого стандартизированного опросника.",
+ workflow:"motivationInterview",calculator:true,category:"school",indicators:ITEMS.map(x=>x[0])
+};
+function instruction(d){return '<h3>Портфолио и процедура</h3><p>'+E(d.goal)+'</p><p><b>Формат:</b> индивидуальная беседа, ориентировочно 15–25 минут. Допустимо устное или письменное предъявление с фиксацией способа.</p><ol><li>Получите необходимые согласия по правилам учреждения и объясните добровольность.</li><li>Предъявляйте вопросы без наводящих подсказок; уточняйте «Можешь привести пример?».</li><li>Записывайте ответы дословно, не оценивайте ребёнка во время беседы.</li><li>Отдельно фиксируйте контекст, сильные стороны и условия возникновения трудностей.</li><li>При необходимости сопоставьте данные с наблюдением и учебной ситуацией.</li></ol><blockquote>'+E(d.instructions)+'</blockquote><div class="notice">Это оригинальное интервью без стандартизированных норм и диагностического ключа.</div>';}
+function materials(d){return '<h3>Печатный бланк ответов</h3><p>Код участника: __________________ Класс/возраст: ______ Дата: __________</p><p>Инструкция: отвечай своими словами. Можно пропустить вопрос.</p><table class="questions-table"><thead><tr><th>№</th><th>Вопрос</th><th>Ответ</th></tr></thead><tbody>'+ITEMS.map((x,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(x[1])+'</td><td>________________________<br>________________________<br>________________________</td></tr>').join("")+'</tbody></table><p>Дополнительные замечания (специалист): __________________________________________</p><button class="btn" type="button" id="motivationPrint">Распечатать бланк</button>';}
+function processing(d){return '<h3>Обработка и интерпретация</h3><p>'+E(d.scoring)+'</p><table class="questions-table"><thead><tr><th>Тема</th><th>На что обратить внимание</th></tr></thead><tbody>'+ITEMS.map(x=>'<tr><td>'+E(x[0])+'</td><td>Конкретный пример, условия проявления, собственная формулировка ребёнка; отсутствие ответа оставлять пропуском.</td></tr>').join("")+'</tbody></table><p>'+E(d.interpret)+'</p><h3>Структура заключения</h3><p>1. Интересы и положительные ресурсы. 2. Осмысленность учёбы. 3. Способы совладания с трудностями. 4. Поддержка и условия среды. 5. Индивидуальная рекомендация и способ последующей проверки.</p><div class="notice">Количественная сумма, процентили, «низкий/высокий уровень» здесь методически не обоснованы.</div>';}
+function calculator(d,ctx){let r=ctx.rows[ctx.rowIndex]||{},notes=Array.isArray(r.motivationNotes)?r.motivationNotes:[];return '<h3>Протокол беседы · '+E(r.name||"код не указан")+'</h3><p>Введите текст ответов без ФИО и других идентифицирующих данных. Эта форма не сохраняет сведения на сервер.</p>'+ITEMS.map((x,i)=>'<label style="display:block;margin:14px 0 5px"><b>'+(i+1)+'. '+E(x[0])+'</b><span style="display:block">'+E(x[1])+'</span></label><textarea data-motivation-index="'+i+'" rows="3" style="width:100%;box-sizing:border-box">'+E(notes[i]||"")+'</textarea>').join("")+'<p><b>Заполнено тем:</b> <span id="motivationProgress">'+notes.filter(v=>String(v||"").trim()).length+'</span> из 8. Это полнота записи, а не балл мотивации.</p><button type="button" class="btn" id="motivationExport">Скачать протокол TXT</button>';}
+function bind(d,ctx){let r=ctx.rows[ctx.rowIndex];if(!r)return;r.motivationNotes=Array.isArray(r.motivationNotes)?r.motivationNotes:[];document.querySelectorAll("[data-motivation-index]").forEach(el=>el.addEventListener("input",()=>{r.motivationNotes[Number(el.dataset.motivationIndex)]=el.value;let n=document.getElementById("motivationProgress");if(n)n.textContent=r.motivationNotes.filter(x=>String(x||"").trim()).length;}));document.getElementById("motivationPrint")?.addEventListener("click",()=>window.print());document.getElementById("motivationExport")?.addEventListener("click",()=>{const lines=["Исследование мотивационной сферы — качественный протокол","Участник: "+(r.name||"код не указан"),"",...ITEMS.flatMap((item,i)=>[item[0]+": "+item[1],r.motivationNotes[i]||"(нет записи)",""]),"Без стандартизированного балла и нормативного заключения."].join("\n");let b=new Blob([lines],{type:"text/plain;charset=utf-8"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="motivation_interview.txt";a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);});}
+window.PSY_MOTIVATION_INTERVIEW={instruction,materials,processing,calculator,bind};
+})();
