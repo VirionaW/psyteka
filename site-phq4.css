@@ -1,0 +1,22 @@
+/* PHQ-4 short-form school screening */
+.library-page #modal .psy-phq-note{border-left:4px solid #bc9b55;background:var(--soft);color:var(--ink)}
+.library-page #modal .psy-phq-links,.library-page #modal .psy-phq-actions{display:flex;flex-wrap:wrap;gap:10px;margin:17px 0}
+.library-page #modal .psy-phq-links .btn{display:inline-flex;align-items:center;min-height:44px}
+.library-page #modal .psy-phq-code{display:grid;gap:8px;max-width:380px;margin:16px 0}
+.library-page #modal .psy-phq-code input,.library-page #modal .psy-phq-item select{width:100%;min-width:0;padding:11px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:10px;font:600 14px system-ui}
+.library-page #modal .psy-phq-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.library-page #modal .psy-phq-item{padding:15px;display:flex;flex-direction:column;gap:15px;justify-content:space-between;min-width:0;border:1px solid var(--line);background:var(--soft);border-radius:12px}
+.library-page #modal .psy-phq-item span{font-size:15px;line-height:1.5}
+.library-page #modal .psy-phq-item b{color:var(--green)}
+.library-page #modal .psy-phq-result{border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--paper);margin:16px 0}
+.library-page #modal .psy-phq-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:15px 0}
+.library-page #modal .psy-phq-stats>div{border:1px solid var(--line);background:var(--soft);border-radius:12px;padding:13px}
+.library-page #modal .psy-phq-stats small{display:block;color:var(--muted)}
+.library-page #modal .psy-phq-stats b{display:block;margin-top:8px;font-size:24px;color:var(--green)}
+.library-page #modal .psy-phq-track{height:11px;background:var(--line);border-radius:20px;overflow:hidden;margin:11px 0}
+.library-page #modal .psy-phq-track span{height:100%;display:block;background:var(--green)}
+.library-page #modal .psy-phq-muted{font-size:13px;color:var(--muted);line-height:1.6}
+.library-page #modal .psy-phq-scroll{overflow-x:auto;max-width:100%;border:1px solid var(--line);border-radius:10px}
+.library-page #modal .psy-phq-scroll table{width:100%;min-width:620px;border-collapse:collapse}
+.library-page #modal .psy-phq-scroll td,.library-page #modal .psy-phq-scroll th{padding:10px;text-align:left;border:1px solid var(--line)}
+@media(max-width:720px){.library-page #modal .psy-phq-grid,.library-page #modal .psy-phq-stats{grid-template-columns:1fr}.library-page #modal .psy-phq-links,.library-page #modal .psy-phq-actions{flex-direction:column}.library-page #modal .psy-phq-links .btn,.library-page #modal .psy-phq-actions .btn{width:100%}}
