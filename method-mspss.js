@@ -121,7 +121,7 @@
   };
   const refresh=()=>{
     const out=document.getElementById("mspssResult");if(out)out.innerHTML=result(r.answers);
-    const g=document.getElementById("mspssGroup");if(g)g.innerHTML=group(rows);
+    const g=document.getElementById("mspssGroup");if(g){g.innerHTML=group(rows);document.getElementById("mspssCSV")?.addEventListener("click",downloadCsv);}
     const progress=document.getElementById("mspssProgress");if(progress)progress.textContent="Заполнено "+done(r.answers)+" из 12";
     const status=document.querySelector(".psy-mspss-person.active small");if(status)status.textContent=done(r.answers)+"/12";
     updateFooter();
@@ -155,14 +155,15 @@
     });
     el.addEventListener("focus",()=>el.select());
   });
-  document.getElementById("mspssCSV")?.addEventListener("click",()=>{
+  function downloadCsv(){
     const ordered=alphabet(rows);
     const table=[["ФИО","Общий показатель","Значимый человек","Семья","Друзья","Ответов"],...ordered.map((p,i)=>{
       const z=score(data,p.answers);
       return [p.name||"Участник "+(i+1),z?z.mean.toFixed(2):"",...SUB.map(x=>z?z.subscales.find(y=>y.id===x.id).mean.toFixed(2):""),done(p.answers)];
     })];
     download("MSPSS_ведомость_класса.csv",csv(table),"text/csv;charset=utf-8");
-  });
+  }
+  document.getElementById("mspssCSV")?.addEventListener("click",downloadCsv);
   updateFooter();
  }
  window.PSY_MSPSS={score,done,instruction,materials,processing,calculator,bind,openReport,pendingReport:null};
