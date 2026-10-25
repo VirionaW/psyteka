@@ -1,0 +1,58 @@
+"use strict";
+(function(){
+const NAME="Тест цветовых отношений";
+const COLORS=[
+ {id:0,name:"Серый",hex:"#777777"},{id:1,name:"Синий",hex:"#245B95"},
+ {id:2,name:"Зелёный",hex:"#268052"},{id:3,name:"Красный",hex:"#CA4240"},
+ {id:4,name:"Жёлтый",hex:"#E5BD3C"},{id:5,name:"Фиолетовый",hex:"#8A62A6"},
+ {id:6,name:"Коричневый",hex:"#865B3C"},{id:7,name:"Чёрный",hex:"#292929"}
+];
+const CONCEPTS=["Я сейчас","Я в школе","Моя учёба","Одноклассники","Взрослые в школе","Мой дом","Отдых","Я в будущем"];
+const SOURCE="https://psytests.org/luscher/cto.html";
+const E=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const selects=(selected,empty)=>'<option value="">'+E(empty||"Нет ответа")+'</option>'+COLORS.map(c=>'<option value="'+c.id+'"'+(selected===c.id?' selected':'')+'>'+c.id+' · '+E(c.name)+'</option>').join("");
+const shade=c=>'<span title="'+E(c.name)+'" style="display:inline-block;vertical-align:middle;background:'+c.hex+';border:1px solid #666;width:22px;height:22px;border-radius:4px;margin-right:5px"></span>';
+function summarize(a,ranking){
+ const groups=new Map();
+ CONCEPTS.forEach((name,i)=>{const n=a[i];if(Number.isInteger(n)&&n>=0&&n<=7){if(!groups.has(n))groups.set(n,[]);groups.get(n).push(name)}});
+ const full=Array.isArray(ranking)&&ranking.length===8&&ranking.every(n=>Number.isInteger(n)&&n>=0&&n<=7)&&new Set(ranking).size===8;
+ return {groups,complete:CONCEPTS.filter((_,i)=>Number.isInteger(a[i])&&a[i]>=0&&a[i]<=7).length,rankValid:full,rankDuplicate:Array.isArray(ranking)&&ranking.filter(Number.isInteger).length!==new Set(ranking.filter(Number.isInteger)).size};
+}
+function resultHtml(row){
+ const a=row.answers||[], ranking=row.colorRanking||[];
+ const z=summarize(a,ranking);
+ let html='<h3>Описательный протокол</h3><p>Ассоциации записаны для '+z.complete+' из 8 понятий. Совпадающий цвет — повод обсудить связь, а не доказательство эмоционального состояния.</p>';
+ const shared=[...z.groups.entries()].filter(([color,names])=>names.length>1);
+ html+=shared.length?'<h4>Совпадающие цветовые ассоциации</h4><ul>'+shared.map(([id,names])=>'<li>'+shade(COLORS[id])+E(COLORS[id].name)+': '+names.map(E).join(' · ')+'</li>').join("")+'</ul>':'<p>Совпадающих цветов среди отмеченных понятий нет.</p>';
+ if(z.rankValid){
+  html+='<h4>Положение выбранного цвета в индивидуальном ранжировании</h4><table class="questions-table"><thead><tr><th>Понятие</th><th>Цвет</th><th>Предпочтение (место)</th></tr></thead><tbody>'+
+  CONCEPTS.map((name,i)=>{const n=a[i];return '<tr><td>'+E(name)+'</td><td>'+(Number.isInteger(n)?E(COLORS[n].name):"Не отмечено")+'</td><td>'+(Number.isInteger(n)?ranking.indexOf(n)+1:"—")+'</td></tr>'}).join("")+'</tbody></table>';
+ }else html+='<p>Ранжирование цветов не завершено или содержит повторения. Сопоставление с предпочтениями не рассчитывается.</p>';
+ html+='<div class="notice">По цвету самому по себе нельзя устанавливать страх, агрессию, семейный конфликт или диагноз. Обсуждайте значения с участником. Точные нормативные выводы оригинального ЦТО к демонстрационной палитре не применяются.</div>';
+ return html;
+}
+const D=window.PSY_FULL_METHODS||{};
+D[NAME]={
+ author:"А. М. Эткинд — цветовой тест отношений; рабочая демонстрационная версия Психотеки",
+ age:"Школьники с достаточным различением цветов и пониманием задания; конкретная возрастная стандартизация не заявлена",
+ kind:"Цветоассоциативная качественная процедура",
+ count:"8 цветовых образцов и 8 изменяемых по контексту понятий",
+ goal:"Качественно исследовать субъективные цветовые ассоциации с важными для ребёнка понятиями, их совпадения и индивидуальное предпочтение цветов.",
+ instructions:"Для каждого названного понятия выбери цвет, который кажется тебе подходящим. Один цвет можно выбирать несколько раз. Затем расположи все восемь цветов от наиболее приятного сейчас к наименее приятному.",
+ questions:CONCEPTS,options:COLORS.map(c=>c.name),
+ scoring:"Зафиксируйте цвет для каждого понятия по номеру 0–7. Отдельно записывайте уникальный порядок предпочтения всех восьми цветов. Отмечайте группы понятий с одинаковым цветом и место их цвета в субъективном ранжировании. Суммарного балла нет.",
+ interpret:"Пересечения цветовых ассоциаций — рабочие гипотезы для последующей беседы. Индивидуальное ранжирование описывает выбор здесь и сейчас; никакой цвет не трактуется как универсальный символ эмоции. По этой форме нельзя делать нормативные выводы по методике Эткинда.",
+ source:SOURCE,sourceScoring:"https://www.consultant.ru/document/cons_doc_LAW_544801/1e1566d9f76498139fad310a2722e910d0c0fb76/",
+ license:"Психотека воспроизводит общую процедуру на созданной для сайта приближённой палитре. Она не является официальным стандартизированным стимульным комплектом Эткинда / Люшера. Цветопередача экрана и принтера не контролируется.",
+ workflow:"colorRelations8",calculator:true,category:"school",
+ guideFile:"downloads/color_relations_guide.html",answerFile:"downloads/color_relations_blank.html",
+ processingFile:"downloads/color_relations_processing.html",stimulusFile:"downloads/color_relations_cards.html",
+ indicators:["Ассоциация цвета с каждым понятием","Совпадающие цвета у различных понятий","Индивидуальный порядок предпочтения восьми цветов","Комментарии, контекст и ограничения цветоразличения"]
+};
+function instruction(d){return '<h3>Проведение</h3><p>'+E(d.goal)+'</p><p><b>Автор:</b> А. М. Эткинд. Перед вами демонстрационная процедура Психотеки, не официальный нормативный комплект.</p><ol><li>Подготовьте восемь однотипных цветовых карточек. Воспроизводите их при одинаковом освещении; по экрану/домашнему принтеру нормативы не определяются.</li><li>Убедитесь, что ребёнок различает образцы. Согласуйте и запишите восемь подходящих ситуации понятий (предложенные на сайте можно заменить при проведении).</li><li>Показывайте все восемь карточек одновременно на нейтральном фоне. Для каждого понятия попросите выбрать подходящий цвет; повторы допустимы.</li><li>После ассоциаций отдельно предложите расположить цвета от наиболее до наименее приятного сейчас, без подсказки.</li><li>Внесите номера цветов, порядок предпочтения и дословные объяснения в протокол; не требуйте трактовать цвета.</li></ol><blockquote>'+E(d.instructions)+'</blockquote><p><a href="'+E(d.stimulusFile)+'" target="_blank" rel="noopener noreferrer">Открыть 8 цветовых карточек · А4</a> · <a href="'+E(d.guideFile)+'" target="_blank" rel="noopener noreferrer">Печатное руководство</a></p><div class="notice">При нарушениях цветоразличения, дискомфорте или неравной цветопередаче качественные сравнения могут быть недостоверны.</div>';}
+function materials(d){return '<h3>Стимульные цвета</h3><p>Эти оттенки приблизительные, не стандартизированные. Для предъявления распечатайте карточки из отдельной страницы.</p><div style="display:flex;flex-wrap:wrap;gap:8px">'+COLORS.map(c=>'<div style="text-align:center;width:86px"><div style="background:'+c.hex+';height:58px;border-radius:5px;border:1px solid #aaa"></div><small>'+c.id+' · '+E(c.name)+'</small></div>').join("")+'</div><h3>Бланк участника</h3><p>Код: __________ Дата: __________</p><table class="questions-table"><thead><tr><th>№</th><th>Понятие</th><th>Цвет (номер)</th></tr></thead><tbody>'+CONCEPTS.map((x,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(x)+'</td><td>________</td></tr>').join("")+'</tbody></table><p>Порядок предпочтения восьми цветов (от 1-го к 8-му): _____________________</p><div style="display:flex;flex-wrap:wrap;gap:8px"><a class="btn" href="'+E(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк · А4</a><a class="btn" href="'+E(d.stimulusFile)+'" target="_blank" rel="noopener noreferrer">Цветовые карточки · А4</a></div>';}
+function processing(d){return '<h3>Обработка</h3><p>'+E(d.scoring)+'</p><ol><li>В таблице 8 понятий запишите коды цветов 0–7; пропуск оставьте пустым.</li><li>Для каждого цвета перечислите понятия, с которыми он совпал. Одинаковый цвет означает сходную ассоциацию в данной ситуации, не диагноз.</li><li>Если все восемь цветов независимо ранжированы и каждый указан один раз, запишите для каждого ассоциированного цвета его место (1–8).</li><li>Сравните наблюдения с пояснениями ребёнка. Отметьте освещение, изменения стимулов, контекст, цветоразличение.</li></ol><h3>Пример</h3><p>Если «Я в школе» и «Моя учёба» связаны с цветом № 2, они попадают в одну группу ассоциаций. Если № 2 занимает третье место в ранге, записывается «3». Ни то, ни другое не является доказательством благополучия/неблагополучия.</p><div class="notice">'+E(d.interpret)+'</div><p>Методический источник: <a href="'+E(d.source)+'" target="_blank" rel="noopener noreferrer">описание ЦТО</a>.</p>';}
+function calculator(d,ctx){const row=ctx.rows[ctx.rowIndex]||{answers:[]},a=row.answers||[],ranking=row.colorRanking||[];return '<h3>Протокол цветовых ассоциаций</h3><p>Записывайте обезличенный результат. В каждой строке допустим повтор того же цвета.</p><div class="psy-color-inputs">'+CONCEPTS.map((name,i)=>'<label style="display:block;margin:11px 0"><b>'+(i+1)+'. '+E(name)+'</b><select class="psy-color-assoc" data-index="'+i+'" style="display:block;width:100%;max-width:360px;margin-top:5px">'+selects(a[i],"Выбрать цвет")+'</select></label>').join("")+'</div><h3>Индивидуальные предпочтения цветов</h3><p>Укажите каждый цвет ровно один раз. Первое место — наиболее приятный цвет на данный момент.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:8px">'+Array.from({length:8},(_,i)=>'<label>'+(i+1)+'-е место<select class="psy-color-rank" data-index="'+i+'" style="display:block;width:100%">'+selects(ranking[i],"Не выбрано")+'</select></label>').join("")+'</div><section id="psyColorResults" aria-live="polite">'+resultHtml(row)+'</section>';}
+function bind(d,ctx){const row=ctx.rows[ctx.rowIndex];if(!row)return;if(!Array.isArray(row.answers))row.answers=[];if(!Array.isArray(row.colorRanking))row.colorRanking=[];const change=()=>{const out=document.getElementById("psyColorResults");if(out)out.innerHTML=resultHtml(row)};document.querySelectorAll(".psy-color-assoc").forEach(el=>el.addEventListener("change",()=>{row.answers[Number(el.dataset.index)]=el.value===""?null:Number(el.value);change()}));document.querySelectorAll(".psy-color-rank").forEach(el=>el.addEventListener("change",()=>{row.colorRanking[Number(el.dataset.index)]=el.value===""?null:Number(el.value);change()}));}
+window.PSY_COLOR_RELATIONS={instruction,materials,processing,calculator,bind,summarize};
+})();
