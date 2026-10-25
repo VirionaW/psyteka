@@ -27,3 +27,14 @@
 .library-page .method p.method-card-summary{font-size:13px;line-height:1.5;color:var(--muted);margin:8px 0 14px;flex:1}
 .library-page .method .head .method-card-author{max-width:100%}
 .library-page .method .tags{margin:11px 0 4px}
+
+/* 61–100: оригинальные изображения из пользовательского архива; 8 столбцов × 5 строк. */
+.library-page .method .glyph:has(.method-art-tile){overflow:hidden;padding:0;border-radius:15px}
+.library-page .method .method-art-tile{
+ display:block;width:100%;height:100%;min-width:100%;min-height:100%;
+ background-image:url('assets/psyteka-methods-61-100.webp?v=20261025art');
+ background-repeat:no-repeat;background-size:800% 500%;
+ background-color:#f4f8f4;border-radius:14px
+}
+html.dark .library-page .method .method-art-tile{background-color:#f4f8f4}
+.library-page .topic-all{font-weight:800}
