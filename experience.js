@@ -129,6 +129,7 @@ function viewInstruction(m){
  if(d?.workflow==='bourdon30')return window.PSY_BOURDON.instructions(d);
  if(d?.workflow==='selwork2026')return window.PSY_SEL_SKILLS.instruction(d);
   if(d?.workflow==='mspss')return window.PSY_MSPSS.instruction(d);
+ if(d?.workflow==='phillips58')return window.PSY_PHILLIPS.instruction(d);
  if(d?.workflow==='snap26')return window.PSY_SNAP26.instruction(d);
   if(d?.workflow==='smfq')return window.PSY_SMFQ.instruction(d);
  if(d?.workflow==='luskanova')return window.PSY_LUSKANOVA.instruction(d);
@@ -191,6 +192,7 @@ function materials(m,blank){
  if(d.workflow==='bourdon30')return window.PSY_BOURDON.materials(d);
  if(d.workflow==='selwork2026')return window.PSY_SEL_SKILLS.materials(d);
   if(d.workflow==='mspss')return window.PSY_MSPSS.materials(d);
+ if(d.workflow==='phillips58')return window.PSY_PHILLIPS.materials(d);
  if(d.workflow==='snap26')return window.PSY_SNAP26.materials(d);
   if(d.workflow==='smfq')return window.PSY_SMFQ.materials(d);
  if(d.workflow==='luskanova')return window.PSY_LUSKANOVA.materials(d);
@@ -216,6 +218,7 @@ function viewMaterials(m){
  if(d?.workflow==='bourdon30')return window.PSY_BOURDON.materials(d);
  if(d?.workflow==='selwork2026')return window.PSY_SEL_SKILLS.materials(d);
   if(d?.workflow==='mspss')return window.PSY_MSPSS.materials(d);
+ if(d?.workflow==='phillips58')return window.PSY_PHILLIPS.materials(d);
  if(d?.workflow==='snap26')return window.PSY_SNAP26.materials(d);
   if(d?.workflow==='smfq')return window.PSY_SMFQ.materials(d);
  if(d?.workflow==='luskanova')return window.PSY_LUSKANOVA.materials(d);
@@ -231,6 +234,7 @@ function viewProcessing(m){
  if(d.workflow==='bourdon30')return window.PSY_BOURDON.processing(d);
  if(d.workflow==='selwork2026')return window.PSY_SEL_SKILLS.processing(d);
   if(d.workflow==='mspss')return window.PSY_MSPSS.processing(d);
+ if(d.workflow==='phillips58')return window.PSY_PHILLIPS.processing(d);
  if(d.workflow==='snap26')return window.PSY_SNAP26.processing(d);
   if(d.workflow==='smfq')return window.PSY_SMFQ.processing(d);
  if(d.workflow==='luskanova')return window.PSY_LUSKANOVA.processing(d);
@@ -247,6 +251,7 @@ function getScores(d,answers){
  if(d.workflow==='bourdon30')return window.PSY_BOURDON.score(d,answers);
  if(d.workflow==='selwork2026')return window.PSY_SEL_SKILLS.score(d,answers);
   if(d.workflow==='mspss')return window.PSY_MSPSS.score(d,answers);
+ if(d.workflow==='phillips58')return window.PSY_PHILLIPS.score(d,answers);
  if(d.workflow==='snap26')return window.PSY_SNAP26.score(d,answers);
   if(d.workflow==='smfq')return window.PSY_SMFQ.score(d,answers);
  if(d.workflow==='luskanova')return window.PSY_LUSKANOVA.score(d,answers);
@@ -276,6 +281,7 @@ function viewCalculator(m){
  if(d?.workflow==='bourdon30')return window.PSY_BOURDON.calculator(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='selwork2026')return window.PSY_SEL_SKILLS.calculator(d,{rows,rowIndex,calcMode});
   if(d?.workflow==='mspss')return window.PSY_MSPSS.calculator(d,{rows,rowIndex,calcMode});
+ if(d?.workflow==='phillips58')return window.PSY_PHILLIPS.calculator(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='snap26')return window.PSY_SNAP26.calculator(d,{rows,rowIndex,calcMode});
   if(d?.workflow==='smfq')return window.PSY_SMFQ.calculator(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='luskanova')return window.PSY_LUSKANOVA.calculator(d,{rows,rowIndex,calcMode});
@@ -311,6 +317,7 @@ function bindControls(){
  if(d?.workflow==='bourdon30')window.PSY_BOURDON.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='selwork2026')window.PSY_SEL_SKILLS.bind(d,{rows,rowIndex,calcMode});
   if(d?.workflow==='mspss')window.PSY_MSPSS.bind(d,{rows,rowIndex,calcMode});
+ if(d?.workflow==='phillips58')window.PSY_PHILLIPS.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='snap26')window.PSY_SNAP26.bind(d,{rows,rowIndex,calcMode});
   if(d?.workflow==='smfq')window.PSY_SMFQ.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='luskanova')window.PSY_LUSKANOVA.bind(d,{rows,rowIndex,calcMode});
@@ -402,10 +409,10 @@ function openMethod(m){
  header.insertAdjacentHTML('afterend','<nav class="method-tabs" id="methodTabs">'+tabs.map(([key,title])=>'<button class="modal-tab" data-tab="'+key+'">'+title+'</button>').join('')+'</nav>');
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
- footer.innerHTML='<div class="actions" id="methodButtons">'+((['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026'].includes(d?.workflow))?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a>'+(d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.specialistFile)+'" target="_blank" rel="noopener noreferrer">Протокол психолога · А4</a>':d.workflow==='mspss'?'<a class="btn" href="'+escapeHTML(d.studentFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Регистрация ответов</a>':'<a class="btn" href="'+escapeHTML(d.answerFile)+'" download>Бланк</a>'+(d?.workflow==='snap26'?'<a class="btn" href="'+escapeHTML(d.teacherFile)+'" target="_blank" rel="noopener">Бланк педагога · А4</a>':''))+(d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.source)+'" target="_blank" rel="noopener noreferrer">Рамка CASEL ↗</a>':'<a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Первоисточник PDF ↗</a>'):d?(d.workflow==='fresh06'?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк · А4</a>':'')+'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions psy-footer-main"><button class="btn psy-footer-close" id="closeFooter">Закрыть</button>'+(d?'<button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button>':'')+'</div>';
+ footer.innerHTML='<div class="actions" id="methodButtons">'+((['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026','phillips58'].includes(d?.workflow))?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a>'+(d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.specialistFile)+'" target="_blank" rel="noopener noreferrer">Протокол психолога · А4</a>':d.workflow==='mspss'?'<a class="btn" href="'+escapeHTML(d.studentFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Регистрация ответов</a>':(d.workflow==='phillips58'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':'<a class="btn" href="'+escapeHTML(d.answerFile)+'" download>Бланк</a>')+(d?.workflow==='snap26'?'<a class="btn" href="'+escapeHTML(d.teacherFile)+'" target="_blank" rel="noopener">Бланк педагога · А4</a>':''))+(d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.source)+'" target="_blank" rel="noopener noreferrer">Рамка CASEL ↗</a>':'<a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">'+(d.workflow==='phillips58'?'Текст 58 вопросов и ключ ↗':'Первоисточник PDF ↗')+'</a>'):d?(d.workflow==='fresh06'?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк · А4</a>':'')+'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions psy-footer-main"><button class="btn psy-footer-close" id="closeFooter">Закрыть</button>'+(d?'<button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button>':'')+'</div>';
  if(d?.workflow==='storycards'){const link=[...footer.querySelectorAll('a')].find(a=>a.textContent.includes('Первоисточник'));if(link){link.href=d.source;link.textContent='Описание процедуры PDF ↗';}}
  $('#closeFooter').onclick=closeModal; if(d)$('#bottomProcessing').onclick=()=>setTab(tabNow==='score'||tabNow==='processing'?'overview':d.calculator?'score':'processing');
- if(d&&!['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026'].includes(d.workflow)){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;if(d.workflow==='diagnostic03'&&d.diagnosticType==='rses')$('#saveBlank').onclick=()=>window.PSY_DIAG03.saveBlank(d);}
+ if(d&&!['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026','phillips58'].includes(d.workflow)){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;if(d.workflow==='diagnostic03'&&d.diagnosticType==='rses')$('#saveBlank').onclick=()=>window.PSY_DIAG03.saveBlank(d);}
  $('#modal').hidden=false;$('#shade').hidden=false;setTab('overview');
 }
 window.openMethod=openMethod;
