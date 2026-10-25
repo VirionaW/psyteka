@@ -1,0 +1,36 @@
+/* Дембо - Рубинштейн, модификация А. М. Прихожан */
+.library-page #modal .psy-dembo-links{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0 22px}
+.library-page #modal .psy-dembo-links>a{min-height:43px;display:inline-flex;align-items:center;justify-content:center}
+.library-page #modal .psy-dembo-warning{border-left:4px solid #d7a037!important;background:color-mix(in srgb,#ffd775 18%,var(--paper));color:var(--ink)}
+.library-page #modal .psy-dembo-paper{background:#fff;border:1px solid #b6ccbe;border-radius:14px;padding:10px;max-width:820px;margin:14px auto}
+.library-page #modal .psy-dembo-paper svg{display:block;max-width:100%;height:auto;width:100%}
+.library-page #modal .psy-dembo-formula{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}
+.library-page #modal .psy-dembo-formula>div{padding:15px;border:1px solid var(--line);border-radius:13px;background:var(--soft);display:flex;flex-direction:column;gap:5px}
+.library-page #modal .psy-dembo-formula b{font-size:16px;color:var(--green)}
+.library-page #modal .psy-dembo-formula span{font-size:13px;color:var(--muted)}
+.library-page #modal .psy-dembo-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:19px 0}
+.library-page #modal .psy-dembo-field{border:1px solid var(--line);border-radius:15px;padding:16px;background:var(--soft)}
+.library-page #modal .psy-dembo-field-title{display:flex;align-items:center;justify-content:space-between;gap:7px}
+.library-page #modal .psy-dembo-field h4{font-size:16px;margin:0 0 13px;color:var(--green)}
+.library-page #modal .psy-dembo-field-title>span{color:#a07125;background:#fff4d2;font-weight:700;font-size:12px;border-radius:7px;padding:5px 8px}
+.library-page #modal .psy-dembo-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.library-page #modal .psy-dembo-pair label{font-size:12px;color:var(--muted);font-weight:700;display:flex;flex-direction:column;gap:8px}
+.library-page #modal .psy-dembo-pair input{min-width:0;width:100%;font:650 15px system-ui;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:9px}
+.library-page #modal .psy-dembo-pair input:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.library-page #modal .psy-dembo-result{margin:19px 0;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px}
+.library-page #modal .psy-dembo-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.library-page #modal .psy-dembo-stats>div{display:flex;flex-direction:column;background:var(--soft);border-radius:13px;padding:15px;gap:8px}
+.library-page #modal .psy-dembo-stats span{font-size:13px;color:var(--muted)}
+.library-page #modal .psy-dembo-stats strong{font-size:27px;color:var(--green)}
+.library-page #modal .psy-dembo-chart{display:grid;gap:10px;margin:18px 0}
+.library-page #modal .psy-dembo-bar-row{display:grid;grid-template-columns:minmax(110px,1.25fr) minmax(90px,2fr) 80px 35px;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.library-page #modal .psy-dembo-bar-row>span:first-child{font-weight:650}
+.library-page #modal .psy-dembo-bar-row strong{font-size:13px;color:var(--ink)}
+.library-page #modal .psy-dembo-bar-row small{color:var(--muted);text-align:right}
+.library-page #modal .psy-dembo-bar-line{position:relative;height:15px;border-radius:7px;background:var(--line)}
+.library-page #modal .psy-dembo-actual{position:absolute;top:0;bottom:0;left:0;background:#74ac97;border-radius:7px}
+.library-page #modal .psy-dembo-want{position:absolute;top:-3px;bottom:-3px;width:4px;background:#9e724b;border-radius:3px;transform:translateX(-2px)}
+.library-page #modal .psy-dembo-hint{font-size:13px;color:var(--muted)}
+.library-page #modal .psy-dembo-actions{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0}
+@media(max-width:850px){.library-page #modal .psy-dembo-inputs{grid-template-columns:1fr}.library-page #modal .psy-dembo-formula{grid-template-columns:1fr}}
+@media(max-width:680px){.library-page #modal .psy-dembo-stats{grid-template-columns:1fr}.library-page #modal .psy-dembo-bar-row{grid-template-columns:90px minmax(60px,1fr) 63px;gap:5px}.library-page #modal .psy-dembo-bar-row small{grid-column:3}.library-page #modal .psy-dembo-links{flex-direction:column}.library-page #modal .psy-dembo-pair{grid-template-columns:1fr}.library-page #modal .psy-dembo-actions .btn{flex:1 1 170px}}
