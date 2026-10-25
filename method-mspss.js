@@ -68,7 +68,7 @@
   let html='<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>'+
   '<div class="notice psy-mspss-warning">Введите числа из оригинального бланка на английском или из проверенной переводной формы. Нельзя заменять пункты тематическими описаниями. 0 не является ответом MSPSS.</div>';
   if(ctx.calcMode==="class")html+='<div class="group-tools"><label>Участник<select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+esc(x.name||"У-"+String(i+1).padStart(2,"0"))+'</option>').join("")+'</select></label><label>Код<input id="participantName" maxlength="40" value="'+esc(r.name||"")+'" placeholder="У-01 (без ФИО)"></label><button class="btn" id="addParticipant">Добавить</button></div>';
-  else html+='<label class="psy-mspss-code">Код (необязательно)<input id="participantName" maxlength="40" value="'+esc(r.name||"")+'" placeholder="Без ФИО"></label>';
+  else html+='<label class="psy-mspss-code">Код (необязательно)<input id="mspssSingleCode" maxlength="40" value="'+esc(r.name||"")+'" placeholder="Без ФИО"></label>';
   html+='<p class="psy-mspss-small">Заполнено '+done(a)+' из 12. Ответы не сохраняются между посещениями.</p>'+
   '<div class="psy-mspss-grid">'+TOPICS.map((q,i)=>'<label class="psy-mspss-item"><span><b>'+(i+1)+'.</b> '+esc(q)+'</span><select data-mspss="'+i+'" aria-label="Ответ на пункт '+(i+1)+'"><option value="">— не заполнено —</option>'+
   Array.from({length:7},(_,j)=>'<option value="'+(j+1)+'" '+(String(a[i])===String(j+1)?"selected":"")+'>'+(j+1)+'</option>').join("")+'</select></label>').join("")+'</div>'+
@@ -83,6 +83,7 @@
  function csv(rows){return "\uFEFF"+rows.map(r=>r.map(csvCell).join(";")).join("\r\n")}
  function bind(data,ctx){
   const rows=ctx.rows||[],r=rows[ctx.rowIndex];if(!r)return;
+  document.getElementById("mspssSingleCode")?.addEventListener("input",e=>{r.name=e.target.value});
   document.querySelectorAll("[data-mspss]").forEach(el=>el.addEventListener("change",()=>{
    r.answers[Number(el.dataset.mspss)]=el.value===""?"":Number(el.value);
    const out=document.getElementById("mspssResult");if(out)out.innerHTML=result(r.answers);
