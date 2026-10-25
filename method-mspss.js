@@ -72,7 +72,7 @@
  function group(rows){
   const ordered=alphabet(rows).filter(r=>r.name?.trim()||score(d,r.answers));
   return '<section class="psy-mspss-group"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>ФИО</th><th>Общий / 7</th><th>Семья</th><th>Друзья</th><th>Значимый человек</th></tr></thead><tbody>'+
-  ordered.map((r,i)=>{const z=score(d,r.answers);const v=id=>z?z.subscales.find(s=>s.id===id).mean.toFixed(2):"—";return '<tr><td>'+esc(r.name||"Не указан")+'</td><td>'+(z?z.mean.toFixed(2):"Не участвовал")+'</td><td>'+v("family")+'</td><td>'+v("friends")+'</td><td>'+v("other")+'</td></tr>'}).join("")+
+  ordered.map((r,i)=>{const z=score(d,r.answers);const v=id=>z?z.subscales.find(s=>s.id===id).mean.toFixed(2):"-";return '<tr><td>'+esc(r.name||"Не указан")+'</td><td>'+(z?z.mean.toFixed(2):"Не участвовал")+'</td><td>'+v("family")+'</td><td>'+v("friends")+'</td><td>'+v("other")+'</td></tr>'}).join("")+
   '</tbody></table></div><p class="psy-mspss-small">Отсутствующие результаты не учитываются при подсчете класса.</p></section>';
  }
  function calculator(data,ctx){
