@@ -58,7 +58,16 @@ function setTab(name){
   bottom.classList.toggle("primary",!insideProcessing||methodNow&&DETAILS[methodNow.name]?.workflow==='mspss');
   const reset=document.getElementById('mspssResetBottom');if(reset)reset.hidden=!insideProcessing;
    const back=document.getElementById('mspssBack');if(back)back.hidden=!insideProcessing;
-   const report=document.getElementById('mspssReportBottom');if(report){report.hidden=!insideProcessing;const d=DETAILS[methodNow.name];report.disabled=!insideProcessing||!window.PSY_MSPSS.score(d,rows[rowIndex]?.answers);}
+   const report=document.getElementById('mspssReportBottom');if(report){
+    report.hidden=!insideProcessing;
+    const d=DETAILS[methodNow.name];
+    const eligible=calcMode==='class'
+      ?rows.some(p=>p.name?.trim()||window.PSY_MSPSS.score(d,p.answers))
+      :!!window.PSY_MSPSS.score(d,rows[rowIndex]?.answers);
+    report.disabled=!insideProcessing||!eligible;
+    report.textContent=calcMode==='class'?'Скачать отчет класса':'Скачать отчет участника';
+    report.classList.toggle('psy-mspss-waiting',!eligible);
+   }
    if(methodNow&&DETAILS[methodNow.name]?.workflow==='mspss')bottom.hidden=insideProcessing;
  }
  bindControls();
@@ -396,18 +405,36 @@ function bindControls(){
  if(d?.workflow==='bourdon30')window.PSY_BOURDON.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='selwork2026')window.PSY_SEL_SKILLS.bind(d,{rows,rowIndex,calcMode});
   if(d?.workflow==='mspss')window.PSY_MSPSS.bind(d,{rows,rowIndex,calcMode,
-    onSelect:i=>{rowIndex=i;modeIndices.class=i;setTab('score');},
-    onBulkAdd:names=>{let last=rowIndex;for(const name of names){const key=name.toLocaleLowerCase('ru');if(!rows.some(x=>x.name?.toLocaleLowerCase('ru')===key)){rows.push({name,answers:[]});last=rows.length-1;}}rowIndex=last;modeIndices.class=rowIndex;setTab('score');},
-    onSort:()=>{const current=rows[rowIndex];rows.sort((a,b)=>(a.name||'').localeCompare(b.name||'','ru',{sensitivity:'base'}));rowIndex=rows.indexOf(current);modeIndices.class=rowIndex;setTab('score');},
-    onNext:()=>{if(rowIndex===rows.length-1)rows.push({name:'',answers:[]});rowIndex+=1;modeIndices.class=rowIndex;setTab('score');document.getElementById('mspssCurrentName')?.focus();}
+    onSelect:i=>{rowIndex=i;modeIndices.class=i;setTab('score');document.querySelector('input[data-mspss="0"]')?.focus();},
+    onBulkAdd:names=>{
+      if(!names?.length)return;
+      if(rows.length===1&&!rows[0].name?.trim()&&!window.PSY_MSPSS.done(rows[0].answers))rows.splice(0,1);
+      let first=-1;
+      for(const name of names){
+       if(!rows.some(x=>x.name?.trim().toLocaleLowerCase('ru')===name.trim().toLocaleLowerCase('ru'))){if(first<0)first=rows.length;rows.push({name:name.trim(),answers:[]});}
+      }
+      if(!rows.length)rows.push({name:'',answers:[]});
+      rowIndex=first>=0?first:Math.max(0,rows.length-1);modeIndices.class=rowIndex;setTab('score');
+    },
+    onSort:names=>{
+      if(names?.length){
+       if(rows.length===1&&!rows[0].name?.trim()&&!window.PSY_MSPSS.done(rows[0].answers))rows.splice(0,1);
+       for(const name of names){if(!rows.some(x=>x.name?.trim().toLocaleLowerCase('ru')===name.trim().toLocaleLowerCase('ru')))rows.push({name:name.trim(),answers:[]});}
+      }
+      if(!rows.length)rows.push({name:'',answers:[]});
+      const current=rows[rowIndex];
+      rows.sort((a,b)=>(a.name||'').localeCompare(b.name||'','ru',{sensitivity:'base'}));
+      rowIndex=Math.max(0,rows.indexOf(current));modeIndices.class=rowIndex;setTab('score');
+    },
+    onDelete:i=>{
+      rows.splice(i,1);
+      if(!rows.length)rows.push({name:'',answers:[]});
+      rowIndex=Math.max(0,Math.min(rowIndex>i?rowIndex-1:rowIndex,rows.length-1));
+      modeIndices.class=rowIndex;setTab('score');
+    },
+    onDeleteAll:()=>{rows.splice(0,rows.length,{name:'',answers:[]});rowIndex=0;modeIndices.class=0;setTab('score');},
+    onNext:()=>{if(rowIndex>=rows.length-1)return;rowIndex++;modeIndices.class=rowIndex;setTab('score');document.querySelector('input[data-mspss="0"]')?.focus();}
   });
- if(d?.workflow==='gad7')window.PSY_GAD7.bind(d,{rows,rowIndex,calcMode});
- if(d?.workflow==='odd4verbal')window.PSY_ODD4.bind(d,{rows,rowIndex,calcMode});
- if(d?.workflow==='phq4')window.PSY_PHQ4.bind(d,{rows,rowIndex,calcMode});
- if(d?.workflow==='who5')window.PSY_WHO5.bind(d,{rows,rowIndex,calcMode});
- if(d?.workflow==='scared41')window.PSY_SCARED41.bind(d,{rows,rowIndex,calcMode});
- if(d?.workflow==='phillips58')window.PSY_PHILLIPS.bind(d,{rows,rowIndex,calcMode});
- if(d?.workflow==='snap26')window.PSY_SNAP26.bind(d,{rows,rowIndex,calcMode});
   if(d?.workflow==='smfq')window.PSY_SMFQ.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='luskanova')window.PSY_LUSKANOVA.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='fresh06')window.PSY_NEW_METHODS.bind(d,{rows,rowIndex,calcMode});
@@ -501,11 +528,11 @@ function openMethod(m){
  header.insertAdjacentHTML('afterend','<nav class="method-tabs" id="methodTabs">'+tabs.map(([key,title])=>'<button class="modal-tab" data-tab="'+key+'">'+title+'</button>').join('')+'</nav>');
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
- footer.innerHTML=mspssPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="mspssBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="mspssReportBottom" disabled hidden>Скачать отчёт участника</button><button class="btn psy-mspss-reset" id="mspssResetBottom" hidden>Очистить ответы</button></div></div>':'<div class="actions" id="methodButtons">'+((['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026','phillips58','scared41','ladder7','who5','schulte5','familySocio110','phq4','luria10x5','gad7','kfdBurns72','cormanFamily','odd4verbal','schoolDrawingL'].includes(d?.workflow))?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a>'+(d.workflow==='gad7'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':d.workflow==='odd4verbal'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':d.workflow==='phq4'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':d.workflow==='who5'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Полный русский WHO-5 · PDF ↗</a>':d.workflow==='scared41'?'<a class="btn" href="'+escapeHTML(d.childFile)+'" target="_blank" rel="noopener noreferrer">Бланк ребенка · А4</a><a class="btn" href="'+escapeHTML(d.parentFile)+'" target="_blank" rel="noopener noreferrer">Бланк родителя · А4</a><a class="btn" href="'+escapeHTML(d.parentPDF)+'" target="_blank" rel="noopener noreferrer">Оригинал родителю · PDF ↗</a>':d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.studentWordFile)+'" download>Бланк ученика · Word</a><a class="btn" href="'+escapeHTML(d.specialistFile)+'" target="_blank" rel="noopener noreferrer">Протокол психолога · А4</a>':d.workflow==='mspss'?'<a class="btn" href="'+escapeHTML(d.studentFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Регистрация ответов</a>':(d.workflow==='phillips58'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':'<a class="btn" href="'+escapeHTML(d.answerFile)+'" download>Бланк</a>')+(d?.workflow==='snap26'?'<a class="btn" href="'+escapeHTML(d.teacherFile)+'" target="_blank" rel="noopener">Бланк педагога · А4</a>':''))+(d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.source)+'" target="_blank" rel="noopener noreferrer">Рамка CASEL ↗</a>':'<a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">'+(d.workflow==='gad7'?'Полный текст ГТР-7 ↗':(d.workflow==='phillips58'?'Текст 58 вопросов и ключ ↗':'Первоисточник PDF ↗'))+'</a>'):d?(d.workflow==='fresh06'?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк · А4</a>':'')+'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions psy-footer-main"><button class="btn psy-footer-close" id="closeFooter">Закрыть</button>'+(d?'<button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button>':'')+'</div>';
+ footer.innerHTML=mspssPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="mspssBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="mspssReportBottom" disabled hidden>Скачать отчет участника</button><button class="btn psy-mspss-reset" id="mspssResetBottom" hidden>Очистить ответы</button></div></div>':'<div class="actions" id="methodButtons">'+((['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026','phillips58','scared41','ladder7','who5','schulte5','familySocio110','phq4','luria10x5','gad7','kfdBurns72','cormanFamily','odd4verbal','schoolDrawingL'].includes(d?.workflow))?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a>'+(d.workflow==='gad7'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':d.workflow==='odd4verbal'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':d.workflow==='phq4'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':d.workflow==='who5'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Полный русский WHO-5 · PDF ↗</a>':d.workflow==='scared41'?'<a class="btn" href="'+escapeHTML(d.childFile)+'" target="_blank" rel="noopener noreferrer">Бланк ребенка · А4</a><a class="btn" href="'+escapeHTML(d.parentFile)+'" target="_blank" rel="noopener noreferrer">Бланк родителя · А4</a><a class="btn" href="'+escapeHTML(d.parentPDF)+'" target="_blank" rel="noopener noreferrer">Оригинал родителю · PDF ↗</a>':d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.studentWordFile)+'" download>Бланк ученика · Word</a><a class="btn" href="'+escapeHTML(d.specialistFile)+'" target="_blank" rel="noopener noreferrer">Протокол психолога · А4</a>':d.workflow==='mspss'?'<a class="btn" href="'+escapeHTML(d.studentFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Регистрация ответов</a>':(d.workflow==='phillips58'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':'<a class="btn" href="'+escapeHTML(d.answerFile)+'" download>Бланк</a>')+(d?.workflow==='snap26'?'<a class="btn" href="'+escapeHTML(d.teacherFile)+'" target="_blank" rel="noopener">Бланк педагога · А4</a>':''))+(d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.source)+'" target="_blank" rel="noopener noreferrer">Рамка CASEL ↗</a>':'<a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">'+(d.workflow==='gad7'?'Полный текст ГТР-7 ↗':(d.workflow==='phillips58'?'Текст 58 вопросов и ключ ↗':'Первоисточник PDF ↗'))+'</a>'):d?(d.workflow==='fresh06'?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк · А4</a>':'')+'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions psy-footer-main"><button class="btn psy-footer-close" id="closeFooter">Закрыть</button>'+(d?'<button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button>':'')+'</div>';
  if(d?.workflow==='storycards'||d?.workflow==='ladder7'||d?.workflow==='schulte5'||d?.workflow==='familySocio110'||d?.workflow==='luria10x5'){const link=[...footer.querySelectorAll('a')].find(a=>a.textContent.includes('Первоисточник'));if(link||d?.workflow==='kfdBurns72'){link.href=d.source;link.textContent=d.workflow==='ladder7'?'Опубликованное руководство PDF ↗':'Методическое описание ↗';}}
  if(!mspssPilot)$('#closeFooter').onclick=closeModal;
  if(d)$('#bottomProcessing').onclick=()=>setTab(tabNow==='score'||tabNow==='processing'?'overview':d.calculator?'score':'processing');
- if(mspssPilot){$('#mspssBack').onclick=()=>setTab('overview');$('#mspssReportBottom').onclick=()=>window.PSY_MSPSS.openReport(rows[rowIndex]);$('#mspssResetBottom').onclick=()=>{if(!confirm('Очистить ответы выбранного участника?'))return;rows[rowIndex].answers=[];setTab('score');document.querySelector('input[data-mspss]')?.focus();};}
+ if(mspssPilot){$('#mspssBack').onclick=()=>setTab('overview');$('#mspssReportBottom').onclick=()=>calcMode==='class'?window.PSY_MSPSS.openClassReport(rows):window.PSY_MSPSS.openReport(rows[rowIndex]);$('#mspssResetBottom').onclick=()=>{if(!confirm('Очистить ответы выбранного участника?'))return;rows[rowIndex].answers=[];setTab('score');document.querySelector('input[data-mspss]')?.focus();};}
  if(d&&!['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026','phillips58','scared41','ladder7','who5','schulte5','familySocio110','phq4','luria10x5','gad7','kfdBurns72','cormanFamily','odd4verbal','schoolDrawingL'].includes(d.workflow)){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;if(d.workflow==='diagnostic03'&&d.diagnosticType==='rses')$('#saveBlank').onclick=()=>window.PSY_DIAG03.saveBlank(d);}
  $('#modal').hidden=false;$('#shade').hidden=false;setTab('overview');
 }
