@@ -67,6 +67,8 @@
   document.querySelectorAll('#catalog article.method').forEach(card=>{
    if(card.dataset.siteV2)return;card.dataset.siteV2='1';
    const h=card.querySelector('h3');const label=h?.textContent||'';const icon=card.querySelector('.glyph');
+   const categoryText=(card.querySelector('.tags')?.textContent||'')+' '+label;
+   card.dataset.visualKind=/рисуночн|проектив|рисунок семьи|дерево|школа зверей|что мне нравится/i.test(categoryText)?'draw':/графичес|шульте|10 слов|лурия|матриц|проба|память|внимание|лесенка|дембо/i.test(categoryText)?'graph':'scale';
    if(icon){const k=kind(label+' '+(card.textContent||''));icon.innerHTML='<svg viewBox="0 0 50 50" aria-hidden="true">'+shapes[k]+'</svg>'}
    const kit=/^Социометрическое исследование класса$/i.test(label)?'sociometry':/^Корректурная проба Бурдона - Анфимова$/i.test(label)?'bourdon':null;
    const selfesteem=label==='Лесенка'?'ladder':/^Самооценка Дембо - Рубинштейн$/i.test(label)?'dembo':null;
