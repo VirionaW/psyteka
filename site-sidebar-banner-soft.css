@@ -54,3 +54,30 @@ html.dark .library-page .hero .hero-art{
 @media(prefers-reduced-motion:reduce){
  .library-page .hero .hero-art{animation:none!important;transition:none!important}
 }
+
+/* Два сюжетных баннера с людьми. Собственные прозрачные векторные иллюстрации.
+   Другие четыре архивных баннера сохраняются без изменений. */
+.library-page[data-area="special"] .hero .hero-art{
+ background-image:url("assets/scene-special-people.svg?v=20261025flat1")!important;
+ background-position:center center!important;
+ background-size:contain!important;
+ background-repeat:no-repeat!important;
+ mix-blend-mode:normal!important;
+ -webkit-mask-image:none!important;
+ mask-image:none!important;
+}
+.library-page[data-area="adults"] .hero .hero-art{
+ background-image:url("assets/scene-adults-people.svg?v=20261025flat1")!important;
+ background-position:center center!important;
+ background-size:contain!important;
+ background-repeat:no-repeat!important;
+ mix-blend-mode:normal!important;
+ -webkit-mask-image:none!important;
+ mask-image:none!important;
+}
+html.dark .library-page[data-area="special"] .hero .hero-art,
+html.dark .library-page[data-area="adults"] .hero .hero-art{
+ opacity:1!important;
+ mix-blend-mode:normal!important;
+ filter:none!important;
+}
