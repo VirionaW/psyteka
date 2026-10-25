@@ -56,6 +56,7 @@ function setTab(name){
   const insideProcessing=name==="score"||name==="processing";
   bottom.textContent=insideProcessing?"← Вернуться к портфолио":"Обработка результатов →";
   bottom.classList.toggle("primary",!insideProcessing||methodNow&&DETAILS[methodNow.name]?.workflow==='mspss');
+  const right=document.querySelector('#modal .psy-mspss-footer-right');if(right)right.hidden=!insideProcessing;
   const reset=document.getElementById('mspssResetBottom');if(reset)reset.hidden=!insideProcessing;
    const back=document.getElementById('mspssBack');if(back)back.hidden=!insideProcessing;
    const report=document.getElementById('mspssReportBottom');if(report){
