@@ -35,27 +35,31 @@
  function done(answers){return Array.from({length:12},(_,i)=>answers?.[i]).filter(v=>v!==""&&v!=null&&Number.isInteger(Number(v))&&Number(v)>=1&&Number(v)<=7).length}
  const STUDENT_ITEMS=["Когда мне нужна помощь, рядом есть особенный для меня человек.","Есть особенный для меня человек, с которым я могу разделить радость и печаль.","Моя семья действительно старается помогать мне.","Я получаю от семьи эмоциональную помощь и поддержку, в которой нуждаюсь.","В моей жизни есть особенный человек, который по-настоящему меня утешает.","Мои друзья действительно стараются мне помочь.","Когда что-то идет не так, я могу рассчитывать на друзей.","Я могу обсуждать свои проблемы с семьей.","У меня есть друзья, с которыми можно делиться радостью и печалью.","В моей жизни есть особенный человек, которому небезразличны мои чувства.","Члены моей семьи готовы помогать мне принимать решения.","Я могу рассказывать друзьям о своих проблемах."];
  function instruction(){
-  return '<section class="psy-mspss-section psy-mspss-document">'+
-  '<h3>Методика и руководство</h3>'+
-  '<p>Полный методический документ содержит цель обследования, инструкцию для чтения ученику, стимульный материал, порядок проведения, ключ, обработку и интерпретацию результатов.</p>'+
-  '<div class="psy-mspss-doc-preview"><strong>Шкала воспринимаемой социальной поддержки</strong><span>Автор: '+esc(d.author)+'</span><span>Назначение: '+esc(d.goal)+'</span><span>Объем: 12 утверждений, 3 шкалы</span></div>'+
-  '<a class="btn primary psy-mspss-view" href="'+METHOD_PAGE+'" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать ↗</a>'+
-  '</section>';
+  return '<section class="psy-mspss-section psy-mspss-manual">'+
+   '<div class="psy-mspss-manual-bar"><div><h3>Методика и руководство</h3><p>Полный материал для педагога-психолога.</p></div><a class="btn primary" href="'+METHOD_PAGE+'" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать ↗</a></div>'+
+   '<h3>Цель</h3><p>'+esc(d.goal)+'</p>'+
+   '<h3>Описание методики</h3><p>Методика включает 12 утверждений и три шкалы: поддержка семьи, друзей и значимого человека. Участник выбирает степень согласия с каждым утверждением по семибалльной шкале.</p>'+
+   '<h3>Порядок проведения</h3><ol><li>Подготовьте бланк и обеспечьте спокойную обстановку.</li><li>Прочитайте инструкцию и предложите ученику заполнить бланк самостоятельно.</li><li>Перенесите 12 ответов в обработку в исходном порядке. Не подсказывайте ответы.</li></ol>'+
+   '<h3>Инструкция для чтения ученику</h3><div class="psy-mspss-script">«Сейчас ты прочитаешь предложения о людях, которые могут тебя поддержать. Подумай, насколько ты согласен с каждым из них. Выбери подходящую цифру и отметь один кружок в строке. Здесь нет правильных и неправильных ответов».</div>'+
+   '<h3>Утверждения</h3><ol class="psy-mspss-statements">'+STUDENT_ITEMS.map(q=>'<li>'+esc(q)+'</li>').join("")+'</ol>'+
+   '<h3>Ключ и подсчет</h3><div class="psy-mspss-key-wrap"><table class="psy-mspss-key"><thead><tr><th>Шкала</th><th>Пункты</th><th>Расчет</th></tr></thead><tbody>'+
+   SUB.map(o=>'<tr><td>'+esc(o.name)+'</td><td>'+o.items.join(", ")+'</td><td>Сумма / 4</td></tr>').join("")+
+   '<tr><td>Общий показатель</td><td>Все 12</td><td>Сумма / 12</td></tr></tbody></table></div>'+
+   '<p>Ответы оцениваются от 1 до 7. Обратных пунктов нет. Если пропущен хотя бы один ответ, полный расчет не выполняется.</p>'+
+   '<h3>Интерпретация</h3><p>'+esc(d.interpret)+'</p><p>Для рабочего русского перевода не установлены собственные возрастные нормы и диагностические пороги. Интерпретация требует учета контекста и профессионального суждения.</p>'+
+   '</section>';
  }
  function materials(){
   return '<section class="psy-mspss-section psy-mspss-student">'+
-   '<div class="psy-mspss-blank-head"><div><h3>Бланк ученика</h3><p class="psy-mspss-small">Отдельный документ для предъявления участнику.</p></div>'+
-   '<a class="btn primary psy-mspss-view" href="'+STUDENT+'" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать ↗</a></div>'+
-   '<p><strong>Инструкция ученику:</strong> Прочитай каждое предложение. Подумай, согласен ли ты с ним. Выбери одну цифру от 1 до 7 и отметь кружок под ней.</p>'+
-   '<div class="psy-mspss-rating">'+d.options.map((o,i)=>'<div><strong>'+(i+1)+'</strong><span>'+esc(o)+'</span></div>').join("")+'</div>'+
+   '<div class="psy-mspss-blank-head"><div><h3>Бланк ученика</h3><p>Анкета для самостоятельного заполнения.</p></div><a class="btn primary psy-mspss-view" href="'+STUDENT+'" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать ↗</a></div>'+
+   '<p><strong>Инструкция.</strong> Прочитай предложения. Для каждого выбери одну цифру, которая больше подходит к твоему ответу. Отметь кружок под этой цифрой.</p>'+
+   '<div class="psy-mspss-rating">'+["Совсем не согласен","Не согласен","Скорее не согласен","Не знаю","Скорее согласен","Согласен","Полностью согласен"].map((o,i)=>'<div><strong>'+(i+1)+'</strong><span>'+o+'</span></div>').join("")+'</div>'+
    '<div class="psy-mspss-blank-scroll"><table class="psy-mspss-blank-table"><thead><tr><th>№</th><th>Утверждение</th>'+
    Array.from({length:7},(_,j)=>'<th>'+(j+1)+'</th>').join("")+'</tr></thead><tbody>'+
    STUDENT_ITEMS.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(q)+'</td>'+Array.from({length:7},()=>'<td aria-hidden="true">○</td>').join("")+'</tr>').join("")+
    '</tbody></table></div></section>';
  }
- function processing(){
-  return '<section class="psy-mspss-section"><h3>Ключ</h3><p>'+esc(d.scoring)+'</p></section>';
- }
+ function processing(){return '<p>'+esc(d.scoring)+'</p>';}
  function result(answers){
   const n=done(answers),z=score(d,answers);
   if(!z)return '<div class="psy-mspss-result"><h3>Заполнено '+n+' из 12</h3><div class="psy-mspss-track"><span style="width:'+(100*n/12)+'%"></span></div><p>Расчет появится после ввода всех двенадцати ответов от 1 до 7. Пропуск нельзя считать нулем.</p></div>';
