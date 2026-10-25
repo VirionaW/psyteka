@@ -1,0 +1,151 @@
+/* Психотека: портфолио по эталону из Психотека11.rar, 25.10.2026. */
+.library-page #modal.modal{
+ width:min(98vw,1320px)!important;
+ height:min(95dvh,990px)!important;
+ max-height:95dvh!important;
+ display:flex;
+ flex-direction:column;
+ border-radius:22px;
+ overflow:hidden;
+}
+.library-page #modal .modalhead{
+ flex:0 0 auto;
+ padding:24px 32px 20px;
+}
+.library-page #modal .modalhead h2{font-size:clamp(25px,2.25vw,35px);line-height:1.2;margin:0 0 6px}
+.library-page #modal .modalhead #modalAuthor{color:var(--muted);font-size:14px}
+.library-page #modal .method-tabs{
+ flex:0 0 auto;
+ padding:10px 30px 0;
+ gap:5px;
+ background:var(--paper);
+}
+.library-page #modal .modal-tab{
+ padding:12px 16px;
+ font-size:14px;
+ border-radius:11px 11px 0 0;
+}
+.library-page #modal .modal-tab.active{
+ border-bottom:3px solid var(--green);
+}
+.library-page #modal .modalbody{
+ flex:1 1 auto;
+ min-height:0;
+ overflow-y:auto;
+ padding:28px clamp(22px,4vw,58px) 42px;
+ background:var(--paper);
+}
+.library-page #modal .modalfoot{
+ flex:0 0 auto;
+ margin-top:auto;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:12px;
+ border-top:1px solid var(--line);
+ padding:15px 26px;
+ background:var(--paper);
+ box-shadow:0 -4px 14px rgba(10,55,38,.04);
+}
+.library-page #modal .modalfoot .actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.library-page #modal .modalfoot .psy-footer-main{margin-left:auto}
+.library-page #modal .psy-bottom-processing{
+ background:#197c53;
+ border-color:#197c53;
+ color:#fff;
+ min-height:46px;
+ font-weight:800;
+ padding:12px 20px;
+ white-space:nowrap;
+}
+.library-page #modal .psy-bottom-processing:not(.primary){background:var(--soft);border-color:var(--line);color:var(--ink)}
+.library-page #modal .psy-footer-close{min-height:44px}
+.library-page .psy-portfolio-reference{max-width:1110px;margin:0 auto}
+.library-page .psy-portfolio-reference h3{
+ font-size:21px;
+ color:var(--green);
+ line-height:1.25;
+ margin:28px 0 15px;
+ font-weight:800;
+}
+.library-page .psy-portfolio-reference h3:first-child{margin-top:0}
+.library-page .psy-profile-lines{border-top:1px solid var(--line)}
+.library-page .psy-profile-row{
+ display:grid;
+ grid-template-columns:minmax(145px,23%) minmax(0,1fr);
+ align-items:start;
+ gap:22px;
+ padding:13px 3px;
+ border-bottom:1px solid var(--line);
+ font-size:16px;
+ line-height:1.5;
+}
+.library-page .psy-profile-row strong{font-weight:800;color:var(--ink)}
+.library-page .psy-profile-row span{color:var(--ink);overflow-wrap:anywhere}
+.library-page .psy-profile-indicators{
+ display:grid;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:12px;
+ margin:0 0 22px;
+}
+.library-page .psy-profile-indicator{
+ display:flex;
+ align-items:center;
+ gap:11px;
+ min-width:0;
+ border:1px solid var(--line);
+ background:var(--soft);
+ border-radius:14px;
+ padding:14px 16px;
+ color:var(--ink);
+ font-size:15px;
+ line-height:1.45;
+}
+.library-page .psy-indicator-number{
+ display:grid;
+ place-items:center;
+ flex:0 0 27px;
+ height:27px;
+ border-radius:8px;
+ background:var(--paper);
+ border:1px solid var(--line);
+ color:var(--green);
+ font-size:12px;
+ font-weight:800;
+}
+.library-page .psy-profile-description{font-size:17px;line-height:1.65;margin:0}
+.library-page .psy-profile-source a{color:var(--green);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.library-page .psy-profile-muted{color:var(--muted);font-size:14px}
+html.dark .library-page #modal .psy-profile-indicator{background:var(--soft)!important;border-color:var(--line)!important;color:var(--ink)!important}
+html.dark .library-page #modal .psy-profile-row strong,
+html.dark .library-page #modal .psy-profile-row span{color:var(--ink)!important}
+html.dark .library-page #modal .psy-bottom-processing.primary{background:#2a8e63!important;color:#fff!important;border-color:#2a8e63!important}
+@media(max-width:900px){
+ .library-page .psy-profile-indicators{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .library-page #modal .modalfoot{padding:12px 18px}
+ .library-page #modal .modalfoot .actions{gap:6px}
+}
+@media(max-width:700px){
+ .library-page #modal.modal{
+  width:100vw!important;height:100dvh!important;max-height:100dvh!important;
+  border-radius:0!important;
+ }
+ .library-page #modal .modalhead{padding:14px 16px 12px}
+ .library-page #modal .modalhead h2{font-size:22px}
+ .library-page #modal .method-tabs{padding:6px 12px 0}
+ .library-page #modal .modal-tab{font-size:13px;padding:10px 12px}
+ .library-page #modal .modalbody{padding:20px 15px 28px}
+ .library-page .psy-portfolio-reference h3{font-size:19px;margin:24px 0 12px}
+ .library-page .psy-profile-row{grid-template-columns:1fr;gap:4px;padding:11px 0;font-size:15px}
+ .library-page .psy-profile-row strong{font-size:13px}
+ .library-page .psy-profile-indicators{grid-template-columns:1fr;gap:8px}
+ .library-page .psy-profile-indicator{padding:12px 13px}
+ .library-page .psy-profile-description{font-size:15px}
+ .library-page #modal .modalfoot{padding:10px 12px max(10px,env(safe-area-inset-bottom));gap:8px}
+ .library-page #modal .modalfoot .actions#methodButtons{flex:1 1 100%;justify-content:flex-start}
+ .library-page #modal .modalfoot .psy-footer-main{flex:1 1 100%;justify-content:flex-end}
+ .library-page #modal .modalfoot .psy-bottom-processing{white-space:normal;flex:1 1 150px;min-width:0}
+}
+@media(max-width:370px){
+ .library-page #modal .modalfoot .btn{font-size:12px;padding:8px}
+}
