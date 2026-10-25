@@ -1,0 +1,180 @@
+/* Единый дизайн Психотеки · 25.10.2026 · на основе архива 35 */
+/* Основные цвета эмблемы: хвойный #28534A, песочный #B7A893 */
+:root{--psy-forest:#28534a;--psy-forest-dark:#173d31;--psy-beige:#b7a893;--psy-paper:#f7faf6;--psy-border:#d5e5d9}
+html{scroll-padding-top:90px}
+body.site-landing{background:#f7faf6;color:#173e31}
+.psy-brand-mark{display:block;width:44px;height:44px;object-fit:contain;flex:none}
+.psy-wordmark{display:inline-flex;align-items:baseline;font-weight:850;letter-spacing:-.045em;white-space:nowrap;color:#28534a;font-size:24px}
+.psy-wordmark .psy-word-end{color:#81715e}
+.site-logo,.gate-top-logo,.psy-library-brand,.psy-footer-brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
+.site-logo .psy-brand-mark{width:40px;height:40px}
+.site-logo .psy-wordmark{font-size:22px}
+.site-logo .psy-wordmark .psy-word-end{color:#857663}
+.site-header{border-color:#deeadf;min-height:79px;height:79px;padding:0 max(24px,calc((100vw - 1240px)/2));}
+.site-header nav{gap:20px}
+.site-header nav>a:not(.site-btn){font-size:15px}
+.site-header .site-btn.small{background:#207958;border-color:#207958;font-size:14px}
+.site-header .round-link{background:#f7faf7;border-color:#d5e4d9;color:#255b43}
+.site-hero{width:calc(100% - 42px);max-width:1280px;min-height:540px;margin:28px auto 0;border-radius:29px;
+ background:linear-gradient(111deg,#154534 3%,#256d51 66%,#338660);color:#fff;
+ padding:clamp(30px,4.3vw,65px);grid-template-columns:minmax(0,1.05fr) minmax(350px,.95fr);gap:25px;isolation:isolate;position:relative}
+.site-hero:before,.site-hero:after{content:"";position:absolute;pointer-events:none;z-index:-1;border:55px solid #ffffff15;border-radius:50%}
+.site-hero:before{width:390px;height:390px;right:-175px;top:-250px}
+.site-hero:after{width:330px;height:330px;right:-20px;bottom:-290px}
+.site-hero .site-eyebrow{color:#deebdf;font-size:12px;letter-spacing:1.9px;font-weight:850}
+.site-hero .hero-copy h1{font-size:clamp(36px,3.9vw,58px);line-height:1.1;letter-spacing:-1.8px;margin:22px 0 19px;max-width:690px}
+.site-hero .hero-copy>p{font-size:18px;line-height:1.55;max-width:685px}
+.site-hero .site-buttons{margin-top:26px}
+.site-hero .site-btn.light{background:#f8fcf8;border-color:#f8fcf8;color:#22543e}
+.site-hero .site-btn.ghost{background:#247956;border-color:#247956;color:#fff}
+.site-hero .hero-categories{margin-top:24px;gap:8px}
+.site-hero .hero-categories a{border:1px solid #ffffff4b;background:#ffffff12;color:#fff;text-decoration:none;padding:6px 12px;border-radius:50px;font-size:12px;font-weight:750}
+.site-hero .hero-categories a:hover{background:#ffffff2b}
+.psy-hero-showcase{height:380px;position:relative;max-width:515px;width:100%;justify-self:center;align-self:center}
+.psy-hero-shot{background:#f9fcf8;color:#1c4635;border:1px solid #dbe7dc;border-radius:17px;box-shadow:0 22px 45px #082c2350;overflow:hidden}
+.psy-hero-shot.primary{width:91%;height:280px;position:absolute;right:0;top:41px;transform:rotate(3deg);padding:12px}
+.psy-hero-shot.secondary{width:58%;height:192px;position:absolute;left:0;bottom:6px;transform:rotate(-5deg);padding:10px}
+.psy-shot-menu{font-size:10px;color:#658071;font-weight:800;padding-bottom:9px;border-bottom:1px solid #dbe6db}
+.psy-shot-title{font-weight:850;font-size:21px;line-height:1.22;margin:13px 0;color:#1b4736}
+.psy-shot-description{font-size:10px;line-height:1.5;color:#536e61;margin:0 0 12px}
+.psy-shot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.psy-shot-grid div{padding:11px 7px;border:1px solid #d6e7d8;background:#f0f6ef;border-radius:9px;min-height:83px}
+.psy-shot-grid b{display:block;font-size:10px}.psy-shot-grid span{display:block;font-size:9px;margin-top:5px;color:#61776a}
+.psy-shot-tile{margin:12px 0;background:#e8f3ec;border:1px solid #cee2d4;border-radius:10px;padding:12px;font-size:11px;font-weight:800}
+.psy-float-card{position:absolute;background:#f9fcf8;color:#285241;box-shadow:0 15px 30px #082c2342;border-radius:14px;padding:15px 17px;font-size:12px;z-index:3}
+.psy-float-card.note{left:-22px;top:12px;max-width:190px}.psy-float-card.note strong{font-size:15px}.psy-float-card.note ul{padding-left:17px;margin:8px 0 0}
+.psy-float-card.bottom{right:16px;bottom:-8px;max-width:207px}.psy-float-card.bottom b{display:block;font-size:15px}.psy-float-card.bottom span{color:#69816e}
+.site-editorial,.site-sections,.site-pricing{max-width:1280px}
+.site-editorial,.site-sections{padding:76px 30px}
+.site-pricing{padding:65px 30px}
+.site-editorial h2,.site-sections h2,.site-pricing h2{color:#1c4735}
+.site-columns article{border-top-color:#bfd8c5}
+.site-landing .site-btn{font-size:14px}
+.site-footer{background:#164333}
+.psy-footer-brand{color:#f4fbf3;margin-bottom:12px}
+.psy-footer-brand .psy-brand-mark{width:38px;height:38px;filter:brightness(1.32)}
+.psy-footer-brand .psy-wordmark{color:#e9f5ed;font-size:23px}
+.psy-footer-brand .psy-word-end{color:#d3c3ad!important}
+/* Экран раннего доступа из архива: светлый, чистый, отдельно от главной */
+.gate-shell{min-height:100vh;min-height:100dvh;background:radial-gradient(circle at 72% 35%,#eff7f0,#f9fbf8 48%,#f6f9f5 100%);color:#1c4736;display:flex;flex-direction:column;padding:22px max(22px,calc((100vw - 1250px)/2)) 18px}
+.gate-top{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:55px}
+.gate-top-logo .psy-brand-mark{width:47px;height:47px}
+.gate-top-logo .psy-wordmark{font-size:24px}
+.gate-top-status{font-size:12px;text-transform:uppercase;letter-spacing:1.4px;font-weight:800;color:#637d70}
+.gate-columns{flex:1;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(340px,.9fr);gap:clamp(35px,6vw,100px);align-items:center;padding:55px 0}
+.gate-left{display:block;padding:0;max-width:650px}
+.gate-left .gate-small{margin:0 0 23px;display:inline-flex;gap:9px;align-items:center;color:#207754;font-size:12px;letter-spacing:1.7px}
+.gate-left .gate-small:before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:#4bab82;box-shadow:0 0 0 6px #4bab821f}
+.gate-left h1{font-size:clamp(45px,5vw,76px);letter-spacing:-3px;line-height:1.08;color:#1b4936;margin:0 0 23px}
+.gate-left>p{color:#547264;font-size:clamp(17px,1.5vw,20px);line-height:1.67;max-width:640px;margin:0 0 20px}
+.gate-left .gate-caption{font-size:15px!important;color:#59766a}
+.gate-left .gate-rule{display:none}
+.gate-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.gate-pills span{border:1px solid #cce0d1;background:#ffffffa8;padding:8px 12px;border-radius:30px;font-size:12px;font-weight:700;color:#39634d}
+.gate-form{padding:clamp(23px,3vw,43px);background:#fff;border:1px solid #d6e7dc;box-shadow:0 23px 66px #1b503114;border-radius:25px;justify-self:end;width:100%;max-width:475px;display:flex;flex-direction:column}
+.gate-form .gate-symbol{font-size:11px;letter-spacing:1.3px;text-transform:uppercase;font-weight:850;color:#227c57}
+.gate-form h2{font-size:29px;letter-spacing:-.6px;line-height:1.2;margin:19px 0 13px}
+.gate-form>p{font-size:15px;color:#678073;line-height:1.55;margin:0 0 28px}
+.gate-form label{font-size:14px;font-weight:800}
+.gate-form input{width:100%;height:52px;border-color:#c3decb;background:#fafdfa;font-size:16px}
+.gate-form .site-btn{min-height:50px;background:#237b56;border-color:#237b56;margin-top:12px}
+.gate-form small{color:#758d80;font-size:12px;line-height:1.4;border-top:1px solid #e6eee8;padding-top:16px;margin-top:21px}
+.gate-bottom{border-top:1px solid #d8e8dc;display:flex;justify-content:space-between;gap:20px;padding-top:13px;color:#80978b;font-size:11px}
+.gate-shell[hidden]{display:none!important}
+/* Единая библиотека: больше пространства и видимый шрифт, как в архиве */
+.library-page .layout{grid-template-columns:315px minmax(0,1fr)}
+.library-page .sidebar{padding:23px 18px;background:var(--area-sidebar)!important}
+.library-page .brand{gap:12px;padding:7px 6px 22px;border-bottom:1px solid var(--area-border);margin-bottom:14px}
+.library-page .psy-library-brand{color:#28534a}
+.library-page .psy-library-brand .psy-brand-mark{width:53px;height:53px}
+.library-page .psy-library-brand .psy-wordmark{font-size:23px}
+.library-page .psy-library-brand small{display:block;font-size:12px;letter-spacing:0;color:#677e6d;margin-top:1px}
+.library-page .side-head{font-size:12px;letter-spacing:1.3px;margin:23px 12px 12px}
+.library-page .navgroup{font-size:16px!important;line-height:1.4;min-height:51px;gap:12px;padding:12px 13px;font-weight:730}
+.library-page .navicon{font-size:21px;min-width:24px}
+.library-page .nested{margin-left:21px;padding-left:11px}
+.library-page .section-toggle{font-size:14.5px!important;line-height:1.45;padding:13px 12px;min-height:47px}
+.library-page .topic-btn{font-size:14.5px!important;font-weight:650;padding:10px 11px;line-height:1.45;min-height:42px}
+.library-page .sidebar-note{font-size:12.5px;line-height:1.55}
+.library-page .main{padding:24px clamp(22px,3vw,52px) 65px;background:#f7faf6!important;min-width:0}
+.library-page[data-area=preschool] .main{background:#faf6fb!important}
+.library-page[data-area=adults] .main{background:#f5f9fe!important}
+.library-page[data-area=special] .main{background:#fdfaf5!important}
+.library-page[data-area=spt] .main{background:#f4faf8!important}
+.library-page[data-area=prevention] .main{background:#f6faf3!important}
+.library-page .topbar{margin-bottom:18px;font-size:12px;gap:12px}
+.library-page .top-home{border:1px solid var(--area-border);border-radius:13px;background:#fff;padding:12px 15px;min-height:45px;color:#285b42;text-transform:none;letter-spacing:0;font-size:14px}
+.library-page .top-spacer{color:#607e70;font-size:12px;letter-spacing:1.2px}
+.library-page .hero{min-height:255px;padding:35px clamp(22px,3vw,45px);margin-bottom:20px;border-radius:24px}
+.library-page .hero h1{font-size:clamp(31px,3vw,45px);letter-spacing:-.65px;max-width:810px;margin:8px 0 14px}
+.library-page .hero p{font-size:16.5px;line-height:1.6;max-width:760px}
+.library-page .eyebrow{font-size:12px;letter-spacing:1.4px}
+.library-page .hero-art{opacity:.27}
+.library-page .filters{padding:13px;background:#fbfdfb;margin:23px 0 24px}
+.library-page .filters input,.library-page .filters select{min-height:50px;font-size:15px}
+.library-page .subbar h2{font-size:26px}
+.library-page .catalog{gap:16px}
+.library-page .method{padding:22px 21px;min-height:235px}
+.library-page .method h3{font-size:20px}
+.library-page .method small.method-card-summary{font-size:15px;line-height:1.55;min-height:47px;color:#607b6d;font-weight:500}
+.library-page .method .method-card-author{font-size:13px}
+.library-page .method .head{gap:15px}
+.library-page .glyph{width:80px;height:77px}
+.library-page .method .glyph svg{width:53px;height:53px}
+.library-page .method .actions .btn{font-size:14px;min-height:46px;padding:10px 14px}
+.library-page .tag{font-size:12px!important}
+/* Привязка палитры к текущему разделу, без зелёного фона в ОВЗ/детском саду */
+.library-page .sidebar{border-right-color:var(--area-border)!important}
+.library-page .navgroup.active,.library-page .topic-btn.active{box-shadow:inset 3px 0 var(--area)}
+.library-page .hero{background:linear-gradient(107deg,var(--area-hero1),var(--area-hero2))!important}
+@media(max-width:1050px){
+ .library-page .layout{grid-template-columns:295px minmax(0,1fr)}
+ .site-hero{grid-template-columns:1fr;min-height:auto}
+ .psy-hero-showcase{height:310px;max-width:620px;margin:auto}
+ .site-header{padding:12px 24px;height:auto;min-height:75px}
+}
+@media(max-width:820px){
+ .library-page .layout{display:block!important}
+ .library-page .sidebar{width:min(92vw,370px)!important;max-width:370px;padding:22px 18px 30px}
+ .library-page .sidebar .navgroup{font-size:16px!important}
+ .library-page .sidebar .topic-btn{font-size:15px!important}
+ .library-page .main{padding:12px 14px 35px!important}
+ .library-page .hero{padding:26px 22px;margin-bottom:15px;min-height:0}
+ .library-page .hero h1{font-size:clamp(29px,6vw,37px)}
+ .library-page .hero p{font-size:15px}
+ .library-page .method{min-height:auto;padding:18px}
+ .library-page .method h3{font-size:18px}
+ .library-page .method small.method-card-summary{font-size:14px;min-height:0}
+ .library-page .method .glyph{width:62px;height:62px}
+ .gate-columns{grid-template-columns:1fr;gap:26px;padding:32px 0}
+ .gate-form{justify-self:stretch;max-width:620px}
+ .gate-left h1{font-size:clamp(36px,7vw,55px);letter-spacing:-1.4px}
+ .gate-shell{padding:20px 23px}
+ .site-header nav{gap:9px}
+}
+@media(max-width:560px){
+ .gate-shell{padding:13px 18px 22px}
+ .gate-top-logo .psy-brand-mark{width:39px;height:39px}
+ .gate-top-logo .psy-wordmark{font-size:21px}
+ .gate-top-status{font-size:10px;max-width:100px;text-align:right}
+ .gate-columns{padding:22px 0}
+ .gate-left h1{font-size:clamp(35px,9vw,47px)}
+ .gate-left>p{font-size:15px}
+ .gate-form{padding:21px;border-radius:18px}
+ .gate-form h2{font-size:24px}
+ .gate-bottom{font-size:10px}
+ .site-hero{margin:14px auto 0;width:calc(100% - 20px);padding:29px 20px;border-radius:21px;gap:15px}
+ .site-hero .hero-copy h1{font-size:clamp(31px,8.8vw,43px);line-height:1.12;letter-spacing:-.8px}
+ .site-hero .hero-copy>p{font-size:15px}
+ .psy-hero-showcase{height:270px;width:100%}
+ .psy-hero-shot.primary{height:220px}
+ .psy-hero-shot.secondary{height:145px}
+ .psy-float-card{font-size:10px;padding:9px 11px}
+ .psy-float-card.note{left:0;top:0}
+ .psy-shot-title{font-size:15px}
+ .psy-shot-grid div{min-height:65px;padding:6px 5px}
+ .psy-shot-grid b{font-size:8px}.psy-shot-grid span{font-size:7px}
+ .site-editorial,.site-sections,.site-pricing{padding:50px 20px}
+ .library-page .top-home{font-size:12px;padding:9px 10px;min-height:42px}
+}
+@media print{.psy-brand-mark{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
