@@ -30,8 +30,8 @@
  const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const ok=v=>(typeof v==="number"&&Number.isInteger(v)&&v>=0&&v<=3)||(typeof v==="string"&&/^[0-3]$/.test(v));
  const filled=a=>Array.from({length:4},(_,i)=>a?.[i]).filter(ok).length;
- function score(d,a){
-  if(!Array.isArray(a))return null;
+ function score(d,answers){
+  const a=Array.isArray(answers)?answers:[];
   const anxiety=ok(a[0])&&ok(a[1])?Number(a[0])+Number(a[1]):null;
   const mood=ok(a[2])&&ok(a[3])?Number(a[2])+Number(a[3]):null;
   const total=anxiety===null||mood===null?null:anxiety+mood;
