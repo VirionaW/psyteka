@@ -1,0 +1,33 @@
+/* Психотека, проверенные рабочие скрининги PHQ-4 / GAD-7. */
+.library-page #modal .psy04-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:17px 0 24px}
+.library-page #modal .psy04-item{display:flex;flex-direction:column;justify-content:space-between;gap:11px;background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:16px 17px;min-height:112px}
+.library-page #modal .psy04-item span{font-size:15px;color:var(--ink);line-height:1.45}
+.library-page #modal .psy04-item b{color:var(--green);margin-right:5px}
+.library-page #modal .psy04-answer{width:100%;min-width:0;padding:10px;border-radius:9px;background:var(--paper);color:var(--ink);border:1px solid var(--line);font:600 14px system-ui}
+.library-page #modal .psy04-answer:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.library-page #modal .psy04-result{margin:12px 0 18px;border:1px solid var(--line);border-radius:16px;padding:17px 19px;background:var(--paper)}
+.library-page #modal .psy04-progress{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:15px;color:var(--ink)}
+.library-page #modal .psy04-progress strong{font-size:15px}
+.library-page #modal .psy04-track{height:11px;flex:1;min-width:90px;background:var(--line);border-radius:10px;overflow:hidden}
+.library-page #modal .psy04-track>span{height:100%;display:block;max-width:100%;background:linear-gradient(90deg,#77a2ab,#3d9972);border-radius:10px}
+.library-page #modal .psy04-score{border:1px solid var(--line);border-radius:13px;padding:15px 17px;background:var(--soft);margin:10px 0}
+.library-page #modal .psy04-score>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:13px;font-size:14px;margin-bottom:10px}
+.library-page #modal .psy04-score b{color:var(--green);font-size:23px}
+.library-page #modal .psy04-score p{font-size:13px;margin:9px 0 0}
+.library-page #modal .psy04-sub{margin:11px 0;padding:13px 17px;border-radius:12px;border:1px solid var(--line)}
+.library-page #modal .psy04-sub strong{color:var(--ink)}
+.library-page #modal .psy04-sub b{float:right;color:var(--green)}
+.library-page #modal .psy04-sub .psy04-track{margin-top:11px}
+.library-page #modal .psy04-sub p{font-size:13px;color:var(--muted);margin:7px 0 0}
+.library-page #modal .psy04-tools{display:flex;gap:10px;flex-wrap:wrap;margin:17px 0}
+.library-page #modal .psy04-sheet td:last-child{width:230px}
+.library-page #modal .psy04-sheet td:nth-child(2){width:auto}
+html.dark .library-page #modal .psy04-item,html.dark .library-page #modal .psy04-score{color:var(--ink)!important;background:var(--soft)!important}
+@media(max-width:800px){
+.library-page #modal .psy04-grid{grid-template-columns:1fr}
+.library-page #modal .psy04-item{min-height:0}
+.library-page #modal .psy04-sheet td:last-child{width:130px;white-space:normal}
+}
+@media print{
+ .library-page #modal .psy04-item{break-inside:avoid}
+}
