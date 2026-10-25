@@ -61,6 +61,7 @@ function setTab(name){
 }
 
 const PORTFOLIO_FIELDS={
+ "Таблицы Шульте":{title:"Показатели внимания",items:["Время пяти таблиц","Эффективность работы (ЭР)","Врабатываемость (ВР)","Психическая устойчивость (ПУ)","Ошибки и динамика"]},
  "Лесенка":{title:"Области наблюдения",items:["Самооценка ребенка","Желаемый образ Я","Представление об оценках взрослых","Объяснения выбора и реакция"]},
  "Самооценка Дембо - Рубинштейн":{title:"Шкалы и показатели",items:["Самооценка по 6 шкалам","Уровень притязаний по 6 шкалам","Расхождение между ними"]},
  "Графический диктант":{title:"Шкалы и показатели",items:["Выполнение по диктовке","Самостоятельное продолжение","Суммарный показатель 0-16"]},
@@ -124,6 +125,7 @@ function viewOverview(m){
 }
 function viewInstruction(m){
  const d=DETAILS[m.name];
+ if(d?.workflow==='schulte5')return window.PSY_SCHULTE.instruction(d);
  if(d?.workflow==='ladder7')return window.PSY_LADDER.instruction(d);
  if(d?.workflow==='dembo7')return window.PSY_DEMBO.instruction(d);
  if(d?.workflow==='elkonin4')return window.PSY_ELKONIN.instruction(d);
@@ -188,6 +190,7 @@ function viewDictationCalculator(d){
 
 function materials(m,blank){
  const d=DETAILS[m.name];
+ if(d?.workflow==='schulte5')return window.PSY_SCHULTE.materials(d);
  if(!d)return '<p>Полный материал доступен только у правообладателя.</p>';
  if(d.special)return window.PSY_BATCH02.materials(d,blank);
  if(d.workflow==='ladder7')return window.PSY_LADDER.materials(d);
@@ -219,7 +222,7 @@ function materials(m,blank){
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
 function viewMaterials(m){
- const d=DETAILS[m.name];if(d?.workflow==='ladder7')return window.PSY_LADDER.materials(d);
+ const d=DETAILS[m.name];if(d?.workflow==='schulte5')return window.PSY_SCHULTE.materials(d);if(d?.workflow==='ladder7')return window.PSY_LADDER.materials(d);
  if(d?.workflow==='dembo7')return window.PSY_DEMBO.materials(d);
  if(d?.workflow==='elkonin4')return window.PSY_ELKONIN.materials(d);
  if(d?.workflow==='storycards')return window.PSY_STORYCARDS.materials(d);
@@ -237,7 +240,7 @@ function viewMaterials(m){
  return '<h3>Стимульный материал и бланк</h3>'+materials(m,false)+(d.questions?.length && d.graphic ? '<h3>Протокол беседы</h3><table class="questions-table"><thead><tr><th>№</th><th>Вопрос психолога</th><th>Ответ / наблюдение</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td>________________</td></tr>').join('')+'</tbody></table>':"");
 }
 function viewProcessing(m){
- const d=DETAILS[m.name];if(!d)return '<div class="notice">Подтвержденный ключ и обработка выбранной версии пока не добавлены. Диагностические результаты здесь не рассчитываются.</div>';
+ const d=DETAILS[m.name];if(d?.workflow==='schulte5')return window.PSY_SCHULTE.processing(d);if(!d)return '<div class="notice">Подтвержденный ключ и обработка выбранной версии пока не добавлены. Диагностические результаты здесь не рассчитываются.</div>';
  if(d.workflow==='ladder7')return window.PSY_LADDER.processing(d);
  if(d.workflow==='dembo7')return window.PSY_DEMBO.processing(d);
  if(d.workflow==='elkonin4')return window.PSY_ELKONIN.processing(d);
@@ -258,6 +261,7 @@ function viewProcessing(m){
  return '<h3>Подсчет / фиксация</h3><p>'+escapeHTML(d.scoring)+'</p><h3>Интерпретация</h3><p>'+escapeHTML(d.interpret)+'</p>'+(d.source?'<p>Источник: <a target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d.source)+'">'+escapeHTML(d.source)+'</a></p>':'');
 }
 function getScores(d,answers){
+ if(d?.workflow==='schulte5')return window.PSY_SCHULTE.score(d,answers);
  if(d.workflow==='ladder7')return window.PSY_LADDER.scan(answers);
  if(d.workflow==='dembo7')return window.PSY_DEMBO.score(d,answers);
  if(d.workflow==='elkonin4')return window.PSY_ELKONIN.score(answers);
@@ -291,6 +295,7 @@ function getScores(d,answers){
 }
 function viewCalculator(m){
  const d=DETAILS[m.name];
+ if(d?.workflow==='schulte5')return window.PSY_SCHULTE.calculator(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='ladder7')return window.PSY_LADDER.calculator(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='dembo7')return window.PSY_DEMBO.calculator(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='elkonin4')return window.PSY_ELKONIN.calculator(d,{rows,rowIndex,calcMode});
@@ -330,6 +335,7 @@ function viewCalculator(m){
 }
 function bindControls(){
  const d=DETAILS[methodNow.name];
+ if(d?.workflow==='schulte5')window.PSY_SCHULTE.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='ladder7')window.PSY_LADDER.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='dembo7')window.PSY_DEMBO.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='elkonin4')window.PSY_ELKONIN.bind(d,{rows,rowIndex,calcMode});
@@ -434,10 +440,10 @@ function openMethod(m){
  header.insertAdjacentHTML('afterend','<nav class="method-tabs" id="methodTabs">'+tabs.map(([key,title])=>'<button class="modal-tab" data-tab="'+key+'">'+title+'</button>').join('')+'</nav>');
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
- footer.innerHTML=mspssPilot?'':'<div class="actions" id="methodButtons">'+((['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026','phillips58','scared41','ladder7','who5'].includes(d?.workflow))?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a>'+(d.workflow==='who5'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Полный русский WHO-5 · PDF ↗</a>':d.workflow==='scared41'?'<a class="btn" href="'+escapeHTML(d.childFile)+'" target="_blank" rel="noopener noreferrer">Бланк ребенка · А4</a><a class="btn" href="'+escapeHTML(d.parentFile)+'" target="_blank" rel="noopener noreferrer">Бланк родителя · А4</a><a class="btn" href="'+escapeHTML(d.parentPDF)+'" target="_blank" rel="noopener noreferrer">Оригинал родителю · PDF ↗</a>':d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.studentWordFile)+'" download>Бланк ученика · Word</a><a class="btn" href="'+escapeHTML(d.specialistFile)+'" target="_blank" rel="noopener noreferrer">Протокол психолога · А4</a>':d.workflow==='mspss'?'<a class="btn" href="'+escapeHTML(d.studentFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Регистрация ответов</a>':(d.workflow==='phillips58'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':'<a class="btn" href="'+escapeHTML(d.answerFile)+'" download>Бланк</a>')+(d?.workflow==='snap26'?'<a class="btn" href="'+escapeHTML(d.teacherFile)+'" target="_blank" rel="noopener">Бланк педагога · А4</a>':''))+(d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.source)+'" target="_blank" rel="noopener noreferrer">Рамка CASEL ↗</a>':'<a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">'+(d.workflow==='phillips58'?'Текст 58 вопросов и ключ ↗':'Первоисточник PDF ↗')+'</a>'):d?(d.workflow==='fresh06'?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк · А4</a>':'')+'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions psy-footer-main"><button class="btn psy-footer-close" id="closeFooter">Закрыть</button>'+(d?'<button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button>':'')+'</div>';
- if(d?.workflow==='storycards'||d?.workflow==='ladder7'){const link=[...footer.querySelectorAll('a')].find(a=>a.textContent.includes('Первоисточник'));if(link){link.href=d.source;link.textContent=d.workflow==='ladder7'?'Опубликованное руководство PDF ↗':'Описание процедуры PDF ↗';}}
+ footer.innerHTML=mspssPilot?'':'<div class="actions" id="methodButtons">'+((['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026','phillips58','scared41','ladder7','who5','schulte5'].includes(d?.workflow))?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a>'+(d.workflow==='who5'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Полный русский WHO-5 · PDF ↗</a>':d.workflow==='scared41'?'<a class="btn" href="'+escapeHTML(d.childFile)+'" target="_blank" rel="noopener noreferrer">Бланк ребенка · А4</a><a class="btn" href="'+escapeHTML(d.parentFile)+'" target="_blank" rel="noopener noreferrer">Бланк родителя · А4</a><a class="btn" href="'+escapeHTML(d.parentPDF)+'" target="_blank" rel="noopener noreferrer">Оригинал родителю · PDF ↗</a>':d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.studentWordFile)+'" download>Бланк ученика · Word</a><a class="btn" href="'+escapeHTML(d.specialistFile)+'" target="_blank" rel="noopener noreferrer">Протокол психолога · А4</a>':d.workflow==='mspss'?'<a class="btn" href="'+escapeHTML(d.studentFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Регистрация ответов</a>':(d.workflow==='phillips58'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':'<a class="btn" href="'+escapeHTML(d.answerFile)+'" download>Бланк</a>')+(d?.workflow==='snap26'?'<a class="btn" href="'+escapeHTML(d.teacherFile)+'" target="_blank" rel="noopener">Бланк педагога · А4</a>':''))+(d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.source)+'" target="_blank" rel="noopener noreferrer">Рамка CASEL ↗</a>':'<a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">'+(d.workflow==='phillips58'?'Текст 58 вопросов и ключ ↗':'Первоисточник PDF ↗')+'</a>'):d?(d.workflow==='fresh06'?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк · А4</a>':'')+'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions psy-footer-main"><button class="btn psy-footer-close" id="closeFooter">Закрыть</button>'+(d?'<button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button>':'')+'</div>';
+ if(d?.workflow==='storycards'||d?.workflow==='ladder7'||d?.workflow==='schulte5'){const link=[...footer.querySelectorAll('a')].find(a=>a.textContent.includes('Первоисточник'));if(link){link.href=d.source;link.textContent=d.workflow==='ladder7'?'Опубликованное руководство PDF ↗':'Описание процедуры PDF ↗';}}
  if(!mspssPilot){$('#closeFooter').onclick=closeModal; if(d)$('#bottomProcessing').onclick=()=>setTab(tabNow==='score'||tabNow==='processing'?'overview':d.calculator?'score':'processing');}
- if(d&&!['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026','phillips58','scared41','ladder7','who5'].includes(d.workflow)){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;if(d.workflow==='diagnostic03'&&d.diagnosticType==='rses')$('#saveBlank').onclick=()=>window.PSY_DIAG03.saveBlank(d);}
+ if(d&&!['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026','phillips58','scared41','ladder7','who5','schulte5'].includes(d.workflow)){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;if(d.workflow==='diagnostic03'&&d.diagnosticType==='rses')$('#saveBlank').onclick=()=>window.PSY_DIAG03.saveBlank(d);}
  $('#modal').hidden=false;$('#shade').hidden=false;setTab('overview');
 }
 window.openMethod=openMethod;
