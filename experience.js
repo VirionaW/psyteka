@@ -61,6 +61,7 @@ function setTab(name){
 }
 
 const PORTFOLIO_FIELDS={
+ "Краткий опросник настроения (SMFQ)":{title:"Основной показатель",items:["Суммарная выраженность симптомов за две недели (13 пунктов)"]},
  "Оценка школьной мотивации":{title:"Основной показатель",items:["Уровень школьной мотивации · 10 вопросов"]},
  "GAD-7 - краткая шкала тревожных симптомов":{title:"Основной показатель",items:["Выраженность тревожных симптомов (7 пунктов)"]},
  "Краткий опросник PHQ-4":{title:"Шкалы и показатели",items:["Тревожные симптомы (GAD-2)","Депрессивные симптомы (PHQ-2)","Общий показатель дистресса"]},
@@ -117,6 +118,7 @@ function viewOverview(m){
 }
 function viewInstruction(m){
  const d=DETAILS[m.name];
+ if(d?.workflow==='smfq')return window.PSY_SMFQ.instruction(d);
  if(d?.workflow==='luskanova')return window.PSY_LUSKANOVA.instruction(d);
   if(!d)return '<div class="notice">Полный текст руководства для данной версии пока не подтвержден. Используйте проверенный первоисточник, а не описание карточки вместо инструкции.</div>';
  return '<h3>Инструкция для участника</h3><blockquote class="kid-instruction">'+escapeHTML(d.instructions)+'</blockquote><h3>Порядок проведения для психолога</h3><ol><li>Проверьте соответствие возраста и цели.</li><li>Объясните добровольность и порядок работы.</li><li>Предъявите стимульный материал без подсказок.</li><li>Зафиксируйте ответы, длительность и существенные наблюдения.</li><li>Проводите интерпретацию в пределах применимых методических норм.</li></ol>'+(d.graphic==='dictation'?dictationCommands(d):'')+(d.special?window.PSY_BATCH02.extraInstructions(d):'')+(d.workflow==='diagnostic'?window.PSY_DIAGNOSTICS.instructions(d):'')+(d.workflow==='diagnostic03'?window.PSY_DIAG03.instructions(d):'');
@@ -170,6 +172,7 @@ function materials(m,blank){
  const d=DETAILS[m.name];
  if(!d)return '<p>Полный материал доступен только у правообладателя.</p>';
  if(d.special)return window.PSY_BATCH02.materials(d,blank);
+ if(d.workflow==='smfq')return window.PSY_SMFQ.materials(d);
  if(d.workflow==='luskanova')return window.PSY_LUSKANOVA.materials(d);
   if(d.workflow==='diagnostic04')return window.PSY_DIAG04.materials(d,blank);
   if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.materials(d,blank);
@@ -186,12 +189,14 @@ function materials(m,blank){
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
 function viewMaterials(m){
- const d=DETAILS[m.name];if(d?.workflow==='luskanova')return window.PSY_LUSKANOVA.materials(d);
+ const d=DETAILS[m.name];if(d?.workflow==='smfq')return window.PSY_SMFQ.materials(d);
+ if(d?.workflow==='luskanova')return window.PSY_LUSKANOVA.materials(d);
   if(!d)return '<div class="notice">Проверенный авторский бланк этой методики пока не добавлен. Применять карточку как готовую форму нельзя.</div>';
  return '<h3>Стимульный материал и бланк</h3>'+materials(m,false)+(d.questions?.length && d.graphic ? '<h3>Протокол беседы</h3><table class="questions-table"><thead><tr><th>№</th><th>Вопрос психолога</th><th>Ответ / наблюдение</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td>________________</td></tr>').join('')+'</tbody></table>':"");
 }
 function viewProcessing(m){
  const d=DETAILS[m.name];if(!d)return '<div class="notice">Подтвержденный ключ и обработка выбранной версии пока не добавлены. Диагностические результаты здесь не рассчитываются.</div>';
+ if(d.workflow==='smfq')return window.PSY_SMFQ.processing(d);
  if(d.workflow==='luskanova')return window.PSY_LUSKANOVA.processing(d);
   if(d.workflow==='diagnostic04')return window.PSY_DIAG04.processing(d);
   if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.processing(d);
@@ -199,6 +204,7 @@ function viewProcessing(m){
  return '<h3>Подсчет / фиксация</h3><p>'+escapeHTML(d.scoring)+'</p><h3>Интерпретация</h3><p>'+escapeHTML(d.interpret)+'</p>'+(d.source?'<p>Источник: <a target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d.source)+'">'+escapeHTML(d.source)+'</a></p>':'');
 }
 function getScores(d,answers){
+ if(d.workflow==='smfq')return window.PSY_SMFQ.score(d,answers);
  if(d.workflow==='luskanova')return window.PSY_LUSKANOVA.score(d,answers);
   if(d.workflow==='diagnostic04')return window.PSY_DIAG04.score(d,answers);
   if(d.workflow==='diagnostic03')return window.PSY_DIAG03.score(d,{answers});
@@ -219,6 +225,7 @@ function getScores(d,answers){
 }
 function viewCalculator(m){
  const d=DETAILS[m.name];
+ if(d?.workflow==='smfq')return window.PSY_SMFQ.calculator(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='luskanova')return window.PSY_LUSKANOVA.calculator(d,{rows,rowIndex,calcMode});
   if(d?.workflow==='diagnostic04')return window.PSY_DIAG04.calculator(d,{rows,rowIndex,calcMode});
   if(d?.workflow==='diagnostic03')return window.PSY_DIAG03.calculator(d,{rows,rowIndex,calcMode});
@@ -245,6 +252,7 @@ function viewCalculator(m){
 }
 function bindControls(){
  const d=DETAILS[methodNow.name];
+ if(d?.workflow==='smfq')window.PSY_SMFQ.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='luskanova')window.PSY_LUSKANOVA.bind(d,{rows,rowIndex,calcMode});
   if(d?.workflow==='diagnostic04')window.PSY_DIAG04.bind(d,{rows,rowIndex,calcMode});
   if(d?.workflow==='diagnostic03')window.PSY_DIAG03.bind(d,{rows,rowIndex,calcMode},()=>setTab('score'));
@@ -333,9 +341,9 @@ function openMethod(m){
  header.insertAdjacentHTML('afterend','<nav class="method-tabs" id="methodTabs">'+tabs.map(([key,title])=>'<button class="modal-tab" data-tab="'+key+'">'+title+'</button>').join('')+'</nav>');
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
- footer.innerHTML='<div class="actions" id="methodButtons">'+(d?.workflow==='luskanova'?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" download>Бланк</a><a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Первоисточник PDF ↗</a>':d?'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions psy-footer-main"><button class="btn psy-footer-close" id="closeFooter">Закрыть</button>'+(d?'<button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button>':'')+'</div>';
+ footer.innerHTML='<div class="actions" id="methodButtons">'+((d?.workflow==='luskanova'||d?.workflow==='smfq')?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" download>Бланк</a><a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Первоисточник PDF ↗</a>':d?'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions psy-footer-main"><button class="btn psy-footer-close" id="closeFooter">Закрыть</button>'+(d?'<button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button>':'')+'</div>';
  $('#closeFooter').onclick=closeModal; if(d)$('#bottomProcessing').onclick=()=>setTab(tabNow==='score'||tabNow==='processing'?'overview':d.calculator?'score':'processing');
- if(d&&d.workflow!=='luskanova'){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;if(d.workflow==='diagnostic03'&&d.diagnosticType==='rses')$('#saveBlank').onclick=()=>window.PSY_DIAG03.saveBlank(d);}
+ if(d&&d.workflow!=='luskanova'&&d.workflow!=='smfq'){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;if(d.workflow==='diagnostic03'&&d.diagnosticType==='rses')$('#saveBlank').onclick=()=>window.PSY_DIAG03.saveBlank(d);}
  $('#modal').hidden=false;$('#shade').hidden=false;setTab('overview');
 }
 window.openMethod=openMethod;
