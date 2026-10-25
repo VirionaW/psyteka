@@ -1,0 +1,51 @@
+/* Иллюстрации баннеров из архива владельца проекта.
+   Шесть разных изображений: ОВЗ, детский сад, методики, профилактика, взрослые, документация. */
+.library-page .hero{align-items:center;gap:28px;isolation:isolate}
+.library-page .hero>div:first-child{position:relative;z-index:1;flex:1;min-width:0}
+.library-page .hero-art{
+ position:relative;z-index:1;flex:0 0 clamp(170px,18vw,225px);
+ width:clamp(170px,18vw,225px)!important;
+ height:clamp(170px,18vw,225px)!important;
+ opacity:1!important;align-self:center;
+ border-radius:27px;
+ background:#f8fbf7 url("assets/psyteka-banner-illustrations.webp?v=20261025i") 0 0 / 300% 200% no-repeat;
+ border:1px solid rgba(255,255,255,.64);
+ box-shadow:0 22px 48px rgba(14,39,30,.19),0 0 0 8px rgba(255,255,255,.075);
+ animation:psy-banner-float 9s ease-in-out infinite;
+}
+.library-page .hero-art svg{display:none!important}
+.library-page[data-area=preschool] .hero-art{background-position:50% 0}
+.library-page[data-area=school] .hero-art{background-position:100% 0}
+.library-page[data-area=special] .hero-art{background-position:0 0}
+.library-page[data-area=prevention] .hero-art{background-position:0 100%}
+.library-page[data-area=adults] .hero-art{background-position:50% 100%}
+.library-page[data-area=documents] .hero-art{background-position:100% 100%}
+.library-page[data-area=spt] .hero-art{display:none!important}
+.library-page .hero:before{
+ content:"";pointer-events:none;position:absolute;right:3%;bottom:-68px;
+ width:310px;height:185px;border:25px solid rgba(255,255,255,.045);
+ border-radius:50%;transform:rotate(-18deg);z-index:0;
+}
+@keyframes psy-banner-float{
+ 0%,100%{transform:translateY(0) rotate(-1deg)}
+ 50%{transform:translateY(-8px) rotate(1deg)}
+}
+.library-page .hero-art:hover{animation-play-state:paused}
+html.dark .library-page .hero-art{
+ border-color:rgba(227,242,231,.7);
+ box-shadow:0 20px 48px rgba(4,16,12,.3),0 0 0 8px rgba(255,255,255,.04);
+}
+@media(max-width:850px){
+ .library-page .hero{gap:17px!important}
+ .library-page .hero-art{width:155px!important;height:155px!important;flex-basis:155px}
+}
+@media(max-width:575px){
+ .library-page .hero{display:flex;flex-direction:column;align-items:flex-start;gap:16px!important}
+ .library-page .hero-art{
+   width:150px!important;height:150px!important;flex:0 0 150px;
+   align-self:flex-end;margin:0 6px -5px 0;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .library-page .hero-art{animation:none!important;transform:none!important}
+}

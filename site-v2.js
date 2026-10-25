@@ -10,8 +10,8 @@
  function apply(area){
   if(!available.includes(area))return;now=area;page.dataset.area=area;
   document.querySelectorAll('[data-view]').forEach(btn=>btn.classList.toggle('area-current',btn.dataset.view===area));
-  if(heroTitle)heroTitle.textContent=area==='school'?'Найдите нужную методику для своей работы':area==='preschool'?'Детский сад':area==='adults'?'Материалы для работы со взрослыми':title[area][0];
-  if(heroLabel)heroLabel.textContent=area==='school'?'Методики · программы · коррекция · ПМПК':title[area][1];
+  if(heroTitle)heroTitle.textContent=area==='school'?'Школа: методики для работы':area==='preschool'?'Детский сад':area==='adults'?'Материалы для работы со взрослыми':title[area][0];
+  if(heroLabel)heroLabel.textContent=area==='school'?'Школьные материалы · диагностика и сопровождение':title[area][1];
   if(heroLead)heroLead.textContent=area==='school'?'Возраст, цель, инструкции, материалы и рабочие бланки. Отдельный онлайн-подсчет – только для проверенных ключей.':area==='preschool'?'Материалы для дошкольного возраста: игровая диагностика, наблюдение и адаптация.':area==='adults'?'Для психологов, педагогов и родителей: беседы, наблюдение и материалы сопровождения.':area==='special'?'Организация доступной среды, наблюдения, поддержка и индивидуальный маршрут.':area==='documents'?'Протоколы, характеристики, журналы и справки для практической работы.':area==='spt'?'Справочная информация о социально-психологическом тестировании в России.':'Практические конспекты встреч, занятия для детей и родителей, памятки и профилактические материалы.';
   if(area==='documents'||area==='spt'||area==='special'||area==='prevention'){
    const titleNode=document.querySelector('#resourceTitle'),leadNode=document.querySelector('#resourceLead'),container=document.querySelector('#resourceCards');
