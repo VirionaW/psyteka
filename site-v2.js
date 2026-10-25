@@ -71,18 +71,19 @@
    const kit=/^Социометрическое исследование класса$/i.test(label)?'sociometry':/^Корректурная проба Бурдона - Анфимова$/i.test(label)?'bourdon':null;
    const selfesteem=label==='Лесенка'?'ladder':/^Самооценка Дембо - Рубинштейн$/i.test(label)?'dembo':null;
    const cognitive=label==='Таблицы Шульте'?'schulte':label==='Заучивание 10 слов'?'memory':null;
-   if(kit||selfesteem||cognitive){
+   const family=label==='Рисунок семьи'?'drawing':label==='Семейная социограмма'?'sociogram':null;
+   if(kit||selfesteem||cognitive||family){
     const actions=card.querySelector('.actions');
     if(actions&&!actions.querySelector('.method-kit-link')){
      const link=document.createElement('a');
-     link.href=kit?'method-kit.html?method='+kit:selfesteem?'selfesteem-kit.html?method='+selfesteem:'cognitive-kit.html?method='+cognitive;
+     link.href=kit?'method-kit.html?method='+kit:selfesteem?'selfesteem-kit.html?method='+selfesteem:cognitive?'cognitive-kit.html?method='+cognitive:'family-kit.html?method='+family;
      link.className='btn primary method-kit-link';
      link.textContent='Портфолио · бланк · обработка';
      actions.prepend(link);
     }
    }
    const issue=alerts.find(([re])=>re.test(label));
-   const incomplete=!kit&&!window.PSY_FULL_METHODS?.[label]&&!issue;
+   const incomplete=!kit&&!selfesteem&&!cognitive&&!family&&!window.PSY_FULL_METHODS?.[label]&&!issue;
    if(issue||incomplete){
     const btn=document.createElement('button');btn.className='method-warning';btn.type='button';btn.textContent='!';btn.setAttribute('aria-label','Замечание к комплекту методики');btn.title='Посмотреть замечание';
     btn.addEventListener('click',()=>showWarning(label,issue?issue[1]:'В открытом каталоге есть описание методики, но нет проверенного полного комплекта с оригинальным бланком, ключом и условиями использования. Для проведения обратитесь к первоисточнику.'));

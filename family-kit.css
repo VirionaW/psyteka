@@ -1,0 +1,65 @@
+/* Психотека — семья: рабочие комплекты. Палитра сайта сохраняется. */
+.family-page{background:#f6f9f6!important}
+.fk-container{max-width:1190px;margin:auto;padding:26px 22px 65px;color:#204433}
+.fk-breadcrumb{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:0 0 25px;color:#728579;font-size:13px;font-weight:700}
+.fk-breadcrumb a,.fk-footer a{color:#257250;text-decoration:none}
+.fk-hero{background:linear-gradient(110deg,#194b37,#357b59);padding:42px 45px;border-radius:22px;color:#fff}
+.fk-overline{font:800 11px/1.4 system-ui;letter-spacing:1.3px;text-transform:uppercase;color:#d6ead8}
+.fk-overline.accent{color:#377e5b}
+.fk-hero h1{font-size:clamp(31px,4vw,52px);line-height:1.16;letter-spacing:-.5px;margin:14px 0}
+.fk-hero p{font-size:17px;max-width:900px;line-height:1.6;color:#e1f0e5;margin:0}
+.fk-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:22px 0}
+.fk-picker button{background:#fff;border:1px solid #d1e3d5;min-height:95px;border-radius:16px;display:flex;gap:14px;align-items:center;padding:17px 19px;text-align:left;cursor:pointer;color:#244e3a}
+.fk-picker button[aria-pressed=true]{background:#edf6ee;border-color:#2a845b;box-shadow:inset 0 0 0 1px #2a845b}
+.fk-picker b,.fk-picker small{display:block}.fk-picker b{font-size:18px}.fk-picker small{font-size:13px;color:#68816d;margin-top:5px}
+.fk-picker-icon{display:grid;place-items:center;flex:none;width:55px;height:55px;background:#e5f2e7;color:#327e57;border-radius:13px;font-size:30px}
+.fk-panel{border:1px solid #d9e8dd;border-radius:22px;background:#fff;padding:36px;box-shadow:0 12px 32px #1040280d}
+.fk-panel[hidden]{display:none!important}
+.fk-heading{display:flex;justify-content:space-between;align-items:center;gap:22px}
+.fk-heading h2{font-size:clamp(26px,3vw,38px);line-height:1.2;margin:9px 0 11px}
+.fk-heading p{font-size:16px;line-height:1.6;color:#5c7763;margin:0;max-width:780px}
+.fk-symbol{min-width:120px;width:120px;height:120px;border-radius:26px;background:#ebf5ec;display:grid;place-items:center;color:#2e835c}
+.fk-symbol svg{width:92px;height:92px}
+.fk-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:27px 0 25px}
+.fk-facts>div{border:1px solid #d6e8db;background:#eff7f0;padding:13px;border-radius:13px;font-size:13px;line-height:1.5;color:#486b51}
+.fk-facts b{display:block;color:#2d7653;text-transform:uppercase;font-size:11px;letter-spacing:.05em;margin-bottom:5px}
+.fk-warning{border-left:4px solid #d9ae56;background:#fbf5e8;color:#6b5b3a;padding:16px 18px;border-radius:7px;font-size:14px;line-height:1.6}
+.fk-accordion{border:1px solid #dbeadd;border-radius:15px;margin:22px 0;background:#fcfefc}
+.fk-accordion summary{cursor:pointer;padding:17px 20px;font-size:16px;font-weight:800;color:#2e7051}
+.fk-accordion>div{padding:0 21px 20px;font-size:15px;line-height:1.68;color:#526c59}
+.fk-accordion li{margin-bottom:6px}.fk-source{font-size:14px;line-height:1.7;color:#627b68;margin-top:20px;overflow-wrap:anywhere}
+.fk-source span{font-weight:800}.fk-source a{color:#207a50}
+.fk-actions{display:flex;flex-wrap:wrap;gap:9px;margin:23px 0}
+.fk-actions button{min-height:45px;border:1px solid #297e57;background:#2d7d58;color:#fff;padding:10px 18px;font:750 14px system-ui;border-radius:11px;cursor:pointer}
+.fk-actions button.outline{background:#fff;color:#2e7b55}
+.fk-picker button:focus-visible,.fk-actions button:focus-visible{outline:3px solid #d5aa58;outline-offset:3px}
+.fk-form{border:1px solid #d5e8da;background:#f5f9f6;border-radius:17px;padding:23px;margin-top:28px}
+.fk-form-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:15px}
+.fk-form-header h3{font-size:23px;margin:0}.fk-form-header span{font-size:12px;color:#728a77}
+.fk-form label{display:block;margin:15px 0;font-weight:750;font-size:14px;color:#315e44}
+.fk-form textarea{display:block;width:100%;max-width:100%;resize:vertical;border:1px solid #bcd9c7;padding:12px;border-radius:10px;background:#fff;color:#214b37;font:16px/1.5 system-ui;margin-top:7px}
+.fk-form textarea:focus-visible{outline:3px solid #bed8be;outline-offset:2px}
+.fk-feedback{font-size:13px;font-weight:750;color:#247952;min-height:18px}
+.fk-circle-panel{border:1px solid #dce7df;border-radius:16px;margin:22px 0;padding:21px;display:grid;grid-template-columns:minmax(0,1fr) 260px;align-items:center;gap:26px}
+.fk-circle-intro h3{font-size:20px;margin:0 0 9px}.fk-circle-intro p{color:#66806b;font-size:14px;line-height:1.6;margin:0}
+.fk-circle-preview{border:2px solid #397b5b;border-radius:50%;width:240px;height:240px;max-width:100%;margin:auto}
+.fk-footer{display:flex;justify-content:space-between;gap:20px;color:#688073;font-size:13px;margin:32px 0}
+.fk-footer p{margin:0;max-width:670px}
+#familyPrint[hidden]{display:none!important}
+@media(max-width:900px){.fk-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.fk-circle-panel{grid-template-columns:1fr}.fk-container{padding:20px 14px 45px}.fk-hero{padding:28px 25px}.fk-panel{padding:23px 18px}}
+@media(max-width:600px){.fk-picker{grid-template-columns:1fr}.fk-picker button{min-height:78px}.fk-hero h1{font-size:32px}.fk-hero p{font-size:15px}.fk-heading .fk-symbol{display:none}.fk-facts{grid-template-columns:1fr}.fk-actions{display:grid;grid-template-columns:1fr 1fr}.fk-actions button{font-size:12px;padding:10px 7px}.fk-form{padding:17px 13px}.fk-breadcrumb>span{font-size:11px;text-align:right}.fk-footer{display:block}}
+@media print{
+ @page{size:A4;margin:15mm}
+ .family-page .site-header,.family-page .fk-container{display:none!important}
+ body.family-page{background:#fff!important;color:#000!important}
+ #familyPrint:not([hidden]){display:block!important;color:#000;font:12pt/1.5 Arial,sans-serif}
+ #familyPrint .fp-sheet{break-after:page;min-height:240mm;padding:0}
+ #familyPrint .fp-sheet:last-child{break-after:auto}
+ #familyPrint h1{font-size:19pt;margin:0 0 6mm}
+ #familyPrint p{font-size:10pt;margin:0 0 5mm}
+ #familyPrint .fp-circle{width:110mm;height:110mm;border:1.5pt solid #111;border-radius:50%;margin:20mm auto}
+ #familyPrint .fp-drawing{height:203mm;border:0;margin-top:8mm}
+ #familyPrint .fp-line{height:17mm;border-bottom:1px dotted #888;margin:0 0 2mm}
+ #familyPrint .fp-prompt{font-weight:700;font-size:11pt;margin-top:6mm}
+ #familyPrint .fp-footer{margin-top:5mm;color:#666;font-size:9pt}
+}
