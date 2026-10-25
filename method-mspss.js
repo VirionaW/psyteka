@@ -71,25 +71,26 @@
  const alphabet=(rows)=>rows.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||"","ru",{sensitivity:"base"}));
  function group(rows){
   const ordered=alphabet(rows);
-  return '<section class="psy-mspss-group"><h3>Сводная ведомость класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>ФИО</th><th>Общий / 7</th><th>Семья</th><th>Друзья</th><th>Значимый человек</th><th>Ответов</th></tr></thead><tbody>'+
-  ordered.map((r,i)=>{const z=score(d,r.answers);const v=id=>z?z.subscales.find(s=>s.id===id).mean.toFixed(2):"—";return '<tr><td>'+esc(r.name||"Участник "+(i+1))+'</td><td>'+(z?z.mean.toFixed(2):"—")+'</td><td>'+v("family")+'</td><td>'+v("friends")+'</td><td>'+v("other")+'</td><td>'+done(r.answers)+'/12</td></tr>'}).join("")+
-  '</tbody></table></div><div class="psy-mspss-actions"><button type="button" class="btn" id="mspssCSV">Скачать ведомость класса · CSV</button></div></section>';
+  return '<section class="psy-mspss-group"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>ФИО</th><th>Общий / 7</th><th>Семья</th><th>Друзья</th><th>Значимый человек</th></tr></thead><tbody>'+
+  ordered.map((r,i)=>{const z=score(d,r.answers);const v=id=>z?z.subscales.find(s=>s.id===id).mean.toFixed(2):"—";return '<tr><td>'+esc(r.name||"Не указан")+'</td><td>'+(z?z.mean.toFixed(2):"Не участвовал")+'</td><td>'+v("family")+'</td><td>'+v("friends")+'</td><td>'+v("other")+'</td></tr>'}).join("")+
+  '</tbody></table></div><p class="psy-mspss-small">Отсутствующие результаты не учитываются при подсчете класса.</p></section>';
  }
  function calculator(data,ctx){
   const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],a=r.answers||[];
   let h='<section class="psy-mspss-calculator"><div class="calc-mode psy-mspss-modes"><button type="button" class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button type="button" class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>';
   if(ctx.calcMode==="class"){
-   h+='<div class="psy-mspss-workspace"><aside class="psy-mspss-sidebar"><h3>Список учащихся</h3><p>Введите ФИО по одному в строке.</p>'+
+   h+='<div class="psy-mspss-workspace"><aside class="psy-mspss-sidebar"><h3>Список учащихся</h3><p>ФИО каждого ребенка - с новой строки.</p>'+
       '<label class="psy-mspss-label" for="mspssBulkNames">Добавить участников</label><textarea id="mspssBulkNames" rows="5" placeholder="Иванов Иван&#10;Петрова Мария"></textarea>'+
       '<button type="button" class="btn primary psy-mspss-add" id="mspssAddNames">Добавить в список</button>'+
       '<button type="button" class="btn psy-mspss-sort" id="mspssSort">По алфавиту А - Я</button>'+
-      '<div class="psy-mspss-person-list">'+rows.map((u,i)=>'<button type="button" class="psy-mspss-person '+(i===ctx.rowIndex?"active":"")+'" data-mspss-person="'+i+'"><span>'+esc(u.name||"Новый участник "+(i+1))+'</span><small>'+done(u.answers)+'/12</small></button>').join("")+'</div>'+
+      '<div class="psy-mspss-person-list">'+rows.map((u,i)=>'<div class="psy-mspss-person-row '+(i===ctx.rowIndex?"active":"")+'"><button type="button" class="psy-mspss-person '+(i===ctx.rowIndex?"active":"")+'" data-mspss-person="'+i+'"><span>'+esc(u.name||"Участник без ФИО")+'</span><small>'+done(u.answers)+'/12</small></button><button type="button" class="psy-mspss-delete-person" title="Удалить участника" aria-label="Удалить '+esc(u.name||"участника")+'" data-mspss-delete="'+i+'">×</button></div>').join("")+'</div>'+
+      '<button type="button" class="btn psy-mspss-delete-all" id="mspssDeleteAll">Удалить всех участников</button>'+
       '</aside><div class="psy-mspss-entry">';
   }else h+='<div class="psy-mspss-entry">';
   h+='<label class="psy-mspss-name-field" for="mspssCurrentName"><span>Фамилия и имя</span><input id="mspssCurrentName" type="text" autocomplete="off" maxlength="120" value="'+esc(r.name||"")+'" placeholder="Введите ФИО"></label>'+
     '<p class="psy-mspss-progress" id="mspssProgress">Заполнено '+done(a)+' из 12</p>'+
     '<div class="psy-mspss-grid">'+TOPICS.map((q,i)=>'<label class="psy-mspss-item '+(a[i]!==""&&a[i]!=null&&Number(a[i])>=1&&Number(a[i])<=7?"is-complete":"is-missing")+'"><span><b>'+(i+1)+'.</b> '+esc(q)+'</span><input class="psy-mspss-score-input" type="text" inputmode="numeric" autocomplete="off" maxlength="1" data-mspss="'+i+'" aria-label="Ответ на пункт '+(i+1)+'" placeholder="1-7" value="'+esc(a[i]??"")+'"></label>').join("")+'</div>';
-  if(ctx.calcMode==="class")h+='<div class="psy-mspss-after-questions"><button type="button" class="btn primary" id="mspssNext">Следующий участник →</button></div>';
+  if(ctx.calcMode==="class")h+='<div class="psy-mspss-after-questions"><button type="button" class="btn primary" id="mspssNext" '+(ctx.rowIndex>=rows.length-1?'disabled title="Последний участник"':'')+'>Следующий участник →</button></div>';
   h+='<div id="mspssResult">'+result(a)+'</div></div>';
   if(ctx.calcMode==="class")h+='</div>'+group(rows);
   h+='</section>';
