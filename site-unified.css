@@ -178,3 +178,29 @@ body.site-landing{background:#f7faf6;color:#173e31}
  .library-page .top-home{font-size:12px;padding:9px 10px;min-height:42px}
 }
 @media print{.psy-brand-mark{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+
+/* Старые стили логотипа оформляли каждый span как зелёную квадратную иконку.
+   Переопределяем их для новой словесной части эмблемы во всех шапках. */
+.site-logo .psy-wordmark,.library-page .brand .psy-wordmark{
+ display:inline-flex!important;align-items:baseline!important;flex-wrap:nowrap!important;
+ width:auto!important;height:auto!important;min-width:0!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ margin:0!important;padding:0!important;font-weight:850!important;
+ font-size:23px!important;line-height:1.1!important;letter-spacing:-.045em!important;
+ color:#28534a!important;
+}
+.site-logo .psy-wordmark>span,.library-page .brand .psy-wordmark>span{
+ display:inline!important;width:auto!important;height:auto!important;min-width:0!important;
+ border:0!important;background:transparent!important;border-radius:0!important;
+ padding:0!important;margin:0!important;font:inherit!important;letter-spacing:inherit!important;
+ color:#28534a!important;
+}
+.site-logo .psy-wordmark>span.psy-word-end,.library-page .brand .psy-wordmark>span.psy-word-end{
+ color:#81715e!important;
+}
+.library-page .brand .psy-library-wordbox{display:block!important;min-width:0}
+.library-page .brand .psy-library-wordbox>small{display:block;font-size:12px;color:#678172}
+@media(max-width:560px){
+ .site-logo .psy-wordmark{font-size:19px!important}
+ .library-page .brand .psy-wordmark{font-size:21px!important}
+}
