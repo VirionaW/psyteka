@@ -1,0 +1,135 @@
+/* Illustrations belong to each color field, without framed white stickers.
+   The source is the six owner-supplied pictures, not panel/method artwork. */
+.library-page .hero{
+ position:relative;display:flex!important;align-items:center!important;gap:clamp(12px,3vw,45px)!important;
+ overflow:hidden;min-height:280px;
+}
+.library-page .hero>div:first-child{flex:1;min-width:0;position:relative;z-index:2}
+.library-page .hero-art{
+ position:relative!important;z-index:1!important;
+ width:clamp(205px,24vw,306px)!important;height:clamp(205px,24vw,306px)!important;
+ flex:0 0 clamp(205px,24vw,306px)!important;
+ align-self:center!important;margin:0 -7px 0 0!important;
+ padding:0!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;background-color:transparent!important;
+ background-size:300% 200%!important;
+ mix-blend-mode:multiply!important;opacity:1!important;
+ animation:none!important;transform:none!important;
+ overflow:visible!important;
+}
+.library-page .hero-art.psy-scene-ready{
+ background:none!important;mix-blend-mode:normal!important;
+}
+.library-page .hero-art svg{display:none!important}
+.psy-scene{display:block;position:relative;overflow:visible;pointer-events:none;isolation:isolate}
+.psy-scene img{
+ display:block!important;position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;max-width:none!important;object-fit:contain!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;
+ user-select:none;-webkit-user-drag:none;
+}
+.library-page .hero-art .psy-scene{width:100%;height:100%}
+.psy-scene-moving{will-change:transform;backface-visibility:hidden}
+.psy-scene-spark{animation:psy-scene-spark 4.9s ease-in-out infinite}
+.psy-scene-gesture{animation:psy-scene-gesture 3.6s ease-in-out infinite}
+.psy-scene-glow{animation:psy-scene-glow 4.7s ease-in-out infinite}
+.psy-scene-speak{animation:psy-scene-speak 4.2s ease-in-out infinite}
+.psy-scene-check{animation:psy-scene-check 5.2s ease-in-out infinite}
+@keyframes psy-scene-spark{
+ 0%,100%{transform:rotate(0) scale(1);filter:brightness(1)}
+ 37%{transform:rotate(5deg) scale(1.045);filter:brightness(1.08)}
+ 65%{transform:rotate(-2deg) scale(.99);filter:brightness(1.03)}
+}
+@keyframes psy-scene-gesture{
+ 0%,100%{transform:rotate(0)}
+ 35%{transform:rotate(-6deg)}
+ 68%{transform:rotate(3deg)}
+}
+@keyframes psy-scene-glow{
+ 0%,100%{transform:scale(1);filter:brightness(1) drop-shadow(0 0 0 transparent)}
+ 49%{transform:scale(1.03);filter:brightness(1.12) drop-shadow(0 0 7px #ffdb8777)}
+}
+@keyframes psy-scene-speak{
+ 0%,100%{transform:translateY(0)}
+ 50%{transform:translateY(-5px)}
+}
+@keyframes psy-scene-check{
+ 0%,100%{transform:rotate(0) scale(1)}
+ 40%{transform:rotate(2deg) scale(1.015)}
+}
+/* Homepage introduction: illustrated, rather than screenshot-like mini rectangles. */
+.site-hero .psy-hero-showcase.psy-showcase-with-scenes{
+ display:block;position:relative;min-height:390px;height:390px;isolation:isolate;
+}
+.site-hero .psy-hero-showcase.psy-showcase-with-scenes::before{
+ content:"";position:absolute;width:74%;aspect-ratio:1;left:13%;top:1%;
+ background:radial-gradient(circle,#ffffff11 0%,#ffffff05 55%,transparent 72%);border-radius:50%;
+}
+.psy-home-scene{position:absolute!important;aspect-ratio:1;height:auto!important}
+.psy-home-main{width:74%;top:0%;left:12%;z-index:2}
+.psy-home-preschool{width:40%;top:-7%;right:-7%;z-index:3}
+.psy-home-documents{width:42%;bottom:-11%;left:-11%;z-index:3}
+.psy-home-main .psy-scene-moving{animation-duration:5.3s}
+/* Six distinctive illustrations in the thematic section cards. */
+.site-sections .section-card.psy-section-with-scene{
+ display:grid!important;grid-template-columns:minmax(0,1fr) minmax(98px,36%);
+ grid-template-rows:auto 1fr auto;column-gap:8px;align-items:start;
+ position:relative;overflow:hidden;min-height:228px;padding:23px!important;
+}
+.site-sections .section-card.psy-section-with-scene .section-icon{display:none!important}
+.site-sections .section-card.psy-section-with-scene h3{
+ grid-column:1;grid-row:1;margin:5px 0 10px;line-height:1.27;font-size:21px;
+}
+.site-sections .section-card.psy-section-with-scene p{grid-column:1;grid-row:2;margin:0}
+.site-sections .section-card.psy-section-with-scene>span{grid-column:1;grid-row:3;margin-top:12px}
+.site-sections .section-card.psy-section-with-scene .psy-card-scene{
+ grid-column:2;grid-row:1 / span 3;width:100%;height:auto;aspect-ratio:1;
+ align-self:center;justify-self:end;max-width:180px;
+}
+/* Editorial cards gain clean illustrated detail without changing text flow. */
+.site-editorial .site-columns article{position:relative}
+.psy-editorial-image{float:right;width:92px;height:92px;margin:-4px -2px 10px 13px}
+.psy-editorial-image .psy-scene{width:100%;height:100%}
+#about .site-columns article h3{margin-top:9px}
+html.dark .library-page .hero-art,
+html.dark .library-page .hero-art.psy-scene-ready{
+ border:none!important;background-color:transparent!important;box-shadow:none!important;opacity:1!important;
+ filter:none!important
+}
+html.dark .site-sections .psy-scene img,
+html.dark .site-hero .psy-scene img{filter:none!important;opacity:1!important}
+@media(max-width:950px){
+ .library-page .hero-art{width:235px!important;height:235px!important;flex-basis:235px!important}
+ .site-hero .psy-hero-showcase.psy-showcase-with-scenes{height:310px;min-height:310px}
+ .site-sections .section-card.psy-section-with-scene{min-height:208px;padding:20px!important}
+}
+@media(max-width:650px){
+ .library-page .hero{flex-direction:row!important;align-items:center!important;gap:6px!important;min-height:205px}
+ .library-page .hero-art{
+  width:clamp(105px,31vw,170px)!important;
+  height:clamp(105px,31vw,170px)!important;
+  flex:0 0 clamp(105px,31vw,170px)!important;
+  align-self:center!important;margin-right:-10px!important;margin-bottom:0!important;
+ }
+ .library-page .hero h1{font-size:clamp(23px,5.8vw,32px)!important;line-height:1.18!important}
+ .library-page .hero p{font-size:12px!important;line-height:1.5!important}
+ .library-page .hero .eyebrow{font-size:9px!important;letter-spacing:.6px!important}
+ .site-hero .psy-hero-showcase.psy-showcase-with-scenes{height:260px;min-height:260px;max-width:520px}
+ .psy-home-main{width:73%;left:14%}
+ .psy-home-preschool{width:37%;right:0}
+ .psy-home-documents{width:39%;left:0;bottom:-6%}
+ .site-sections .section-card.psy-section-with-scene{min-height:192px}
+}
+@media(max-width:430px){
+ .site-sections .section-card.psy-section-with-scene{
+  grid-template-columns:minmax(0,1fr) 98px;min-height:188px;padding:18px!important
+ }
+ .site-sections .section-card.psy-section-with-scene h3{font-size:18px}
+ .site-sections .section-card.psy-section-with-scene p{font-size:12px}
+ .psy-editorial-image{width:67px;height:67px}
+}
+/* Screen readers and users who dislike motion receive static illustrations. */
+@media(prefers-reduced-motion:reduce){
+ .psy-scene-moving{animation:none!important;transition:none!important;filter:none!important}
+ .site-sections .section-card:hover{transform:none!important}
+}
