@@ -13,6 +13,8 @@ const categoryIcons={
 "Настроение":'<path d="M20 6c8 0 14 6 14 14s-6 14-14 14S6 28 6 20 12 6 20 6z"/><path d="M14 17v2m12-2v2m-12 8h12"/>',
 "Семья":'<circle cx="12" cy="14" r="5"/><circle cx="28" cy="14" r="5"/><circle cx="20" cy="25" r="4"/><path d="M3 33v-6q1-8 9-8m25 14v-6q-1-8-9-8m-15 16v-3q0-8 7-8t7 8v3"/>',
 "Внимание":'<circle cx="20" cy="20" r="15"/><circle cx="20" cy="20" r="8"/><circle cx="20" cy="20" r="2"/>',
+"Память":'<rect x="7" y="7" width="25" height="27" rx="3"/><path d="M13 14h13M13 21h13M13 28h9"/>',
+"Нейропсихология":'<path d="M20 7q-13-6-14 8v10q0 8 13 8M20 7q13-6 14 8v10q0 8-13 8M20 7v26M10 17h8M22 23h9"/>',
 "СДВГ":'<circle cx="17" cy="11" r="4"/><path d="M17 16v9m0-5-10 7m10-5 10 4m-10-1-5 11m5-11 7 11m3-27q9 4 0 9m5 3q7 4-1 8"/>',
 "Агрессия":'<path d="m20 4 5 11 11 5-11 5-5 11-5-11-11-5 11-5z"/>',
 "Общение":'<path d="M5 9h21v16H14l-7 6v-6H5z"/><path d="M22 14h13v16h-8l-5 5v-5"/>',
@@ -168,6 +170,8 @@ function viewOverview(m){
 }
 
 function viewInstruction(m){
+ if(DETAILS[m.name]?.workflow==='digitSpanPsy')return window.PSY_DIGIT_SPAN.instruction(DETAILS[m.name]);
+ if(DETAILS[m.name]?.workflow==='dynamicPraxisLuria')return window.PSY_DYNAMIC_PRAXIS.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='colorRelations8')return window.PSY_COLOR_RELATIONS.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='independentLiving12')return window.PSY_INDEPENDENT_LIVING.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='motivationInterview')return window.PSY_MOTIVATION_INTERVIEW.instruction(DETAILS[m.name]);
@@ -246,6 +250,7 @@ function viewDictationCalculator(d){
 }
 
 function materials(m,blank){
+ if(['digitSpanPsy','dynamicPraxisLuria'].includes(DETAILS[m.name]?.workflow))return window[DETAILS[m.name].workflow==='digitSpanPsy'?'PSY_DIGIT_SPAN':'PSY_DYNAMIC_PRAXIS'].materials(DETAILS[m.name]);
  const d=DETAILS[m.name];
  if(d?.workflow==='objectClass16')return window.PSY_OBJECT_CLASSIFY.materials(d);
  if(d?.workflow==='schoolDrawingL')return window.PSY_SCHOOL_DRAWING.materials(d);
@@ -288,6 +293,8 @@ function materials(m,blank){
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
 function viewMaterials(m){
+ if(DETAILS[m.name]?.workflow==='digitSpanPsy')return window.PSY_DIGIT_SPAN.materials(DETAILS[m.name]);
+ if(DETAILS[m.name]?.workflow==='dynamicPraxisLuria')return window.PSY_DYNAMIC_PRAXIS.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='colorRelations8')return window.PSY_COLOR_RELATIONS.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='independentLiving12')return window.PSY_INDEPENDENT_LIVING.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='motivationInterview')return window.PSY_MOTIVATION_INTERVIEW.materials(DETAILS[m.name]);
@@ -313,6 +320,8 @@ function viewMaterials(m){
  return '<h3>Стимульный материал и бланк</h3>'+materials(m,false)+(d.questions?.length && d.graphic ? '<h3>Протокол беседы</h3><table class="questions-table"><thead><tr><th>№</th><th>Вопрос психолога</th><th>Ответ / наблюдение</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td>________________</td></tr>').join('')+'</tbody></table>':"");
 }
 function viewProcessing(m){
+ if(DETAILS[m.name]?.workflow==='digitSpanPsy')return window.PSY_DIGIT_SPAN.processing(DETAILS[m.name]);
+ if(DETAILS[m.name]?.workflow==='dynamicPraxisLuria')return window.PSY_DYNAMIC_PRAXIS.processing(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='colorRelations8')return window.PSY_COLOR_RELATIONS.processing(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='independentLiving12')return window.PSY_INDEPENDENT_LIVING.processing(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='motivationInterview')return window.PSY_MOTIVATION_INTERVIEW.processing(DETAILS[m.name]);
@@ -383,6 +392,8 @@ function getScores(d,answers){
  return {raw,index:null,max:n*(d.options.length-1),caption:'Сырая сумма'};
 }
 function viewCalculator(m){
+ if(DETAILS[m.name]?.workflow==='digitSpanPsy')return window.PSY_DIGIT_SPAN.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
+ if(DETAILS[m.name]?.workflow==='dynamicPraxisLuria')return window.PSY_DYNAMIC_PRAXIS.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  if(DETAILS[m.name]?.workflow==='colorRelations8')return window.PSY_COLOR_RELATIONS.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  if(DETAILS[m.name]?.workflow==='independentLiving12')return window.PSY_INDEPENDENT_LIVING.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  if(DETAILS[m.name]?.workflow==='motivationInterview')return window.PSY_MOTIVATION_INTERVIEW.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
@@ -436,6 +447,8 @@ function viewCalculator(m){
  return head+'<div class="notice">Ответы вводятся цифрами от 0 до '+(d.options.length-1)+'. После ввода курсор переходит к следующему полю.</div>'+qhtml+results+'<div class="class-actions"><button class="btn" id="resetParticipant">Сбросить ответы участника</button></div>';
 }
 function bindControls(){
+ if(DETAILS[methodNow.name]?.workflow==='digitSpanPsy')window.PSY_DIGIT_SPAN.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
+ if(DETAILS[methodNow.name]?.workflow==='dynamicPraxisLuria')window.PSY_DYNAMIC_PRAXIS.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  if(DETAILS[methodNow.name]?.workflow==='colorRelations8')window.PSY_COLOR_RELATIONS.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  if(DETAILS[methodNow.name]?.workflow==='independentLiving12')window.PSY_INDEPENDENT_LIVING.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  if(DETAILS[methodNow.name]?.workflow==='motivationInterview')window.PSY_MOTIVATION_INTERVIEW.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
@@ -547,7 +560,7 @@ function makePrintPage(d,blank){
 }
 function printMaterial(blank){
  const d=DETAILS[methodNow?.name];if(!d)return;
- if(d.workflow==='colorRelations8'){window.open(blank?d.answerFile:d.guideFile,'_blank','noopener');return;}
+ if(['colorRelations8','digitSpanPsy','dynamicPraxisLuria'].includes(d.workflow)){window.open(blank?d.answerFile:d.guideFile,'_blank','noopener');return;}
  const html=makePrintPage(d,blank);
  let f=document.getElementById('psyPrint');if(f)f.remove();
  f=document.createElement('iframe');f.id='psyPrint';f.title='Печать материала';f.style='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
@@ -556,7 +569,7 @@ function printMaterial(blank){
 }
 function saveMethodHTML(){
  const d=DETAILS[methodNow?.name];if(!d)return;
- if(d.workflow==='colorRelations8'){window.open(d.guideFile,'_blank','noopener');return;}
+ if(['colorRelations8','digitSpanPsy','dynamicPraxisLuria'].includes(d.workflow)){window.open(d.guideFile,'_blank','noopener');return;}
  const data='<!doctype html>'+makePrintPage(d,false),url=URL.createObjectURL(new Blob([data],{type:'text/html;charset=utf-8'}));
  const a=document.createElement('a');a.href=url;a.download=methodNow.name.replace(/[\\/:*?"<>|]+/g,'_')+'.html';a.click();URL.revokeObjectURL(url);
 }
@@ -576,7 +589,7 @@ function openMethod(m){
  const mspssPilot=d?.workflow==='mspss';
  $('#modal').classList.toggle('psy-mspss-example',mspssPilot);
  const tabs=[['overview','Портфолио'],['instruction','Методика / руководство'],['materials','Бланк']];
- if(['independentLiving12','motivationInterview','schoolAdaptObserve','colorRelations8'].includes(d?.workflow)){
+ if(['independentLiving12','motivationInterview','schoolAdaptObserve','colorRelations8','digitSpanPsy','dynamicPraxisLuria'].includes(d?.workflow)){
    tabs.push(['processing','Обработка'],['score',d.workflow==='independentLiving12'?'Подсчёт':'Протокол']);
  }
  // MSPSS: processing is reached using the original green bottom action.
