@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 430" fill="none" role="img" aria-label="Беседа психолога и взрослого человека">
+ <defs><linearGradient id="teal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8CB6AD"/><stop offset="1" stop-color="#5B8D90"/></linearGradient></defs>
+ <g opacity=".77"><path d="M44 317c-20-64-10-114 30-148 15 62 11 112-12 147" fill="#9AC3A7"/><path d="M85 307c-17-55 4-107 47-134-2 58-16 101-30 136" fill="#6FA88E"/><path d="M346 315c9-53 34-96 71-110-2 63-22 91-53 121" fill="#79AF93"/><path d="M360 313c-13-50 0-82 31-114 13 48 5 88-15 121" fill="#AACBA9"/><path d="M58 348c45-28 103-29 151-13M303 338c41-26 86-24 111-2" stroke="#7AA787" stroke-width="5" stroke-linecap="round" opacity=".6"/></g>
+ <ellipse cx="222" cy="376" rx="193" ry="26" fill="#739882" opacity=".17"/>
+ <path d="M40 265c0-25 14-44 36-48h80c23 0 37 19 37 44v68H40z" fill="#699A8B"/><path d="M42 280h149v44H42z" fill="#78AB9B"/><path d="M53 318l3 46m123-45-3 45" stroke="#49746B" stroke-width="10" stroke-linecap="round"/>
+ <path d="M253 256c0-27 16-45 40-45h82c22 0 36 18 36 44v73H253z" fill="#8FAE9D"/><path d="M255 285h153v43H255z" fill="#A5BEA7"/><path d="M269 324l-4 39m125-39 5 39" stroke="#6B8776" stroke-width="10" stroke-linecap="round"/>
+ <path d="M90 291c-9 27-6 57 1 77h33l16-61 17 61h34c3-34-4-57-23-80" fill="#274C62"/><path d="M91 360c-9 6-14 12-13 20h49c7-7 2-15-7-19" fill="#34516A"/><path d="M155 362c-1 6 1 16 6 18h47c1-8-12-15-21-18" fill="#34516A"/>
+ <path d="M78 186c-23 14-30 39-26 72l21 48h98l16-64c-5-37-23-64-56-70z" fill="url(#teal)"/><path d="M65 215c-11 20-13 45 1 59 14 9 48 9 74 3" stroke="#74A4A2" stroke-width="25" stroke-linecap="round"/><path d="M142 218c21 18 40 39 54 55" stroke="#77A5A4" stroke-width="23" stroke-linecap="round"/><path d="M192 265c8-4 17-4 26 2 3 9-3 17-14 17l-13-3" fill="#E7AC88"/>
+ <path d="M100 163l-5 24 20 26 20-27-7-24" fill="#DDA580"/>
+ <path d="M81 99c-5 25-9 58-4 83 7 21 27 25 54 15 23-12 29-36 28-67-1-22-11-49-34-56-20-7-39 1-44 25" fill="#263C49"/>
+ <path d="M84 127c1-29 20-48 42-46 24 2 40 21 40 48l-5 22c-3 19-18 34-37 34-24 0-38-17-40-40z" fill="#E8B18D"/>
+ <path d="M80 131c-7-23-3-53 13-66 24-19 58-14 72 13 10 18 7 40 4 53-15-5-28-19-35-34-17 18-31 27-54 34" fill="#283A49"/><path d="M77 143c-14 20-12 45 1 57l17-4c-9-15-12-31-9-48" fill="#283A49"/>
+ <path d="M100 135q8-5 16 0m25 0q8-5 16 0" stroke="#8C5C4E" stroke-width="2.5" stroke-linecap="round"/><circle cx="110" cy="143" r="3.1" fill="#353B3B"/><circle cx="150" cy="143" r="3.1" fill="#353B3B"/><path d="M120 163q13 10 24-2" stroke="#BB7563" stroke-width="2.7" stroke-linecap="round"/><path d="M89 188l24 25 17-24" stroke="#DAE9DD" stroke-width="8" stroke-linecap="round"/>
+ <path d="M295 290c-8 27-12 49-12 75h39l16-50 17 52h37c5-28-1-57-18-78" fill="#3C6267"/><path d="M287 359c-7 7-10 15-8 21h51c4-10-6-18-13-22" fill="#3B4D4A"/><path d="M354 359c-5 7-4 15-1 21h51c3-9-8-15-17-22" fill="#3B4D4A"/>
+ <path d="M266 206c-13 16-20 45-17 78l39 26h87l21-64c-9-40-29-63-61-66-28-4-53 9-69 26" fill="#C6AA87"/><path d="M283 223c-12 21-18 45-12 54 11 17 37 15 58 11" stroke="#D0B896" stroke-width="23" stroke-linecap="round"/><path d="M354 223c15 18 21 39 23 54" stroke="#C6AA87" stroke-width="23" stroke-linecap="round"/><path d="M318 266c-8 7-22 11-30 10" stroke="#D9A27B" stroke-width="14" stroke-linecap="round"/><path d="M371 274c6 7 12 9 22 7" stroke="#E7AC86" stroke-width="14" stroke-linecap="round"/>
+ <path d="M320 172l-5 25 25 17 16-17-8-23" fill="#D9A17B"/>
+ <path d="M280 123c-7-32 8-57 33-65 31-9 59 9 65 38 8 39-7 76-34 83-29 8-58-13-64-56" fill="#483B33"/>
+ <path d="M282 124c-2-29 17-48 42-49 30-2 48 20 48 49v18c-4 22-21 40-44 41-24-1-43-20-46-40z" fill="#E8B58F"/>
+ <path d="M277 129c-12-35 8-73 42-78 34-5 65 17 60 58-18-5-33-19-40-31-15 24-33 35-62 51" fill="#433A33"/>
+ <path d="M306 146q9-5 17 0m20 0q8-5 15-1" stroke="#7C5548" stroke-width="3" stroke-linecap="round"/><circle cx="315" cy="151" r="3" fill="#413A35"/><circle cx="354" cy="151" r="3" fill="#413A35"/><path d="M323 165c9 7 19 7 26-1" stroke="#A76B59" stroke-width="2.5" stroke-linecap="round"/>
+ <path d="M312 168c6 12 17 20 30 17 14-2 23-13 25-24-10 2-17 9-25 9-11 2-20-1-30-2" fill="#65483D"/>
+ <path d="M202 104c0-16 15-27 37-27 23 0 37 11 37 27 0 16-15 28-36 28l-16 12 3-15c-16-3-25-12-25-25" fill="#D9E6D8" stroke="#93B7A2" stroke-width="2"/><circle cx="224" cy="104" r="4" fill="#64987B"/><circle cx="240" cy="104" r="4" fill="#64987B"/><circle cx="256" cy="104" r="4" fill="#64987B"/>
+ <path d="M193 281c28 10 50 10 70 0" stroke="#B4C9B7" stroke-width="4" stroke-linecap="round"/>
+</svg>
