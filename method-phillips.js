@@ -40,7 +40,7 @@
   license:"Печатный лист Психотеки является самостоятельным регистрационным листом. Для предъявления 58 вопросов используется полный текст по ссылке, а не тематическая реконструкция."
  };
  const D=window.PSY_FULL_METHODS||(window.PSY_FULL_METHODS={});
- D[METHOD_NAME]=DATA;
+ D[NAME]=DATA;
  const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const fmt=n=>Number(n).toFixed(1).replace(".",",");
  const valid=x=>x==="yes"||x==="no";
