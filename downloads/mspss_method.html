@@ -1,7 +1,7 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MSPSS - Методика и руководство</title><style>
 @page{size:A4;margin:15mm}*{box-sizing:border-box}body{margin:0;background:#f4f7f3;color:#243a2e;font:16px/1.6 Arial,"Liberation Sans",sans-serif}
 .toolbar{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:white;border-bottom:1px solid #d7e7db;padding:14px max(20px,calc((100vw - 1030px)/2));z-index:2}
-.toolbar strong{color:#1d553c}.tools{display:flex;gap:8px;flex-wrap:wrap}.tools button,.tools a{padding:11px 17px;border:1px solid #237751;background:#237751;color:white;font:700 14px Arial;border-radius:8px;text-decoration:none;cursor:pointer}.tools a{background:white;color:#237751}
+.toolbar strong{color:#1d553c}.tools{display:flex;gap:8px;flex-wrap:wrap}.tools button,.tools a{padding:11px 17px;border:1px solid #237751;background:#237751;color:white;font:700 14px Arial;border-radius:8px;text-decoration:none;cursor:pointer}.tools a,.tools button.secondary{background:white;color:#237751}
 .paper{max-width:970px;margin:26px auto 60px;padding:43px 58px;background:white;border-radius:14px;border:1px solid #d4e2d7}
 h1{font-size:29px;line-height:1.2;color:#164832;margin:0 0 13px}h2{font-size:21px;color:#207651;margin:29px 0 12px}p{margin:10px 0}ol{padding-left:25px}li{margin:7px 0}
 .subtitle{font-size:14px;color:#567161;margin:0 0 20px}.read{background:#edf5ef;padding:18px 21px;border-left:4px solid #247b51;margin:10px 0;line-height:1.6}
@@ -11,7 +11,7 @@ table{width:100%;border-collapse:collapse;margin:14px 0}td,th{text-align:left;bo
 @media(max-width:760px){.paper{padding:20px;margin:0;border-radius:0}.toolbar{padding:12px 17px}h1{font-size:23px}h2{font-size:19px}}
 @media print{html,body{background:white}.toolbar{display:none}.paper{padding:0;margin:0;border:0;border-radius:0;max-width:none}h1{font-size:19pt}h2{font-size:14pt;page-break-after:avoid}body{font-size:11pt}table{font-size:10pt}td,th{padding:7px}ol{padding-left:20px}.read{print-color-adjust:exact;-webkit-print-color-adjust:exact}.paper>*{break-inside:auto}tr{break-inside:avoid}}
 </style></head><body>
-<header class="toolbar"><strong>Методика и руководство · MSPSS</strong><div class="tools"><a href="mspss_method_guide.docx" download>Скачать Word</a><button onclick="window.print()">Распечатать / сохранить PDF</button></div></header>
+<header class="toolbar"><strong>Методика и руководство · MSPSS</strong><div class="tools"><button type="button" class="secondary" onclick="forceWord('mspss_method_guide.docx','MSPSS_методика.docx')">Скачать Word</button><button onclick="window.print()">Распечатать / сохранить PDF</button></div></header>
 <main class="paper"><h1>Шкала воспринимаемой социальной поддержки (MSPSS)</h1>
 <p class="subtitle">Методика и руководство для педагога-психолога</p>
 <div class="meta"><span><strong>Авторы:</strong> Г. Зимет, Н. Далем, С. Зимет, Г. Фарли, 1988</span><span><strong>Возраст:</strong> подростки и взрослые</span></div>
@@ -53,9 +53,19 @@ table{width:100%;border-collapse:collapse;margin:14px 0}td,th{text-align:left;bo
 <p>Более высокий средний показатель отражает более выраженное субъективное ощущение социальной поддержки. Подшкалы позволяют сравнить, от кого участник ощущает больше поддержки. Результаты следует интерпретировать с учётом возраста, культурной среды, индивидуальных обстоятельств и других данных обследования.</p>
 <p>Одна шкала не служит основанием для клинического диагноза. Для рабочей русскоязычной формы Психотеки не заявляются собственные нормы или диагностические границы.</p>
 <h2>Протокол специалиста</h2>
-<p>Код участника: _______________________ &nbsp; Класс: ______ &nbsp; Дата: _____________</p>
+<p>ФИО: _____________________________ &nbsp; Класс: ______ &nbsp; Дата: _____________</p>
 <p>Общее среднее: _________ &nbsp; Семья: ________ &nbsp; Друзья: ________ &nbsp; Значимый человек: ________</p>
 <p>Контекст и наблюдения: _________________________________________________________________________</p>
 <p>Заключение и рекомендации: ___________________________________________________________________</p>
 <p class="small">Методический первоисточник: <a href="https://gzimet.wixsite.com/mspss" target="_blank" rel="noopener noreferrer">Сайт разработчика MSPSS</a>. Русскоязычная формулировка пунктов в данной рабочей версии не является подтверждённой возрастной адаптацией оригинального опросника.</p>
-</main></body></html>
+</main><script>
+async function forceWord(path,name){
+  try{
+   const response=await fetch(path,{cache:"no-store"});
+   if(!response.ok)throw new Error("Не удалось получить файл");
+   const blob=await response.blob(),url=URL.createObjectURL(blob),a=document.createElement("a");
+   a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),8000);
+  }catch(err){alert("Не удалось скачать Word-файл. Попробуйте еще раз.");}
+}
+</script></body></html>
