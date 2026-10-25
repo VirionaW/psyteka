@@ -38,3 +38,7 @@
 }
 html.dark .library-page .method .method-art-tile{background-color:#f4f8f4}
 .library-page .topic-all{font-weight:800}
+
+/* Ten user-supplied Psyteka pictures — independent thumbnails, no old art modified. */
+.library-page .method .glyph:has(.method-art-personal){overflow:hidden;padding:0;border-radius:15px;background:#f7faf7;display:flex;align-items:center;justify-content:center}
+.library-page .method .method-art-personal{display:block;width:100%;height:100%;min-width:100%;min-height:100%;object-fit:cover;object-position:center;border-radius:14px}

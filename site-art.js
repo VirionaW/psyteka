@@ -53,7 +53,7 @@
    if(!icon)return;
    // Новые миниатюры 61-100 создаются в каталоге до этого скрипта.
    // Не удаляем их и не подменяем старым атласом.
-   if(icon.querySelector(".method-art-tile")){
+   if(icon.querySelector(".method-art-tile, .method-art-personal")){
     card.classList.add("psy-has-art");
     card.classList.remove("psy-no-art");
     return;
