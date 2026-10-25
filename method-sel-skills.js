@@ -3,6 +3,7 @@
  const NAME="Опросник социально-эмоциональных навыков";
  const SRC="https://casel.org/what-is-sel/";
  const GUIDE="downloads/sel_skills_working_guide.docx";
+ const STUDENT_WORD="downloads/sel_skills_student_blank.docx";
  const BLANK="downloads/sel_skills_student_blank.html";
  const SPECIALIST="downloads/sel_skills_specialist_protocol.html";
  const SCALES=[
@@ -46,7 +47,7 @@
   questions:ITEMS,options:["Никогда","Редко","Часто","Почти всегда"],
   scoring:"Каждый ответ оценивается от 0 до 3 без обратного кодирования. По 4 пункта на каждое направление: 1,6,11,16; 2,7,12,17; 3,8,13,18; 4,9,14,19; 5,10,15,20. Сумма по направлению 0-12. Общая сумма 0-60, среднее по всем пунктам 0-3. При любом пропуске количественный подсчет для участника не выводится; ноль является полноценным ответом, а не пропуском.",
   interpret:"Чем выше сумма, тем чаще участник сообщает о соответствующих действиях за последние две недели. Не используйте проценты, уровни нормы, клинические выводы или межличностное ранжирование. Обсудите конкретные примеры, сопоставьте с наблюдением и условиями класса. Следите за эффектом социальной желательности.",
-  warning:WARN,source:SRC,guideFile:GUIDE,answerFile:BLANK,specialistFile:SPECIALIST,
+  warning:WARN,source:SRC,guideFile:GUIDE,answerFile:BLANK,studentWordFile:STUDENT_WORD,specialistFile:SPECIALIST,
   workflow:"selwork2026",calculator:true,formVersion:"SEL-WORK-20-2026-v1",
   scales:SCALES,indicators:SCALES.map(x=>x.name)
  };
@@ -60,7 +61,7 @@
  }
  function done(a){return Array.from({length:20},(_,i)=>a?.[i]).filter(valid).length}
  function links(){
-  return '<div class="psy-sel-links"><a class="btn primary" href="'+GUIDE+'" download>Методика и ключ · Word</a><a class="btn" href="'+BLANK+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+SPECIALIST+'" target="_blank" rel="noopener noreferrer">Протокол психолога · А4</a><a class="btn" href="'+SRC+'" target="_blank" rel="noopener noreferrer">Рамка CASEL · источник</a></div>';
+  return '<div class="psy-sel-links"><a class="btn primary" href="'+GUIDE+'" download>Методика и ключ · Word</a><a class="btn" href="'+STUDENT_WORD+'" download>Бланк ученика · Word</a><a class="btn" href="'+BLANK+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+SPECIALIST+'" target="_blank" rel="noopener noreferrer">Протокол психолога · А4</a><a class="btn" href="'+SRC+'" target="_blank" rel="noopener noreferrer">Рамка CASEL · источник</a></div>';
  }
  function instruction(){
   return '<h3>О проведении</h3><div class="notice psy-sel-caution">'+E(WARN)+'</div><p>'+E(D.instructions)+'</p><p>Ориентировочное время: 7-10 минут. Индивидуально или в группе при обеспечении добровольности, спокойной обстановки и конфиденциальности.</p>'+
