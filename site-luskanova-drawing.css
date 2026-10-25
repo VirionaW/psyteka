@@ -1,0 +1,24 @@
+/* Лусканова: рисуночная методика «Что мне нравится в школе» */
+.library-page #modal .psy-school-draw-links{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0 20px}
+.library-page #modal .psy-school-draw-links .btn{display:inline-flex;min-height:43px;align-items:center;justify-content:center}
+.library-page #modal .psy-school-draw-warn{border-left:4px solid #d8a434!important;background:color-mix(in srgb,#ffe4a0 19%,var(--paper));color:var(--ink)}
+.library-page #modal .psy-school-draw-paper{min-height:335px;border:1px solid #c3d6c7;background:#fff;border-radius:15px;padding:12px;display:flex;justify-content:end;align-items:end;max-width:720px;margin:18px auto;color:#abc0b1;font-size:11px}
+.library-page #modal .psy-school-draw-rubric{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.library-page #modal .psy-school-draw-rubric>div{display:grid;grid-template-columns:50px 1fr;gap:5px 10px;border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:13px}
+.library-page #modal .psy-school-draw-rubric b{grid-row:span 2;display:grid;place-items:center;border-radius:9px;background:var(--paper);color:var(--green);font-size:21px}
+.library-page #modal .psy-school-draw-rubric strong{font-size:15px;color:var(--ink)}
+.library-page #modal .psy-school-draw-rubric span{font-size:12px;color:var(--muted)}
+.library-page #modal .psy-school-draw-category{display:flex;flex-direction:column;gap:9px;padding:15px;border:1px solid var(--line);border-radius:13px;background:var(--soft);margin:15px 0}
+.library-page #modal .psy-school-draw-category select,.library-page #modal .psy-school-draw-notes textarea{width:100%;min-width:0;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:10px;font:500 14px system-ui}
+.library-page #modal .psy-school-draw-notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:15px 0}
+.library-page #modal .psy-school-draw-notes label{display:flex;flex-direction:column;gap:7px;padding:14px;border:1px solid var(--line);border-radius:13px;background:var(--soft)}
+.library-page #modal .psy-school-draw-notes strong{color:var(--green);font-size:15px}
+.library-page #modal .psy-school-draw-notes small{color:var(--muted);font-size:12px}
+.library-page #modal .psy-school-draw-notes textarea{resize:vertical;min-height:83px}
+.library-page #modal .psy-school-draw-result{border:1px solid var(--line);border-radius:15px;background:var(--paper);padding:18px;margin:17px 0}
+.library-page #modal .psy-school-draw-score{display:flex;align-items:center;gap:12px;background:var(--soft);padding:12px;border-radius:12px;margin:11px 0}
+.library-page #modal .psy-school-draw-score strong{color:var(--green);font-size:25px;white-space:nowrap}
+.library-page #modal .psy-school-draw-score span{font-size:14px}
+.library-page #modal .psy-school-draw-actions{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0}
+@media(max-width:800px){.library-page #modal .psy-school-draw-notes{grid-template-columns:1fr}}
+@media(max-width:650px){.library-page #modal .psy-school-draw-rubric{grid-template-columns:1fr}.library-page #modal .psy-school-draw-links{flex-direction:column}}
