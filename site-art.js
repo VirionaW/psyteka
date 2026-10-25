@@ -51,9 +51,16 @@
    const name=card.querySelector("h3")?.textContent?.trim()||"";
    const icon=card.querySelector(".glyph");
    if(!icon)return;
+   // Новые миниатюры 61-100 создаются в каталоге до этого скрипта.
+   // Не удаляем их и не подменяем старым атласом.
+   if(icon.querySelector(".method-art-tile")){
+    card.classList.add("psy-has-art");
+    card.classList.remove("psy-no-art");
+    return;
+   }
    const index=methodIndex.get(name);
    if(index===undefined){
-    // Нет проверенной пары "название - PNG" - не используем рисунок категории или повтор.
+    // Карточка без подтвержденного изображения остается без картинки.
     icon.remove();
     card.classList.add("psy-no-art");
     return;
@@ -61,6 +68,7 @@
    icon.replaceChildren(sprite("method",index));
    icon.classList.add("psy-art-glyph");
    card.classList.add("psy-has-art");
+   card.classList.remove("psy-no-art");
   });
  }
  function drawSidebar(){
