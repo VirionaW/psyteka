@@ -60,7 +60,7 @@ function downloadWord(){
  function crc(a){let c=-1;for(const b of a){c^=b;for(let j=0;j<8;j++)c=(c>>>1)^((c&1)?0xedb88320:0)}return(c^(-1))>>>0}
  for(const [name,contents] of entries){
   const n=en.encode(name),body=en.encode(contents),check=crc(body),start=bytes.length;
-  p32(bytes,0x04034b50);p16(bytes,20);p16(bytes,0);p16(bytes,0);p16(bytes,0);p16(bytes,0);p16(bytes,0);
+  p32(bytes,0x04034b50);p16(bytes,20);p16(bytes,0);p16(bytes,0);p16(bytes,0);p16(bytes,0);
   p32(bytes,check);p32(bytes,body.length);p32(bytes,body.length);p16(bytes,n.length);p16(bytes,0);bytes.push(...n,...body);
   p32(central,0x02014b50);p16(central,20);p16(central,20);p16(central,0);p16(central,0);p16(central,0);p16(central,0);
   p32(central,check);p32(central,body.length);p32(central,body.length);p16(central,n.length);p16(central,0);p16(central,0);p16(central,0);p16(central,0);p32(central,0);p32(central,start);central.push(...n);
