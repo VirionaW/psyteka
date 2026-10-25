@@ -30,7 +30,7 @@ function render(){
  $("#listHeading").textContent=state.topic||"Школьные материалы";
  $("#catalog").innerHTML=filtered.map(m=>{
  const d=DETAILS[m.name],age=d?.age||m.age;
- const description=d?.workflow==='mspss'?d.goal:(m.summary||d?.goal||m.goal||'Описание методики');
+ const description=profileGoal(m,d,window.PSY_PORTFOLIO_EDITS?.[m.name]||{})||m.summary||m.goal||'';
  const kind=d?.workflow==='diagnostic03'?'scale':d?.special==='memory10'?'memory':d?.special==='odd4'?'cognitive':(d?.graphic==='drawing'||d?.graphic==='sociogram')?'drawing':(d?.graphic==='dictation'||d?.graphic==='schulte'||d?.graphic==='dembo'||d?.graphic==='ladder')?'graphic':(d?.calculator?'scale':'other');
  const author=(d?.author||m.author||'');
  const credited=author&&!/сведения об авторе уточняются/i.test(author)?'<p class="method-card-author">'+escapeHTML(author)+'</p>':'<p class="method-card-author">Автор не установлен</p>';
@@ -126,25 +126,38 @@ function portfolioIndicators(m,d){
  if(d?.graphic==="dictation")return {title:"Показатели",items:["Выполнение по инструкции","Самостоятельное продолжение","Ошибки"]};
  return {title:"Шкалы и показатели",items:[]};
 }
-function viewOverview(m){
- const d=DETAILS[m.name]||{};
- const name=m.name;
- const author=d.author||m.author||"";
- const verifiedAuthor=author&&!/сведения об авторе уточняются/i.test(author)?author:"Не указан в проверенном источнике";
- const age=d.age||m.age||"Не уточнен";
- const kind=d.kind||m.format||"Не уточнен";
- const count=d.count||m.count||"Не уточнено";
- const description=d.goal||m.summary||m.goal||"Описание уточняется по первоисточнику.";
- const source=d.source||m.source||"";
- const fields=[["Методика",name],["Автор",verifiedAuthor],["Возраст",age],["Вид",kind],["Количество вопросов / заданий",count]];
- const fieldHtml=fields.map(([label,value])=>'<div class="psy-profile-row"><strong>'+escapeHTML(label)+'</strong><span>'+escapeHTML(value)+'</span></div>').join("");
- const indicators=portfolioIndicators(m,d);
- const indicatorHtml=indicators.items.length?'<div class="psy-profile-indicators">'+indicators.items.map((t,i)=>'<div class="psy-profile-indicator"><span class="psy-indicator-number" aria-hidden="true">'+(i+1)+'</span><span>'+escapeHTML(t)+'</span></div>').join("")+'</div>':'<p class="psy-profile-muted">Перечень шкал для этой редакции пока не подтвержден.</p>';
- const sourceHtml=source?'<a href="'+escapeHTML(source)+'" target="_blank" rel="noopener noreferrer">Открыть первоисточник ↗</a>':'<span class="psy-profile-muted">Проверенная ссылка на первоисточник пока не добавлена.</span>';
- const attributionHtml=m.attributionNote?'<h3>Авторство и редакция</h3><p class="psy-profile-description">'+escapeHTML(m.attributionNote)+'</p>':'';
- if(d.workflow==='mspss')return '<section class="psy-portfolio-reference"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div><h3>Цель методики</h3><p class="psy-profile-description">'+escapeHTML(description)+'</p><h3>'+escapeHTML(indicators.title)+'</h3>'+indicatorHtml+attributionHtml+'<h3>Первоисточник</h3><p class="psy-profile-source">'+sourceHtml+'</p></section>';
- return '<section class="psy-portfolio-reference"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div><h3>'+escapeHTML(indicators.title)+'</h3>'+indicatorHtml+'<h3>Краткое описание</h3><p class="psy-profile-description">'+escapeHTML(description)+'</p>'+(d.warning?'<div class="notice psy-lus-warning">'+escapeHTML(d.warning)+'</div>':'')+'<h3>Первоисточник</h3><p class="psy-profile-source">'+sourceHtml+'</p></section>';
+function profileText(value){
+ return String(value??"").replace(/[Ёё]/g,"е").replace(/[—–]/g,"-").replace(/\s+/g," ").trim();
 }
+function profileGoal(m,d,o){
+ if(o.goal)return o.goal;
+ if(d?.goal)return d.goal;
+ const catalogGoal=m.goal||"";
+ if(catalogGoal&&!/^(Изучение направления:|Коррекционная или профилактическая работа|Оценка отдельных познавательных функций)/i.test(catalogGoal))return catalogGoal;
+ return m.summary||"";
+}
+function viewOverview(m){
+ const d=DETAILS[m.name]||{},o=window.PSY_PORTFOLIO_EDITS?.[m.name]||{};
+ const author=profileText(o.author||d.author||m.author||"");
+ const verifiedAuthor=author&&!/сведения об авторе уточняются/i.test(author)?author:"Автор не установлен";
+ const age=profileText(o.age||d.age||m.age||"");
+ const kind=profileText(o.kind||d.kind||m.format||"");
+ const count=profileText(o.count||d.count||m.count||"");
+ const name=profileText(m.name);
+ const fields=[["Методика",name],["Автор",verifiedAuthor],["Возраст",age],["Вид",kind]];
+ if(count&&count!=="Не уточнено")fields.push(["Количество вопросов / заданий",count]);
+ const fieldHtml=fields.filter(([,v])=>!!v).map(([label,value])=>'<div class="psy-profile-row"><strong>'+escapeHTML(label)+'</strong><span>'+escapeHTML(value)+'</span></div>').join("");
+ const description=profileText(profileGoal(m,d,o));
+ const indicators=portfolioIndicators(m,d);
+ const rawIndicators=Array.isArray(o.indicators)?o.indicators:indicators.items;
+ const items=[...new Set((rawIndicators||[]).map(profileText).filter(Boolean))];
+ const indicatorHtml=items.length?'<h3>'+escapeHTML(profileText(o.indicatorsTitle||indicators.title||"Шкалы и показатели"))+'</h3><div class="psy-profile-indicators">'+items.map((t,i)=>'<div class="psy-profile-indicator" data-profile-index="'+i+'"><span>'+escapeHTML(t)+'</span></div>').join("")+'</div>':"";
+ const goalHtml=description?'<h3>'+(m.theme==="Программы"?"Цель программы":d.goal||o.goal?"Цель методики":"Назначение материала")+'</h3><p class="psy-profile-description">'+escapeHTML(description)+'</p>':"";
+ const source=profileText(o.source||d.source||m.source||"");
+ const sourceHtml=/^https?:\/\/[^\s]+$/i.test(source)?'<h3>Первоисточник</h3><p class="psy-profile-source"><a href="'+escapeHTML(source)+'" target="_blank" rel="noopener noreferrer">Открыть первоисточник ↗</a></p>':"";
+ return '<section class="psy-portfolio-reference psy-portfolio-unified"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div>'+goalHtml+indicatorHtml+sourceHtml+'</section>';
+}
+
 function viewInstruction(m){
  if(DETAILS[m.name]?.workflow==='motivationInterview')return window.PSY_MOTIVATION_INTERVIEW.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='schoolAdaptObserve')return window.PSY_SCHOOL_ADAPT.instruction(DETAILS[m.name]);
