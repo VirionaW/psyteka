@@ -179,3 +179,9 @@
 .library-page #modal.psy-mspss-example .psy-mspss-delete-all{margin-top:12px;width:100%;min-height:42px;background:#fff0f0;border:1px solid #e9b2b7;color:#a42d37}
 .library-page #modal.psy-mspss-example #mspssNext:disabled{background:#e8eeea!important;border-color:#cbd9d0!important;color:#64776c!important;cursor:not-allowed}
 @media(max-width:690px){.library-page #modal.psy-mspss-example .modalbody{padding-left:12px!important;padding-right:12px!important}}
+
+.library-page #modal.psy-mspss-example .psy-profile-row{font-size:18px!important;line-height:1.65!important;grid-template-columns:minmax(165px,23%) minmax(0,1fr)!important}
+.library-page #modal.psy-mspss-example .psy-profile-row strong,.library-page #modal.psy-mspss-example .psy-profile-row span{font-size:18px!important}
+.library-page #modal.psy-mspss-example .psy-profile-indicator{font-size:17px!important}
+.library-page #modal.psy-mspss-example .psy-profile-indicator strong{font-size:17px!important}
+@media(max-width:700px){.library-page #modal.psy-mspss-example .psy-profile-row{grid-template-columns:1fr!important;font-size:15px!important;gap:5px}.library-page #modal.psy-mspss-example .psy-profile-row strong,.library-page #modal.psy-mspss-example .psy-profile-row span{font-size:15px!important}}
