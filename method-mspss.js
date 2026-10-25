@@ -92,7 +92,7 @@
     '<div class="psy-mspss-grid">'+TOPICS.map((q,i)=>'<label class="psy-mspss-item '+(a[i]!==""&&a[i]!=null&&Number(a[i])>=1&&Number(a[i])<=7?"is-complete":"is-missing")+'"><span><b>'+(i+1)+'.</b> '+esc(q)+'</span><input class="psy-mspss-score-input" type="text" inputmode="numeric" autocomplete="off" maxlength="1" data-mspss="'+i+'" aria-label="Ответ на пункт '+(i+1)+'" placeholder="1-7" value="'+esc(a[i]??"")+'"></label>').join("")+'</div>';
   if(ctx.calcMode==="class")h+='<div class="psy-mspss-after-questions"><button type="button" class="btn primary" id="mspssNext" '+(ctx.rowIndex>=rows.length-1?'disabled title="Последний участник"':'')+'>Следующий участник →</button></div>';
   h+='<div id="mspssResult">'+result(a)+'</div></div>';
-  if(ctx.calcMode==="class")h+='</div>'+group(rows);
+  if(ctx.calcMode==="class")h+='</div><div id="mspssGroup">'+group(rows)+'</div>';
   h+='</section>';
   return h;
  }
