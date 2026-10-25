@@ -23,7 +23,7 @@ const categoryIcons={
 };
 function iconSvg(theme){return '<svg viewBox="0 0 40 40" role="img" aria-label="'+escapeHTML(theme)+'" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+(categoryIcons[theme]||categoryIcons["ПМПК"])+'</svg>'}
 function render(){
- const filtered=C.filter(m=>{const hay=[m.name,m.author,m.theme,m.goal].join(" ").toLowerCase();return (!state.topic||m.theme===state.topic)&&(!state.category||m.theme===state.category)&&(!state.query||hay.includes(state.query.toLowerCase()))&&(!state.format||(state.format==="Проективная"?m.format.includes("Проективная"):state.format==="Проба"?m.format.includes("проба"):state.format==="Программа"?m.format==="Программа":m.format==="Опросник"))});
+ const filtered=C.filter(m=>{const hay=[m.name,m.author,m.theme,m.goal].join(" ").toLowerCase();return (!state.topic||m.theme===state.topic)&&(!state.category||m.theme===state.category)&&(!state.query||hay.includes(state.query.toLowerCase()))&&(!state.format||(state.format==="Проективная"?/проективн|рисуночн/i.test(m.format):state.format==="Проба"?/проба|графическ|табличн/i.test(m.format):state.format==="Программа"?m.format==="Программа":m.format==="Опросник"))});
  $("#resultCount").textContent="Найдено: "+filtered.length;
  $("#listHeading").textContent=state.topic||"Школьные материалы";
  $("#catalog").innerHTML=filtered.map(m=>{
@@ -31,8 +31,10 @@ function render(){
  const description=m.summary||d?.goal||m.goal||'Описание методики';
  const kind=d?.workflow==='diagnostic03'?'scale':d?.special==='memory10'?'memory':d?.special==='odd4'?'cognitive':(d?.graphic==='drawing'||d?.graphic==='sociogram')?'drawing':(d?.graphic==='dictation'||d?.graphic==='schulte'||d?.graphic==='dembo'||d?.graphic==='ladder')?'graphic':(d?.calculator?'scale':'other');
  const author=(d?.author||m.author||'');
- const credited=author&&!/сведения об авторе уточняются/i.test(author)?'<p class="method-card-author">Автор / основа: '+escapeHTML(author)+'</p>':'';
- return '<article class="method" data-kind="'+kind+'"><div class="head"><div class="glyph">'+iconSvg(m.theme)+'</div><div><h3>'+escapeHTML(m.name)+'</h3><small class="method-card-summary">'+escapeHTML(description)+'</small></div></div><div class="tags"><span class="tag">'+escapeHTML(m.format)+'</span><span class="tag">'+escapeHTML(age)+'</span></div>'+credited+'<div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">'+(d?'Открыть методику':'Подробнее')+'</button>'+(d?.calculator?'<button class="btn" data-score="'+escapeHTML(m.id)+'">Обработка</button>':'')+'</div></article>';
+ const credited=author&&!/сведения об авторе уточняются/i.test(author)?'<p class="method-card-author">'+escapeHTML(author)+'</p>':'<p class="method-card-author">Автор не установлен</p>';
+ const count=d?.count||m.count;
+ const countTag=count?'<span class="tag">'+escapeHTML(count)+'</span>':'';
+ return '<article class="method" data-kind="'+kind+'"><div class="head"><div class="glyph">'+iconSvg(m.theme)+'</div><div><h3>'+escapeHTML(m.name)+'</h3>'+credited+'</div></div><div class="tags"><span class="tag">'+escapeHTML(m.format)+'</span><span class="tag">'+escapeHTML(age)+'</span>'+countTag+'</div><p class="method-card-summary">'+escapeHTML(description)+'</p><div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">Открыть методику</button>'+(d?.calculator?'<button class="btn" data-score="'+escapeHTML(m.id)+'">Обработка</button>':'')+'</div></article>';
  }).join("") || '<p>Не найдено материалов по выбранным параметрам.</p>';
  document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openMethod(C.find(m=>m.id===b.dataset.open)));
  document.querySelectorAll('[data-score]').forEach(b=>b.onclick=()=>{openMethod(C.find(m=>m.id===b.dataset.score));setTab("score")});
@@ -60,7 +62,7 @@ function viewOverview(m){
 }
 function viewInstruction(m){
  const d=DETAILS[m.name];
- if(!d)return viewOverview(m);
+ if(!d)return '<div class="notice">Полный текст руководства для данной версии пока не подтвержден. Используйте проверенный первоисточник, а не описание карточки вместо инструкции.</div>';
  return '<h3>Инструкция для участника</h3><blockquote class="kid-instruction">'+escapeHTML(d.instructions)+'</blockquote><h3>Порядок проведения для психолога</h3><ol><li>Проверьте соответствие возраста и цели.</li><li>Объясните добровольность и порядок работы.</li><li>Предъявите стимульный материал без подсказок.</li><li>Зафиксируйте ответы, длительность и существенные наблюдения.</li><li>Проводите интерпретацию в пределах применимых методических норм.</li></ol>'+(d.graphic==='dictation'?dictationCommands(d):'')+(d.special?window.PSY_BATCH02.extraInstructions(d):'')+(d.workflow==='diagnostic'?window.PSY_DIAGNOSTICS.instructions(d):'')+(d.workflow==='diagnostic03'?window.PSY_DIAG03.instructions(d):'');
 }
 function ladderSvg(){let s='<svg width="500" height="250" viewBox="0 0 500 250" aria-label="Лестница из семи ступеней"><path d="M16 224 H485" stroke="#42765c" stroke-width="3"/>';for(let i=0;i<7;i++){let h=23*(i+1);s+='<rect x="'+(50+i*59)+'" y="'+(224-h)+'" width="56" height="'+h+'" fill="'+(i%2?'#b4dbb9':'#d8ecd7')+'" stroke="#41795c" stroke-width="2"/><text x="'+(77+i*59)+'" y="'+(216-h)+'" text-anchor="middle" font-size="15" fill="#28553f">'+(i+1)+'</text>'}return s+'</svg>'}
@@ -126,11 +128,11 @@ function materials(m,blank){
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
 function viewMaterials(m){
- const d=DETAILS[m.name];if(!d)return viewOverview(m);
+ const d=DETAILS[m.name];if(!d)return '<div class="notice">Проверенный авторский бланк этой методики пока не добавлен. Применять карточку как готовую форму нельзя.</div>';
  return '<h3>Стимульный материал и бланк</h3>'+materials(m,false)+(d.questions?.length && d.graphic ? '<h3>Протокол беседы</h3><table class="questions-table"><thead><tr><th>№</th><th>Вопрос психолога</th><th>Ответ / наблюдение</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td>________________</td></tr>').join('')+'</tbody></table>':"");
 }
 function viewProcessing(m){
- const d=DETAILS[m.name];if(!d)return viewOverview(m);
+ const d=DETAILS[m.name];if(!d)return '<div class="notice">Подтвержденный ключ и обработка выбранной версии пока не добавлены. Диагностические результаты здесь не рассчитываются.</div>';
  if(d.workflow==='diagnostic')return window.PSY_DIAGNOSTICS.processing(d);
  if(d.workflow==='diagnostic03')return window.PSY_DIAG03.processing(d);
  return '<h3>Подсчет / фиксация</h3><p>'+escapeHTML(d.scoring)+'</p><h3>Интерпретация</h3><p>'+escapeHTML(d.interpret)+'</p>'+(d.source?'<p>Источник: <a target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d.source)+'">'+escapeHTML(d.source)+'</a></p>':'');
@@ -260,7 +262,7 @@ function openMethod(m){
  $('#modalBody').innerHTML='';
  const header=$('#modal').querySelector('.modalhead');
  let old=$('#methodTabs');if(old)old.remove();
- const tabs=d?[['overview','Описание'],['instruction','Инструкция'],['materials','Методика и бланк'],['processing','Обработка'],...(d.calculator?[['score','Подсчет']]:[])]:[['overview','Описание']];
+ const tabs=[['overview','Портфолио'],['instruction','Методика / руководство'],['materials','Бланк'],['processing','Обработка результатов'],...(d?.calculator?[['score','Ввод и подсчет']]:[])];
  header.insertAdjacentHTML('afterend','<nav class="method-tabs" id="methodTabs">'+tabs.map(([key,title])=>'<button class="modal-tab" data-tab="'+key+'">'+title+'</button>').join('')+'</nav>');
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
