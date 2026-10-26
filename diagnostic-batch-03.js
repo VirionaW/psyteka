@@ -9,7 +9,7 @@ Object.assign(r,{
  diagnosticType:"rses",
  guideFile:"downloads/rses_guide.html",
  guideWithBlankFile:"downloads/rses_guide_with_blank.html",
- answerFile:"downloads/rses_student_blank.html",
+ answerFile:"downloads/rses_student_blank.html",answerWordFile:"downloads/rses_student_blank.docx",
  age:"Подростки (ориентировочно от 12 лет) и взрослые; проверяйте пригодность русской версии",
  source:"https://socy.umd.edu/about-us/using-rosenberg-self-esteem-scale",
  officialBlank:"https://socy.umd.edu/about-us/using-rosenberg-self-esteem-scale",
