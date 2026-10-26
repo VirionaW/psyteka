@@ -1,0 +1,154 @@
+/* Seven approved banners for Psyteka (Oct 2026).
+   Independent full-resolution WebP files, not a sprite.
+   This stylesheet is loaded LAST to override the retired sprite. */
+.library-page[data-area="school"]{
+ --area:#387d5e;--area-soft:#eff7f0;--area-sidebar:#e7f1e9;--area-border:#c7ddcd;
+ --area-hero1:#1e503c;--area-hero2:#387d5e;--psy-card-tint:#f8fcf8;
+ --psy-banner:url("assets/psyteka-banner-school-approved.webp?v=20261026approved7b");
+}
+.library-page[data-area="preschool"]{
+ --area:#8466a7;--area-soft:#f7f0fb;--area-sidebar:#f0e6f7;--area-border:#dfcce8;
+ --area-hero1:#594173;--area-hero2:#8466a7;--psy-card-tint:#fcf9fe;
+ --psy-banner:url("assets/psyteka-banner-preschool-approved.webp?v=20261026approved7b");
+}
+.library-page[data-area="adults"]{
+ --area:#397da9;--area-soft:#edf6fc;--area-sidebar:#e4f0fa;--area-border:#c6ddeb;
+ --area-hero1:#245574;--area-hero2:#397da9;--psy-card-tint:#f8fbfe;
+ --psy-banner:url("assets/psyteka-banner-adults-approved.webp?v=20261026approved7b");
+}
+.library-page[data-area="special"]{
+ --area:#ab7040;--area-soft:#fff4e8;--area-sidebar:#fbead6;--area-border:#edcfb4;
+ --area-hero1:#84502f;--area-hero2:#ab7040;--psy-card-tint:#fffaf5;
+ --psy-banner:url("assets/psyteka-banner-special-approved.webp?v=20261026approved7b");
+}
+.library-page[data-area="prevention"]{
+ --area:#a67c28;--area-soft:#fff9e8;--area-sidebar:#fff0d0;--area-border:#ecdcb0;
+ --area-hero1:#81601f;--area-hero2:#a67c28;--psy-card-tint:#fffdf7;
+ --psy-banner:url("assets/psyteka-banner-prevention-approved.webp?v=20261026approved7b");
+}
+.library-page[data-area="information"]{
+ --area:#6c778a;--area-soft:#f3f4f7;--area-sidebar:#e9ebf0;--area-border:#d6dce4;
+ --area-hero1:#4b5667;--area-hero2:#6c778a;--psy-card-tint:#fbfbfd;
+ --psy-banner:url("assets/psyteka-banner-information-approved.webp?v=20261026approved7b");
+}
+.library-page[data-area="documents"]{
+ --area:#a76666;--area-soft:#fcf2f0;--area-sidebar:#f7e5e3;--area-border:#e9c9c6;
+ --area-hero1:#7c4548;--area-hero2:#a76666;--psy-card-tint:#fffbfa;
+ --psy-banner:url("assets/psyteka-banner-documents-approved.webp?v=20261026approved7b");
+}
+.library-page[data-area="spt"]{
+ --area:#6c778a;--area-soft:#f3f4f7;--area-sidebar:#e9ebf0;--area-border:#d6dce4;
+ --area-hero1:#4b5667;--area-hero2:#6c778a;--psy-card-tint:#fbfbfd;
+ --psy-banner:url("assets/psyteka-banner-information-approved.webp?v=20261026approved7b");
+}
+
+/* Match the entire active page to the section palette. */
+.library-page{background:var(--area-soft)!important;transition:background-color .28s ease!important}
+.library-page .main{background:var(--area-soft)!important;transition:background-color .28s ease!important}
+.library-page .sidebar{background:var(--area-sidebar)!important;border-color:var(--area-border)!important;transition:background-color .28s ease!important}
+.library-page .method,.library-page .resource-card,.library-page .filters{
+ border-color:var(--area-border)!important;
+ box-shadow:0 9px 28px -24px color-mix(in srgb,var(--area-hero1) 26%,transparent)!important;
+}
+.library-page .method,.library-page .resource-card{
+ background:var(--psy-card-tint,#fff)!important;
+}
+.library-page .topbar,.library-page .brand{border-color:var(--area-border)!important}
+.library-page .topic-btn.area-current,.library-page .navgroup.area-current{
+ color:var(--area)!important;
+}
+.library-page .hero{
+ position:relative!important;isolation:isolate!important;overflow:hidden!important;
+ display:flex!important;align-items:center!important;
+ background:var(--area-hero1)!important;
+ border:0!important;border-radius:28px!important;
+ min-height:clamp(270px,25vw,330px)!important;
+ box-shadow:0 12px 35px -30px var(--area-hero1)!important;
+}
+.library-page .hero .hero-art,
+.library-page[data-area="special"] .hero .hero-art,
+.library-page[data-area="adults"] .hero .hero-art,
+.library-page[data-area="spt"] .hero .hero-art{
+ display:block!important;position:absolute!important;right:0!important;top:0!important;left:auto!important;bottom:auto!important;
+ width:66%!important;height:100%!important;min-width:0!important;
+ margin:0!important;padding:0!important;flex:none!important;
+ opacity:1!important;filter:none!important;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;outline:0!important;
+ background-color:transparent!important;
+ background-image:var(--psy-banner)!important;
+ background-repeat:no-repeat!important;
+ background-size:cover!important;
+ background-position:right center!important;
+ mix-blend-mode:normal!important;
+ mask-image:none!important;-webkit-mask-image:none!important;
+ animation:none!important;transform:none!important;
+ pointer-events:none!important;z-index:1!important;
+}
+/* A gradual transition across the illustration: no seam or pasted-on edge. */
+.library-page .hero::before{
+ content:"";position:absolute;inset:0;pointer-events:none;
+ z-index:2;
+ background:linear-gradient(90deg,
+  var(--area-hero1) 0%,
+  var(--area-hero1) 26%,
+  color-mix(in srgb,var(--area-hero1) 96%,transparent) 42%,
+  color-mix(in srgb,var(--area-hero1) 73%,transparent) 60%,
+  color-mix(in srgb,var(--area-hero1) 15%,transparent) 82%,
+  transparent 100%);
+}
+.library-page .hero>div:first-child{
+ position:relative!important;z-index:3!important;
+ flex:0 1 61%!important;max-width:61%!important;min-width:0!important;
+}
+.library-page .hero h1,.library-page .hero p,.library-page .hero .eyebrow{
+ position:relative;z-index:3;
+ color:#fff!important;
+ text-shadow:0 1px 3px rgba(0,0,0,.12)!important;
+}
+.library-page .hero p{color:rgba(255,255,255,.89)!important}
+.library-page .hero .eyebrow{color:rgba(255,255,255,.85)!important}
+.library-page[data-area="adults"] .hero .hero-art{background-position:100% 50%!important}
+.library-page[data-area="information"] #resourceCards .resource-card{
+ display:flex;flex-direction:column;gap:4px;
+}
+.library-page .psy-information-link{
+ display:inline-flex;align-items:center;gap:8px;margin-top:auto;
+ padding-top:13px;color:var(--area)!important;font-weight:750;text-decoration:none;line-height:1.5;
+}
+.library-page .psy-information-link:hover{text-decoration:underline}
+.library-page .psy-information-link:focus-visible{outline:2px solid var(--area);outline-offset:4px;border-radius:5px}
+/* On narrow screens the image becomes a quiet backdrop, never behind illegible text. */
+@media(max-width:940px){
+ .library-page .hero{min-height:265px!important}
+ .library-page .hero>div:first-child{flex:0 1 74%!important;max-width:74%!important}
+ .library-page .hero .hero-art{width:76%!important}
+ .library-page .hero::before{
+  background:linear-gradient(90deg,var(--area-hero1) 0%,var(--area-hero1) 35%,color-mix(in srgb,var(--area-hero1) 90%,transparent) 66%,transparent 100%);
+ }
+}
+@media(max-width:600px){
+ .library-page .hero{min-height:236px!important;padding:25px 23px!important}
+ .library-page .hero>div:first-child{max-width:100%!important;flex:1 1 100%!important}
+ .library-page .hero .hero-art{width:100%!important;opacity:.28!important;background-position:right center!important}
+ .library-page .hero::before{background:linear-gradient(90deg,var(--area-hero1) 0%,color-mix(in srgb,var(--area-hero1) 96%,transparent) 55%,color-mix(in srgb,var(--area-hero1) 72%,transparent) 100%)}
+ .library-page .hero h1{font-size:clamp(29px,7vw,37px)!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .library-page,.library-page .main,.library-page .sidebar{transition:none!important}
+}
+/* Keep per-section night palettes rather than one generic teal night mode. */
+html.dark .library-page[data-area="school"]{--area-soft:#1b2c26;--area-sidebar:#23372d;--area-border:#486451;--psy-card-tint:#24392d;--area:#a7dbb4}
+html.dark .library-page[data-area="preschool"]{--area-soft:#2d2736;--area-sidebar:#362e43;--area-border:#645273;--psy-card-tint:#362d43;--area:#d5b7ea}
+html.dark .library-page[data-area="adults"]{--area-soft:#1d2f3c;--area-sidebar:#253d4b;--area-border:#4f6b7c;--psy-card-tint:#273d4a;--area:#b4dafa}
+html.dark .library-page[data-area="special"]{--area-soft:#322a23;--area-sidebar:#3e3026;--area-border:#705644;--psy-card-tint:#413228;--area:#efbf91}
+html.dark .library-page[data-area="prevention"]{--area-soft:#302d21;--area-sidebar:#3a3525;--area-border:#655c41;--psy-card-tint:#393425;--area:#e9d28a}
+html.dark .library-page[data-area="information"],
+html.dark .library-page[data-area="spt"]{--area-soft:#292d36;--area-sidebar:#303644;--area-border:#515a6a;--psy-card-tint:#333947;--area:#bec8dc}
+html.dark .library-page[data-area="documents"]{--area-soft:#302729;--area-sidebar:#3b2d2f;--area-border:#705354;--psy-card-tint:#402f32;--area:#edb4b2}
+html.dark .library-page .hero .hero-art{filter:brightness(.83) saturate(.85)!important}
+html.dark .library-page .method,html.dark .library-page .resource-card{
+ color:#f0f3f5!important;border-color:var(--area-border)!important;
+}
+html.dark .library-page .sidebar,html.dark .library-page .main{background:var(--area-soft)!important}
+html.dark .library-page .sidebar{background:var(--area-sidebar)!important}
