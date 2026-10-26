@@ -39,7 +39,7 @@ const key='<table class="questions-table"><thead><tr><th>№</th><th>Прави�
  TASKS.map(t=>'<tr><td>'+t.id+'</td><td><b>'+CH[t.key]+') '+E(t.options[t.key])+'</b></td><td>'+E(t.relation)+'</td></tr>').join("")+'</tbody></table>';
 const tasks=TASKS.map(t=>'<div class="question"><p><strong>'+t.id+'. '+E(t.question)+'</strong></p><p>'+t.options.map((o,i)=>CH[i]+') '+E(o)).join(' · ')+'</p></div>').join("");
 return '<section class="psy-mspss-section psy-mspss-manual">'+
- '<div class="psy-mspss-manual-bar"><div><h3>Методика и руководство</h3><p>Полный набор заданий, ключ, обработка и интерпретация.</p></div><div class="psy-mspss-manual-actions"><a class="btn primary" href="'+E(d.guideFile)+'" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать ↗</a></div></div>'+
+ '<div class="psy-mspss-manual-bar"><div><h3>Методика и руководство</h3><p>Полный набор заданий, ключ, обработка и интерпретация.</p></div><div class="psy-mspss-manual-actions"><a class="btn primary" href="'+E(d.guideFile)+'?v=20261026complete2" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать ↗</a></div></div>'+
  '<h3>Цель</h3><p>'+E(d.goal)+'</p>'+
  '<h3>Описание методики</h3><p>Классическая проба на установление словесных отношений и перенос аналогии: 12 заданий, в каждом четыре варианта. Задания Психотеки составлены самостоятельно и не имеют возрастных нормативов.</p>'+
  '<h3>Инструкция ребёнку</h3><div class="psy-mspss-script">«'+E(d.instructions)+'»</div>'+
