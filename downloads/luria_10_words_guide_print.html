@@ -21,7 +21,7 @@ body{padding:22px}.guide{max-width:760px;margin:0 auto}.guide h1{font-size:25px;
 body.with-protocol .guide{max-width:990px}
 body.with-protocol .record-sheet{display:block;break-before:page;page-break-before:always}
 @media print{body{padding:0}.tools{display:none}.guide{max-width:none}.guide h1{font-size:20px}.guide h2{font-size:14px}.guide p,.guide li{font-size:11px;margin:5px 0}.guide h2{break-after:avoid}.record-sheet{width:100%}}
-</style></head><body><div class="tools"><a href="?with_protocol=0">Без бланка</a><a href="?with_protocol=1">С бланком</a><button type="button" onclick="window.print()">Распечатать / сохранить PDF</button></div>
+</style></head><body><div class="tools"><a href="?with_protocol=0">Без бланка</a><a href="?with_protocol=1">С бланком</a><a id="guideWordLink" href="luria_10_words_guide_only.docx" download>Скачать Word</a><button type="button" onclick="window.print()">Распечатать / сохранить PDF</button></div>
 <article class="guide"><h1>Заучивание 10 слов</h1><p class="intro">А. Р. Лурия · протокол с пятью предъявлениями и отсроченной пробой</p>
 <h2>Цель</h2><p>Описать непосредственное воспроизведение слов, динамику заучивания и воспроизведение после паузы. Применение – дети от 7 лет и взрослые; количественные возрастные нормы к данному списку не приписываются.</p>
 <h2>Материалы и условия</h2><p>Тихое помещение, отдельный стимульный список только для специалиста, лист регистрации. Участник не видит написанные слова или ключи.</p>
@@ -41,5 +41,5 @@ body.with-protocol .record-sheet{display:block;break-before:page;page-break-befo
 <p class="record-foot">Фактический интервал отсрочки: __________ минут. Время начала / завершения: ______________________</p>
 <div class="note-line">Проба 1 – повторы, посторонние слова, наблюдения: ________________________________________________</div><div class="note-line">Проба 2 – повторы, посторонние слова, наблюдения: ________________________________________________</div><div class="note-line">Проба 3 – повторы, посторонние слова, наблюдения: ________________________________________________</div><div class="note-line">Проба 4 – повторы, посторонние слова, наблюдения: ________________________________________________</div><div class="note-line">Проба 5 – повторы, посторонние слова, наблюдения: ________________________________________________</div><div class="note-line">Отсрочка – повторы, посторонние слова, наблюдения: ________________________________________________</div>
 </section>
-<script>if(new URLSearchParams(location.search).get("with_protocol")==="1"){document.body.classList.add("with-protocol");document.getElementById("pageStyle").textContent="@page{size:A4 landscape;margin:14mm}"}</script>
+<script>if(new URLSearchParams(location.search).get("with_protocol")==="1"){document.body.classList.add("with-protocol");document.getElementById("pageStyle").textContent="@page{size:A4 landscape;margin:14mm}";document.getElementById("guideWordLink").href="luria_10_words_guide_with_protocol.docx"}</script>
 </body></html>
