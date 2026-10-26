@@ -41,7 +41,7 @@ Object.assign(d,{
 });
 D[NAME]=d;
 function instruction(d){
- return '<div class="psy-luria-section-head"><h3>Методика и руководство</h3><div class="psy-luria-print-links"><a class="btn" href="'+escape(d.guideFile)+'?with_protocol=0&amp;v=20261026clean" target="_blank" rel="noopener noreferrer">Без бланка</a><a class="btn primary" href="'+escape(d.guideFile)+'?with_protocol=1&amp;v=20261026clean" target="_blank" rel="noopener noreferrer">С бланком</a></div></div>'+
+ return '<div class="psy-luria-section-head"><h3>Методика и руководство</h3><div class="psy-luria-print-links"><a class="btn" href="'+escape(d.guideFile)+'?v=20261026clean" target="_blank" rel="noopener noreferrer">Без бланка</a><a class="btn primary" href="downloads/luria_10_words_guide_with_protocol.html?v=20261026clean" target="_blank" rel="noopener noreferrer">С бланком</a></div></div>'+
  '<h3>Назначение и условия</h3><p>'+escape(d.goal)+'</p><p>Провести в спокойном помещении. Подготовить стимулы специалиста и лист регистрации. Слова предъявляют только на слух, не показывая их участнику.</p>'+
  '<h3>Инструкция участнику</h3><p>«Сейчас я зачитаю 10 слов. Внимательно слушайте и запоминайте. Когда закончу, назовите столько слов, сколько вспомните, в любом порядке».</p>'+
  '<h3>Проведение</h3><ol><li>Четко прочитать список из 10 слов в установленном порядке с интервалами 1-2 секунды.</li><li>Записать, какие слова воспроизведены. Повторные и посторонние слова отмечать отдельно.</li><li>Повторить тот же список еще четыре раза, регистрируя ответы после каждого предъявления.</li><li>Примерно через 60 минут попросить вспомнить слова без нового чтения. Зафиксировать фактический интервал.</li></ol>'+
