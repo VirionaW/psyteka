@@ -134,7 +134,7 @@
    '<h3>Цель</h3><p class="psy-profile-description">'+esc(m.goal)+'</p>'+
    '<h3>Исследуемые характеристики</h3><div class="psy-profile-indicators">'+m.indicators.map(x=>'<div class="psy-profile-indicator"><span>'+esc(x)+'</span></div>').join("")+'</div>'+
    '<h3>Опубликованные версии</h3><div class="psy-special-versions">'+m.variants.map(v=>'<p>'+esc(v.label)+'</p>').join("")+'</div>'+
-   '<h3>Первоисточник</h3><p>'+a(m.source,"Официальное описание")+'</p><p>'+a(m.extra,"Методическое основание")+'</p>'+
+   '<h3>Первоисточник</h3><p>'+a(m.source,"Официальное описание")+'</p>'+(m.extra&&m.extra!==m.source?'<p>'+a(m.extra,"Методическое основание")+'</p>':'')+
    '<h3>Интерпретация и ограничения</h3><p>'+esc(m.interpretation)+'</p><p>'+esc(m.limitations)+'</p></section>';
  }
  function content(m){
