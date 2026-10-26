@@ -1,0 +1,75 @@
+/* Раздел ОВЗ повторяет проверенные размеры карточек и портфолио школьной библиотеки. */
+#specialTree .special-tree-nested{margin-left:15px}
+#specialTree .special-tree-nested[hidden],#specialTree[hidden]{display:none!important}
+#specialTree .section-toggle{font-size:13px}
+#specialTree .topic-btn{width:100%;text-align:left}
+#specialView{padding-bottom:60px}
+#specialView .special-filters{display:flex;align-items:center;gap:12px}
+#specialView .special-filters .search-wrap{flex:1 1 320px;min-width:250px}
+#specialView .special-filters .search-wrap input{height:50px}
+#specialView .special-age-field{flex:0 1 240px;min-width:210px;display:flex;align-items:center}
+#specialView .special-age-field select{height:50px;width:100%;min-width:0}
+#specialView .special-subbar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+#specialView .special-subbar h2{margin:0;font-size:clamp(22px,2vw,28px)}
+#specialView .special-subbar span{color:var(--muted);font-size:13px}
+#specialView .special-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+#specialView .special-method{min-width:0}
+#specialView .special-method .head{display:flex;align-items:flex-start}
+#specialView .special-method .head>div:last-child{min-width:0}
+#specialView .special-method .glyph{flex:none}
+#specialView .special-method .tags{margin-top:13px}
+#specialView .special-method p.method-card-summary{margin:7px 0 16px}
+#specialView .special-method .actions{margin-top:auto}
+#specialView .special-method .actions .btn{max-width:100%}
+#specialView .special-empty{padding:25px;border:1px dashed var(--area-border);border-radius:14px;grid-column:1/-1}
+#modal.psy-main-tabs.psy-special-current .modalfoot #bottomProcessing:not([hidden]){position:static!important;right:auto!important;left:auto!important;bottom:auto!important;top:auto!important;margin-left:auto!important;transform:none!important;flex:0 0 auto!important;max-width:100%!important}
+#modal.psy-special-current .psy-special-shared-footer{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0;width:100%}
+#modal.psy-special-current .psy-special-shared-footer #bottomProcessing{margin-left:auto;white-space:normal}
+#modal.psy-special-current .psy-special-footer-state{font:700 12px/1.4 system-ui;border-radius:100px;padding:8px 12px;white-space:nowrap}
+#modal.psy-special-current .psy-special-footer-state.pending{background:#fff0d7;color:#985d0c}
+#modal.psy-special-current .psy-special-footer-state.complete{background:#e0f3e6;color:#246a43}
+#modal.psy-special-current .psy-special-guide h3{color:var(--green)}
+#modal.psy-special-current .psy-special-calc{max-width:100%;margin:0 auto}
+#modal.psy-special-current .special-result-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap;margin:0 0 18px}
+#modal.psy-special-current .special-result-head h3{margin:0}
+#modal.psy-special-current .special-result-head p{margin:5px 0 0;color:var(--muted)}
+#modal.psy-special-current .special-status{border-radius:100px;padding:8px 13px;font:700 12px/1.4 system-ui}
+#modal.psy-special-current .special-status.pending{background:#fff0d7;color:#985d0c}
+#modal.psy-special-current .special-status.complete{background:#e0f3e6;color:#246a43}
+#modal.psy-special-current .special-answer-list{display:grid;gap:9px}
+#modal.psy-special-current .special-answer{display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,215px);align-items:center;gap:13px;padding:12px 15px;border:1px solid var(--line);border-radius:12px;font-size:14px}
+#modal.psy-special-current .special-answer select{width:100%;min-height:42px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--paper);color:var(--ink);font:inherit}
+#modal.psy-special-current .special-note-label{display:block;margin-top:16px;font-weight:700;font-size:13px}
+#modal.psy-special-current .special-note-label textarea{display:block;margin-top:8px;padding:12px 14px;width:100%;min-height:95px;resize:vertical;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font:400 14px/1.5 system-ui}
+#modal.psy-special-current .special-summary{margin-top:18px;padding:17px 19px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
+#modal.psy-special-current .special-summary p{overflow-wrap:anywhere;font-size:14px}
+#modal.psy-special-current .special-result-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin:18px 0}
+#modal.psy-special-current .special-result-actions button:disabled{opacity:.55;cursor:not-allowed}
+#modal.psy-special-current .special-table{border-collapse:collapse;width:100%;table-layout:fixed;margin:18px 0;font-size:13px}
+#modal.psy-special-current .special-table td,#modal.psy-special-current .special-table th{border:1px solid var(--line);padding:10px;overflow-wrap:anywhere;vertical-align:top}
+#modal.psy-special-current .special-table th:first-child{width:62%}
+#modal.psy-special-current .special-table td:not(:first-child),#modal.psy-special-current .special-table th:not(:first-child){text-align:center}
+#modal.psy-special-current .special-paper-lines{overflow-wrap:anywhere}
+#modal.psy-special-current .psy-special-shared-footer [hidden]{display:none!important}
+html.dark #modal.psy-special-current .psy-special-footer-state.pending,html.dark #modal.psy-special-current .special-status.pending{background:#51432e;color:#ffd18b}
+html.dark #modal.psy-special-current .psy-special-footer-state.complete,html.dark #modal.psy-special-current .special-status.complete{background:#234d35;color:#a5ebbb}
+@media(max-width:1050px){
+ #specialView .special-cards{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+ #specialView .special-filters{gap:10px}
+ #specialView .special-filters .search-wrap{flex:1 1 100%;min-width:0}
+ #specialView .special-age-field{flex:1 1 100%;min-width:0}
+ #modal.psy-special-current .psy-special-shared-footer{gap:9px;flex-wrap:wrap}
+ #modal.psy-special-current .psy-special-footer-state{font-size:11px}
+ #modal.psy-special-current .special-answer{grid-template-columns:1fr}
+ #modal.psy-special-current .special-table td,#modal.psy-special-current .special-table th{padding:7px 6px;font-size:12px}
+ #modal.psy-special-current .special-table th:first-child{width:55%}
+}
+
+/* Не используем статус как оценку состояния человека: только полнота протокола. */
+#specialView .special-method .method-card-summary{overflow-wrap:anywhere}
+#specialView .special-method .tags{flex-wrap:wrap}
+#modal.psy-special-current .special-table th:not(:first-child){width:11%}
+#modal.psy-special-current .special-table th:first-child{width:67%}
+#specialView .special-method .head h3{overflow-wrap:anywhere}
