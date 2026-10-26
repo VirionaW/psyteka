@@ -91,7 +91,7 @@
   limits:"Это описательный рабочий протокол без опубликованных возрастных нормативов и клинических порогов. Отметки нельзя переводить в диагноз или уровень развития.",
   outcome:"Качественная запись с датой, ситуацией, наблюдаемыми действиями и следующим шагом сопровождения."
  });
- for(const m of detailById.values())m.detailed=portfolioDetails[m.title]||derivedDetails(m);
+ for(const m of detailById.values())m.detailed=portfolioDetails[m.title]||(m.group==="Диагностика"&&Array.isArray(m.items)?derivedDetails(m):null);
  for(const m of detailById.values()){
   if(m.verified){window.PSY_FULL_METHODS[m.title]={workflow:"preschoolSheet",preschoolId:m.id,verified:true,verifiedKey:m.verifiedKey,portfolioFilled:true,author:m.author,age:m.age+" лет",kind:m.format,goal:m.goal,count:m.verifiedKey==="mittens"?"5 критериев":"3 выбора",source:m.source,calculator:true};continue;}
   window.PSY_FULL_METHODS[m.title]={
