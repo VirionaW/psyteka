@@ -56,6 +56,31 @@
 #modal.psy-preschool-current .psy-preschool-shared-footer [hidden]{display:none!important}
 html.dark #modal.psy-preschool-current .psy-preschool-footer-state.pending,html.dark #modal.psy-preschool-current .preschool-status.pending{background:#51432e;color:#ffd18b}
 html.dark #modal.psy-preschool-current .psy-preschool-footer-state.complete,html.dark #modal.psy-preschool-current .preschool-status.complete{background:#234d35;color:#a5ebbb}
+
+/* Подлинные дошкольные диагностические методики – наследуют оформление школьных вкладок */
+#modal.psy-preschool-current .pv-preview-mittens{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:660px;margin:14px auto 20px}
+#modal.psy-preschool-current .pv-preview-mittens>div{display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--paper);padding:12px;border-radius:13px}
+#modal.psy-preschool-current .pv-preview-mittens svg{display:block;height:min(230px,39vw);width:100%;max-width:260px}
+#modal.psy-preschool-current .pv-secret-setup{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin:16px 0}
+#modal.psy-preschool-current .pv-secret-setup label{display:grid;gap:6px;font-size:13px;font-weight:700}
+#modal.psy-preschool-current .pv-secret-setup input{width:180px;height:43px;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--paper);color:var(--ink);font:inherit}
+#modal.psy-preschool-current .pv-secret-rows{display:grid;gap:9px;margin-bottom:17px}
+#modal.psy-preschool-current .pv-secret-row{display:grid;grid-template-columns:48px minmax(145px,1.3fr) repeat(3,minmax(90px,1fr));gap:8px;align-items:center;padding:10px;background:var(--paper);border:1px solid var(--line);border-radius:11px;min-width:0}
+#modal.psy-preschool-current .pv-secret-row strong{text-align:center;font-size:13px;white-space:nowrap}
+#modal.psy-preschool-current .pv-secret-row select{width:100%;min-width:0;max-width:100%;font:inherit;font-size:12px;color:var(--ink);background:var(--paper);padding:10px 7px;border:1px solid var(--line);border-radius:9px}
+#modal.psy-preschool-current .pv-secret-row select:disabled{opacity:.42}
+#modal.psy-preschool-current .pv-calc .preschool-summary{overflow-x:auto}
+#modal.psy-preschool-current .pv-calc .preschool-table th:first-child{width:auto}
+#modal.psy-preschool-current .pv-calc .preschool-table{width:100%;min-width:530px;font-variant-numeric:tabular-nums}
+#modal.psy-preschool-current .pv-calc .preschool-table td{padding:7px}
+#modal.psy-preschool-current .pv-calc [data-psy-verified-print]:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:780px){
+ #modal.psy-preschool-current .pv-secret-row{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ #modal.psy-preschool-current .pv-secret-row strong{grid-column:1}
+ #modal.psy-preschool-current .pv-secret-row [data-pv-secret-status]{grid-column:2 / 4}
+ #modal.psy-preschool-current .pv-secret-row select{font-size:12px;padding:10px 5px}
+}
+
 @media(max-width:1050px){
  #preschoolView .preschool-cards{grid-template-columns:1fr}
 }
