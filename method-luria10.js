@@ -40,7 +40,7 @@ Object.assign(d,{
  questions:TRIALS.slice()
 });
 D[NAME]=d;
-function sourceLinks(d){return '<div class="psy-luria-links"><a class="btn primary" href="'+escape(d.guideFile)+'" download>Методика и протокол · Word</a><a class="btn" href="'+escape(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк психолога · А4 ↗</a><a class="btn" href="'+escape(d.sourceAlternative)+'" target="_blank" rel="noopener noreferrer">Описание процедуры ↗</a></div>';}
+function sourceLinksUnused(d){return '<div class="psy-luria-links"><a class="btn primary" href="'+escape(d.guideFile)+'" download>Методика и протокол · Word</a><a class="btn" href="'+escape(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк психолога · А4 ↗</a><a class="btn" href="'+escape(d.sourceAlternative)+'" target="_blank" rel="noopener noreferrer">Описание процедуры ↗</a></div>';}
 function instruction(d){
  return '<div class="psy-luria-section-head"><h3>Методика и руководство</h3><div class="psy-luria-print-links"><a class="btn" href="'+escape(d.guideFile)+'?with_protocol=0" target="_blank" rel="noopener noreferrer">Без бланка</a><a class="btn primary" href="'+escape(d.guideFile)+'?with_protocol=1" target="_blank" rel="noopener noreferrer">С бланком</a></div></div>'+
  '<h3>Цель и условия</h3><p>'+escape(d.goal)+'</p><p>Проводить в тишине. Подготовить отдельный список стимулов и протокол. Участник не видит написанные слова.</p>'+
@@ -53,10 +53,13 @@ function grid(d,preview=false){
  let html='<div class="psy-luria-grid-wrap"><table class="psy-luria-grid"><thead><tr><th>Проба</th>'+WORDS.map(w=>'<th>'+escape(w)+'</th>').join("")+'<th>Итог</th></tr></thead><tbody>';
  html+=TRIALS.map((label,i)=>'<tr><th>'+escape(label)+'</th>'+WORDS.map(()=>'<td>□</td>').join("")+'<td>–</td></tr>').join("")+'</tbody></table></div>';return html;
 }
-function materials(d){return '<h3>Бланк психолога</h3><div class="notice">Вместо бланка для чтения ребенком используется таблица регистрации. Слова предъявляются <strong>только на слух</strong>; участнику эту таблицу не показывают.</div>'+sourceLinks(d)+grid(d)+'<p>В печатном бланке дополнительно предусмотрены строки для посторонних слов, повторов и времени отсроченного воспроизведения.</p>';}
-function processing(d){return '<h3>Обработка</h3><p>'+escape(d.scoring)+'</p><div class="psy-luria-concepts"><div><strong>0–10</strong><small>Уникальных правильных слов в одной пробе</small></div><div><strong>5</strong><small>Последовательных предъявлений</small></div><div><strong>60 мин</strong><small>Отсрочка без повторного чтения</small></div></div>'+
- '<p>В электронной форме нужно отметить, какие именно слова названы, и завершение каждой из пяти проб. Важная проверка: <b>0 названных слов</b> и <b>не проведенная проба</b> – разные ситуации.</p>'+
- '<div class="notice psy-luria-caution">'+escape(d.warning)+'</div>'+sourceLinks(d);}
+function materials(d){
+ return '<div class="psy-luria-section-head"><h3>Протокол психолога</h3><div class="psy-luria-print-links"><a class="btn primary" href="'+escape(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать</a></div></div>'+
+ '<p>Ответы регистрирует специалист, а не обследуемый. Участнику список слов и таблицу регистрации не показывают.</p>'+grid(d)+
+ '<p>Печатный протокол содержит строки для записи повторов, посторонних слов и фактической длительности отсрочки.</p>'+
+ '<p class="psy-luria-stimulus-link"><a href="'+escape(d.stimulusFile)+'" target="_blank" rel="noopener noreferrer">Открыть отдельные стимулы для специалиста</a></p>';
+}
+function processing(d){return '<h3>Обработка результатов</h3><p>'+escape(d.scoring)+'</p><p>'+escape(d.interpret)+'</p>';}
 function results(a){
  let done=Array.from({length:5},(_,i)=>completed(a,i)).filter(Boolean).length;
  const res=score(d,a);let h='<section class="psy-luria-results"><h3>Профиль запоминания</h3>';
