@@ -1,0 +1,296 @@
+{
+  "auditDate": "2026-10-26",
+  "kind": "module-coverage-A",
+  "moduleNames": [
+    "methods.js",
+    "method-batch-02.js",
+    "diagnostics-methods.js",
+    "diagnostic-batch-03.js",
+    "diagnostic-batch-04.js",
+    "method-luskanova.js",
+    "method-smfq.js",
+    "method-bourdon.js",
+    "method-sociometry-classification.js",
+    "method-mspss.js",
+    "method-storycards.js",
+    "method-elkonin.js",
+    "method-phillips.js",
+    "method-snap-26.js",
+    "method-dembo.js",
+    "method-sel-skills.js",
+    "method-scared41.js"
+  ],
+  "errors": [],
+  "methods": {
+    "Шкала самооценки Розенберга (RSES)": {
+      "age": "Подростки (ориентировочно от 12 лет) и взрослые; проверяйте пригодность русской версии",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "diagnostic03",
+      "source": true,
+      "options": 0
+    },
+    "Индекс хорошего самочувствия WHO-5": {
+      "age": "В первую очередь подростки старшего возраста и взрослые; возрастные нормы для детей проверяйте отдельно",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "diagnostic",
+      "source": true,
+      "options": 0
+    },
+    "Лесенка": {
+      "age": "6-10 лет (по модификации)",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "",
+      "source": false,
+      "options": 0
+    },
+    "Школа зверей": {
+      "age": "6-8 лет",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "",
+      "source": true,
+      "options": 0
+    },
+    "Что мне нравится в школе": {
+      "age": "6-10 лет",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "",
+      "source": false,
+      "options": 0
+    },
+    "Рисунок семьи": {
+      "age": "Школьный возраст по выбранной версии",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "",
+      "source": true,
+      "options": 0
+    },
+    "Таблицы Шульте": {
+      "age": "От 7 лет (по варианту)",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "",
+      "source": false,
+      "options": 0
+    },
+    "Семейная социограмма": {
+      "age": "От 6-7 лет и взрослые - в зависимости от процедуры",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "",
+      "source": false,
+      "options": 0
+    },
+    "Самооценка Дембо – Рубинштейн": {
+      "age": "10-16 лет; модификация А. М. Прихожан, семь шкал по 100 мм",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "dembo7",
+      "source": true,
+      "options": 0
+    },
+    "Кинетический рисунок семьи": {
+      "age": "Школьный возраст; с учетом возможностей ребенка",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "",
+      "source": true,
+      "options": 0
+    },
+    "Графический диктант": {
+      "age": "Старший дошкольный и младший школьный возраст (по выбранной версии)",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "elkonin4",
+      "source": true,
+      "options": 0
+    },
+    "Заучивание 10 слов": {
+      "age": "Школьники и взрослые; применимость версии по возрасту проверяет специалист",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "",
+      "source": true,
+      "options": 0
+    },
+    "Исключение четвертого лишнего (словесный вариант)": {
+      "age": "Ориентировочно от 8 лет при сформированном чтении; возрастные нормы не заявлены",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "",
+      "source": true,
+      "options": 0
+    },
+    "SCARED": {
+      "age": "8–18 лет; для 8–11 лет рекомендуется помощь взрослого при понимании вопросов",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "scared41",
+      "source": true,
+      "options": 0
+    },
+    "Vanderbilt Assessment Scales": {
+      "age": "6-12 лет; версия NICHQ (первое издание 2002 года)",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "diagnostic03",
+      "source": true,
+      "options": 0
+    },
+    "GAD-7 - краткая шкала тревожных симптомов": {
+      "age": "Взрослые, 18+; применение у детей требует отдельной валидизации",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "diagnostic04",
+      "source": true,
+      "options": 0
+    },
+    "Краткий опросник PHQ-4": {
+      "age": "Взрослые, 18-60 лет - возраст исследованной русской адаптации",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "diagnostic04",
+      "source": true,
+      "options": 0
+    },
+    "Оценка школьной мотивации": {
+      "age": "7-10 лет · младшие школьники",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "luskanova",
+      "source": true,
+      "options": 0
+    },
+    "Краткий опросник настроения (SMFQ)": {
+      "age": "6-17 лет; для самостоятельного заполнения ориентируйтесь на способность читать и понимать пункты",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "smfq",
+      "source": true,
+      "options": 0
+    },
+    "Корректурная проба Бурдона - Анфимова": {
+      "age": "Младший школьный возраст и старше; без подтвержденных возрастных норм для данного листа",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "bourdon30",
+      "source": true,
+      "options": 0
+    },
+    "Социометрическое исследование класса": {
+      "age": "Ориентировочно с 9 лет при понимании критерия выбора; решение специалиста",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "fresh06",
+      "source": true,
+      "options": 0
+    },
+    "Классификация предметов (словесный вариант)": {
+      "age": "Ориентировочно 7-11 лет, с учетом словаря и учебных возможностей",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "fresh06",
+      "source": true,
+      "options": 0
+    },
+    "Шкала воспринимаемой социальной поддержки (MSPSS)": {
+      "age": "Подростки и взрослые",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "mspss",
+      "source": true,
+      "options": 0
+    },
+    "Последовательные картинки": {
+      "age": "От 5 лет ориентировочно, нормативная валидизация этих серий отсутствует",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "storycards",
+      "source": true,
+      "options": 0
+    },
+    "Тест школьной тревожности": {
+      "age": "Младший и средний школьный возраст; уточняйте возрастные ограничения применяемой версии",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "phillips58",
+      "source": true,
+      "options": 0
+    },
+    "SNAP-IV-26": {
+      "age": "Дети и подростки школьного возраста; применять с учетом возраста и валидности языковой версии",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "snap26",
+      "source": true,
+      "options": 0
+    },
+    "Опросник социально-эмоциональных навыков": {
+      "age": "Ориентировочно 10-17 лет, при понимании текста; возрастная валидизация отсутствует",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "selwork2026",
+      "source": true,
+      "options": 0
+    }
+  }
+}
