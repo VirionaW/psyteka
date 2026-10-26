@@ -7,7 +7,7 @@
  const PDF="https://iro23.ru/wp-content/uploads/2024/01/141_%E2%84%9618.pdf";
  const LABELS=["Здоровье (тренировочная)","Ум, способности","Характер","Авторитет у сверстников","Умелые руки","Внешность","Уверенность в себе"];
  const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
- const WARNING="В публикациях встречаются варианты названий шкал и способы суммирования (среднее арифметическое или медиана), а приводимые нормы относятся к определенным возрастным выборкам. Здесь выбран вариант А. М. Прихожан: семь линий по 100 мм, «Здоровье» — тренировочная, основная обработка по шести шкалам. Возрастные уровни автоматически не присваиваются.";
+ const WARNING="В публикациях встречаются варианты названий шкал и способы суммирования (среднее арифметическое или медиана), а приводимые нормы относятся к определенным возрастным выборкам. Здесь выбран вариант А. М. Прихожан: семь линий по 100 мм, «Здоровье» – тренировочная, основная обработка по шести шкалам. Возрастные уровни автоматически не присваиваются.";
  const d=window.PSY_FULL_METHODS[NAME]||{};
  Object.assign(d,{
   author:"Т. В. Дембо, С. Я. Рубинштейн; модификация А. М. Прихожан",
@@ -15,11 +15,11 @@
   kind:"Графическая диагностическая методика",
   count:"7 вертикальных шкал по 100 мм, по 2 отметки",
   goal:"Изучение актуальной самооценки, уровня притязаний и расхождения между ними в шести личностных сферах.",
-  instructions:"На семи вертикальных шкалах поставьте черту (—) в точке, соответствующей тому, как вы оцениваете качество у себя сейчас, затем крестик (×) на желаемом уровне. Нижний конец каждой линии — 0, верхний — 100. Начните со шкалы «Здоровье», чтобы проверить понимание задания. Не показывайте ребенку результаты подсчета заранее.",
-  scoring:"Для каждой шкалы: самооценка = мм от нижней границы до черты, уровень притязаний = мм до крестика, расхождение = притязания − самооценка. Основные сводные показатели — средние арифметические по шести шкалам, исключая тренировочное «Здоровье». Дополнительно показывается медиана для сопоставления редакций.",
+  instructions:"На семи вертикальных шкалах поставьте черту (–) в точке, соответствующей тому, как вы оцениваете качество у себя сейчас, затем крестик (×) на желаемом уровне. Нижний конец каждой линии – 0, верхний – 100. Начните со шкалы «Здоровье», чтобы проверить понимание задания. Не показывайте ребенку результаты подсчета заранее.",
+  scoring:"Для каждой шкалы: самооценка = мм от нижней границы до черты, уровень притязаний = мм до крестика, расхождение = притязания − самооценка. Основные сводные показатели – средние арифметические по шести шкалам, исключая тренировочное «Здоровье». Дополнительно показывается медиана для сопоставления редакций.",
   interpret:"Используйте профиль шести шкал, средние показатели и качественное объяснение ребенка. Отрицательное расхождение означает, что отмеченный желаемый уровень ниже текущего. Автоматическая постановка диагноза, риск-категории и универсальные возрастные нормативы не предусмотрены.",
   warning:WARNING,source:SOURCE,sourcePDF:PDF,officialBlank:PDF,
-  guideFile:"downloads/dembo_prikhozhan_guide.docx",
+  guideFile:"downloads/dembo_prikhozhan_guide.html",guideWithBlankFile:"downloads/dembo_prikhozhan_guide_with_blank.html",guideWordFile:"downloads/dembo_prikhozhan_guide.docx",
   answerFile:"downloads/dembo_prikhozhan_student.html",
   workflow:"dembo7",graphic:"dembo",calculator:true,
   scales:LABELS.map((name,i)=>({name,training:i===0})),
@@ -49,9 +49,9 @@
  function score(d,answers){const o=inspect(answers);return o.status==="complete"?o:null;}
  function links(d){return '<div class="psy-dembo-links"><a class="btn primary" href="'+esc(d.guideFile)+'" download>Методика и протокол · Word</a><a class="btn" href="'+esc(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · A4 ↗</a><a class="btn" href="'+esc(d.source)+'" target="_blank" rel="noopener noreferrer">Методический источник ↗</a></div>';}
  function instruction(d){
-  return '<h3>Проведение</h3><p>'+esc(d.instructions)+'</p>'+links(d)+
-  '<h3>Семь шкал</h3><ol>'+LABELS.map((s,i)=>'<li>'+esc(s)+(i===0?' — тренировочная, не входит в средние':'')+'</li>').join("")+'</ol>'+
-  '<h3>Измерение</h3><p>Распечатайте бланк с сохранением масштаба 100%. Измеряйте от нижней границы каждой вертикальной линии: черта «—» = текущая самооценка, крестик «×» = желаемый уровень. Полученные миллиметры затем перенесите в обработчик.</p>'+
+  return '<div class="psy-common-guide-head"><h3>Методика и руководство</h3><div class="psy-common-guide-actions"><a class="btn" href="downloads/dembo_prikhozhan_guide.html" target="_blank" rel="noopener noreferrer">Без бланка</a><a class="btn primary" href="downloads/dembo_prikhozhan_guide_with_blank.html" target="_blank" rel="noopener noreferrer">С бланком</a></div></div><h3>Проведение</h3><p>'+esc(d.instructions)+'</p>'+
+  '<h3>Семь шкал</h3><ol>'+LABELS.map((s,i)=>'<li>'+esc(s)+(i===0?' – тренировочная, не входит в средние':'')+'</li>').join("")+'</ol>'+
+  '<h3>Измерение</h3><p>Распечатайте бланк с сохранением масштаба 100%. Измеряйте от нижней границы каждой вертикальной линии: черта «–» = текущая самооценка, крестик «×» = желаемый уровень. Полученные миллиметры затем перенесите в обработчик.</p>'+
   '<div class="notice psy-dembo-warning">'+esc(d.warning)+'</div>';
  }
  function scaleSVG(demo=false){
@@ -66,15 +66,15 @@
      '<rect x="0" y="0" width="196" height="145" fill="white"/><text x="5" y="11" font-size="4" fill="#577969">100</text><text x="7" y="117" font-size="4" fill="#577969">0</text>'+items+'</svg>';
  }
  function materials(d){
-  return '<h3>Печатный бланк с семью шкалами</h3><div class="notice">Семь вертикальных линий длиной 100 мм. На листе отметьте текущую самооценку чертой «—» и уровень притязаний крестиком «×». Первая шкала тренировочная.</div>'+links(d)+
+  return '<div class="psy-common-guide-head"><h3>Бланк с семью шкалами</h3><div class="psy-common-guide-actions"><a class="btn primary" href="'+esc(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать</a></div></div><h3>Печатный бланк с семью шкалами</h3><div class="notice">Семь вертикальных линий длиной 100 мм. На листе отметьте текущую самооценку чертой «–» и уровень притязаний крестиком «×». Первая шкала тренировочная.</div>'+
      '<div class="psy-dembo-paper">'+scaleSVG()+'</div><p>Для точного измерения в миллиметрах используйте файл A4, а не экранный предварительный просмотр.</p>';
  }
  function processing(d){
   return '<h3>Показатели и ключ</h3><p>'+esc(d.scoring)+'</p>'+
-  '<div class="psy-dembo-formula"><div><b>Самооценка</b><span>0-100 мм до «—»</span></div><div><b>Притязания</b><span>0-100 мм до «×»</span></div><div><b>Разница</b><span>Притязания − самооценка</span></div></div>'+
-  '<p>Обработке подлежат шесть шкал со 2-й по 7-ю. Здоровье — упражнение для понимания отметок. Среднее арифметическое — основной количественный показатель этой редакции; медиана выводится только дополнительно.</p>'+
+  '<div class="psy-dembo-formula"><div><b>Самооценка</b><span>0-100 мм до «–»</span></div><div><b>Притязания</b><span>0-100 мм до «×»</span></div><div><b>Разница</b><span>Притязания − самооценка</span></div></div>'+
+  '<p>Обработке подлежат шесть шкал со 2-й по 7-ю. Здоровье – упражнение для понимания отметок. Среднее арифметическое – основной количественный показатель этой редакции; медиана выводится только дополнительно.</p>'+
   '<h3>Ограничения</h3><div class="notice psy-dembo-warning">'+esc(d.warning)+'</div>'+
-  '<p><a href="'+esc(d.source)+'" target="_blank" rel="noopener noreferrer">Описание модификации и обработки ↗</a></p>'+links(d);
+  '<p><a href="'+esc(d.source)+'" target="_blank" rel="noopener noreferrer">Описание модификации и обработки ↗</a></p>';
  }
  const bars=(row)=>'<div class="psy-dembo-bar-line"><span class="psy-dembo-actual" style="width:'+row.esteem+'%" aria-label="Самооценка '+row.esteem+'"></span><span class="psy-dembo-want" style="left:'+row.aspiration+'%" title="Притязания '+row.aspiration+'"></span></div>';
  function result(answers){
@@ -83,7 +83,7 @@
   let html=partial+'<h3>Результаты по шести шкалам</h3><div class="psy-dembo-stats">'+[
    ["Средняя самооценка",o.mean.esteem],["Средние притязания",o.mean.aspiration],["Средняя разница",o.mean.gap]
   ].map(([name,value])=>'<div><span>'+esc(name)+'</span><strong>'+value+'</strong></div>').join("")+'</div>';
-  html+='<p class="psy-dembo-hint">Заливка — самооценка, вертикальная отметка — притязания. Первая шкала «Здоровье» показана отдельно как тренировочная.</p>';
+  html+='<p class="psy-dembo-hint">Заливка – самооценка, вертикальная отметка – притязания. Первая шкала «Здоровье» показана отдельно как тренировочная.</p>';
   html+='<div class="psy-dembo-chart">'+o.rows.map((r,i)=>'<div class="psy-dembo-bar-row"><span>'+esc(r.name)+'</span>'+bars(r)+'<strong>'+r.esteem+' / '+r.aspiration+'</strong><small>'+(r.gap>0?'+':'')+r.gap+'</small></div>').join("")+'</div>';
   html+='<p><strong>Дополнительная медиана по 6 шкалам:</strong> самооценка '+o.median.esteem+', притязания '+o.median.aspiration+', разница '+o.median.gap+'.</p>'+
     '<div class="notice">Вывод описательный. Не назначайте уровни или диагноз по этим значениям вне применимой нормативной выборки.</div></div>';
@@ -92,11 +92,11 @@
  function calculator(d,ctx){
   const persons=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=persons[ctx.rowIndex]||persons[0],a=r.answers||[];
   let html='<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один ученик</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Весь класс</button></div>'+
-  '<div class="notice">После заполнения бумажного бланка измерьте отметки линейкой снизу в миллиметрах (0-100). Введите отдельно текущую оценку и желаемую. <strong>«Здоровье» — тренировочная шкала.</strong></div>';
+  '<div class="notice">После заполнения бумажного бланка измерьте отметки линейкой снизу в миллиметрах (0-100). Введите отдельно текущую оценку и желаемую. <strong>«Здоровье» – тренировочная шкала.</strong></div>';
   if(ctx.calcMode==="class")html+='<div class="group-tools"><label>Ученик <select id="participantSelect">'+persons.map((p,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?'selected':'')+'>'+(i+1)+'. '+esc(p.name||"Код "+(i+1))+'</option>').join("")+'</select></label><label>Код ученика <input id="participantName" value="'+esc(r.name||"")+'" placeholder="Желательно без ФИО"></label><button class="btn" id="addParticipant">Добавить</button></div>';
-  html+='<div class="psy-dembo-inputs">'+LABELS.map((name,i)=>'<section class="psy-dembo-field"><div class="psy-dembo-field-title"><h4>'+(i+1)+'. '+esc(name)+'</h4>'+(i===0?'<span>Тренировка</span>':'')+'</div><div class="psy-dembo-pair"><label>Самооценка (—), мм<input type="number" inputmode="numeric" step="1" min="0" max="100" data-dembo="'+(i*2)+'" value="'+esc(a[i*2]??"")+'" placeholder="0-100"></label><label>Притязания (×), мм<input type="number" inputmode="numeric" step="1" min="0" max="100" data-dembo="'+(i*2+1)+'" value="'+esc(a[i*2+1]??"")+'" placeholder="0-100"></label></div></section>').join("")+'</div>';
+  html+='<div class="psy-dembo-inputs">'+LABELS.map((name,i)=>'<section class="psy-dembo-field"><div class="psy-dembo-field-title"><h4>'+(i+1)+'. '+esc(name)+'</h4>'+(i===0?'<span>Тренировка</span>':'')+'</div><div class="psy-dembo-pair"><label>Самооценка (–), мм<input type="number" inputmode="numeric" step="1" min="0" max="100" data-dembo="'+(i*2)+'" value="'+esc(a[i*2]??"")+'" placeholder="0-100"></label><label>Притязания (×), мм<input type="number" inputmode="numeric" step="1" min="0" max="100" data-dembo="'+(i*2+1)+'" value="'+esc(a[i*2+1]??"")+'" placeholder="0-100"></label></div></section>').join("")+'</div>';
   html+='<div id="demboResult">'+result(a)+'</div><div class="psy-dembo-actions"><button class="btn" id="resetParticipant">Очистить отметки</button><button class="btn primary" id="demboJSON">Скачать индивидуальный результат</button></div>';
-  if(ctx.calcMode==="class")html+='<h3>Обработка класса</h3><div class="results-table"><table><thead><tr><th>Код</th><th>Самооценка (ср.)</th><th>Притязания (ср.)</th><th>Разница (ср.)</th></tr></thead><tbody>'+persons.map((p,i)=>{const z=score(d,p.answers);return '<tr><td>'+esc(p.name||"Код "+(i+1))+'</td><td>'+(z?.mean.esteem??"—")+'</td><td>'+(z?.mean.aspiration??"—")+'</td><td>'+(z?.mean.gap??"—")+'</td></tr>'}).join("")+'</tbody></table></div><div class="psy-dembo-actions"><button class="btn primary" id="demboCSV">Скачать CSV класса</button></div>';
+  if(ctx.calcMode==="class")html+='<h3>Обработка класса</h3><div class="results-table"><table><thead><tr><th>Код</th><th>Самооценка (ср.)</th><th>Притязания (ср.)</th><th>Разница (ср.)</th></tr></thead><tbody>'+persons.map((p,i)=>{const z=score(d,p.answers);return '<tr><td>'+esc(p.name||"Код "+(i+1))+'</td><td>'+(z?.mean.esteem??"–")+'</td><td>'+(z?.mean.aspiration??"–")+'</td><td>'+(z?.mean.gap??"–")+'</td></tr>'}).join("")+'</tbody></table></div><div class="psy-dembo-actions"><button class="btn primary" id="demboCSV">Скачать CSV класса</button></div>';
   return html;
  }
  function csvCell(x){let t=String(x??"");if(/^\s*[=+\-@]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"';}
