@@ -66,7 +66,7 @@
 .library-page #sidebar .navgroup:hover > .nav-chevron,
 .library-page #sidebar .section-toggle:hover > .nav-chevron{color:#1b6549}
 </style><link rel="stylesheet" href="preschool.css?v=20261026verified2"><link rel="stylesheet" href="special.css?v=20261026functional2"><link rel="stylesheet" href="site-brand-refresh.css?v=20261026brand4">
-<link rel="stylesheet" href="site-special-programs.css?v=20261026ovz1"><link rel="stylesheet" href="site-requested-six.css?v=20261026six2020qa4"><link rel="stylesheet" href="site-logo-theme-fix.css?v=20261026logo3"><link rel="stylesheet" href="site-library-entry.css?v=20261026entry1"></head>
+<link rel="stylesheet" href="site-special-programs.css?v=20261026ovz1"><link rel="stylesheet" href="site-requested-six.css?v=20261026six2020qa4"><link rel="stylesheet" href="site-logo-theme-fix.css?v=20261026logo3"><link rel="stylesheet" href="site-library-entry.css?v=20261026entry1"><link rel="stylesheet" href="site-owner-nav.css?v=20261026owner1"></head>
 <body class="library-page" data-area="school">
 <div class="layout">
 <aside class="sidebar" id="sidebar" aria-label="Разделы библиотеки"><button id="mobileNavClose" class="mobile-sidebar-close" type="button" aria-label="Закрыть меню">×</button>
@@ -115,7 +115,7 @@
 </aside>
 <div id="mobileBackdrop" class="mobile-backdrop" hidden></div>
 <main class="main">
- <div class="topbar"><button class="desktop-sidebar-open" id="desktopSidebarOpen" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Показать боковую панель"><span aria-hidden="true">☰</span> Показать меню</button><button class="mobile-menu" id="menuBtn" aria-label="Открыть меню разделов" aria-controls="sidebar" aria-expanded="false">☰</button><a class="top-home" href="index.html?home=1">← На главную</a><span class="top-spacer">Методическая библиотека · 2026</span><a class="header-avatar" href="profile.html" aria-label="Личный профиль" title="Профиль">С</a><button class="theme-switch" id="themeBtn" aria-label="Переключить тему"><svg id="themeIcon" viewBox="0 0 24 24" aria-hidden="true"></svg><span id="themeLabel">Темная тема</span></button><a class="header-gear" href="settings.html" aria-label="Настройки" title="Настройки">⚙</a></div>
+ <div class="topbar"><button class="desktop-sidebar-open" id="desktopSidebarOpen" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Показать боковую панель"><span aria-hidden="true">☰</span> Показать меню</button><button class="mobile-menu" id="menuBtn" aria-label="Открыть меню разделов" aria-controls="sidebar" aria-expanded="false">☰</button><a class="top-home" href="index.html?home=1">← На главную</a><span class="top-spacer">Методическая библиотека · 2026</span><a id="psyOwnerNav" href="manage-users.html" hidden>👑 Управление</a><a class="header-avatar" href="profile.html" aria-label="Личный профиль" title="Профиль">С</a><button class="theme-switch" id="themeBtn" aria-label="Переключить тему"><svg id="themeIcon" viewBox="0 0 24 24" aria-hidden="true"></svg><span id="themeLabel">Темная тема</span></button><a class="header-gear" href="settings.html" aria-label="Настройки" title="Настройки">⚙</a></div>
  <nav class="mobile-area-switch" aria-label="Быстрый переход к разделу"><button type="button" data-mobile-area="preschool" aria-pressed="false">Детский сад</button><button type="button" data-mobile-area="school" aria-pressed="true">Школа</button><button type="button" data-mobile-area="adults" aria-pressed="false">Взрослые</button><button type="button" data-mobile-area="special" aria-pressed="false">ОВЗ</button><button type="button" data-mobile-area="pmpk" aria-pressed="false">ПМПК</button></nav>
  <header class="hero"><div><div class="eyebrow">Методики · коррекция · документы · ПМПК</div><h1>Все для работы<br>педагога-психолога</h1><p>Находите материалы по возрасту, направлению и автору. Портфолио методик и проверенные источники в одном месте.</p></div><div class="hero-art" aria-hidden="true"></div></header>
  <section id="preschoolView" hidden aria-label="Детский сад – методики и сопровождение"></section>
@@ -151,5 +151,5 @@
  window.addEventListener("pageshow",update);
  update();
 })();
-</script></body>
+</script><script src="site-owner-nav.js?v=20261026owner1" defer></script></body>
 </html>
