@@ -748,6 +748,7 @@ function openMethod(m){
  const header=$('#modal').querySelector('.modalhead');
  let old=$('#methodTabs');if(old)old.remove();
  const preschoolPilot=d?.workflow==='preschoolSheet';
+ $('#modal').classList.toggle('psy-preschool-current',preschoolPilot);
  const mspssPilot=d?.workflow==='mspss';
  const schultePilot=d?.workflow==='schulte5';
  const luriaPilot=d?.workflow==='luria10x5';
