@@ -80,20 +80,22 @@
    '</section>';
  }
  function supplement(name,d,m,existing){
-  const r=data(name),text=String(existing||"");
-  const hasData=!!d;
+  const r=data(name),unsupported=choice(name)?.status==="source";
+  const localD=unsupported?null:d;
+  const text=unsupported?'<div class="psy-guide-verify">Этот возрастной вариант пока доступен только через первоисточник. Не используйте ключи, стимулы или бланки другой редакции.</div>':String(existing||"");
+  const hasData=!!localD;
   const fields=[
-   ["Цель методики",d?.goal||"Цель конкретной редакции не подтверждена."],
+   ["Цель методики",localD?.goal||"Цель конкретной редакции не подтверждена."],
    ["Инструкция обследуемому – текст для чтения",r.spoken||(hasData?"Дословный текст для чтения не подтвержден. Используйте оригинальный бланк или проверенное руководство конкретной редакции. Описание процедуры ниже предназначено психологу.":"Для этой записи нет подтвержденной инструкции обследуемому. Используйте первоисточник, а не придумывайте текст.")],
-   ["Ключ и правила обработки",d?.scoring||"Ключ и правила подсчета этой редакции не проверены. Автоматический результат недоступен."],
-   ["Интерпретация и ограничения",d?.interpret||"Интерпретация для выбранной редакции не подтверждена. Не делайте диагностических выводов по карточке."]
+   ["Ключ и правила обработки",localD?.scoring||"Ключ и правила подсчета этой редакции не проверены. Автоматический результат недоступен."],
+   ["Интерпретация и ограничения",localD?.interpret||"Интерпретация для выбранной редакции не подтверждена. Не делайте диагностических выводов по карточке."]
   ];
   const seen=plain=>new RegExp("<h[2-4][^>]*>\\s*"+plain,"i").test(text);
   // Specialized method tabs retain their original rich content. Provide required sections once in the
   // common standard header, rather than forcing changes to protected stimulus/calculator logic.
   const html=fields.map(([label,value],i)=>{
    if(i!==1&&seen(i===0?"Цель":i===2?"Ключ":"Интерпретация"))return "";
-   const warn=!(i===1?r.spoken:hasData&&d?.[["goal","instructions","scoring","interpret"][i]])||i===1&&!r.spoken;
+   const warn=!(i===1?r.spoken:hasData&&localD?.[["goal","instructions","scoring","interpret"][i]])||i===1&&!r.spoken;
    return '<section class="psy-guide-check'+(warn?' needs-source':'')+'"><h3>'+escape(label)+'</h3>'+
     (i===1&&r.spoken?'<blockquote class="psy-guide-spoken">'+escape(value)+'</blockquote>':'<p>'+escape(value)+'</p>')+
     (i===1&&r.spokenNote?'<p class="psy-guide-note">'+escape(r.spokenNote)+'</p>':'')+
