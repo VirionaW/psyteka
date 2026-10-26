@@ -10,7 +10,7 @@
    spokenNote:"Рабочая формулировка по семиступенчатому варианту. Перед стандартизированным обследованием сверяйте с текстом выбранного источника."
   },
   "Самооценка Дембо – Рубинштейн":{
-   age:"10-17 лет (выбранная модификация А. М. Прихожан)",
+   age:"10-16 лет (выбранная модификация А. М. Прихожан)",
    spoken:"Перед тобой семь линий. Каждая показывает одно качество. Самая нижняя точка – самый низкий уровень, верхняя – самый высокий. Отметь чертой, как ты оцениваешь себя сейчас, а крестиком – каким хотел бы быть. Сначала попробуем на шкале «Здоровье».",
    spokenNote:"Рабочая инструкция к размещенному комплекту из семи линий. Печатать без подгонки масштаба."
   },
@@ -40,10 +40,15 @@
   "Школа зверей":{age:"6-8 лет (проверить границы используемой редакции)"},
   "Что мне нравится в школе":{age:"6-10 лет (выбранный рисунок; без возрастных норм)"},
   "Оценка школьной мотивации":{age:"7-10 лет (опросник Н. Г. Лускановой)"},
-  "Самооценка Дембо – Рубинштейн":{age:"10-17 лет (модификация А. М. Прихожан)"}
+  "Самооценка Дембо – Рубинштейн":{age:"10-16 лет (модификация А. М. Прихожан)"}
  };
  records["Самооценка Дембо – Рубинштейн"].spoken="Перед тобой семь линий. Каждая показывает одно качество. Самая нижняя точка – самый низкий уровень, верхняя – самый высокий. Отметь чертой, как ты оцениваешь себя сейчас, а крестиком – каким хотел бы быть. Сначала попробуем на шкале «Здоровье».";
  records["Самооценка Дембо – Рубинштейн"].spokenNote="Рабочая инструкция к размещенному комплекту. Печатать без подгонки масштаба.";
+ records["Самооценка Дембо – Рубинштейн"].age="10-16 лет – действующая модификация А. М. Прихожан; иной школьный вариант требует другого бланка";
+ records["Самооценка Дембо – Рубинштейн"].ages=[
+  {id:"prikhozhan1016",label:"10-16 лет · модификация Прихожан, 7 линий",age:"10-16 лет",status:"ready",source:"https://psytests.org/trait/demborp.html"},
+  {id:"junior711",label:"7-11 лет · другой опубликованный школьный вариант, комплект не подготовлен",age:"7-11 лет",status:"source",source:"https://infolesson.kz/metodicheskoe-posobie-dlya-uchitelya-nachalnyh-klassov-diagnosticheskie-metodiki-dlya-opredeleniya-samootsenki-mladshih-shkolniko-7920305.html"}
+ ];
  const selected={};
  const escape=s=>String(s??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
  const ageClaim=(age)=>{
@@ -56,7 +61,8 @@
  function choice(name){const r=data(name);return r.ages?.find(x=>x.id===selected[name])||r.ages?.[0]||null;}
  function age(name,d,m){
   const r=data(name),v=choice(name);
-  if(v)return v.age+" – "+v.label.split(" · ").slice(1).join(" · ");
+  if(v&&selected[name])return v.age+" – "+v.label.split(" · ").slice(1).join(" · ");
+  if(v)return r.age||v.age;
   if(r.age)return r.age;
   const candidate=ageClaim(d?.age||m?.age);
   return candidate||"Возрастная редакция не подтверждена – требуется проверенный источник";
@@ -69,7 +75,8 @@
    '<label>Выберите вариант обследования<select data-psy-age-version="'+escape(name)+'">'+options+'</select></label>'+
    '<p>Выбрано: <strong>'+escape(v.label)+'</strong></p>'+
    (v.source?'<p><a href="'+escape(v.source)+'" target="_blank" rel="noopener noreferrer">Документ выбранной версии ↗</a></p>':'')+
-   (v.status==='source'?'<p class="psy-guide-verify">На сайте пока есть только ссылка на официальный комплект. Бланк и автоматический подсчет этой версии в Психотеке не проверены и не предоставляются.</p>':'')+
+   (v.status==='source'?'<p class="psy-guide-verify">Для этого варианта доступен только источник. Бланк и подсчет этой редакции на сайте не проверены; обработка выбранной версии заблокирована.</p>':'')+
+   (name==='SCARED'?'<p class="psy-guide-note">При обработке выбирайте ту же форму информанта, что использована при предъявлении. Детские и родительские ответы не объединять.</p>':'')+
    '</section>';
  }
  function supplement(name,d,m,existing){
@@ -99,5 +106,5 @@
    const name=el.getAttribute('data-psy-age-version'),r=data(name);
    if(r.ages?.some(x=>x.id===el.value)){selected[name]=el.value;if(typeof reopen==='function')reopen();}
  }));}
- window.PSY_GUIDE_STANDARD={data,age,choice,versions,supplement,bind,records};
+ window.PSY_GUIDE_STANDARD={data,age,choice,versions,supplement,bind,records,selectionUnsupported:name=>choice(name)?.status==="source"};
 })();
