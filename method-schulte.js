@@ -54,24 +54,32 @@
  function tableHTML(i,forPrint=false){
    return '<div class="psy-schulte-item"><h4>Таблица '+(i+1)+'</h4><div class="psy-schulte-grid" aria-label="Таблица Шульте '+(i+1)+'">'+MATRIX[i].map(n=>'<span>'+n+'</span>').join("")+'</div></div>';
  }
- function doclinks(d,blankOnly=false){return '<div class="psy-schulte-links">'+
- (blankOnly?'':'<a class="btn" href="'+esc(d.guideFile)+'" target="_blank" rel="noopener noreferrer">Руководство · Word ↗</a>')+
- '<a class="btn primary" href="'+esc(d.answerFile)+'" target="_blank" rel="noopener noreferrer">'+(blankOnly?'Посмотреть и распечатать ↗':'Таблицы для печати · А4 ↗')+'</a></div>';}
- function instruction(d){return '<h3>Процедура проведения</h3><p>'+esc(d.instructions)+'</p>'+doclinks(d)+
-  '<h3>Что подготовить</h3><p>Пять разных распечатанных матриц 5×5, чистый протокол, секундомер, ручку. Испытуемому не показывают следующую таблицу до завершения текущей. На каждой таблице начало отсчета времени — предъявление чисел.</p>'+
-  '<h3>Регистрация</h3><p>Для каждой таблицы введите <strong>секунды</strong> и количество ошибок. Нулевое число ошибок укажите цифрой 0. При неполном проведении оставьте незаполненными остальные таблицы и не рассчитывайте средний показатель.</p>'+
-  '<div class="notice psy-schulte-warning">'+esc(d.warning)+'</div>';
+
+ function topBar(title,href,label){
+  return '<div class="psy-schulte-document-head"><h3>'+esc(title)+'</h3><a class="btn primary" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'+esc(label||"Посмотреть и распечатать ↗")+'</a></div>';
  }
- function materials(d){return '<h3>Стимульные таблицы</h3><p>Каждая таблица содержит числа от 1 до 25 ровно по одному разу и предъявляется отдельно. Для обследования распечатайте пять страниц А4.</p>'+doclinks(d,true)+
-  '<div class="psy-schulte-all">'+MATRIX.map((_,i)=>tableHTML(i)).join("")+'</div>'+
-  '<p>Печатный лист использует ту же последовательность чисел, что и предварительный просмотр.</p>';
+ function instruction(d){
+  return '<section class="psy-schulte-manual">'+
+   topBar("Методика и руководство",d.guideFile,"Открыть руководство · Word ↗")+
+   '<h3>Цель</h3><p>'+esc(d.goal)+'</p>'+
+   '<h3>Описание методики</h3><p>Пять таблиц размером 5 × 5 содержат числа от 1 до 25 в разном порядке. Участник последовательно находит числа по возрастанию. Специалист измеряет время выполнения каждой таблицы и фиксирует ошибки.</p>'+
+   '<h3>Что подготовить</h3><p>Пять отдельных таблиц А4, секундомер и протокол для записи времени и ошибок. Предъявляйте только одну таблицу за раз.</p>'+
+   '<h3>Порядок проведения</h3><ol><li>Объясните задание и убедитесь, что участник различает числа от 1 до 25.</li><li>Предъявите первую таблицу, запустите секундомер и предложите последовательно показать и назвать числа.</li><li>На числе 25 остановите секундомер, запишите время и ошибки.</li><li>Повторите процедуру со второй, третьей, четвёртой и пятой таблицами, фиксируя результаты отдельно.</li></ol>'+
+   '<h3>Инструкция участнику</h3><div class="psy-schulte-script">«Сейчас ты увидишь таблицу с числами. Найди, покажи и называй числа от 1 до 25 по порядку. Старайся делать это быстро и без ошибок. Начинай по моей команде».</div>'+
+   '<h3>Ключ и подсчёт</h3><div class="psy-schulte-key"><table><thead><tr><th>Показатель</th><th>Расчёт</th></tr></thead><tbody>'+
+   '<tr><td>Эффективность работы (ЭР)</td><td>(T1 + T2 + T3 + T4 + T5) / 5, сек.</td></tr>'+
+   '<tr><td>Врабатываемость (ВР)</td><td>T1 / ЭР</td></tr>'+
+   '<tr><td>Психическая устойчивость (ПУ)</td><td>T4 / ЭР</td></tr>'+
+   '</tbody></table></div><p>Т1–Т5 — время выполнения каждой таблицы в секундах. Ошибки фиксируются отдельно и не вычитаются из времени. При отсутствии любого из пяти измерений итог не рассчитывается.</p>'+
+   '<h3>Интерпретация</h3><p>'+esc(d.interpret)+'</p>'+
+   '</section>';
  }
- function processing(d){return '<h3>Показатели и формулы</h3>'+
-  '<div class="psy-schulte-formulas"><div><strong>ЭР</strong><span>(T1 + T2 + T3 + T4 + T5) / 5</span><small>Среднее время, сек</small></div>'+
-  '<div><strong>ВР</strong><span>T1 / ЭР</span><small>Врабатываемость</small></div>'+
-  '<div><strong>ПУ</strong><span>T4 / ЭР</span><small>Динамический показатель</small></div></div>'+
-  '<p>'+esc(d.scoring)+'</p><h3>Замечания по интерпретации</h3><div class="notice psy-schulte-warning">'+esc(d.warning)+'</div>'+doclinks(d);
+ function materials(d){
+  return '<section class="psy-schulte-blank">'+topBar("Бланк ученика — таблицы Шульте",d.answerFile)+
+   '<p>Пять таблиц, на каждой числа от 1 до 25. Для проведения распечатайте каждую таблицу на отдельном листе А4.</p>'+
+   '<div class="psy-schulte-all">'+MATRIX.map((_,i)=>tableHTML(i)).join("")+'</div></section>';
  }
+ function processing(d){return '<h3>Обработка результатов</h3><p>'+esc(d.scoring)+'</p><h3>Интерпретация</h3><p>'+esc(d.interpret)+'</p>';}
  function visual(d,answers){
    const validCount=Array.from({length:5},(_,i)=>answers?.[i*2]).filter(v=>v!==""&&v!=null&&Number.isFinite(Number(v))&&Number(v)>0&&Number(v)<=3600).length;
    let h='<section class="psy-schulte-results"><h3>Результаты</h3>';
