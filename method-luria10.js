@@ -5,11 +5,11 @@
    это отмечено как разночтение редакций; нельзя их смешивать. */
 (function(){
 const NAME="Заучивание 10 слов";
-const WORDS=["лес","хлеб","окно","стул","вода","брат","конь","гриб","игла","мёд"];
+const WORDS=["лес","хлеб","окно","стул","вода","брат","конь","гриб","игла","мед"];
 const SOURCE="https://www.almazovcentre.ru/wp-content/uploads/%D0%94%D0%B8%D1%81%D1%81%D0%B5%D1%80%D1%82%D0%B0%D1%86%D0%B8%D1%8F-%D0%9D%D0%B0%D0%BB%D1%8C%D0%BA%D0%B8%D0%BD-%D0%A1.%D0%90.1.pdf";
 const SECOND="https://www.mediasphera.ru/issues/khirurgiya-zhurnal-im-n-i-pirogova/2013/2/030023-12072013215";
 const TRIALS=["1-е предъявление","2-е предъявление","3-е предъявление","4-е предъявление","5-е предъявление","Через 60 минут"];
-const CAUTION="Методика имеет разные списки слов и количество предъявлений. В приложении 3 выбранного опубликованного источника указано «окно», тогда как в тексте того же исследования встречается «огонь». В нашем комплекте используются строго 10 слов приложения 3 и пять предъявлений. Отсроченная проба — через 60 минут без повторного чтения. Возрастные нормы и диагностические категории не переносятся из иных редакций.";
+const CAUTION="Методика имеет разные списки слов и количество предъявлений. В приложении 3 выбранного опубликованного источника указано «окно», тогда как в тексте того же исследования встречается «огонь». В нашем комплекте используются строго 10 слов приложения 3 и пять предъявлений. Отсроченная проба – через 60 минут без повторного чтения. Возрастные нормы и диагностические категории не переносятся из иных редакций.";
 const escape=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const truth=v=>v===1||v==="1"||v===true;
 const all=(a,t)=>WORDS.map((w,j)=>truth(a?.[t*10+j]));
@@ -34,7 +34,7 @@ Object.assign(d,{
  scoring:"В каждой пробе подсчитываются уникальные слова из исходного списка (от 0 до 10), пять итогов образуют кривую заучивания. Отдельно указываются количество слов после первой и пятой проб, максимальное количество и отсроченное воспроизведение через 60 минут. Повторы и «лишние» слова записываются как качественные ошибки и не прибавляются к количеству правильных.",
  interpret:"Оценка описательная: изменение по пяти пробам, сохранение материала через час, посторонние слова, повторы, поведение. Отсрочка не должна выдаваться за выполненную без отметки специалиста. Нормативные ярлыки и клинический диагноз по одной пробе не ставятся.",
  source:SOURCE,officialBlank:SOURCE,sourceAlternative:SECOND,
- warning:CAUTION,guideFile:"downloads/luria_10_words_guide.docx",
+ warning:CAUTION,guideFile:"downloads/luria_10_words_guide_print.html",stimulusFile:"downloads/luria_10_words_stimuli.html",
  answerFile:"downloads/luria_10_words_psychologist.html",workflow:"luria10x5",special:"memory10",calculator:true,
  words:WORDS.slice(),scaleLabels:["Непосредственное воспроизведение","Кривая заучивания (5 предъявлений)","Отсроченное воспроизведение (60 минут)","Посторонние слова и повторы"],
  questions:TRIALS.slice()
@@ -50,17 +50,17 @@ function instruction(d){
 }
 function grid(d,preview=false){
  let html='<div class="psy-luria-grid-wrap"><table class="psy-luria-grid"><thead><tr><th>Проба</th>'+WORDS.map(w=>'<th>'+escape(w)+'</th>').join("")+'<th>Итог</th></tr></thead><tbody>';
- html+=TRIALS.map((label,i)=>'<tr><th>'+escape(label)+'</th>'+WORDS.map(()=>'<td>□</td>').join("")+'<td>—</td></tr>').join("")+'</tbody></table></div>';return html;
+ html+=TRIALS.map((label,i)=>'<tr><th>'+escape(label)+'</th>'+WORDS.map(()=>'<td>□</td>').join("")+'<td>–</td></tr>').join("")+'</tbody></table></div>';return html;
 }
 function materials(d){return '<h3>Бланк психолога</h3><div class="notice">Вместо бланка для чтения ребенком используется таблица регистрации. Слова предъявляются <strong>только на слух</strong>; участнику эту таблицу не показывают.</div>'+sourceLinks(d)+grid(d)+'<p>В печатном бланке дополнительно предусмотрены строки для посторонних слов, повторов и времени отсроченного воспроизведения.</p>';}
 function processing(d){return '<h3>Обработка</h3><p>'+escape(d.scoring)+'</p><div class="psy-luria-concepts"><div><strong>0–10</strong><small>Уникальных правильных слов в одной пробе</small></div><div><strong>5</strong><small>Последовательных предъявлений</small></div><div><strong>60 мин</strong><small>Отсрочка без повторного чтения</small></div></div>'+
- '<p>В электронной форме нужно отметить, какие именно слова названы, и завершение каждой из пяти проб. Важная проверка: <b>0 названных слов</b> и <b>не проведенная проба</b> — разные ситуации.</p>'+
+ '<p>В электронной форме нужно отметить, какие именно слова названы, и завершение каждой из пяти проб. Важная проверка: <b>0 названных слов</b> и <b>не проведенная проба</b> – разные ситуации.</p>'+
  '<div class="notice psy-luria-caution">'+escape(d.warning)+'</div>'+sourceLinks(d);}
 function results(a){
  let done=Array.from({length:5},(_,i)=>completed(a,i)).filter(Boolean).length;
  const res=score(d,a);let h='<section class="psy-luria-results"><h3>Профиль запоминания</h3>';
  if(!res)return h+'<p>Проведено '+done+' из 5 обязательных проб. Отмечайте флажок «Проба завершена» в каждой строке, даже если не названо ни одного слова.</p></section>';
- const stats=[["1-я проба",res.first],["5-я проба",res.fifth],["Лучший результат",res.peak],["Среднее за 5 проб",res.mean],["Изменение 5-я − 1-я",res.gain],["Через 60 минут",res.delayed??"—"]];
+ const stats=[["1-я проба",res.first],["5-я проба",res.fifth],["Лучший результат",res.peak],["Среднее за 5 проб",res.mean],["Изменение 5-я − 1-я",res.gain],["Через 60 минут",res.delayed??"–"]];
  h+='<div class="psy-luria-stats">'+stats.map(([l,v])=>'<div><span>'+escape(l)+'</span><strong>'+v+'</strong></div>').join("")+'</div>';
  h+='<h4>Кривая по пяти предъявлениям</h4><div class="psy-luria-bars">'+res.trials.map((v,i)=>'<div><span>'+(i+1)+'</span><div class="psy-luria-track"><i style="width:'+(v*10)+'%"></i></div><b>'+v+' / 10</b></div>').join("")+'</div>';
  if(res.delayed===null)h+='<p><strong>Отсроченная проба не проведена или не отмечена.</strong> Это не нулевой результат.</p>';
@@ -69,7 +69,7 @@ function results(a){
 function calculator(d,ctx){
  const rs=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rs[ctx.rowIndex]||rs[0],a=r.answers||[],notes=r.luriaNotes||[];
  let h='<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа по кодам</button></div>'+
- '<div class="notice">Внесите услышанные ответы после предъявления слов. Ставьте галочку «Проба завершена», даже если воспроизведено 0 слов. <strong>Шестая строка — только через 60 минут, без повторного чтения.</strong></div>';
+ '<div class="notice">Внесите услышанные ответы после предъявления слов. Ставьте галочку «Проба завершена», даже если воспроизведено 0 слов. <strong>Шестая строка – только через 60 минут, без повторного чтения.</strong></div>';
  if(ctx.calcMode==="class")h+='<div class="group-tools"><label>Участник<select id="participantSelect">'+rs.map((u,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+(i+1)+'. '+escape(u.name||"Код "+(i+1))+'</option>').join("")+'</select></label><label>Код, не ФИО<input id="participantName" value="'+escape(r.name||"")+'" placeholder="Код"></label><button class="btn" id="addParticipant">Добавить</button></div>';
  h+='<div class="psy-luria-trials">';
  TRIALS.forEach((label,t)=>{
@@ -79,7 +79,7 @@ function calculator(d,ctx){
  });
  h+='</div><div id="luriaResult">'+results(a)+'</div>'+
  '<div class="psy-luria-actions"><button class="btn" id="resetParticipant">Очистить запись</button><button class="btn primary" id="luriaJSON">Скачать индивидуальный протокол JSON</button></div>';
- if(ctx.calcMode==="class")h+='<h3>Сводка участников</h3><div class="results-table"><table><thead><tr><th>Код</th><th>1-я</th><th>5-я</th><th>Пик</th><th>Через 60 мин</th></tr></thead><tbody>'+rs.map((u,i)=>{let z=score(d,u.answers);return '<tr><td>'+escape(u.name||"Код "+(i+1))+'</td><td>'+(z?.first??"—")+'</td><td>'+(z?.fifth??"—")+'</td><td>'+(z?.peak??"—")+'</td><td>'+(z?.delayed??"—")+'</td></tr>';}).join("")+'</tbody></table></div><div class="psy-luria-actions"><button class="btn primary" id="luriaCSV">Скачать CSV группы</button></div>';
+ if(ctx.calcMode==="class")h+='<h3>Сводка участников</h3><div class="results-table"><table><thead><tr><th>Код</th><th>1-я</th><th>5-я</th><th>Пик</th><th>Через 60 мин</th></tr></thead><tbody>'+rs.map((u,i)=>{let z=score(d,u.answers);return '<tr><td>'+escape(u.name||"Код "+(i+1))+'</td><td>'+(z?.first??"–")+'</td><td>'+(z?.fifth??"–")+'</td><td>'+(z?.peak??"–")+'</td><td>'+(z?.delayed??"–")+'</td></tr>';}).join("")+'</tbody></table></div><div class="psy-luria-actions"><button class="btn primary" id="luriaCSV">Скачать CSV группы</button></div>';
  return h;
 }
 function csv(x){let t=String(x??"");if(/^\s*[=+\-@]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"';}
