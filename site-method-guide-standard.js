@@ -86,6 +86,14 @@
   const candidate=ageClaim(d?.age||m?.age);
   return candidate||"Возрастная редакция не подтверждена – требуется проверенный источник";
  }
+ function cardAge(name,d,m){
+  const label=age(name,d,m);
+  if(label.startsWith("Возрастная редакция не подтверждена"))return "Возраст не подтвержден";
+  if(name==="Самооценка Дембо – Рубинштейн")return "10-16 лет · выбор версии внутри";
+  if(name==="Сильные стороны и трудности (SDQ)")return "2-4 / 4-10 / 11-17 / 18+";
+  if(name==="SCARED")return "8-18 лет · две формы";
+  return label.replace(/ \(.*\)$/,"");
+ }
  function versions(name){
   const r=data(name),v=choice(name);
   if(!r.ages?.length)return "";
@@ -127,5 +135,5 @@
    const name=el.getAttribute('data-psy-age-version'),r=data(name);
    if(r.ages?.some(x=>x.id===el.value)){selected[name]=el.value;if(typeof reopen==='function')reopen();}
  }));}
- window.PSY_GUIDE_STANDARD={data,age,choice,versions,supplement,bind,records,selectionUnsupported:name=>choice(name)?.status==="source"};
+ window.PSY_GUIDE_STANDARD={data,age,cardAge,choice,versions,supplement,bind,records,selectionUnsupported:name=>choice(name)?.status==="source"};
 })();
