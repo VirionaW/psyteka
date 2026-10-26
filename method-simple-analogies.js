@@ -27,7 +27,7 @@ goal:"Исследование словесно-логического мышл�
 instructions:"В левой паре два слова связаны между собой. Выбери слово справа, которое так же связано с третьим словом. В каждом задании один наиболее подходящий ответ. Не угадывай по похожести звучания.",
 questions:TASKS.map(x=>x.question),options:CH,
 scoring:"Каждое правильное решение — 1 балл по авторскому ключу; неправильное — 0. При неполном заполнении итог из 12 не рассчитывается. Отдельно фиксируются выбранные ответы, виды отношений, пояснения, самокоррекция, помощь и время, если его отмечали.",
-interpret:"Итог 0–12 (только если ответили на все задания) описывает число верно решённых задач этого набора. Не сопоставлять с нормативными уровнями опубликованных версий «Простых аналогий»: вопросы и сложность здесь иные.",
+interpret:"Итог 0–12 (только если ответили на все задания) описывает число верно решенных задач этого набора. Не сопоставлять с нормативными уровнями опубликованных версий «Простых аналогий»: вопросы и сложность здесь иные.",
 source:"https://psy.wikireading.ru/7528",
 license:"Общая схема классической пробы подтверждена опубликованными методическими пособиями. Все 12 вопросов и ключ составлены Психотекой заново; это не стандартизированная адаптация и не авторская норма.",
 workflow:"simpleAnalogies12",calculator:true,
@@ -47,7 +47,7 @@ function instruction(d){
  '<h3>Подсчет</h3><p>Каждый правильный вариант — 1 балл; неверный ответ — 0 баллов. Полная сумма от 0 до 12 рассчитывается только при ответах на все двенадцать заданий. Пропуски не заменяются нулями.</p>'+
  '<h3>Интерпретация</h3><p>'+E(d.interpret)+'</p><p>Отмечайте типы смысловых отношений, характер ошибок, пояснения и самостоятельность решения. Нормативные уровни опубликованных версий не используются.</p>'+
  '</section>';
- return html.replace(/[Ёё]/g,c=>c==="Ё"?"Е":"е");
+ return html.replace(/[Ее]/g,c=>c==="Е"?"Е":"е");
 }
 function materials(d){
 return '<section class="psy-mspss-section psy-mspss-student">'+
@@ -56,9 +56,9 @@ return '<section class="psy-mspss-section psy-mspss-student">'+
  '<div class="psy-mspss-blank-scroll">'+TASKS.map(t=>'<div class="question"><p><strong>'+t.id+'. '+E(t.question)+'</strong></p><p>'+t.options.map((o,i)=>CH[i]+') '+E(o)).join(' · ')+'</p></div>').join("")+'</div>'+
  '</section>';
 }
-function processing(d){return '<h3>Ключ и подсчёт</h3><p>'+E(d.scoring)+'</p><table class="questions-table"><thead><tr><th>№</th><th>Верный ответ</th><th>Вид отношения</th></tr></thead><tbody>'+TASKS.map(t=>'<tr><td>'+t.id+'</td><td>'+CH[t.key]+') '+E(t.options[t.key])+'</td><td>'+E(t.relation)+'</td></tr>').join('')+'</tbody></table><p>'+E(d.interpret)+'</p><p>Пример: 12 предъявлено, 9 верных → 9 из 12; 11 предъявлено, 9 верных → итог не вычислять.</p><a href="'+d.processingFile+'" target="_blank" rel="noopener noreferrer">Лист обработки А4</a>';}
+function processing(d){return '<h3>Ключ и подсчет</h3><p>'+E(d.scoring)+'</p><table class="questions-table"><thead><tr><th>№</th><th>Верный ответ</th><th>Вид отношения</th></tr></thead><tbody>'+TASKS.map(t=>'<tr><td>'+t.id+'</td><td>'+CH[t.key]+') '+E(t.options[t.key])+'</td><td>'+E(t.relation)+'</td></tr>').join('')+'</tbody></table><p>'+E(d.interpret)+'</p><p>Пример: 12 предъявлено, 9 верных → 9 из 12; 11 предъявлено, 9 верных → итог не вычислять.</p><a href="'+d.processingFile+'" target="_blank" rel="noopener noreferrer">Лист обработки А4</a>';}
 function report(a){const s=score(a);return '<h3>Результат</h3><p>Заполнено: <b>'+s.filled+' из '+TASKS.length+'</b>. Правильных среди заполненных: '+s.correct+'.</p><p><b>Итог:</b> '+(s.complete?s.correct+' из '+TASKS.length:'не рассчитывается: остались пропуски')+'</p><p>Анализ отношений: '+Object.entries(s.byType).map(([k,v])=>E(k)+' — '+v.correct+'/'+v.total+' выполненных').join('; ')+'.</p><div class="notice">Это качественный показатель на материалах Психотеки, не возрастная нормативная оценка.</div>';}
-function calculator(d,ctx){const r=ctx.rows[ctx.rowIndex]||{answers:[]},a=r.answers||[];return '<h3>Интерактивная проверка 12 аналогий</h3><p>Внесите буквы ответов обследуемого. Не заполняйте пропущенный ответ нулём.</p>'+TASKS.map((t,i)=>'<label style="display:block;margin:12px 0"><b>'+t.id+'. '+E(t.question)+'</b><select data-analogy="'+i+'" style="display:block;min-width:220px;max-width:100%;margin-top:5px"><option value="">Нет ответа</option>'+t.options.map((v,j)=>'<option value="'+j+'"'+(a[i]===j?' selected':'')+'>'+CH[j]+') '+E(v)+'</option>').join('')+'</select></label>').join('')+'<section id="analogyResult" aria-live="polite">'+report(a)+'</section>';}
+function calculator(d,ctx){const r=ctx.rows[ctx.rowIndex]||{answers:[]},a=r.answers||[];return '<h3>Интерактивная проверка 12 аналогий</h3><p>Внесите буквы ответов обследуемого. Не заполняйте пропущенный ответ нулем.</p>'+TASKS.map((t,i)=>'<label style="display:block;margin:12px 0"><b>'+t.id+'. '+E(t.question)+'</b><select data-analogy="'+i+'" style="display:block;min-width:220px;max-width:100%;margin-top:5px"><option value="">Нет ответа</option>'+t.options.map((v,j)=>'<option value="'+j+'"'+(a[i]===j?' selected':'')+'>'+CH[j]+') '+E(v)+'</option>').join('')+'</select></label>').join('')+'<section id="analogyResult" aria-live="polite">'+report(a)+'</section>';}
 function bind(d,ctx){const r=ctx.rows[ctx.rowIndex];if(!r)return;r.answers??=[];document.querySelectorAll("[data-analogy]").forEach(e=>e.addEventListener("change",()=>{r.answers[+e.dataset.analogy]=e.value===""?null:Number(e.value);document.getElementById("analogyResult").innerHTML=report(r.answers)}));}
 window.PSY_ANALOGIES={TASKS,score,instruction,materials,processing,calculator,bind};
 })();
