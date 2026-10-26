@@ -158,6 +158,7 @@
   if(change.before)return existing?.status!=="done"||window.confirm("При смене методики результаты этого задания нужно очистить, чтобы не смешивать разные процедуры. Продолжить?");
   if(change.choiceChanged&&existing?.status==="done"){
    rec().items[i]={status:"",result:"",help:"",notes:"",reason:"",duration:""};
+   rec().summary="";
   }
   if(state.tab!=="portfolio"){render();return;}
   const container=root.querySelector("#pmpk-task-"+i+" .pmpk-choices");
