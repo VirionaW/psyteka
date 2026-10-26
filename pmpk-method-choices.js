@@ -34,7 +34,7 @@
  ],
  // 7-11 лет
  [
-  [c("Простые аналогии (словесно-логическое мышление)","Установление смысловых отношений"),c("Исключение четвертого лишнего (словесный вариант)","Словесное обобщение"),c("Методика классификации предметов","Классификация и гибкость выбора"),w("Исключение лишнего и простая аналогия","thinking","Дополнительная авторская рабочая серия")],
+  [c("Простые аналогии (словесно-логическое мышление)","В используемой серии – ориентировочно с 10 лет"),c("Исключение четвертого лишнего (словесный вариант)","Словесное обобщение"),c("Методика классификации предметов","Классификация и гибкость выбора"),w("Исключение лишнего и простая аналогия","thinking","Дополнительная авторская рабочая серия")],
   [c("Заучивание 10 слов","Слухоречевое запоминание"),c("Повторение цифровых рядов (прямой и обратный порядок)","Непосредственная память"),w("Запоминание шести слов","memory","Дополнительная авторская рабочая серия без нормативов")],
   [c("Таблицы Шульте","Темп и устойчивость внимания"),c("Корректурная проба Бурдона - Анфимова","Концентрация и работоспособность")],
   [r("Зрительно-моторный гештальт-тест Бендер","Только по конкретному оригинальному изданию"),c("Проба на динамический праксис «Кулак – ребро – ладонь»","Программирование движений"),r("Кубики Кооса","Пространственный анализ и конструирование")],
@@ -56,7 +56,7 @@
  const selections=Array.from({length:4},()=>Array(7).fill(""));
  const esc=x=>String(x??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
  function idFor(m){return m.kind==="working"?"working:"+m.id:m.kind==="catalog"?"catalog:"+m.name:"reference:"+m.name}
- function hasPortfolio(m){return m.kind==="working"&&!!window.PSY_PMPK_METHODS?.open||m.kind==="catalog"&&!!window.PSY_CATALOG?.find(x=>x.name===m.name)&&!!document.querySelector('[data-open="'+CSSsafe(window.PSY_CATALOG.find(x=>x.name===m.name).id)+'"]')}
+ function hasPortfolio(m){return m.kind==="working"&&!!window.PSY_PMPK_METHODS?.open||m.kind==="catalog"&&!!window.PSY_CATALOG?.find(x=>x.name===m.name)&&!!window.PSY_FULL_METHODS?.[m.name]}
  function CSSsafe(s){return String(s).replace(/["\\]/g,"\\$&")}
  function render(age,task){
   const items=catalogue[age]?.[task]||[];
@@ -80,7 +80,7 @@
   if(m.kind==="working")window.PSY_PMPK_METHODS?.open?.(m.id);
   if(m.kind==="catalog"){
    const item=window.PSY_CATALOG?.find(x=>x.name===m.name);
-   if(item){const action=document.querySelector('[data-open="'+CSSsafe(item.id)+'"]');if(action)action.click();}
+   if(item){const action=document.querySelector('[data-open="'+CSSsafe(item.id)+'"]');if(action)action.click();else if(typeof window.openMethod==="function")window.openMethod(item);}
   }
   return true;
  }
