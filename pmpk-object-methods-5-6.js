@@ -129,6 +129,7 @@ document.addEventListener("click",e=>{if(!overlay||!overlay.contains(e.target))r
  const a=b.dataset.object56Action;if(a==="close")close();else if(a==="back"){tab="portfolio";draw()}else if(a==="processing"){tab="processing";draw()}
  else if(a.startsWith("print-"))print(a.slice(6));else if(a.startsWith("docx-"))word(a.slice(5));
 });
+if(window.PSY_CATALOG){for(const [id,m]of Object.entries(M)){if(!window.PSY_CATALOG.some(x=>x.name===m.name))window.PSY_CATALOG.push({id:m.id,name:m.name,theme:m.theme,author:"Издание под ред. Е. А. Стребелевой, 1998",age:"5-6 лет",format:TYPE[id],goal:m.goal,source:m.source})}}
 window.PSY_PMPK_OBJECT56={has:id=>!!M[id],open,catalog:Object.entries(M).map(([id,m])=>({id:m.id,title:m.name,group:"Диагностика",topic:m.theme,age:"5-6",goal:m.goal,format:TYPE[id],author:"Издание под ред. Е. А. Стребелевой, 1998",existing:m.name,verified:true,object56Id:id})),
  test:{ready:(id,d)=>ready(id,d),init,ids:Object.keys(M)}};
 })();
