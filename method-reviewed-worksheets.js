@@ -65,6 +65,8 @@ function improve(cfg){
   for(const g of api.GROUPS){g.items.forEach((pair,i)=>{
     const id=g.code+"-"+i,word=document.querySelector('[data-paired-note="'+id+'"]'),mark=document.querySelector('[data-paired-mark="'+id+'"]');
     const apply=()=>{const txt=word?.value.trim()||"",grade=txt?Number(normWord(txt)===normWord(pair[1])):null;person.pairedAnswers[id]=grade;if(mark)mark.value=grade===null?"":String(grade);const target=document.getElementById("pairedSummary");if(target)target.innerHTML=(api.outcomes(person.pairedAnswers).map(z=>'<p><b>'+esc(z.title)+'</b>: '+(z.complete?z.correct+"/10":"Оценено "+(z.correct+z.wrong)+"/10")+'</p>').join(""))+'<p>Проверка дословного воспроизведения; пропуски сохраняются.</p>';updateGroup();};
+    if(word?.value.trim() && person.pairedAnswers[id]!==Number(normWord(word.value)===normWord(pair[1])))apply();
+    else if(mark?.value==="1"&&!word?.value.trim()){person.pairedAnswers[id]=null;mark.value="";}
     word?.addEventListener("input",apply);
     mark?.addEventListener("change",()=>{if(word?.value.trim()){apply();return;}if(mark?.value==="1"){mark.value="";person.pairedAnswers[id]=null;const out=document.getElementById("pairedSummary");if(out)out.innerHTML=api.outcomes(person.pairedAnswers).map(z=>"<p><b>"+esc(z.title)+"</b>: "+(z.complete?z.correct+"/10":"Оценено "+(z.correct+z.wrong)+"/10")+"</p>").join("");}updateGroup();});
   });}
