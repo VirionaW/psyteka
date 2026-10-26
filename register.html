@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Регистрация и вход – Психотека</title>
+<link rel="icon" type="image/svg+xml" href="brand-favicon.svg?v=20261025e">
+<link rel="stylesheet" href="registration.css?v=20261026a1">
+<script defer src="auth-config.js?v=20261026a1"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+<script defer src="registration.js?v=20261026a1"></script>
+</head>
+<body>
+<header class="auth-header"><a href="index.html?home=1" class="auth-brand"><img src="brand-mark.svg?v=20261025c" width="45" height="45" alt=""><span><strong>Психотека</strong><small>Методическая библиотека</small></span></a><a class="auth-back" href="index.html?home=1">На главную</a></header>
+<main class="auth-wrap">
+ <section class="auth-copy">
+  <p class="auth-eyebrow">Личный кабинет психолога</p>
+  <h1>Ваше рабочее пространство</h1>
+  <p>Один аккаунт для ваших избранных методик и личных папок. Регистрация по почте без пароля.</p>
+  <div class="auth-points"><p><span aria-hidden="true">☆</span> Сохраняйте нужные методики</p><p><span aria-hidden="true">▤</span> Собирайте собственные подборки</p><p><span aria-hidden="true">✓</span> Доступ к вашим материалам с разных устройств после подключения синхронизации</p></div>
+  <p class="auth-privacy">Не загружайте сюда имена детей, результаты обследований или другую конфиденциальную информацию.</p>
+ </section>
+ <section class="auth-card" aria-labelledby="authTitle">
+  <p class="auth-eyebrow">Вход и регистрация</p>
+  <h2 id="authTitle">Войти по электронной почте</h2>
+  <p class="auth-help">Пришлем письмо для подтверждения. Если в нем будет код, его можно ввести здесь; если ссылка – откройте ее.</p>
+  <p id="authNotConfigured" class="auth-note" role="status" hidden>Регистрация готовится к запуску. Подключение сервиса учетных записей еще не завершено.</p>
+  <form id="authEmailForm" novalidate>
+   <label for="authEmail">Электронная почта</label>
+   <input id="authEmail" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="name@example.com" required>
+   <button id="authSend" type="submit">Продолжить</button>
+  </form>
+  <form id="authCodeForm" hidden novalidate>
+   <label for="authCode">Код из письма, если он указан</label>
+   <input id="authCode" type="text" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" minlength="6" maxlength="8" placeholder="Код из письма">
+   <button id="authVerify" type="submit">Подтвердить код</button>
+   <button class="auth-link-button" type="button" id="authAgain">Указать другую почту</button>
+  </form>
+  <div id="authSignedIn" hidden>
+   <h3>Вы вошли в аккаунт</h3>
+   <p id="authEmailLabel"></p>
+   <p class="auth-help">Профиль пока сохраняет сведения локально. Синхронизация избранного и папок будет подключена отдельно.</p>
+   <a href="profile.html" class="auth-button-link">Открыть профиль</a>
+   <button class="auth-secondary" id="authSignOut" type="button">Выйти</button>
+  </div>
+  <p class="auth-status" id="authStatus" role="status" aria-live="polite"></p>
+  <p class="auth-disclaimer">Код тестового доступа Психотеки и личный аккаунт – разные механизмы.</p>
+ </section>
+</main>
+<footer class="auth-footer">Психотека · Бережно к личным данным</footer>
+</body></html>
