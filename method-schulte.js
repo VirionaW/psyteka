@@ -93,6 +93,12 @@
  }
 
  function done(answers){return Array.from({length:5},(_,i)=>answers?.[i*2]).filter(v=>v!==""&&v!=null&&Number.isFinite(Number(v))&&Number(v)>0&&Number(v)<=3600).length;}
+ function schulteEntryComplete(answers,i){
+  const t=answers?.[i*2],e=answers?.[i*2+1];
+  return t!==""&&t!=null&&Number.isFinite(Number(t))&&Number(t)>0&&Number(t)<=3600&&
+   e!==""&&e!=null&&Number.isInteger(Number(e))&&Number(e)>=0&&Number(e)<=999;
+ }
+ function completed(answers){return MATRIX.reduce((n,_,i)=>n+(schulteEntryComplete(answers,i)?1:0),0);}
  const sorted=rows=>rows.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||"","ru",{sensitivity:"base"}));
  function group(rows){
   const people=sorted(rows).filter(x=>x.name?.trim()||done(x.answers));
@@ -109,12 +115,12 @@
      '<button type="button" class="btn primary" id="schulteAddNames">Добавить в список</button>'+
      '<button type="button" class="btn" id="schulteSort">По алфавиту А – Я</button>'+
      '<div class="psy-schulte-person-list">'+people.map((p,i)=>(p.name?.trim()||done(p.answers))?
-      '<div class="psy-schulte-person-row"><button type="button" class="psy-schulte-person '+(i===ctx.rowIndex?"active":"")+'" data-schulte-person="'+i+'"><span>'+esc(p.name||"Участник без имени")+'</span><small>'+done(p.answers)+'/5</small></button><button type="button" class="psy-schulte-person-delete" data-schulte-delete="'+i+'" aria-label="Удалить участника '+esc(p.name||"")+'">×</button></div>':"").join("")+'</div>'+
+      '<div class="psy-schulte-person-row"><button type="button" class="psy-schulte-person '+(i===ctx.rowIndex?"active ":"")+(completed(p.answers)===5?"is-complete":"is-missing")+'" data-schulte-person="'+i+'"><span>'+esc(p.name||"Участник без имени")+'</span><small>'+completed(p.answers)+'/5</small></button><button type="button" class="psy-schulte-person-delete" data-schulte-delete="'+i+'" aria-label="Удалить участника '+esc(p.name||"")+'">×</button></div>':"").join("")+'</div>'+
      '<button type="button" class="btn psy-schulte-delete-all" id="schulteDeleteAll">Удалить всех участников</button></aside><div class="psy-schulte-entry-main">';
   }else h+='<div class="psy-schulte-entry-main">';
   h+='<label class="psy-schulte-name"><span>Фамилия и имя</span><input id="schulteCurrentName" autocomplete="off" maxlength="120" placeholder="Введите ФИО" value="'+esc(row.name||"")+'"></label>'+
-   '<p class="psy-schulte-progress" id="schulteProgress">Заполнено '+done(a)+' из 5 таблиц</p>'+
-   '<div class="psy-schulte-inputs">'+MATRIX.map((_,i)=>'<section class="psy-schulte-entry"><h4>Таблица '+(i+1)+'</h4><div class="psy-schulte-entry-fields"><label>Время, сек.<input data-schulte="'+(i*2)+'" type="number" inputmode="decimal" min="0.1" max="3600" step="any" value="'+esc(a[i*2]??"")+'" placeholder="Например, 45.5"></label><label>Ошибок<input data-schulte="'+(i*2+1)+'" type="number" inputmode="numeric" min="0" max="999" step="1" value="'+esc(a[i*2+1]??"")+'" placeholder="0"></label></div></section>').join("")+'</div>';
+   '<p class="psy-schulte-progress" id="schulteProgress">Заполнено '+completed(a)+' из 5 таблиц</p>'+
+   '<div class="psy-schulte-inputs">'+MATRIX.map((_,i)=>'<section class="psy-schulte-entry '+(schulteEntryComplete(a,i)?"is-complete":"is-missing")+'" data-schulte-table="'+i+'"><div class="psy-schulte-entry-heading"><h4>Таблица '+(i+1)+'</h4><span class="psy-schulte-entry-status">'+(schulteEntryComplete(a,i)?"Заполнено":"Не заполнено")+'</span></div><div class="psy-schulte-entry-fields"><label>Время, сек.<input data-schulte="'+(i*2)+'" type="number" inputmode="decimal" min="0.1" max="3600" step="any" value="'+esc(a[i*2]??"")+'" placeholder="Например, 45.5"></label><label>Ошибок<input data-schulte="'+(i*2+1)+'" type="number" inputmode="numeric" min="0" max="999" step="1" value="'+esc(a[i*2+1]??"")+'" placeholder="0"></label></div></section>').join("")+'</div>';
   if(ctx.calcMode==="class")h+='<div class="psy-schulte-next"><button type="button" class="btn primary" id="schulteNext" '+(ctx.rowIndex>=people.length-1?"disabled":"")+'>Следующий участник →</button></div>';
   h+='<div id="schulteResult">'+visual(d,a)+'</div></div>';
   if(ctx.calcMode==="class")h+='</div><div id="schulteGroup">'+group(people)+'</div>';
@@ -140,8 +146,19 @@
   const refresh=()=>{
    const out=document.getElementById("schulteResult");if(out)out.innerHTML=visual(d,person.answers);
    const summary=document.getElementById("schulteGroup");if(summary)summary.innerHTML=group(rows);
-   const progress=document.getElementById("schulteProgress");if(progress)progress.textContent="Заполнено "+done(person.answers)+" из 5 таблиц";
-   const status=document.querySelector(".psy-schulte-person.active small");if(status)status.textContent=done(person.answers)+"/5";
+   const progress=document.getElementById("schulteProgress");if(progress)progress.textContent="Заполнено "+completed(person.answers)+" из 5 таблиц";
+   document.querySelectorAll(".psy-schulte-entry[data-schulte-table]").forEach(card=>{
+    const filled=schulteEntryComplete(person.answers,Number(card.dataset.schulteTable));
+    card.classList.toggle("is-complete",filled);
+    card.classList.toggle("is-missing",!filled);
+    const label=card.querySelector(".psy-schulte-entry-status");if(label)label.textContent=filled?"Заполнено":"Не заполнено";
+   });
+   const active=document.querySelector(".psy-schulte-person.active");
+   if(active){
+    const filled=completed(person.answers)===5;
+    active.classList.toggle("is-complete",filled);active.classList.toggle("is-missing",!filled);
+    const status=active.querySelector("small");if(status)status.textContent=completed(person.answers)+"/5";
+   }
    const downloadBtn=document.getElementById("schulteReportBottom");if(downloadBtn)downloadBtn.disabled=!(ctx.calcMode==="class"?rows.some(x=>score(d,x.answers)):score(d,person.answers));
   };
   document.querySelectorAll("[data-schulte]").forEach(el=>el.addEventListener("input",()=>{
