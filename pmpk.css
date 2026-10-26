@@ -284,3 +284,35 @@ body.pmpk-method-open{overflow:hidden}
 }
 @media(max-width:430px){#pmpkView .pmpk-task-toggle .pmpk-minutes{display:none}#pmpkView .pmpk-route-stats{max-width:100%}}
 @media(prefers-reduced-motion:reduce){#pmpkView .pmpk-task-chevron{transition:none}}
+
+
+/* Источниковые методики ПМПК: формы Пьерона – Рузера и результаты Изотовой. */
+.pmpk-method-content .pmpk-pieron-grid{
+ display:grid;grid-template-columns:repeat(10,minmax(0,1fr));
+ gap:0;margin:18px auto;width:min(100%,610px);
+ border:1px solid var(--line);background:var(--paper);border-radius:10px;overflow:hidden;
+}
+.pmpk-method-content .pmpk-pieron-grid span{
+ display:grid;place-items:center;aspect-ratio:1;
+ font:clamp(17px,2.4vw,31px)/1 "Arial",sans-serif;
+ color:var(--ink);border:1px solid var(--line);min-width:0;
+}
+.pmpk-method-content .pmpk-pict-empty{
+ min-height:190px;border:1px solid var(--line);border-radius:11px;background:var(--paper);margin:12px 0;
+}
+.pmpk-method-content .pmpk-sourced-result{
+ padding:14px 16px;border:1px solid var(--line);border-radius:12px;margin:13px 0;background:var(--soft);
+}
+.pmpk-method-content .pmpk-sourced-result h3{margin:0 0 6px;font-size:17px}
+.pmpk-method-content .pmpk-sourced-result p{margin:0;font-size:14px;line-height:1.6}
+.pmpk-method-content .pmpk-method-table select,
+.pmpk-method-content .pmpk-method-table input{
+ display:block;width:100%;min-width:0;font:13px/1.3 system-ui;
+ padding:8px;border:1px solid var(--line);border-radius:8px;
+ background:var(--paper);color:var(--ink);
+}
+@media(max-width:620px){
+ .pmpk-method-content .pmpk-pieron-grid span{font-size:clamp(14px,3.4vw,21px)}
+ .pmpk-method-content .pmpk-method-table th,
+ .pmpk-method-content .pmpk-method-table td{padding:6px}
+}
