@@ -764,6 +764,7 @@ function saveMethodHTML(){
 }
 function openMethod(m){
  if(!m)return;
+ if(window.PSY_PMPK_SOURCED?.has?.(m.name)){window.PSY_PMPK_SOURCED.open(m.name);return;}
  if(methodNow?.name){methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex}};
  methodNow=m;tabNow='overview';
  const saved=methodSessions[m.name];
