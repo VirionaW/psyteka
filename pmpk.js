@@ -101,7 +101,7 @@
       return '<section class="pmpk-card pmpk-guide-step"><div class="pmpk-task-head"><div class="pmpk-titleline"><span class="pmpk-number">'+(i+1)+'</span><h2>'+esc(t.title)+'</h2></div><span class="pmpk-minutes">ориентир '+SCHEDULE[i]+' мин</span></div>'+
       '<p class="pmpk-meta">'+esc(t.goal)+'</p>'+
       (m?'<p><strong>Выбрана методика:</strong> '+esc(m.name)+'</p><p>Проводите ее по собственной инструкции и зарегистрируйте реальный результат. При необходимости отметьте, почему обследование изменено или прекращено.</p>'+
-       (m.kind==="reference"?'<p class="pmpk-note">Для данного варианта используйте оригинальное руководство и материалы. Общая страница содержит только сведения о выборе.</p>':
+       (!window.PSY_PMPK_CHOICES?.hasPortfolio?.(m)?'<p class="pmpk-note">Полный комплект данной версии на этой странице не представлен. Для проведения используйте оригинальное руководство и материалы.</p>':
        '<button type="button" class="pmpk-action primary" data-pmpk-open-selected="'+i+'">Открыть портфолио методики</button>'):
        '<p>Методика пока не выбрана. Перейдите к возрастному списку, выберите подходящий вариант и откройте руководство в его портфолио.</p><button type="button" class="pmpk-mini" data-pmpk-go-select="'+i+'">Выбрать методику</button>')+
       '<p class="pmpk-note"><strong>В сводный протокол:</strong> способ выполнения, зарегистрированные ошибки, виды помощи, динамику работоспособности и наблюдения без произвольного нормативного балла.</p></section>';
