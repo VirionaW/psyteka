@@ -34,83 +34,144 @@
   {group:"Диагностика",topic:"Готовность к школе",title:"Графический диктант",age:"6-7",goal:"Оценка выполнения графической инструкции в условиях конкретной версии методики.",existing:"Графический диктант"},
   {group:"Диагностика",topic:"Мышление",title:"Методика классификации предметов",age:"5-7",goal:"Используйте только доступный комплект Психотеки с указанными ограничениями.",existing:"Методика классификации предметов"}
  ];
- const data=subjects.concat(reuse).map((x,i)=>Object.assign({id:"preschool-"+String(i+1).padStart(2,"0"),author:x.existing?"Существующий комплект Психотеки":"Психотека – авторский рабочий протокол (2026)",format:x.existing?"Диагностическая методика":"Качественная карта / план",notes:""},x));
- const categories=["Все направления","Адаптация","Тревожность","Страхи","Эмоциональная сфера","Поведение","Самооценка","Общение","Внимание","Память","Мышление","Саморегуляция","Семья","Готовность к школе"];
- const ages=["Все возрасты","2-3","3-4","4-5","5-6","6-7"];
- const store=new Map();
- let group="",topic="",query="",age="Все возрасты",current=null,tab="portfolio",processing=false,trigger=null;
- function ageMatch(m){if(age==="Все возрасты")return true;const [min,max]=m.age.split("-").map(Number),[a,b]=age.split("-").map(Number);return min<=a&&max>=b}
+
+ const data=subjects.concat(reuse).map((m,i)=>Object.assign({
+  id:"preschool-"+String(i+1).padStart(2,"0"),
+  format:m.existing?"Диагностическая методика":m.group==="Диагностика"?"Карта наблюдения / протокол":"Рабочий материал",
+  author:m.existing?"":"Психотека"
+ },m));
+ const detailById=new Map(data.filter(m=>!m.existing).map(m=>[m.id,m]));
+ for(const m of detailById.values()){
+  window.PSY_FULL_METHODS[m.title]={
+   workflow:"preschoolSheet",preschoolId:m.id,author:"Психотека",age:m.age+" лет",
+   kind:m.format,goal:m.goal,count:m.items.length+" наблюдаемых пунктов",
+   indicators:m.items.slice(0,5),indicatorsTitle:"Области наблюдения и работы",
+   calculator:true,scoring:"Описательная регистрация без баллов и нормативных порогов.",
+   interpret:m.recommend
+  };
+ }
+ const ages=[["","Все возрастные группы"],["2-3","2-3 года"],["3-4","3-4 года"],["4-5","4-5 лет"],["5-6","5-6 лет"],["6-7","6-7 лет"]];
+ const stateMap=new Map();
+ let group="",topic="",query="",age="";
+ const ownedState=d=>{const m=detailById.get(d.preschoolId);if(!m)throw Error("Не найдена форма");if(!stateMap.has(m.id))stateMap.set(m.id,{values:Array(m.items.length).fill(""),note:""});return stateMap.get(m.id)};
+ const complete=d=>ownedState(d).values.every(v=>v==="Отмечено"||v==="Не отмечено");
+ const summary=d=>{
+  if(!complete(d))return null;
+  const m=detailById.get(d.preschoolId),values=ownedState(d).values;
+  return {yes:m.items.filter((_,i)=>values[i]==="Отмечено"),no:m.items.filter((_,i)=>values[i]==="Не отмечено")};
+ };
+ const ageMatch=m=>{if(!age)return true;const [lo,hi]=m.age.split("-").map(Number),[a,b]=age.split("-").map(Number);return lo<=a&&hi>=b};
+ const themeName=m=>{
+  const map={"Эмоциональная сфера":"Настроение","Поведение":"Агрессия","Страхи":"Тревожность","Саморегуляция":"Внимание","Готовность к школе":"Мышление","Адаптация группы":"Адаптация"};
+  return map[m.topic]||(["Диагностика","Коррекционно-развивающая работа"].includes(m.group)?(m.topic in (window.categoryIcons||{})?m.topic:"ПМПК"):"Программы");
+ };
+ function picture(m){
+  if(m.existing&&typeof artForMethod==="function")return artForMethod({name:m.existing,theme:themeName(m)});
+  return typeof iconSvg==="function"?iconSvg(themeName(m)):"";
+ }
  function show(){
   const out=data.filter(m=>(!group||m.group===group)&&(!topic||m.topic===topic)&&ageMatch(m)&&(!query||[m.title,m.goal,m.topic,m.author,m.group].join(" ").toLowerCase().includes(query.toLowerCase())));
   root.querySelector("#preschoolHeading").textContent=topic||group||"Материалы для детского сада";
   root.querySelector("#preschoolCount").textContent="Найдено: "+out.length;
-  root.querySelector("#preschoolCards").innerHTML=out.length?out.map(m=>'<article class="preschool-card"><div class="preschool-card-top"><span class="preschool-card-kind">'+esc(m.group)+'</span><span class="preschool-card-age">'+esc(m.age)+' лет</span></div><h3>'+esc(m.title)+'</h3><p class="preschool-credit">'+esc(m.author)+'</p><p>'+esc(m.goal)+'</p><div class="preschool-card-bottom"><span>'+esc(m.topic)+'</span><button class="btn primary" type="button" data-preschool-open="'+esc(m.id)+'">Открыть методику</button></div></article>').join(""):'<p class="preschool-empty">По выбранным параметрам материалов нет. Попробуйте другой возраст или направление.</p>';
-  tree.querySelectorAll("[data-preschool-topic]").forEach(b=>b.classList.toggle("active",!!topic&&b.dataset.preschoolTopic===topic&&b.dataset.preschool-group===group));
+  root.querySelector("#preschoolCards").innerHTML=out.map(m=>{
+   const realAuthor=m.existing?(window.PSY_CATALOG||[]).find(x=>x.name===m.existing)?.author||"":"";
+   const credit=realAuthor&&!/сведения об авторе уточняются/i.test(realAuthor)?'<p class="method-card-author">'+esc(realAuthor)+'</p>':"";
+   return '<article class="method preschool-method" data-kind="'+(m.existing?"graphic":"other")+'"><div class="head"><div class="glyph">'+picture(m)+'</div><div><h3>'+esc(m.title)+'</h3>'+credit+'</div></div><div class="tags"><span class="tag">'+esc(m.format)+'</span><span class="tag">'+esc(m.age)+' лет</span></div><p class="method-card-summary">'+esc(m.goal)+'</p><div class="actions"><button class="btn primary" type="button" data-preschool-open="'+esc(m.id)+'">Открыть методику</button></div></article>';
+  }).join("")||'<p class="preschool-empty">По выбранным параметрам материалов нет. Попробуйте другое направление или возраст.</p>';
+  tree.querySelectorAll("[data-preschool-topic]").forEach(b=>b.classList.toggle("active",!!topic&&b.dataset.preschoolTopic===topic&&b.dataset.preschoolGroup===group));
   tree.querySelectorAll("[data-preschool-all]").forEach(b=>b.classList.toggle("active",!topic&&!group));
  }
  function selectCategory(g,t){
-  group=g||"";topic=t||"";query="";root.querySelector("#preschoolSearch").value="";
+  group=g||"";topic=t||"";query="";
+  root.querySelector("#preschoolSearch").value="";
   if(typeof selectView==="function")selectView("preschool");
   show();root.scrollIntoView({block:"start",behavior:"auto"});
  }
  tree.addEventListener("click",e=>{
   const toggle=e.target.closest("[data-preschool-toggle]");
   if(toggle){const target=document.getElementById(toggle.dataset.preschoolToggle);if(!target)return;target.hidden=!target.hidden;toggle.setAttribute("aria-expanded",String(!target.hidden));return}
-  const all=e.target.closest("[data-preschool-all]");if(all){selectCategory("","");return}
+  if(e.target.closest("[data-preschool-all]")){selectCategory("","");return}
   const b=e.target.closest("[data-preschool-topic]");if(b)selectCategory(b.dataset.preschoolGroup,b.dataset.preschoolTopic||"");
  });
  document.querySelector('[data-view="preschool"]')?.addEventListener("click",()=>{if(!tree.hidden)show()});
- root.innerHTML='<div class="preschool-filters"><label class="preschool-search-label"><span class="visually-hidden">Поиск дошкольных материалов</span><input id="preschoolSearch" type="search" placeholder="Название, направление, автор..." aria-label="Поиск дошкольных материалов"></label><label class="preschool-age-label">Возраст <select id="preschoolAge" aria-label="Возраст ребенка">'+ages.map(a=>'<option>'+esc(a)+'</option>').join("")+'</select></label></div><div class="preschool-subbar"><h2 id="preschoolHeading">Материалы для детского сада</h2><span id="preschoolCount"></span></div><p class="preschool-intro">Практические протоколы наблюдения, игровые занятия и работа с семьей и воспитателями. Авторские рабочие карты не являются стандартизированными психологическими тестами и не имеют диагностических порогов.</p><div class="preschool-cards" id="preschoolCards"></div>';
+ root.innerHTML='<div class="filters preschool-filters"><label class="search-wrap"><span aria-hidden="true">⌕</span><input id="preschoolSearch" type="search" placeholder="Название методики, направление..." aria-label="Поиск дошкольных материалов"></label><label class="preschool-age-field"><span class="visually-hidden">Возрастная группа</span><select id="preschoolAge" aria-label="Возрастная группа">'+ages.map(([v,label])=>'<option value="'+esc(v)+'">'+esc(label)+'</option>').join("")+'</select></label></div><div class="subbar preschool-subbar"><h2 id="preschoolHeading">Материалы для детского сада</h2><span id="preschoolCount"></span></div><div class="preschool-cards catalog" id="preschoolCards"></div>';
  root.querySelector("#preschoolSearch").addEventListener("input",e=>{query=e.target.value;show()});
  root.querySelector("#preschoolAge").addEventListener("change",e=>{age=e.target.value;show()});
- root.addEventListener("click",e=>{const b=e.target.closest("[data-preschool-open]");if(!b)return;const m=data.find(x=>x.id===b.dataset.preschoolOpen);if(!m)return;if(m.existing){const found=(window.PSY_CATALOG||[]).find(x=>x.name===m.existing);if(found&&typeof window.openMethod==="function"){window.openMethod(found)}return}open(m,b)});
- function getState(m){if(!store.has(m.id))store.set(m.id,{values:Array(m.items.length).fill(""),note:""});return store.get(m.id)}
- function completeness(m){const s=getState(m);return s.values.every(v=>v==="Отмечено"||v==="Не отмечено")}
- function summary(m){const s=getState(m);if(!completeness(m))return null;return {yes:m.items.filter((x,i)=>s.values[i]==="Отмечено"),no:m.items.filter((x,i)=>s.values[i]==="Не отмечено")}}
- const overlay=document.createElement("div");overlay.className="preschool-overlay";overlay.hidden=true;overlay.innerHTML='<div class="preschool-dialog" role="dialog" aria-modal="true" aria-labelledby="preschoolModalTitle"><header class="preschool-dialog-head"><div><h2 id="preschoolModalTitle"></h2><p id="preschoolModalCredit"></p></div><button class="preschool-close" type="button" aria-label="Закрыть портфолио">×</button></header><nav class="preschool-tabs" aria-label="Разделы методики"><button type="button" data-preschool-tab="portfolio">Портфолио</button><button type="button" data-preschool-tab="guide">Методика / руководство</button><button type="button" data-preschool-tab="blank">Бланк</button></nav><div id="preschoolDialogBody" class="preschool-dialog-body"></div><footer id="preschoolDialogFoot" class="preschool-dialog-foot"></footer></div>';
- document.body.appendChild(overlay);
- const modal=overlay.querySelector(".preschool-dialog"),body=overlay.querySelector("#preschoolDialogBody"),foot=overlay.querySelector("#preschoolDialogFoot");
- function open(m,b){trigger=b;current=m;tab="portfolio";processing=false;overlay.hidden=false;document.body.classList.add("preschool-dialog-open");draw();overlay.querySelector(".preschool-close").focus()}
- function close(){overlay.hidden=true;document.body.classList.remove("preschool-dialog-open");current=null;trigger?.focus()}
- overlay.querySelector(".preschool-close").addEventListener("click",close);
- overlay.addEventListener("click",e=>{if(e.target===overlay)close()});
- document.addEventListener("keydown",e=>{if(overlay.hidden)return;if(e.key==="Escape"){e.preventDefault();close()}else if(e.key==="Tab"){const controls=[...modal.querySelectorAll("button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled])")].filter(x=>x.getClientRects().length);if(!controls.length)return;const first=controls[0],last=controls[controls.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});
- overlay.querySelector(".preschool-tabs").addEventListener("click",e=>{const b=e.target.closest("[data-preschool-tab]");if(!b)return;tab=b.dataset.preschoolTab;processing=false;draw()});
- function sheetRows(m,values){return '<table class="preschool-table"><thead><tr><th>Наблюдаемый признак / пункт плана</th><th>Отмечено</th><th>Не отмечено</th></tr></thead><tbody>'+m.items.map((x,i)=>'<tr><td>'+esc(x)+'</td><td>'+((values&&values[i]==="Отмечено")?"Да":"")+'</td><td>'+((values&&values[i]==="Не отмечено")?"Да":"")+'</td></tr>').join("")+'</tbody></table>'}
- function portfolio(m){return '<div class="preschool-facts"><span><b>Возраст</b>'+esc(m.age)+' лет</span><span><b>Раздел</b>'+esc(m.group)+'</span><span><b>Направление</b>'+esc(m.topic)+'</span><span><b>Тип</b>'+esc(m.format)+'</span></div><h3>Цель</h3><p>'+esc(m.goal)+'</p><h3>О комплекте</h3><p>Авторская рабочая форма Психотеки для описательного сопровождения. Не является стандартизированной диагностической методикой; нормативов и автоматических уровней нет.</p><h3>Кому предназначена</h3><p>'+esc(m.audience)+'</p><p class="preschool-note">Результаты не хранятся на сервере. Не вводите ФИО и другие персональные данные ребенка.</p>'}
- function guide(m){return '<div class="preschool-print-head"><h3>Методика / руководство</h3><div class="preschool-print-actions"><button type="button" data-preschool-print="guide">Без бланка</button><button type="button" data-preschool-print="both">С бланком</button></div></div><h3>Назначение</h3><p>'+esc(m.goal)+'</p><h3>Процедура</h3><p>'+esc(m.steps)+'</p><h3>Регистрация и обработка</h3><p>Специалист фиксирует каждый признак как «Отмечено», «Не отмечено» либо оставляет без оценки. Результат качественный: перечень зафиксированных наблюдений без суммарного балла.</p><h3>Интерпретация и ограничения</h3><p>'+esc(m.recommend)+'</p><h3>Авторство</h3><p>'+esc(m.author)+'.</p>'}
- function blank(m){return '<div class="preschool-print-head"><h3>Протокол специалиста</h3><button type="button" data-preschool-print="blank">Печать бланка</button></div><p>Дата наблюдения: ____________________　Группа: ____________________</p>'+sheetRows(m,null)+'<p class="preschool-paper-lines">Ситуация и условия: __________________________________________________________</p><p class="preschool-paper-lines">Уточнения / оказанная помощь: __________________________________________________</p><p class="preschool-paper-lines">Следующий шаг: ______________________________________________________________</p><p class="preschool-note">Заполняет специалист. Лист не передается ребенку. Отмеченные пункты не складываются в диагностический балл.</p>'}
- function results(m){const s=getState(m),ready=completeness(m),sum=summary(m);
-  return '<div class="preschool-results-head"><div><h3>Обработка результатов</h3><p>Описательная регистрация без числовых норм.</p></div><span class="preschool-status '+(ready?"complete":"pending")+'">'+(ready?"Данные заполнены":"Не все данные введены")+'</span></div><div class="preschool-answer-list">'+m.items.map((x,i)=>'<label class="preschool-answer"><span>'+(i+1)+'. '+esc(x)+'</span><select data-preschool-answer="'+i+'" aria-label="'+esc(x)+'"><option value="">Нет ответа</option><option value="Отмечено" '+(s.values[i]==="Отмечено"?"selected":"")+'>Отмечено</option><option value="Не отмечено" '+(s.values[i]==="Не отмечено"?"selected":"")+'>Не отмечено</option></select></label>').join("")+'</div><label class="preschool-note-label">Контекст наблюдения (без персональных данных)<textarea id="preschoolContext" rows="3" placeholder="Ситуация, условия, помощь...">'+esc(s.note)+'</textarea></label><div id="preschoolSummary" class="preschool-summary">'+(sum?renderSummary(sum):'<p>Заполните все наблюдения, чтобы получить описательное резюме. Пустой ответ не считается отсутствием признака.</p>')+'</div>';
- }
- function renderSummary(s){return '<h4>Описательное резюме</h4><p><b>Отмечено:</b> '+(s.yes.length?esc(s.yes.join("; ")):"нет отмеченных пунктов")+'.</p><p><b>Не отмечено:</b> '+(s.no.length?esc(s.no.join("; ")):"нет отмеченных отсутствий")+'.</p><p>Это протокол фактов, а не показатель выраженности или диагноз.</p>'}
- function draw(){
-  const m=current;if(!m)return;overlay.querySelector("#preschoolModalTitle").textContent=m.title;overlay.querySelector("#preschoolModalCredit").textContent=m.author+" · "+m.age+" лет";
-  overlay.querySelector(".preschool-tabs").hidden=processing;
-  overlay.querySelectorAll("[data-preschool-tab]").forEach(b=>{const active=b.dataset.preschoolTab===tab;b.classList.toggle("active",active);b.setAttribute("aria-current",String(active))});
-  body.innerHTML=processing?results(m):tab==="guide"?guide(m):tab==="blank"?blank(m):portfolio(m);
-  foot.innerHTML=processing?'<button type="button" class="preschool-secondary" data-preschool-return>К методике</button><button type="button" class="preschool-secondary" data-preschool-clear>Очистить данные</button><div class="preschool-foot-spacer"></div><button type="button" class="preschool-primary" data-preschool-print="result" '+(!completeness(m)?"disabled":"")+'>Печать результата</button>':'<div class="preschool-foot-spacer"></div><button type="button" class="preschool-primary" data-preschool-process>Обработка результатов <span class="preschool-dot '+(completeness(m)?"complete":"pending")+'" aria-hidden="true"></span></button>';
-  body.scrollTop=0;
- }
- overlay.addEventListener("change",e=>{const el=e.target.closest("[data-preschool-answer]");if(!el||!current)return;getState(current).values[Number(el.dataset.preschoolAnswer)]=el.value;const ready=completeness(current),sum=summary(current);const badge=overlay.querySelector(".preschool-status");if(badge){badge.textContent=ready?"Данные заполнены":"Не все данные введены";badge.className="preschool-status "+(ready?"complete":"pending")}const dest=overlay.querySelector("#preschoolSummary");if(dest)dest.innerHTML=sum?renderSummary(sum):"<p>Заполните все наблюдения, чтобы получить описательное резюме. Пустой ответ не считается отсутствием признака.</p>";const btn=overlay.querySelector('[data-preschool-print="result"]');if(btn)btn.disabled=!ready});
- overlay.addEventListener("input",e=>{if(e.target.id==="preschoolContext"&&current)getState(current).note=e.target.value});
- overlay.addEventListener("click",e=>{
-  if(e.target.closest("[data-preschool-process]")){processing=true;draw();return}
-  if(e.target.closest("[data-preschool-return]")){processing=false;draw();return}
-  if(e.target.closest("[data-preschool-clear]")){if(!window.confirm("Очистить введенные отметки и заметку?"))return;store.delete(current.id);draw();return}
-  const print=e.target.closest("[data-preschool-print]");if(print&&current)printPage(current,print.dataset.preschoolPrint);
+ root.addEventListener("click",e=>{
+  const b=e.target.closest("[data-preschool-open]");if(!b)return;
+  const m=data.find(x=>x.id===b.dataset.preschoolOpen);
+  if(!m||typeof window.openMethod!=="function")return;
+  const found=m.existing?(window.PSY_CATALOG||[]).find(x=>x.name===m.existing):null;
+  window.openMethod(found||{id:m.id,name:m.title,theme:m.topic,author:m.author,format:m.format,age:m.age+" лет",goal:m.goal});
  });
- function printPage(m,mode){
-  if(mode==="result"&&!completeness(m))return;
-  const s=getState(m),sm=summary(m);
-  const printGuide='<h2>'+esc(m.title)+'</h2><p><b>Возраст:</b> '+esc(m.age)+' лет. <b>Авторство:</b> '+esc(m.author)+'.</p><h3>Цель</h3><p>'+esc(m.goal)+'</p><h3>Процедура</h3><p>'+esc(m.steps)+'</p><h3>Регистрация и интерпретация</h3><p>Качественная регистрация без суммарного балла. '+esc(m.recommend)+'</p>';
-  const printBlank='<section class="print-blank"><h2>Протокол специалиста</h2><p>Дата: ____________________　Группа: ____________________</p>'+sheetRows(m,mode==="result"?s.values:null)+'<p>Контекст: '+(mode==="result"?esc(s.note||"Не указан"):"________________________________________________")+'</p><p>Уточнения и следующий шаг: __________________________________________________</p></section>';
-  const result=mode==="result"?'<h3>Описательное резюме</h3>'+renderSummary(sm):"";
-  const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>'+esc(m.title)+'</title><style>@page{size:A4;margin:16mm}body{font:12pt/1.5 Arial,sans-serif;color:#161616}h2{font-size:17pt;margin:0 0 12px}h3{font-size:13pt;margin:16px 0 6px}p{margin:7px 0}table{border-collapse:collapse;width:100%;font-size:10pt;table-layout:fixed}td,th{border:1px solid #666;padding:7px;text-align:left;overflow-wrap:anywhere;vertical-align:top}th:first-child{width:65%}.print-blank{break-before:page}section:first-child{break-before:auto}</style></head><body>'+(mode==="guide"||mode==="both"?'<section>'+printGuide+'</section>':"")+(mode!=="guide"?printBlank:"")+result+'</body></html>';
-  const frame=document.createElement("iframe");frame.title="Печать протокола";frame.style.position="fixed";frame.style.width="0";frame.style.height="0";frame.style.border="0";document.body.appendChild(frame);
+ function rowTable(m,values){
+  return '<table class="preschool-table"><thead><tr><th>Наблюдение / действие</th><th>Отмечено</th><th>Не отмечено</th></tr></thead><tbody>'+
+   m.items.map((v,i)=>'<tr><td>'+(i+1)+'. '+esc(v)+'</td><td>'+(values?.[i]==="Отмечено"?"Да":"")+'</td><td>'+(values?.[i]==="Не отмечено"?"Да":"")+'</td></tr>').join("")+'</tbody></table>';
+ }
+ function summaryMarkup(d){
+  const s=summary(d);return s?'<h3>Описательное резюме</h3><p><b>Отмечено:</b> '+(s.yes.length?esc(s.yes.join("; ")):"нет отмеченных пунктов")+'.</p><p><b>Не отмечено:</b> '+(s.no.length?esc(s.no.join("; ")):"нет пунктов")+'.</p><p>Отметки фиксируют наблюдения, а не являются суммой баллов или диагнозом.</p>':'<p>Заполните все наблюдения для получения описательного резюме. Пустой ответ не равен «Не отмечено».</p>';
+ }
+ function instruction(d){
+  const m=detailById.get(d.preschoolId);
+  return '<div class="psy-common-guide-head"><h3>Методика / руководство</h3><div class="psy-common-guide-actions"><button class="btn" type="button" data-preschool-print="guide">Без бланка</button><button class="btn primary" type="button" data-preschool-print="combined">С бланком</button></div></div>'+
+  '<div class="psy-preschool-guide"><h3>Цель</h3><p>'+esc(m.goal)+'</p><h3>Для кого предназначено</h3><p>'+esc(m.audience)+'. Возраст: '+esc(m.age)+' лет.</p><h3>Порядок проведения</h3><p>'+esc(m.steps)+'</p><h3>Регистрация результатов</h3><p>Каждый пункт заполняется отдельно: «Отмечено», «Не отмечено» или «Нет ответа». Сведения о ситуации и помощи фиксируются в примечании.</p><h3>Интерпретация и ограничения</h3><p>'+esc(m.recommend)+'</p><p>Эта рабочая карта используется для качественного сопровождения и не является стандартизированной диагностической шкалой.</p></div>';
+ }
+ function materials(d){
+  const m=detailById.get(d.preschoolId);
+  return '<div class="psy-common-guide-head"><h3>Протокол специалиста</h3><div class="psy-common-guide-actions"><button class="btn primary" type="button" data-preschool-print="blank">Посмотреть и распечатать</button></div></div><p>Дата: ___________________　Группа: ___________________</p>'+
+  rowTable(m,null)+'<p class="preschool-paper-lines">Ситуация: ____________________________________________________________</p><p class="preschool-paper-lines">Помощь и следующий шаг: ____________________________________________________________</p><p class="privacy-inline">Протокол заполняет специалист. Не вписывайте ФИО детей на публичном сайте.</p>';
+ }
+ function calculator(d){
+  const m=detailById.get(d.preschoolId),s=ownedState(d),ready=complete(d);
+  return '<section class="psy-preschool-calc"><div class="preschool-results-head"><div><h3>Обработка результатов</h3><p>Описательная фиксация наблюдений без числовых норм</p></div><span class="preschool-status '+(ready?"complete":"pending")+'">'+(ready?"Данные заполнены":"Требуется заполнение")+'</span></div>'+
+   '<div class="preschool-answer-list">'+m.items.map((x,i)=>'<label class="preschool-answer"><span>'+(i+1)+'. '+esc(x)+'</span><select data-preschool-answer="'+i+'" aria-label="'+esc(x)+'"><option value="">Нет ответа</option><option value="Отмечено" '+(s.values[i]==="Отмечено"?"selected":"")+'>Отмечено</option><option value="Не отмечено" '+(s.values[i]==="Не отмечено"?"selected":"")+'>Не отмечено</option></select></label>').join("")+'</div>'+
+   '<label class="preschool-note-label">Контекст наблюдения (без персональных данных)<textarea id="preschoolContext" rows="3" placeholder="Условия, помощь, особенности ситуации...">'+esc(s.note)+'</textarea></label>'+
+   '<div id="preschoolSummary" class="preschool-summary">'+summaryMarkup(d)+'</div>'+
+   '<div class="preschool-result-actions"><button type="button" class="btn" id="preschoolClear">Очистить ответы</button><button type="button" class="btn primary" id="preschoolReport" '+(!ready?"disabled":"")+'>Печать результата</button></div></section>';
+ }
+ function updateFooter(d){
+  const badge=document.getElementById("preschoolFooterStatus");
+  if(!badge)return;
+  const ready=complete(d);badge.className="psy-preschool-footer-state "+(ready?"complete":"pending");
+  badge.textContent=ready?"Данные заполнены":"Требуется заполнение";
+  document.getElementById("modal")?.classList.toggle("psy-preschool-current",true);
+ }
+ function bind(d){
+  const body=document.getElementById("modalBody");if(!body)return;
+  const refresh=()=>{
+   const ready=complete(d);const badge=body.querySelector(".preschool-status");
+   if(badge){badge.className="preschool-status "+(ready?"complete":"pending");badge.textContent=ready?"Данные заполнены":"Требуется заполнение";}
+   const summary=body.querySelector("#preschoolSummary");if(summary)summary.innerHTML=summaryMarkup(d);
+   const report=body.querySelector("#preschoolReport");if(report)report.disabled=!ready;
+   updateFooter(d);
+  };
+  body.querySelectorAll("[data-preschool-answer]").forEach(el=>el.addEventListener("change",()=>{
+   ownedState(d).values[Number(el.dataset.preschoolAnswer)]=el.value;refresh();
+  }));
+  body.querySelector("#preschoolContext")?.addEventListener("input",e=>{ownedState(d).note=e.target.value;});
+  body.querySelector("#preschoolClear")?.addEventListener("click",()=>{
+   if(!window.confirm("Очистить все введенные ответы и примечание?"))return;
+   const m=detailById.get(d.preschoolId);stateMap.set(m.id,{values:Array(m.items.length).fill(""),note:""});
+   body.querySelectorAll("[data-preschool-answer]").forEach(el=>el.value="");
+   const note=body.querySelector("#preschoolContext");if(note)note.value="";
+   refresh();
+  });
+  body.querySelector("#preschoolReport")?.addEventListener("click",()=>print(d,"result"));
+  body.querySelectorAll("[data-preschool-print]").forEach(btn=>btn.addEventListener("click",()=>print(d,btn.dataset.preschoolPrint)));
+ }
+ function print(d,mode){
+  const m=detailById.get(d.preschoolId);if(!m)return;
+  if(mode==="result"&&!complete(d))return;
+  const s=ownedState(d),printGuide='<section><h2>'+esc(m.title)+'</h2><p><b>Возраст:</b> '+esc(m.age)+' лет</p><h3>Цель</h3><p>'+esc(m.goal)+'</p><h3>Порядок проведения</h3><p>'+esc(m.steps)+'</p><h3>Регистрация и интерпретация</h3><p>Качественная регистрация без суммарного балла. '+esc(m.recommend)+'</p></section>';
+  const printBlank='<section class="print-blank"><h2>Протокол специалиста</h2><p>Дата: _____________________　Группа: _____________________</p>'+rowTable(m,mode==="result"?s.values:null)+'<p>Контекст: '+(mode==="result"?esc(s.note||"Не указан"):"____________________________")+'</p><p>Следующий шаг: ___________________________________________</p></section>';
+  const result=mode==="result"?'<section>'+summaryMarkup(d)+'</section>':"";
+  const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>'+esc(m.title)+'</title><style>@page{size:A4 portrait;margin:16mm}*{box-sizing:border-box}body{font:11pt/1.45 Arial,sans-serif;color:#212121}h2{font-size:17pt}h3{font-size:12pt}table{border-collapse:collapse;width:100%;table-layout:fixed;font-size:9pt}td,th{border:1px solid #777;padding:6px;text-align:left;overflow-wrap:anywhere;vertical-align:top}th:first-child{width:65%}tr{break-inside:avoid}.print-blank:not(:first-child){break-before:page}p{margin:8px 0}</style></head><body>'+(mode==="guide"||mode==="combined"?printGuide:"")+(mode==="guide"?"":printBlank)+result+'</body></html>';
+  const frame=document.createElement("iframe");frame.title="Печать протокола";frame.style.cssText="position:fixed;width:0;height:0;border:0";
+  document.body.appendChild(frame);
   frame.onload=()=>{try{frame.contentWindow.focus();frame.contentWindow.print()}finally{setTimeout(()=>frame.remove(),1800)}};
   frame.srcdoc=html;
  }
+ window.PSY_PRESCHOOL={instruction,materials,calculator,bind,updateFooter,print};
  if(document.body.dataset.area==="preschool"){tree.hidden=false;document.querySelector('[data-view="preschool"]')?.setAttribute("aria-expanded","true")}
  show();
 })();
