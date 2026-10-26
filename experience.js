@@ -262,6 +262,7 @@ function viewOverview(m){
 }
 
 function viewInstruction(m){
+ if(DETAILS[m.name]?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialToolkit')return window.PSY_SPECIAL_TOOLKIT.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialSheet')return window.PSY_SPECIAL.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='preschoolSheet')return window.PSY_PRESCHOOL.instruction(DETAILS[m.name]);
@@ -397,6 +398,7 @@ function materials(m,blank){
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
 function viewMaterials(m){
+ if(DETAILS[m.name]?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialToolkit')return window.PSY_SPECIAL_TOOLKIT.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialSheet')return window.PSY_SPECIAL.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='preschoolSheet')return window.PSY_PRESCHOOL.materials(DETAILS[m.name]);
@@ -429,6 +431,7 @@ function viewMaterials(m){
  return '<h3>Стимульный материал и бланк</h3>'+materials(m,false)+(d.questions?.length && d.graphic ? '<h3>Протокол беседы</h3><table class="questions-table"><thead><tr><th>№</th><th>Вопрос психолога</th><th>Ответ / наблюдение</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td>________________</td></tr>').join('')+'</tbody></table>':"");
 }
 function viewProcessing(m){
+ if(DETAILS[m.name]?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.processing(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialToolkit')return window.PSY_SPECIAL_TOOLKIT.calculator(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialSheet')return window.PSY_SPECIAL.calculator(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='preschoolSheet')return window.PSY_PRESCHOOL.calculator(DETAILS[m.name]);
@@ -464,6 +467,7 @@ function viewProcessing(m){
  return '<h3>Подсчет / фиксация</h3><p>'+escapeHTML(d.scoring)+'</p><h3>Интерпретация</h3><p>'+escapeHTML(d.interpret)+'</p>'+(d.source?'<p>Источник: <a target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d.source)+'">'+escapeHTML(d.source)+'</a></p>':'');
 }
 function getScores(d,answers){
+ if(d?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.score(d,answers);
  if(d?.workflow==='objectClass16')return window.PSY_OBJECT_CLASSIFY.score(d,answers);
  if(d?.workflow==='schoolDrawingL')return window.PSY_SCHOOL_DRAWING.score(d,answers);
  if(d?.workflow==='cormanFamily')return window.PSY_CORMAN.score(d,answers);
@@ -506,6 +510,7 @@ function getScores(d,answers){
  return {raw,index:null,max:n*(d.options.length-1),caption:'Сырая сумма'};
 }
 function viewCalculator(m){
+ if(DETAILS[m.name]?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  if(DETAILS[m.name]?.workflow==='specialToolkit')return window.PSY_SPECIAL_TOOLKIT.calculator(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialSheet')return window.PSY_SPECIAL.calculator(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='preschoolSheet')return window.PSY_PRESCHOOL.calculator(DETAILS[m.name]);
@@ -566,6 +571,7 @@ function viewCalculator(m){
  return head+'<div class="notice">Ответы вводятся цифрами от 0 до '+(d.options.length-1)+'. После ввода курсор переходит к следующему полю.</div>'+qhtml+results+'<div class="class-actions"><button class="btn" id="resetParticipant">Сбросить ответы участника</button></div>';
 }
 function bindControls(){
+ if(DETAILS[methodNow?.name]?.workflow==='verifiedSix')window.PSY_REQUESTED_SIX.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  if(DETAILS[methodNow?.name]?.workflow==='specialToolkit'){window.PSY_SPECIAL_TOOLKIT.bind(DETAILS[methodNow.name]);return;}
  if(DETAILS[methodNow?.name]?.workflow==='specialSheet'){window.PSY_SPECIAL.bind(DETAILS[methodNow.name]);return;}
  if(DETAILS[methodNow?.name]?.workflow==='preschoolSheet'){window.PSY_PRESCHOOL.bind(DETAILS[methodNow.name]);return;}
@@ -777,6 +783,7 @@ function openMethod(m){
  $('#modalBody').innerHTML='';
  const header=$('#modal').querySelector('.modalhead');
  let old=$('#methodTabs');if(old)old.remove();
+ $('#modal').classList.toggle('psy-six-current',d?.workflow==='verifiedSix');
  const preschoolPilot=d?.workflow==='preschoolSheet';
  const specialPilot=d?.workflow==='specialSheet'||d?.workflow==='specialToolkit';
  $('#modal').classList.toggle('psy-preschool-current',preschoolPilot);
