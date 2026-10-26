@@ -218,5 +218,12 @@
  root.addEventListener("input",e=>{const el=e.target;if(el.matches("[data-meta],[data-task]"))storeValue(el)});
  root.addEventListener("change",e=>{const el=e.target;if(el.matches("[data-meta],[data-task]"))storeValue(el)});
  render();
+ const navButton=document.querySelector('.navgroup[data-view="pmpk"]');
+ if(navButton){
+  navButton.addEventListener("click",()=>{if(location.hash!=="#pmpk")history.replaceState(null,"",location.pathname+location.search+"#pmpk")});
+  document.querySelectorAll('.navgroup[data-view]:not([data-view="pmpk"])').forEach(btn=>btn.addEventListener("click",()=>{if(location.hash==="#pmpk")history.replaceState(null,"",location.pathname+location.search)}));
+  if(location.hash==="#pmpk")navButton.click();
+  window.addEventListener("hashchange",()=>{if(location.hash==="#pmpk")navButton.click()});
+ }
  window.PSY_PMPK_TEST={ready:routeReady,progress:progress,ageLabels:AGE_LABELS.slice(),taskCount:TASKS.length};
 })();
