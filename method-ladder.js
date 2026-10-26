@@ -84,9 +84,9 @@ function processing(d){
 }
 function summary(a,notes){
  const z=scan(a);
- if(!z)return '<div class="psy-ladder-result"><h3>Результат</h3><p>Выберите, куда ребенок поставил себя. Дополнительные ответы можно оставить пустыми.</p></div>';
+ if(!z)return '<div class="psy-ladder-result"><h3>Результат</h3><span class="psy-data-state is-waiting" role="status">Данные не заполнены</span><p>Выберите, куда ребенок поставил себя. Дополнительные ответы можно оставить пустыми.</p></div>';
  const cells=FIELDS.map((f,i)=>'<div class="psy-ladder-stat"><span>'+esc(f[1])+'</span><strong>'+(z.steps[i]??"–")+(z.steps[i]!==null?' / 7':'')+'</strong>'+(i>0&&z.steps[i]!==null?'<small>К своей: '+(z.relative[f[0]]>=0?'+':'')+z.relative[f[0]]+'</small>':'')+'</div>').join("");
- return '<div class="psy-ladder-result"><h3>Регистрация ответов</h3><div class="psy-ladder-stats">'+cells+'</div>'+
+ const isComplete=Boolean(notes?.explanation?.trim());return '<div class="psy-ladder-result"><h3>Регистрация ответов</h3><span class="psy-data-state '+(isComplete?'is-ready':'is-waiting')+'" role="status">'+(isComplete?'Данные заполнены':'Не записано объяснение выбора')+'</span><div class="psy-ladder-stats">'+cells+'</div>'+
  '<p><strong>Объяснение ребенка:</strong> '+esc(notes?.explanation?.trim()||"Не записано")+'</p>'+
  '<div class="notice">Это описание ответов на конкретном бланке, а не психологический диагноз. Дополнительные беседы и наблюдения необходимы.</div></div>';
 }
