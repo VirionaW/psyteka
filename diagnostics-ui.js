@@ -52,8 +52,8 @@
  }
  function results(d,a){
   const n=count(d,a),z=score(d,a);
-  if(!z)return '<section class="diag-output" id="diagOutput"><h3>Результат</h3><p>Заполнено '+n+' из '+d.questions.length+'. Введите все ответы для обработки. Отсутствующий ответ нельзя считать нулем.</p><div class="diag-progress"><span style="width:'+(100*n/d.questions.length)+'%"></span></div></section>';
-  let body='<section class="diag-output" id="diagOutput"><h3>Результат</h3><div class="diag-headline">'+
+  if(!z)return '<section class="diag-output" id="diagOutput"><h3>Результат</h3><span class="psy-data-state is-waiting" role="status">Данные не заполнены</span><p>Заполнено '+n+' из '+d.questions.length+'. Введите все ответы для обработки. Отсутствующий ответ нельзя считать нулем.</p><div class="diag-progress"><span style="width:'+(100*n/d.questions.length)+'%"></span></div></section>';
+  let body='<section class="diag-output" id="diagOutput"><h3>Результат</h3><span class="psy-data-state is-ready" role="status">Данные заполнены</span><div class="diag-headline">'+
    '<strong>'+z.raw+' / '+z.max+'</strong>'+(isWho(d)?'<span>WHO-5: <b>'+z.index+' / 100</b></span>':'<span>Полный опросник · 41 из 41</span>')+'</div>'+
    '<p class="diag-interpret">'+escape(z.summary)+'</p>';
   if(z.scales)body+='<h4>Подшкалы</h4><div class="diag-scales">'+z.scales.map(x=>
