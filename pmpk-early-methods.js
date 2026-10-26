@@ -29,7 +29,7 @@
  const ESC=s=>String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
  const versions=[{label:"3-4 года",count:{forms:4,pyramid:4}},{label:"4-5 лет",count:{forms:5,pyramid:6}}];
  const choices={mode:["Выполнено самостоятельно","Выполнено с помощью","Не удалось выполнить","Не проводилось"],strategy:["Зрительное соотнесение","Примеривание","Перебор вариантов","Хаотические действия","Не наблюдалось"],help:["Не требовалась","Повтор инструкции","Словесная подсказка","Показ образца","Совместные действия"]};
- const sessions={};let active="",tab="portfolio",el=null,focusBefore=null;
+ const sessions={};let active="",activeTask=0,tab="portfolio",el=null,focusBefore=null;
  function blankState(){return {version:"",code:"",date:new Date().toISOString().slice(0,10),mode:"",strategy:"",help:"",count:"",notes:"",reason:""}}
  function current(){return sessions[active]||(sessions[active]=blankState())}
  function method(){return METHODS[active]}
@@ -74,14 +74,14 @@
   '<div class="pmpk-method-tabs" role="tablist">'+[["portfolio","Портфолио"],["guide","Методика / руководство"],["blank","Бланк"]].map(([id,l])=>'<button type="button" role="tab" data-early-tab="'+id+'" aria-selected="'+(tab===id)+'">'+l+'</button>').join("")+'</div>'+
   '<div class="pmpk-method-content">'+(tab==="portfolio"?overview():tab==="guide"?guide():tab==="blank"?blank():processing())+'</div>'+
   '<footer class="pmpk-method-footer"><span data-early-status class="pmpk-status '+(ok?"is-done":"")+'">'+(ok?"Обработка заполнена":"Обработка не заполнена")+'</span>'+
-  (tab==="processing"?'<div class="pmpk-method-right"><button class="pmpk-mini" type="button" data-early-action="back">К портфолио</button><button class="pmpk-mini" type="button" data-early-action="print-report" '+(!ok?"disabled":"")+'>Печать отчета</button><button class="pmpk-action primary" type="button" data-early-action="docx-report" '+(!ok?"disabled":"")+'>Скачать отчет Word</button></div>':
+  (tab==="processing"?'<div class="pmpk-method-right"><button class="pmpk-mini" type="button" data-early-action="back">К портфолио</button><button class="pmpk-mini" type="button" data-early-action="print-report" '+(!ok?"disabled":"")+'>Печать отчета</button><button class="pmpk-action primary" type="button" data-early-action="docx-report" '+(!ok?"disabled":"")+'>Скачать отчет Word</button><button class="pmpk-action primary" type="button" data-early-action="transfer" '+(!ok?"disabled":"")+'>В общий протокол</button></div>':
   '<button type="button" class="pmpk-action primary" data-early-action="processing" style="margin-left:auto">Обработка результатов</button>')+'</footer></section>';
   const pane=el.querySelector(".pmpk-method-content");if(pane)pane.scrollTop=old;
  }
- function close(){if(!el)return;el.remove();el=null;active="";document.body.classList.remove("pmpk-method-open");document.removeEventListener("keydown",onKey);if(focusBefore?.isConnected)focusBefore.focus?.()}
+ function close(){if(!el)return;el.remove();el=null;active="";activeTask=0;document.body.classList.remove("pmpk-method-open");document.removeEventListener("keydown",onKey);if(focusBefore?.isConnected)focusBefore.focus?.()}
  function onKey(e){if(e.key==="Escape"){e.preventDefault();close();return}if(e.key==="Tab"&&el){const controls=[...el.querySelectorAll("button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),a[href]")].filter(x=>x.getClientRects().length);
   if(controls.length){const first=controls[0],last=controls.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}}
- function open(id){if(!METHODS[id])return false;if(el)close();active=id;tab="portfolio";focusBefore=document.activeElement;el=document.createElement("div");el.className="pmpk-method-overlay";document.body.appendChild(el);document.body.classList.add("pmpk-method-open");draw(false);document.addEventListener("keydown",onKey);el.querySelector('[data-early-action="close"]')?.focus?.();return true}
+ function open(id,task){if(!METHODS[id])return false;if(el)close();active=id;activeTask=Number.isInteger(task)&&task>=0&&task<7?task:METHODS[id].domain;tab="portfolio";focusBefore=document.activeElement;el=document.createElement("div");el.className="pmpk-method-overlay";document.body.appendChild(el);document.body.classList.add("pmpk-method-open");draw(false);document.addEventListener("keydown",onKey);el.querySelector('[data-early-action="close"]')?.focus?.();return true}
  function print(type){
   if(type==="report"&&!ready())return;
   let content=type==="guide"?guideHTML():type==="guide-blank"?guideHTML()+'<div class="page-break"></div>'+blankHTML():type==="blank"?blankHTML():'<h1>Отчет специалиста</h1>'+protocolText().map(x=>'<p>'+ESC(x)+'</p>').join("");
@@ -90,6 +90,19 @@
  }
  function guideHTML(){const m=method();return '<h1>'+ESC(m.title)+'</h1><p>Варианты 3-4 года / 4-5 лет. Основание: издание под редакцией Е. А. Стребелевой (1998).</p><h2>Цель</h2><p>'+ESC(m.goal)+'</p><h2>Материалы</h2><p>'+ESC(m.material)+'</p><h2>Инструкция ребенку</h2><p>'+ESC(m.child)+'</p><h2>Процедура</h2><ol>'+m.steps.map(x=>'<li>'+ESC(x)+'</li>').join("")+'</ol><h2>Регистрация и интерпретация</h2><p>'+ESC(m.key)+'</p><p>Не переводить технический показатель в возрастную норму, интеллект или диагноз.</p><p>Источник: '+SOURCE+'</p>'}
  function blankHTML(){return '<h1>Протокол специалиста</h1><p>'+ESC(method().title)+'</p><p>Код ______ Дата ______ Возраст: 3-4 / 4-5 лет. Число элементов: ____</p><table><tr><th>Показатель</th><th>Наблюдение</th></tr>'+["Способ действия","Правильные элементы","Пробы и ошибки","Помощь","Самокоррекция","Поведение и утомление","Заключение"].map(x=>'<tr><td>'+x+'</td><td>________________________________________</td></tr>').join("")+'</table>'}
+ function transfer(){
+  if(!ready())return;
+  const d=current(),bridge=window.PSY_PMPK_BRIDGE;
+  if(!bridge||bridge.getAge()!==0){window.alert("Для переноса откройте возрастную группу 3-5 лет в ПМПК.");return}
+  if(d.mode==="Не проводилось"){window.alert("Пропуск задания следует отметить в общем протоколе с причиной.");return}
+  const result=d.mode==="Не удалось выполнить"?"Не выполнил":d.mode==="Выполнено самостоятельно"&&d.help==="Не требовалась"?"Самостоятельно":"С помощью";
+  const help=d.help==="Не требовалась"?"Без помощи":d.help==="Повтор инструкции"?"Повторение инструкции":d.help==="Словесная подсказка"?"Словесная подсказка":d.help==="Показ образца"?"Показ образца":"Пошаговая помощь";
+  const notes="Методика: "+method().title+". Возрастная версия: "+versions[Number(d.version)].label+
+   ". Элементов выполнено: "+d.count+" из "+expected()+". Способ: "+d.strategy+
+   ". Наблюдения: "+d.notes;
+  if(bridge.transfer(activeTask,{result,help,notes,sourceId:active})){close()}
+  else window.alert("Сначала выберите эту методику в соответствующем задании ПМПК.");
+ }
  function escXml(x){return ESC(x).replace(/&#39;/g,"&apos;")}
  function xmlP(x){return '<w:p><w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="22"/></w:rPr><w:t xml:space="preserve">'+escXml(x)+'</w:t></w:r></w:p>'}
  function zip(values){
@@ -118,13 +131,13 @@
   switch(cmd.dataset.earlyAction){
    case "close":close();break;case "processing":tab="processing";draw(false);break;case "back":tab="portfolio";draw(false);break;
    case "print-guide":print("guide");break;case "print-both":print("guide-blank");break;case "print-blank":print("blank");break;case "docx-blank":docx("blank");break;
-   case "print-report":print("report");break;case "docx-report":docx("report");break;
+   case "print-report":print("report");break;case "docx-report":docx("report");break;case "transfer":transfer();break;
   }
  });
  function change(e){if(!el||!el.contains(e.target)||!e.target.matches("[data-early-field]"))return;let key=e.target.dataset.earlyField;
   if(key==="version"){const previous=current().version;if(previous!==e.target.value){const keep={code:current().code,date:current().date};sessions[active]={...blankState(),...keep,version:e.target.value};draw(true)}return}
   current()[key]=e.target.value;const stat=el.querySelector("[data-early-status]");if(stat){let ok=ready();stat.textContent=ok?"Обработка заполнена":"Обработка не заполнена";stat.classList.toggle("is-done",ok)}
-  el.querySelectorAll('[data-early-action="print-report"],[data-early-action="docx-report"]').forEach(b=>b.disabled=!ready());
+  el.querySelectorAll('[data-early-action="print-report"],[data-early-action="docx-report"],[data-early-action="transfer"]').forEach(b=>b.disabled=!ready());
  }
  document.addEventListener("input",change);document.addEventListener("change",change);
  window.PSY_PMPK_EARLY={open,has:id=>!!METHODS[id],test:{current:()=>active?{...current()}:null,ready:()=>active?ready():false,counts:versions.map(v=>v.count)}};
