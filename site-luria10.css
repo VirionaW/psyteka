@@ -73,3 +73,51 @@
 .library-page #modal .psy-luria-meta-inputs label{display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;color:var(--muted);min-width:0}
 .library-page #modal .psy-luria-meta-inputs input{width:100%;min-width:0;min-height:42px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);padding:10px}
 @media(max-width:650px){.library-page #modal .psy-luria-meta-inputs{grid-template-columns:1fr}}
+
+/* Confirmed portfolio invariant: the sole processing action hugs the right edge. */
+.library-page #modal .modalfoot:has(.psy-luria-footer){
+ display:flex!important;
+ align-items:center!important;
+ justify-content:flex-end!important;
+ position:relative!important;
+ width:100%!important;
+}
+.library-page #modal .modalfoot .psy-luria-footer{
+ display:flex!important;
+ flex:1 1 100%!important;
+ width:100%!important;
+ justify-content:flex-end!important;
+ align-items:center!important;
+ gap:10px;
+}
+.library-page #modal .modalfoot .psy-luria-footer #bottomProcessing{
+ margin:0 0 0 auto!important;
+ position:static!important;
+ left:auto!important;
+ right:auto!important;
+ transform:none!important;
+ flex:0 0 auto!important;
+}
+.library-page #modal .psy-luria-grid{width:100%;table-layout:fixed;min-width:680px;border-spacing:0}
+.library-page #modal .psy-luria-grid col.psy-luria-first-col{width:19%}
+.library-page #modal .psy-luria-grid col.psy-luria-last-col{width:9%}
+.library-page #modal .psy-luria-grid th,
+.library-page #modal .psy-luria-grid td{
+ border:1px solid var(--line);padding:8px 4px;text-align:center;
+ overflow-wrap:normal;word-break:normal;vertical-align:middle;
+}
+.library-page #modal .psy-luria-grid tbody td{height:43px;background:var(--paper)}
+.library-page #modal .psy-luria-grid thead th{font-size:13px}
+.library-page #modal .psy-luria-interpret{padding-left:25px;line-height:1.6}
+.library-page #modal .psy-luria-interpret li{margin:10px 0}
+.library-page #modal .psy-luria-example{background:var(--soft);border-left:3px solid var(--green);padding:12px 15px;line-height:1.6}
+.library-page #modal .psy-luria-limits{font-size:14px;color:var(--muted)}
+@media(max-width:700px){
+ .library-page #modal .modalfoot .psy-luria-footer{
+   flex-direction:column!important;align-items:stretch!important;
+ }
+ .library-page #modal .modalfoot .psy-luria-footer #bottomProcessing{
+   align-self:flex-end!important;flex:0 0 auto!important;
+ }
+ .library-page #modal .modalfoot .psy-luria-footer-right{width:100%}
+}
