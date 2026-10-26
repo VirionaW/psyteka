@@ -167,7 +167,21 @@ function viewOverview(m){
  const goalHtml=description?'<h3>'+(m.theme==="Программы"?"Цель программы":d.goal||o.goal?"Цель методики":"Назначение материала")+'</h3><p class="psy-profile-description">'+escapeHTML(description)+'</p>':"";
  const source=profileText(o.source||d.source||m.source||"");
  const sourceHtml=/^https?:\/\/[^\s]+$/i.test(source)?'<h3>Первоисточник</h3><p class="psy-profile-source"><a href="'+escapeHTML(source)+'" target="_blank" rel="noopener noreferrer">Открыть первоисточник ↗</a></p>':"";
- const packLinks=d.guideFile&&d.answerFile&&d.processingFile?'<div class="psy-profile-files"><h3>Готовые материалы</h3><p><a class="btn" href="'+escapeHTML(d.guideFile)+'" target="_blank" rel="noopener noreferrer">Методика · А4</a> <a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк · А4</a> <a class="btn" href="'+escapeHTML(d.processingFile)+'" target="_blank" rel="noopener noreferrer">Обработка · А4</a></p></div>':'';
+ const availableFiles=[
+  ["Руководство",d.guideFile],["Методика",d.methodPage],
+  ["Бланк ученика",d.studentFile||d.childFile||d.answerFile],
+  ["Бланк родителя",d.parentFile],["Бланк педагога",d.teacherFile],
+  ["Регистрационный бланк",d.studentFile||d.childFile?d.answerFile:null],
+  ["Протокол специалиста",d.specialistFile],["Обработка",d.processingFile]
+ ];
+ const foundFiles=new Set();
+ const links=availableFiles.filter(([,url])=>
+   typeof url==="string"&&/^downloads\/[a-z0-9_.-]+$/i.test(url)&&!foundFiles.has(url)&&!!foundFiles.add(url)
+ ).map(([label,url])=>
+   '<a class="btn psy-portfolio-document" href="'+escapeHTML(url)+'" target="_blank" rel="noopener noreferrer">'+
+   escapeHTML(label+' · '+(/\.docx$/i.test(url)?"Word":/\.html$/i.test(url)?"А4":"Файл"))+'</a>'
+ );
+ const packLinks=links.length?'<section class="psy-profile-files"><h3>Материалы методики</h3><div class="psy-portfolio-file-links">'+links.join("")+'</div></section>':"";
  return '<section class="psy-portfolio-reference psy-portfolio-unified"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div>'+goalHtml+indicatorHtml+sourceHtml+packLinks+'</section>';
 }
 
