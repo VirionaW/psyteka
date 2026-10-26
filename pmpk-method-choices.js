@@ -121,7 +121,7 @@
    return true;
   }
   if(m.kind==="working")window.PSY_PMPK_METHODS?.open?.(m.id);
-  if(m.kind==="early")window.PSY_PMPK_EARLY?.open?.(m.id);
+  if(m.kind==="early")window.PSY_PMPK_EARLY?.open?.(m.id,task);
   if(m.kind==="catalog"){
    const item=window.PSY_CATALOG?.find(x=>x.name===m.name);
    if(item){
