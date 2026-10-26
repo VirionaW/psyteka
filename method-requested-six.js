@@ -66,6 +66,7 @@ function score(d,answers,version){
  const scales=results(d,answers,version);
  return scales?{raw:scales.map(x=>x.raw).join(" / "),max:"По шкалам",caption:scales.map(x=>x.title+": "+x.raw).join("; "),scales}:null;
 }
+function processing(d){return "<h3>Ключ и обработка</h3><p>"+escape(d.scoring)+"</p><h3>Интерпретация и ограничения</h3><p>"+escape(d.interpret)+"</p>";}
 function status(r,d){return !!results(d,r.answers,r.sixVersion);}
 function summary(d,r){const res=results(d,r.answers,r.sixVersion);if(!d.scaleMax&&!(d.id==="morosanova-ssp-family"&&String(r.sixVersion)==="3"))return '<p>Регистрируйте наблюдения без расчета тестовых баллов. Официальный подсчет производится по опубликованному руководству выбранной редакции.</p>';return res?'<div class="psy-six-results">'+res.map(x=>'<div><strong>'+escape(x.title)+'</strong><span>'+x.raw+' ('+x.min+'-'+x.max+')'+(x.band?' · '+x.band:'')+'</span></div>').join("")+'</div>':'<p>До заполнения всех '+(d.id==="morosanova-ssp-family"?28:d.questionsCount)+' ответов итог не рассчитывается.</p>';}
 function table(d,rows){return '<h3>Сводная таблица группы</h3><div class="results-table"><table><thead><tr><th>Код</th><th>Полнота</th><th>Результат</th></tr></thead><tbody>'+rows.map((r,i)=>{const res=results(d,r.answers,r.sixVersion);return '<tr><td>'+escape(r.name||"Участник "+(i+1))+'</td><td>'+(status(r,d)?"Заполнено":"Нет полного результата")+'</td><td>'+escape(res?res.map(x=>x.raw).join(" / "):"–")+'</td></tr>'}).join("")+'</tbody></table></div>';}
