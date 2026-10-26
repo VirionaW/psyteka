@@ -11,7 +11,7 @@
    group:"Диагностика и наблюдение",topic:"Ранний скрининг РАС",
    ages:["Дошкольники"],ageLabel:"16-30 месяцев · родительская форма · русская версия 3",
    format:"Двухэтапный скрининговый опросник",goal:"Выявление риска РАС у детей раннего возраста с последующим уточняющим интервью при промежуточном риске.",
-   source:pdf,original:"https://www.mchatscreen.com/",scoring:"https://www.mchatscreen.com/",
+   source:pdf,original:"https://www.mchatscreen.com/",scoring:"https://www.mchatscreen.com/mchat-rf/scoring/",
    authorship:"© 2009 Robins, Fein & Barton. Официальная русская версия 3, перевод Елизаветы Морозовой.",
    variants:[{id:"ru-v3",label:"Русская версия 3, родители, 16-30 месяцев",age:"16-30 месяцев",url:pdf}],
    indicators:["20 пунктов первой стадии (родительский отчет)","Сумма по опубликованному ключу","Дополнительное интервью для промежуточного результата","Решение о дальнейшем обследовании, но не диагноз"],
@@ -97,12 +97,12 @@
   const m=byId.get(d.sourceId);
   return '<div class="psy-common-guide-head"><h3>Методика / руководство</h3><div class="psy-common-guide-actions">'+
    '<button type="button" class="btn" data-source-print="guide">Без бланка</button>'+
-   '<button type="button" class="btn primary" data-source-print="combined">С бланком</button></div></div>'+guideContent(m);
+   '<button type="button" class="btn primary" data-source-print="combined" title="Открывает авторский бланк отдельно">С бланком</button></div></div>'+guideContent(m);
  }
  function materials(d){
   const m=byId.get(d.sourceId),v=chosen(m);
   return '<div class="psy-common-guide-head"><h3>Оригинальный бланк</h3></div>'+
-   '<p>Выберите опубликованную редакцию. Ссылка ведет непосредственно к документу правообладателя или на его официальную страницу с формами.</p>'+
+   '<p>Выберите опубликованную редакцию. Ссылка ведет к документу правообладателя или на его официальную страницу с формами. Вариант «С бланком» открывает оригинал отдельно от руководства.</p>'+
    (m.variants.length>1?
     '<label class="psy-special-source-choice">Возраст и информант<select data-source-variant="'+esc(m.id)+'">'+
     m.variants.map(x=>'<option value="'+esc(x.id)+'" '+(x.id===v.id?'selected':'')+'>'+esc(x.label)+'</option>').join("")+'</select></label>':
