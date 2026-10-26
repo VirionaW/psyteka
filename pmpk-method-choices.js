@@ -136,5 +136,5 @@
   eventClick({dataset:{pmpkOpen:age+":"+task+":"+index}},age,null);
   return true;
  }
- window.PSY_PMPK_CHOICES={render,getMethod,eventClick,openSelected,portfolioCount,source:REF,counts:catalogue.map(g=>g.map(a=>a.length))};
+ window.PSY_PMPK_CHOICES={render,getMethod,getSelectedIndex:(age,task)=>catalogue[age]?.[task]?.findIndex(m=>idFor(m)===selections[age][task])??-1,eventClick,openSelected,portfolioCount,source:REF,counts:catalogue.map(g=>g.map(a=>a.length))};
 })();
