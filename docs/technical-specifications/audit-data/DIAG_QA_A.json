@@ -39,17 +39,22 @@
       ],
       "render": {
         "guide": {
-          "ok": false,
-          "error": "TypeError: Cannot read properties of undefined (reading 'instructions')"
+          "ok": true,
+          "bytes": 1493,
+          "hasSpoken": true,
+          "hasScoring": true,
+          "hasInterpret": true
         },
         "blank": {
-          "ok": false,
-          "error": "TypeError: Cannot read properties of undefined (reading 'materials')"
+          "ok": true,
+          "bytes": 1971,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
         },
         "portfolio": {
           "ok": true,
           "bytes": 1163,
-          "mentionsSource": true,
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
@@ -72,17 +77,22 @@
       "localFiles": [],
       "render": {
         "guide": {
-          "ok": false,
-          "error": "TypeError: Cannot read properties of undefined (reading 'instructions')"
+          "ok": true,
+          "bytes": 1315,
+          "hasSpoken": true,
+          "hasScoring": true,
+          "hasInterpret": true
         },
         "blank": {
-          "ok": false,
-          "error": "TypeError: Cannot read properties of undefined (reading 'materials')"
+          "ok": true,
+          "bytes": 1174,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
         },
         "portfolio": {
           "ok": true,
           "bytes": 1293,
-          "mentionsSource": true,
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
@@ -485,17 +495,22 @@
       "localFiles": [],
       "render": {
         "guide": {
-          "ok": false,
-          "error": "TypeError: Cannot read properties of undefined (reading 'extraInstructions')"
+          "ok": true,
+          "bytes": 1574,
+          "hasSpoken": true,
+          "hasScoring": true,
+          "hasInterpret": true
         },
         "blank": {
-          "ok": false,
-          "error": "TypeError: Cannot read properties of undefined (reading 'materials')"
+          "ok": true,
+          "bytes": 1465,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
         },
         "portfolio": {
           "ok": true,
           "bytes": 1521,
-          "mentionsSource": true,
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
@@ -518,17 +533,22 @@
       "localFiles": [],
       "render": {
         "guide": {
-          "ok": false,
-          "error": "TypeError: Cannot read properties of undefined (reading 'extraInstructions')"
+          "ok": true,
+          "bytes": 2147,
+          "hasSpoken": true,
+          "hasScoring": true,
+          "hasInterpret": true
         },
         "blank": {
-          "ok": false,
-          "error": "TypeError: Cannot read properties of undefined (reading 'materials')"
+          "ok": true,
+          "bytes": 2949,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
         },
         "portfolio": {
           "ok": true,
           "bytes": 1148,
-          "mentionsSource": true,
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
@@ -551,17 +571,22 @@
       "localFiles": [],
       "render": {
         "guide": {
-          "ok": false,
-          "error": "TypeError: Cannot read properties of undefined (reading 'instructions')"
+          "ok": true,
+          "bytes": 1458,
+          "hasSpoken": true,
+          "hasScoring": false,
+          "hasInterpret": true
         },
         "blank": {
-          "ok": false,
-          "error": "TypeError: Cannot read properties of undefined (reading 'materials')"
+          "ok": true,
+          "bytes": 2525,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
         },
         "portfolio": {
           "ok": true,
           "bytes": 1709,
-          "mentionsSource": true,
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
@@ -584,17 +609,22 @@
       "localFiles": [],
       "render": {
         "guide": {
-          "ok": false,
-          "error": "TypeError: Cannot read properties of undefined (reading 'instructions')"
+          "ok": true,
+          "bytes": 1550,
+          "hasSpoken": true,
+          "hasScoring": true,
+          "hasInterpret": true
         },
         "blank": {
-          "ok": false,
-          "error": "TypeError: Cannot read properties of undefined (reading 'materials')"
+          "ok": true,
+          "bytes": 903,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
         },
         "portfolio": {
           "ok": true,
           "bytes": 1185,
-          "mentionsSource": true,
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
@@ -1116,5 +1146,10 @@
       "guideFile": "downloads/phillips_school_anxiety_guide.docx",
       "answerFile": "downloads/phillips_school_anxiety_student.html"
     }
-  }
+  },
+  "runtimeDependencies": [
+    "method-batch-02-ui.js",
+    "diagnostics-ui.js",
+    "diagnostic-batch-03-ui.js"
+  ]
 }
