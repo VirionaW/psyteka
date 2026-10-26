@@ -1,0 +1,13 @@
+/* 8 одобренных замен. Остальные карточки и атласы не затронуты. */
+.library-page #catalog article.method .glyph:has(.psy-approved-eight){
+ overflow:hidden!important;padding:0!important;
+ border-radius:14px!important;background:#f8faf7!important
+}
+.library-page #catalog article.method .psy-approved-eight{
+ display:block!important;width:100%!important;height:100%!important;
+ min-width:100%!important;min-height:100%!important;
+ border-radius:13px!important;
+ background-image:url("assets/psyteka-approved-eight-site.jpg?v=20261026r1")!important;
+ background-repeat:no-repeat!important;
+ background-size:400% 200%!important
+}
