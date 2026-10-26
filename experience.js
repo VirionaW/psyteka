@@ -40,7 +40,7 @@ function render(){
  $("#resultCount").textContent="Найдено: "+filtered.length;
  $("#listHeading").textContent=state.topic||"Школьные материалы";
  $("#catalog").innerHTML=filtered.map(m=>{
- const d=DETAILS[m.name],age=d?.age||m.age;
+ const d=DETAILS[m.name],age=window.PSY_GUIDE_STANDARD?.age(m.name,d,m)||d?.age||m.age;
  const description=profileGoal(m,d,window.PSY_PORTFOLIO_EDITS?.[m.name]||{})||m.summary||m.goal||'';
  const kind=d?.workflow==='diagnostic03'?'scale':d?.special==='memory10'?'memory':d?.special==='odd4'?'cognitive':(d?.graphic==='drawing'||d?.graphic==='sociogram')?'drawing':(d?.graphic==='dictation'||d?.graphic==='schulte'||d?.graphic==='dembo'||d?.graphic==='ladder')?'graphic':(d?.calculator?'scale':'other');
  const author=(d?.author||m.author||'');
