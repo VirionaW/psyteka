@@ -111,8 +111,10 @@
   const m=catalogue[age][task][ix];
   if(btn.dataset.pmpkSelect!==undefined){
    const id=idFor(m);
-   selections[age][task]=selections[age][task]===id?"":id;
-   if(typeof refresh==="function")refresh({task,choiceChanged:true});
+   const from=selections[age][task],to=from===id?"":id;
+   if(typeof refresh==="function"&&refresh({task,from,to,before:true})===false)return true;
+   selections[age][task]=to;
+   if(typeof refresh==="function")refresh({task,from,to,choiceChanged:true});
    return true;
   }
   if(m.kind==="working")window.PSY_PMPK_METHODS?.open?.(m.id);
