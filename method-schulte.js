@@ -17,7 +17,7 @@
  const D=window.PSY_FULL_METHODS,d=D[NAME]||{};
  Object.assign(d,{
   author:"В. Шульте (Walter Schulte)",
-  age:"Для умеющих уверенно называть числа 1–25; возрастные нормативы зависят от руководства",
+  age:"От 7 лет",
   kind:"Табличная диагностическая проба внимания",
   count:"5 таблиц × 25 чисел; 5 измерений времени",
   goal:"Описание темпа зрительного поиска, распределения внимания и динамики времени выполнения пяти таблиц.",
@@ -54,13 +54,15 @@
  function tableHTML(i,forPrint=false){
    return '<div class="psy-schulte-item"><h4>Таблица '+(i+1)+'</h4><div class="psy-schulte-grid" aria-label="Таблица Шульте '+(i+1)+'">'+MATRIX[i].map(n=>'<span>'+n+'</span>').join("")+'</div></div>';
  }
- function doclinks(d){return '<div class="psy-schulte-links"><a class="btn primary" download href="'+esc(d.guideFile)+'">Методика Word</a><a class="btn" href="'+esc(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Печатные таблицы · А4 ↗</a><a class="btn" href="'+esc(d.source)+'" target="_blank" rel="noopener noreferrer">Первоисточник PDF ↗</a></div>';}
+ function doclinks(d,blankOnly=false){return '<div class="psy-schulte-links">'+
+ (blankOnly?'':'<a class="btn" href="'+esc(d.guideFile)+'" target="_blank" rel="noopener noreferrer">Руководство · Word ↗</a>')+
+ '<a class="btn primary" href="'+esc(d.answerFile)+'" target="_blank" rel="noopener noreferrer">'+(blankOnly?'Посмотреть и распечатать ↗':'Таблицы для печати · А4 ↗')+'</a></div>';}
  function instruction(d){return '<h3>Процедура проведения</h3><p>'+esc(d.instructions)+'</p>'+doclinks(d)+
   '<h3>Что подготовить</h3><p>Пять разных распечатанных матриц 5×5, чистый протокол, секундомер, ручку. Испытуемому не показывают следующую таблицу до завершения текущей. На каждой таблице начало отсчета времени — предъявление чисел.</p>'+
   '<h3>Регистрация</h3><p>Для каждой таблицы введите <strong>секунды</strong> и количество ошибок. Нулевое число ошибок укажите цифрой 0. При неполном проведении оставьте незаполненными остальные таблицы и не рассчитывайте средний показатель.</p>'+
   '<div class="notice psy-schulte-warning">'+esc(d.warning)+'</div>';
  }
- function materials(d){return '<h3>Стимульные таблицы</h3><p>Каждая таблица содержит числа от 1 до 25 ровно по одному разу и предъявляется отдельно. Для обследования распечатайте пять страниц А4.</p>'+doclinks(d)+
+ function materials(d){return '<h3>Стимульные таблицы</h3><p>Каждая таблица содержит числа от 1 до 25 ровно по одному разу и предъявляется отдельно. Для обследования распечатайте пять страниц А4.</p>'+doclinks(d,true)+
   '<div class="psy-schulte-all">'+MATRIX.map((_,i)=>tableHTML(i)).join("")+'</div>'+
   '<p>Печатный лист использует ту же последовательность чисел, что и предварительный просмотр.</p>';
  }
