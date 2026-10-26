@@ -116,3 +116,11 @@ html.dark #modal.psy-special-current .psy-special-footer-state.complete,html.dar
 #modal.psy-special-current .special-measure-interval select{min-width:0;max-width:135px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);padding:7px}
 #modal.psy-special-current .special-measure-table th,#modal.psy-special-current .special-measure-table td{text-align:left}
 @media(max-width:700px){#modal.psy-special-current .special-measure-line,#modal.psy-special-current .special-measure-interval-list{grid-template-columns:1fr}}
+
+/* Published, copyright-protected diagnostic form selection in OVZ. */
+#modal.psy-special-current .psy-special-source-choice{display:grid;gap:8px;font-weight:700;font-size:14px;margin:16px 0}
+#modal.psy-special-current .psy-special-source-choice select{width:100%;max-width:100%;min-width:0;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);padding:11px 13px;font:inherit}
+#modal.psy-special-current .psy-special-source-current{font-size:13px;color:var(--muted);margin:10px 0}
+#modal.psy-special-current .psy-special-versions{margin:8px 0 16px}
+#modal.psy-special-current .psy-special-versions p{padding:7px 0;margin:0;border-bottom:1px solid var(--line)}
+#modal.psy-special-current .psy-special-footer-state.external{background:var(--soft);color:var(--muted);border-color:var(--line)}
