@@ -16,62 +16,55 @@
 @media(max-width:820px){.library-page .back-top{right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:46px;height:46px}}
 @media(prefers-reduced-motion:reduce){.library-page .back-top{transition:none}}
 
-/* Аккуратные индикаторы раскрытия бокового меню. */
+/* Ровные шевроны без декоративных кружков, справа по центру. */
 .library-page #sidebar .navgroup[aria-expanded],
 .library-page #sidebar .section-toggle[aria-expanded]{
  position:relative;
  display:flex;
  align-items:center;
- padding-right:50px!important;
+ padding-right:42px!important;
 }
 .library-page #sidebar .navgroup > .nav-chevron,
 .library-page #sidebar .section-toggle > .nav-chevron{
  position:absolute!important;
  top:50%;
- right:12px;
+ right:13px;
+ width:20px;
+ height:20px;
  margin:0!important;
- transform:translateY(-50%);
- width:28px;
- height:28px;
+ padding:0;
  flex:none;
- display:grid;
- place-items:center;
- box-sizing:border-box;
- border-radius:50%;
- border:1px solid color-mix(in srgb,var(--area,#287b56) 18%,transparent);
- background:color-mix(in srgb,var(--area,#287b56) 9%,transparent);
- color:var(--area,#287b56);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ transform:translateY(-50%);
+ background:none!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ color:var(--area,#297554);
+ pointer-events:none;
  font-size:0!important;
  line-height:0;
- pointer-events:none;
- transition:background-color .2s ease,border-color .2s ease;
 }
-.library-page #sidebar .navgroup > .nav-chevron::after,
-.library-page #sidebar .section-toggle > .nav-chevron::after{
- content:"";
+.library-page #sidebar .nav-chevron::before,
+.library-page #sidebar .nav-chevron::after{content:none!important;display:none!important}
+.library-page #sidebar .nav-chevron svg{
+ width:18px;
+ height:18px;
  display:block;
- box-sizing:border-box;
- width:9px;
- height:9px;
- border-style:solid;
- border-color:currentColor;
- border-width:0 2.5px 2.5px 0;
- border-radius:1px;
- transform:translate(-2px,0) rotate(-45deg);
- transition:transform .22s ease;
+ overflow:visible;
+ fill:none;
+ stroke:currentColor;
+ stroke-width:2.5;
+ stroke-linecap:round;
+ stroke-linejoin:round;
 }
-.library-page #sidebar [aria-expanded="true"] > .nav-chevron::after{
- transform:translate(0,-2px) rotate(45deg);
-}
+.library-page #sidebar .nav-chevron .chevron-down{display:none}
+.library-page #sidebar [aria-expanded="true"] > .nav-chevron .chevron-right{display:none}
+.library-page #sidebar [aria-expanded="true"] > .nav-chevron .chevron-down{display:block}
 .library-page #sidebar .navgroup:hover > .nav-chevron,
-.library-page #sidebar .section-toggle:hover > .nav-chevron{
- background:color-mix(in srgb,var(--area,#287b56) 17%,transparent);
- border-color:color-mix(in srgb,var(--area,#287b56) 32%,transparent);
-}
-@media(prefers-reduced-motion:reduce){
- .library-page #sidebar .nav-chevron,
- .library-page #sidebar .nav-chevron::after{transition:none}
-}
+.library-page #sidebar .section-toggle:hover > .nav-chevron{color:#1b6549}
 </style></head>
 <body class="library-page" data-area="school">
 <div class="layout">
@@ -80,11 +73,11 @@
  <div class="sidebar-collapse-row"><button class="desktop-sidebar-toggle" id="desktopSidebarToggle" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Скрыть боковую панель"><span aria-hidden="true">«</span> Скрыть меню</button></div>
  <div class="side-head">Материалы</div>
  <button class="navgroup" data-view="preschool"><span class="navicon">✿</span> Детский сад</button>
- <button class="navgroup active" data-view="school" aria-expanded="true" aria-controls="schoolTree"><span class="navicon">▦</span> Школа <span class="nav-chevron" aria-hidden="true">⌄</span></button>
+ <button class="navgroup active" data-view="school" aria-expanded="true" aria-controls="schoolTree"><span class="navicon">▦</span> Школа <span class="nav-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path class="chevron-right" d="m9 6 6 6-6 6"></path><path class="chevron-down" d="m6 9 6 6 6-6"></path></svg></span></button>
  <div class="school-tree" id="schoolTree">
-  <button class="section-toggle" data-section="diagnosticsGroup" aria-expanded="true" aria-controls="diagnosticsGroup">Диагностика <span class="nav-chevron" aria-hidden="true">⌄</span></button>
+  <button class="section-toggle" data-section="diagnosticsGroup" aria-expanded="true" aria-controls="diagnosticsGroup">Диагностика <span class="nav-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path class="chevron-right" d="m9 6 6 6-6 6"></path><path class="chevron-down" d="m6 9 6 6 6-6"></path></svg></span></button>
   <div class="nested" id="diagnosticsGroup"><div id="topics"></div></div>
-  <button class="section-toggle" data-section="correctionGroup" aria-expanded="false" aria-controls="correctionGroup">Коррекционная работа <span class="nav-chevron" aria-hidden="true">⌄</span></button>
+  <button class="section-toggle" data-section="correctionGroup" aria-expanded="false" aria-controls="correctionGroup">Коррекционная работа <span class="nav-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path class="chevron-right" d="m9 6 6 6-6 6"></path><path class="chevron-down" d="m6 9 6 6 6-6"></path></svg></span></button>
   <div class="nested" id="correctionGroup" hidden><button class="topic-btn" data-topic="Программы">Программы и занятия</button></div>
  </div>
  <button class="navgroup" data-view="pmpk"><span class="navicon">◎</span> ПМПК</button>
@@ -93,9 +86,9 @@
  <button class="navgroup" data-view="prevention"><span class="navicon">✳</span> Профилактика и просвещение</button>
  <button class="navgroup" data-view="documents"><span class="navicon">▤</span> Документация</button>
  <div class="side-head second">Справочные материалы</div>
- <button class="navgroup info-parent" type="button" data-view="information" data-section="informationGroup" aria-expanded="false" aria-controls="informationGroup"><span class="navicon">ⓘ</span> Информация <span class="nav-chevron" aria-hidden="true">⌄</span></button>
+ <button class="navgroup info-parent" type="button" data-view="information" data-section="informationGroup" aria-expanded="false" aria-controls="informationGroup"><span class="navicon">ⓘ</span> Информация <span class="nav-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path class="chevron-right" d="m9 6 6 6-6 6"></path><path class="chevron-down" d="m6 9 6 6 6-6"></path></svg></span></button>
  <div class="nested info-tree" id="informationGroup" hidden>
-  <button class="section-toggle info-testing-toggle" type="button" data-section="testingGroup" aria-expanded="false" aria-controls="testingGroup">Тестирования <span class="nav-chevron" aria-hidden="true">⌄</span></button>
+  <button class="section-toggle info-testing-toggle" type="button" data-section="testingGroup" aria-expanded="false" aria-controls="testingGroup">Тестирования <span class="nav-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path class="chevron-right" d="m9 6 6 6-6 6"></path><path class="chevron-down" d="m6 9 6 6 6-6"></path></svg></span></button>
   <div class="nested" id="testingGroup" hidden>
    <a class="topic-btn info-link" href="testing.html">Обзор тестирований</a>
    <button class="topic-btn" type="button" data-view="spt">СПТ в России</button>
