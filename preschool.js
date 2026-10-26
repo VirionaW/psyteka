@@ -71,6 +71,8 @@
   const out=data.filter(m=>(!group||m.group===group)&&(!topic||m.topic===topic)&&ageMatch(m)&&(!query||[m.title,m.goal,m.topic,m.author,m.group].join(" ").toLowerCase().includes(query.toLowerCase())));
   root.querySelector("#preschoolHeading").textContent=topic||group||"Материалы для детского сада";
   root.querySelector("#preschoolCount").textContent="Найдено: "+out.length;
+  const guidance=root.querySelector("#preschoolGuidance");
+  if(guidance)guidance.hidden=group!=="Работа с воспитателями";
   root.querySelector("#preschoolCards").innerHTML=out.map(m=>{
    const realAuthor=m.existing?(window.PSY_CATALOG||[]).find(x=>x.name===m.existing)?.author||"":"";
    const credit=realAuthor&&!/сведения об авторе уточняются/i.test(realAuthor)?'<p class="method-card-author">'+esc(realAuthor)+'</p>':"";
@@ -92,7 +94,7 @@
   const b=e.target.closest("[data-preschool-topic]");if(b)selectCategory(b.dataset.preschoolGroup,b.dataset.preschoolTopic||"");
  });
  document.querySelector('[data-view="preschool"]')?.addEventListener("click",()=>{if(!tree.hidden)show()});
- root.innerHTML='<div class="filters preschool-filters"><label class="search-wrap"><span aria-hidden="true">⌕</span><input id="preschoolSearch" type="search" placeholder="Название методики, направление..." aria-label="Поиск дошкольных материалов"></label><label class="preschool-age-field"><span class="visually-hidden">Возрастная группа</span><select id="preschoolAge" aria-label="Возрастная группа">'+ages.map(([v,label])=>'<option value="'+esc(v)+'">'+esc(label)+'</option>').join("")+'</select></label></div><div class="subbar preschool-subbar"><h2 id="preschoolHeading">Материалы для детского сада</h2><span id="preschoolCount"></span></div><div class="preschool-cards catalog" id="preschoolCards"></div>';
+ root.innerHTML='<div class="filters preschool-filters"><label class="search-wrap"><span aria-hidden="true">⌕</span><input id="preschoolSearch" type="search" placeholder="Название методики, направление..." aria-label="Поиск дошкольных материалов"></label><label class="preschool-age-field"><span class="visually-hidden">Возрастная группа</span><select id="preschoolAge" aria-label="Возрастная группа">'+ages.map(([v,label])=>'<option value="'+esc(v)+'">'+esc(label)+'</option>').join("")+'</select></label></div><div class="subbar preschool-subbar"><h2 id="preschoolHeading">Материалы для детского сада</h2><span id="preschoolCount"></span></div><p class="preschool-educator-guidance" id="preschoolGuidance" hidden>Педагогическая диагностика проводится по решению ДОО, а формы и периодичность определяются самой организацией. Карта наблюдения не является обязательным федеральным бланком. <a href="https://docs.edu.gov.ru/document/0e6ad380fc69dd72b6065672830540ac/" target="_blank" rel="noopener noreferrer">ФОП ДО, раздел 16</a>.</p><div class="preschool-cards catalog" id="preschoolCards"></div>';
  root.querySelector("#preschoolSearch").addEventListener("input",e=>{query=e.target.value;show()});
  root.querySelector("#preschoolAge").addEventListener("change",e=>{age=e.target.value;show()});
  root.addEventListener("click",e=>{
