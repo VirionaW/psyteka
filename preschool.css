@@ -12,6 +12,9 @@
 #preschoolView .preschool-subbar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 #preschoolView .preschool-subbar h2{margin:0;font-size:clamp(22px,2vw,28px)}
 #preschoolView .preschool-subbar span{color:var(--muted);font-size:13px}
+#preschoolView .preschool-educator-guidance{margin:0 0 17px;font-size:13px;line-height:1.55;color:var(--muted);max-width:980px}
+#preschoolView .preschool-educator-guidance[hidden]{display:none!important}
+#preschoolView .preschool-educator-guidance a{color:var(--area);text-underline-offset:2px}
 #preschoolView .preschool-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
 #preschoolView .preschool-method{min-width:0}
 #preschoolView .preschool-method .head{display:flex;align-items:flex-start}
