@@ -52,7 +52,7 @@
  {name:"Рефлексия и мотивация",materials:"Короткая беседа.",procedure:["Обсудить отношение к учебным трудностям и успехам.","Спросить о предпочитаемых способах помощи.","Зафиксировать высказывания дословно и наблюдаемые реакции."],stimuli:["Вопросы: «Какие задания тебе обычно даются легче?», «Как ты поступаешь, когда не понимаешь инструкцию?», «Какую помощь считаешь полезной?»"]}
  ]}
  ];
- const state={age:2,tab:"portfolio",data:AGE_LABELS.map(()=>({code:"",date:new Date().toISOString().slice(0,10),conditions:"",summary:"",items:TASKS.map(()=>({status:"",result:"",help:"",notes:"",reason:"",duration:""}))}))};
+ const state={age:2,tab:"portfolio",opened:AGE_LABELS.map(()=>new Set([0])),data:AGE_LABELS.map(()=>({code:"",date:new Date().toISOString().slice(0,10),conditions:"",summary:"",items:TASKS.map(()=>({status:"",result:"",help:"",notes:"",reason:"",duration:""}))}))};
  const esc=s=>String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
  const rec=()=>state.data[state.age];
  const route=i=>TASKS[i].versions[state.age];
@@ -60,21 +60,38 @@
   return (item.status==="done"&&!!item.result&&!!item.help&&!!item.notes.trim())||(item.status==="skip"&&!!item.reason.trim());
  }
  function progress(){return rec().items.filter(valid).length}
- function routeReady(){return progress()===TASKS.length&&rec().items.some(x=>x.status==="done")&&!!rec().summary.trim()}
+ function selectedMethod(i){return window.PSY_PMPK_CHOICES?.getMethod(state.age,i)||null}
+ function selectedCount(){return TASKS.filter((_,i)=>!!selectedMethod(i)).length}
+ function routeReady(){return progress()===TASKS.length&&rec().items.some(x=>x.status==="done")&&
+   rec().items.every((x,i)=>x.status!=="done"||!!selectedMethod(i))&&!!rec().summary.trim()}
  function facts(){
   return '<div class="pmpk-facts"><div class="pmpk-fact"><small>Возраст</small><strong>'+AGE_LABELS[state.age]+'</strong></div><div class="pmpk-fact"><small>Планирование</small><strong>До 40 минут</strong></div><div class="pmpk-fact"><small>Формат</small><strong>7 заданий</strong></div><div class="pmpk-fact"><small>Оценка</small><strong>Качественная</strong></div></div>';
  }
  function header(){
-  return '<div class="pmpk-hero"><div><div class="pmpk-eyebrow">ПМПК · Комплексное обследование</div><h1>ПМПК</h1><p>Возрастные задания, методики, рабочие бланки и единый протокол для комплексного обследования.</p></div></div>'+
-  '<div class="pmpk-card pmpk-toolbar"><div><label>Возраст обследуемого</label><div class="pmpk-ages" role="group" aria-label="Возраст">'+AGE_LABELS.map((a,i)=>'<button type="button" data-age="'+i+'" aria-pressed="'+(state.age===i)+'">'+a+'</button>').join("")+'</div></div><p class="pmpk-note">Программа индивидуальная. Для детей младше 3 лет и при выраженных особенностях развития нужен отдельный возрастной маршрут.</p></div>'+
-  '<div class="pmpk-tabs" role="tablist" aria-label="Материалы ПМПК">'+[["portfolio","Портфолио"],["guide","Методика / руководство"],["blank","Бланк"]].map(a=>'<button role="tab" type="button" data-tab="'+a[0]+'" aria-selected="'+(state.tab===a[0])+'">'+a[1]+'</button>').join("")+'</div>';
+  return '<div class="pmpk-hero"><div><div class="pmpk-eyebrow">Комплексное обследование · ПМПК</div><h1>ПМПК</h1><p>Методики по возрасту, материалы специалиста и единый протокол психологического обследования.</p></div></div>'+
+  '<section class="pmpk-route-settings" aria-label="Настройка обследования"><div class="pmpk-route-settings-top"><div><div class="pmpk-settings-label">Возраст обследуемого</div><div class="pmpk-ages" role="group" aria-label="Возраст">'+AGE_LABELS.map((a,i)=>'<button type="button" data-age="'+i+'" aria-pressed="'+(state.age===i)+'">'+a+'</button>').join("")+'</div></div>'+
+  '<div class="pmpk-route-stats"><strong data-pmpk-selected-count>'+selectedCount()+' / 7</strong><span>направлений с выбранной методикой</span></div></div>'+
+  '<p class="pmpk-note">40 минут – ориентир для краткого обследования, не норматив длительности ПМПК. Полные методики, например заучивание 10 слов Лурии с отсрочкой, могут требовать больше времени. Задания адаптируются к возможностям ребенка.</p></section>'+
+  '<div class="pmpk-tabs" role="tablist" aria-label="Разделы комплекса">'+
+   [["portfolio","Методики и маршрут"],["guide","Руководство по маршруту"],["blank","Протокол специалиста"]].map(a=>'<button type="button" role="tab" data-tab="'+a[0]+'" aria-selected="'+(state.tab===a[0])+'">'+a[1]+'</button>').join("")+'</div>';
  }
  function portfolio(){
-  return '<div class="pmpk-card"><h2>Общие сведения</h2>'+facts()+
-  '<p><strong>Цель:</strong> краткое описание особенностей познавательной деятельности, обучаемости, саморегуляции и эмоционального контакта при индивидуальном обследовании.</p>'+
-  '<p class="pmpk-note">Это авторский рабочий маршрут наблюдения и диагностических проб Психотеки, а не стандартизированная батарея ПМПК. Нормативные таблицы, суммарный IQ, уровень развития и диагностические категории для него не установлены. Он не заменяет заключение комиссии, обследование логопеда, дефектолога и врача.</p></div>'+
-  '<div class="pmpk-card"><h2>Задания по выбранному возрасту</h2><div class="pmpk-list">'+TASKS.map((t,i)=>'<div class="pmpk-task"><div class="pmpk-task-head"><div class="pmpk-titleline"><span class="pmpk-number">'+(i+1)+'</span><h3>'+esc(t.title)+'</h3></div><span class="pmpk-minutes">'+SCHEDULE[i]+' мин</span></div><p class="pmpk-meta">'+esc(t.goal)+'</p>'+(window.PSY_PMPK_CHOICES?.render(state.age,i)||"")+'</div>').join("")+'</div><p class="pmpk-note">Дополнительно: примерно 2 минуты на контакт и 2 минуты резерва. При перегрузке или усталости этапы можно переносить либо пропускать с указанием причины.</p></div>'+
-  '<div class="pmpk-card"><h2>Методические основания</h2><p>Примерные возрастные направления содержатся в рекомендациях Минобрнауки от 23.05.2016 № ВК-1074/07, приложение 8. Действующее положение о ПМПК утверждено приказом Минпросвещения от 01.11.2024 № 763. Эти документы не задают данной рабочей батарее стандартных норм.</p><p class="pmpk-note"><a href="https://base.garant.ru/71462034/38d0e20d10a9099ed1e190abf152a12a/" target="_blank" rel="noopener noreferrer">Примерный пакет методик психолога</a> · <a href="https://docs.edu.gov.ru/document/b4b4effded15d5ace08f738188fc46c3" target="_blank" rel="noopener noreferrer">Положение о ПМПК</a></p><p class="pmpk-note">Тест Люшера не включен в базовый маршрут: по цветовым предпочтениям нельзя делать достоверное диагностическое заключение о ребенке.</p></div>';
+  const opened=state.opened[state.age];
+  const selectLinks=TASKS.map((t,i)=>'<button type="button" class="pmpk-route-link'+(opened.has(i)?" is-active":"")+'" data-pmpk-jump="'+i+'"><span class="pmpk-route-link-n">'+(i+1)+'</span><span>'+esc(t.title)+'</span><span class="pmpk-route-link-dot'+(selectedMethod(i)?" is-chosen":"")+'"></span></button>').join("");
+  const cards=TASKS.map((t,i)=>{
+   const open=opened.has(i),m=selectedMethod(i),cardsCount=window.PSY_PMPK_CHOICES?.counts?.[state.age]?.[i]||0;
+   return '<section id="pmpk-task-'+i+'" class="pmpk-task pmpk-task-section" aria-label="Задание '+(i+1)+' – '+esc(t.title)+'">'+
+    '<button type="button" class="pmpk-task-toggle" data-pmpk-expand="'+i+'" aria-expanded="'+open+'" aria-controls="pmpk-task-content-'+i+'">'+
+     '<span class="pmpk-number">'+(i+1)+'</span><span class="pmpk-task-toggle-text"><strong>Задание '+(i+1)+'. '+esc(t.title)+'</strong><span data-pmpk-chosen-label="'+i+'">'+(m?"Выбрано: "+esc(m.name):cardsCount+" методики на выбор")+'</span></span>'+
+     '<span class="pmpk-minutes">≈ '+SCHEDULE[i]+' мин</span><span class="pmpk-task-chevron" aria-hidden="true"></span></button>'+
+    '<div id="pmpk-task-content-'+i+'" class="pmpk-task-content" data-pmpk-content="'+i+'" '+(!open?"hidden":"")+'><p class="pmpk-meta">'+esc(t.goal)+'</p>'+
+    (window.PSY_PMPK_CHOICES?.render(state.age,i)||"")+'</div></section>';
+  }).join("");
+  return '<section class="pmpk-card pmpk-overview"><div class="pmpk-overview-header"><div><h2>Маршрут обследования</h2><p>Сначала выберите возраст и подходящую методику в каждом направлении. Готовые комплекты открываются в Психотеке; результаты записывайте в общий протокол.</p></div><span class="pmpk-overview-kpi"><strong>7</strong> направлений</span></div>'+
+    '<nav class="pmpk-route-links" aria-label="Перейти к направлению">'+selectLinks+'</nav>'+
+    '<div class="pmpk-overview-actions"><button type="button" class="pmpk-mini" data-pmpk-expand-all="true">Развернуть все</button><button type="button" class="pmpk-mini" data-pmpk-expand-all="false">Свернуть все</button><span>Одну и ту же функцию можно исследовать разными методами, но выполнять все подряд необязательно.</span></div></section>'+
+    '<div class="pmpk-list pmpk-domains">'+cards+'</div>'+
+    '<section class="pmpk-card pmpk-method-note"><h2>О чем важно помнить</h2><p>Названия классических методик не означают, что все их варианты стандартизированы. Для проведения и обработки используйте инструкцию и нормативы именно той редакции, которая указана в портфолио или оригинальном источнике. Сводная обработка ПМПК описательная.</p><p>Рекомендации Минобрнауки № ВК-1074/07, приложение 8, содержат примерные возрастные комплекты, а не единый обязательный набор. <a target="_blank" rel="noopener noreferrer" href="https://base.garant.ru/71462034/38d0e20d10a9099ed1e190abf152a12a/">Посмотреть методические рекомендации</a>.</p></section>';
  }
  function guide(){
   return '<div class="pmpk-card"><div class="pmpk-toolbar"><h2>Методика и руководство</h2><div class="pmpk-actions"><button type="button" class="pmpk-mini" data-print="guide">Без бланка</button><button type="button" class="pmpk-action primary" data-print="guide-blank">С бланком</button></div></div><p>Перед началом уточнить запрос и состояние ребенка, проверить доступность инструкций, возможности слуха, зрения и двигательной активности. Начать с контакта; наблюдение ведется на протяжении всех заданий. Не применять чужие нормативные пороги.</p><p class="pmpk-note">В этом разделе порядок проведения. Предъявляемые слова и другие стимулы размещены отдельно в разделе «Бланк» и материалах специалиста.</p></div>'+
