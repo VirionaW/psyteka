@@ -3,6 +3,8 @@
    Real subscriptions later require a server-mediated file store. */
 (function(){
  const root=document.documentElement;
+ const publicPages=new Set(["about.html","guide.html","profile.html","settings.html"]);
+ if(publicPages.has(location.pathname.split("/").pop())){root.classList.add("psy-access-ok");return}
  const config=window.PSY_AUTH_CONFIG||{};
  const enabled=config.registrationEnabled===true;
  // The landing page shows non-interactive real catalog previews in iframes.
