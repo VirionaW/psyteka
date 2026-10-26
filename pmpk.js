@@ -73,7 +73,7 @@
   return '<div class="pmpk-card"><h2>Общие сведения</h2>'+facts()+
   '<p><strong>Цель:</strong> краткое описание особенностей познавательной деятельности, обучаемости, саморегуляции и эмоционального контакта при индивидуальном обследовании.</p>'+
   '<p class="pmpk-note">Это авторский рабочий маршрут наблюдения и диагностических проб Психотеки, а не стандартизированная батарея ПМПК. Нормативные таблицы, суммарный IQ, уровень развития и диагностические категории для него не установлены. Он не заменяет заключение комиссии, обследование логопеда, дефектолога и врача.</p></div>'+
-  '<div class="pmpk-card"><h2>Задания по выбранному возрасту</h2><div class="pmpk-list">'+TASKS.map((t,i)=>'<div class="pmpk-task"><div class="pmpk-task-head"><div class="pmpk-titleline"><span class="pmpk-number">'+(i+1)+'</span><h3>'+esc(t.title)+'</h3></div><span class="pmpk-minutes">'+SCHEDULE[i]+' мин</span></div><p><strong>'+esc(route(i).name)+'</strong></p><p class="pmpk-meta">'+esc(t.goal)+'</p>'+(state.age===2&&i<2?'<div class="pmpk-task-actions"><button type="button" class="pmpk-action primary" data-open-pmpk-method="'+(i===0?"thinking":"memory")+'">Открыть методику</button></div>':'')+'</div>').join("")+'</div><p class="pmpk-note">Дополнительно: примерно 2 минуты на контакт и 2 минуты резерва. При перегрузке или усталости этапы можно переносить либо пропускать с указанием причины.</p></div>'+
+  '<div class="pmpk-card"><h2>Задания по выбранному возрасту</h2><div class="pmpk-list">'+TASKS.map((t,i)=>'<div class="pmpk-task"><div class="pmpk-task-head"><div class="pmpk-titleline"><span class="pmpk-number">'+(i+1)+'</span><h3>'+esc(t.title)+'</h3></div><span class="pmpk-minutes">'+SCHEDULE[i]+' мин</span></div><p><strong>'+esc(route(i).name)+'</strong></p><p class="pmpk-meta">'+esc(t.goal)+'</p>'+(window.PSY_PMPK_CHOICES?.render(state.age,i)||"")+'</div>').join("")+'</div><p class="pmpk-note">Дополнительно: примерно 2 минуты на контакт и 2 минуты резерва. При перегрузке или усталости этапы можно переносить либо пропускать с указанием причины.</p></div>'+
   '<div class="pmpk-card"><h2>Методические основания</h2><p>Примерные возрастные направления содержатся в рекомендациях Минобрнауки от 23.05.2016 № ВК-1074/07, приложение 8. Действующее положение о ПМПК утверждено приказом Минпросвещения от 01.11.2024 № 763. Эти документы не задают данной рабочей батарее стандартных норм.</p><p class="pmpk-note"><a href="https://base.garant.ru/71462034/38d0e20d10a9099ed1e190abf152a12a/" target="_blank" rel="noopener noreferrer">Примерный пакет методик психолога</a> · <a href="https://docs.edu.gov.ru/document/b4b4effded15d5ace08f738188fc46c3" target="_blank" rel="noopener noreferrer">Положение о ПМПК</a></p><p class="pmpk-note">Тест Люшера не включен в базовый маршрут: по цветовым предпочтениям нельзя делать достоверное диагностическое заключение о ребенке.</p></div>';
  }
  function guide(){
@@ -126,7 +126,7 @@
  }
  function reportLines(){
   const d=rec(),x=["ПМПК · КАЧЕСТВЕННЫЙ ПРОТОКОЛ", "Возраст: "+AGE_LABELS[state.age],"Имя / код: "+(d.code||"не указан"),"Дата: "+(d.date||"не указана"),"Условия: "+(d.conditions||"не указаны"),"Рабочий маршрут Психотеки без нормативных порогов",""];
-  TASKS.forEach((t,i)=>{const y=d.items[i];x.push((i+1)+". "+t.title+" · "+route(i).name);if(y.status==="skip")x.push("Не проводилось. Причина: "+y.reason);else {x.push("Выполнение: "+y.result+"; помощь: "+y.help+(y.duration?" · "+y.duration+" сек":""));x.push("Наблюдения: "+y.notes)}x.push("");});
+  TASKS.forEach((t,i)=>{const y=d.items[i],choice=window.PSY_PMPK_CHOICES?.getMethod(state.age,i);x.push((i+1)+". "+t.title+" · "+(choice?"Выбрана: "+choice.name:route(i).name));if(y.status==="skip")x.push("Не проводилось. Причина: "+y.reason);else {x.push("Выполнение: "+y.result+"; помощь: "+y.help+(y.duration?" · "+y.duration+" сек":""));x.push("Наблюдения: "+y.notes)}x.push("");});
   x.push("Качественное заключение специалиста: "+(d.summary||"Не заполнено"));
   x.push("Автоматическое диагностическое заключение не формировалось.");
   return x;
@@ -199,6 +199,7 @@
  }
  root.addEventListener("click",e=>{
   const button=e.target.closest("button");if(!button||!root.contains(button))return;
+  if(window.PSY_PMPK_CHOICES?.eventClick(button,state.age,render))return;
   if(button.hasAttribute("data-age")){state.age=Number(button.dataset.age);state.tab="portfolio";render();}
   else if(button.dataset.tab){state.tab=button.dataset.tab;render();}
   else if(button.dataset.action==="processing"){state.tab="processing";render();}
