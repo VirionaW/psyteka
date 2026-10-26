@@ -46,7 +46,9 @@
  const frames=[...root.querySelectorAll("iframe[data-psy-library-preview]")];
  function align(frame){
   let doc,win;try{win=frame.contentWindow;doc=frame.contentDocument}catch(_){return}
-  if(!win||!doc)return;
+  if(!win||!doc||!doc.querySelector("body"))return;
+  if(!doc.querySelector("#schoolView, #preschoolView"))return;
+  frame.classList.add("psy-preview-loaded");
   const area=frame.dataset.psyLibraryPreview;
   if(area==="portfolio"){
    const method=(win.PSY_CATALOG||[]).find(m=>m.name==="Таблицы Шульте");
