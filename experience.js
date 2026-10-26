@@ -59,9 +59,13 @@ function enhanceMethodView(tab,html){
  if(tab==='instruction'&&!html.includes('Без бланка')&&!html.includes('С бланком')){
   const hasWrittenGuide=!!(d.instructions||d.guideFile||d.goal);
   if(hasWrittenGuide){
+   const directGuide=typeof d.guideFile==='string'&&d.guideFile.startsWith('downloads/')&&d.guideFile.endsWith('.html');
+   const directCombined=typeof d.guideWithBlankFile==='string'&&d.guideWithBlankFile.startsWith('downloads/')&&d.guideWithBlankFile.endsWith('.html');
    const buttons='<div class="psy-common-guide-head"><h3>Методика и руководство</h3><div class="psy-common-guide-actions">'+
-    '<button type="button" class="btn" data-generic-print="guide">Без бланка</button>'+
-    (d.answerFile||d.studentFile||d.childFile||d.questions?.length||d.graphic?
+    (directGuide?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" target="_blank" rel="noopener noreferrer">Без бланка</a>':
+     '<button type="button" class="btn" data-generic-print="guide">Без бланка</button>')+
+    (directCombined?'<a class="btn primary" href="'+escapeHTML(d.guideWithBlankFile)+'" target="_blank" rel="noopener noreferrer">С бланком</a>':
+      d.answerFile||d.studentFile||d.childFile||d.questions?.length||d.graphic?
       '<button type="button" class="btn primary" data-generic-print="combined">С бланком</button>':'')+
     '</div></div>';
    return buttons+html;
