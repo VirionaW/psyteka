@@ -84,14 +84,14 @@ function calculator(d,ctx){
   '<div class="psy-luria-notes"><label>«Лишние» слова / повторы<textarea data-luria-note="'+t+'" rows="2" placeholder="Посторонние слова и повторы отдельно">'+escape(notes[t]?.extra||"")+'</textarea></label></div></section>';
  });
  h+='</div><div id="luriaResult">'+results(a)+'</div>';
- if(ctx.calcMode==="class")h+='<h3>Сводка участников</h3><div class="results-table"><table><thead><tr><th>Код</th><th>1-я</th><th>5-я</th><th>Пик</th><th>Через 60 мин</th></tr></thead><tbody>'+rs.map((u,i)=>{let z=score(d,u.answers);return '<tr><td>'+escape(u.name||"Код "+(i+1))+'</td><td>'+(z?.first??"–")+'</td><td>'+(z?.fifth??"–")+'</td><td>'+(z?.peak??"–")+'</td><td>'+(z?.delayed??"–")+'</td></tr>';}).join("")+'</tbody></table></div>';
+ if(ctx.calcMode==="class")h+='<h3>Сводка участников</h3><div class="results-table"><table id="luriaGroupSummary"><thead><tr><th>Код</th><th>1-я</th><th>5-я</th><th>Пик</th><th>Через 60 мин</th></tr></thead><tbody>'+rs.map((u,i)=>{let z=score(d,u.answers);return '<tr><td>'+escape(u.name||"Код "+(i+1))+'</td><td>'+(z?.first??"–")+'</td><td>'+(z?.fifth??"–")+'</td><td>'+(z?.peak??"–")+'</td><td>'+(z?.delayed??"–")+'</td></tr>';}).join("")+'</tbody></table></div>';
  return h;
 }
 function csv(x){let t=String(x??"");if(/^\s*[=+\-@]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"';}
 function download(name,value,type){const blob=new Blob([value],{type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1250);}
 function bind(d,ctx){
  const row=ctx.rows[ctx.rowIndex];row.luriaNotes||=[];
- const refresh=()=>{const target=document.getElementById("luriaResult");if(target)target.innerHTML=results(row.answers);ctx.onChange?.();};
+ const refresh=()=>{const target=document.getElementById("luriaResult");if(target)target.innerHTML=results(row.answers);const tbody=document.querySelector('#luriaGroupSummary tbody');if(tbody)tbody.innerHTML=ctx.rows.map((u,i)=>{const z=score(d,u.answers);return '<tr><td>'+escape(u.name||'Код '+(i+1))+'</td><td>'+(z?.first??'–')+'</td><td>'+(z?.fifth??'–')+'</td><td>'+(z?.peak??'–')+'</td><td>'+(z?.delayed??'–')+'</td></tr>';}).join('');ctx.onChange?.();};
  document.querySelectorAll("[data-luria-word]").forEach(x=>x.addEventListener("change",()=>{row.answers[Number(x.dataset.luriaWord)]=x.checked?1:0;refresh();}));
  document.querySelectorAll("[data-luria-done]").forEach(x=>x.addEventListener("change",()=>{row.answers[60+Number(x.dataset.luriaDone)]=x.checked?1:0;refresh();}));
  document.querySelectorAll("[data-luria-note]").forEach(x=>x.addEventListener("input",()=>{const i=Number(x.dataset.luriaNote);row.luriaNotes[i] ||= {};row.luriaNotes[i].extra=x.value;}));
