@@ -15,6 +15,63 @@
 .library-page .back-top:focus-visible{outline:3px solid #e1b35c;outline-offset:3px}
 @media(max-width:820px){.library-page .back-top{right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:46px;height:46px}}
 @media(prefers-reduced-motion:reduce){.library-page .back-top{transition:none}}
+
+/* Аккуратные индикаторы раскрытия бокового меню. */
+.library-page #sidebar .navgroup[aria-expanded],
+.library-page #sidebar .section-toggle[aria-expanded]{
+ position:relative;
+ display:flex;
+ align-items:center;
+ padding-right:50px!important;
+}
+.library-page #sidebar .navgroup > .nav-chevron,
+.library-page #sidebar .section-toggle > .nav-chevron{
+ position:absolute!important;
+ top:50%;
+ right:12px;
+ margin:0!important;
+ transform:translateY(-50%);
+ width:28px;
+ height:28px;
+ flex:none;
+ display:grid;
+ place-items:center;
+ box-sizing:border-box;
+ border-radius:50%;
+ border:1px solid color-mix(in srgb,var(--area,#287b56) 18%,transparent);
+ background:color-mix(in srgb,var(--area,#287b56) 9%,transparent);
+ color:var(--area,#287b56);
+ font-size:0!important;
+ line-height:0;
+ pointer-events:none;
+ transition:background-color .2s ease,border-color .2s ease;
+}
+.library-page #sidebar .navgroup > .nav-chevron::after,
+.library-page #sidebar .section-toggle > .nav-chevron::after{
+ content:"";
+ display:block;
+ box-sizing:border-box;
+ width:9px;
+ height:9px;
+ border-style:solid;
+ border-color:currentColor;
+ border-width:0 2.5px 2.5px 0;
+ border-radius:1px;
+ transform:translate(-2px,0) rotate(-45deg);
+ transition:transform .22s ease;
+}
+.library-page #sidebar [aria-expanded="true"] > .nav-chevron::after{
+ transform:translate(0,-2px) rotate(45deg);
+}
+.library-page #sidebar .navgroup:hover > .nav-chevron,
+.library-page #sidebar .section-toggle:hover > .nav-chevron{
+ background:color-mix(in srgb,var(--area,#287b56) 17%,transparent);
+ border-color:color-mix(in srgb,var(--area,#287b56) 32%,transparent);
+}
+@media(prefers-reduced-motion:reduce){
+ .library-page #sidebar .nav-chevron,
+ .library-page #sidebar .nav-chevron::after{transition:none}
+}
 </style></head>
 <body class="library-page" data-area="school">
 <div class="layout">
