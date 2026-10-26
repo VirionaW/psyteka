@@ -68,3 +68,8 @@
  .library-page #modal .psy-luria-footer-right{margin-left:0;width:100%;justify-content:flex-end}
  .library-page #modal .psy-luria-footer>.psy-bottom-processing{margin-left:auto}
 }
+
+.library-page #modal .psy-luria-meta-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.library-page #modal .psy-luria-meta-inputs label{display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;color:var(--muted);min-width:0}
+.library-page #modal .psy-luria-meta-inputs input{width:100%;min-width:0;min-height:42px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);padding:10px}
+@media(max-width:650px){.library-page #modal .psy-luria-meta-inputs{grid-template-columns:1fr}}
