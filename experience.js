@@ -141,6 +141,36 @@ function profileGoal(m,d,o){
  if(catalogGoal&&!/^(Изучение направления:|Коррекционная или профилактическая работа|Оценка отдельных познавательных функций)/i.test(catalogGoal))return catalogGoal;
  return m.summary||"";
 }
+/* Individual portfolio: five-table Schulte edition. Other methods are unchanged. */
+function schultePortfolioExtra(d){
+ const first=window.PSY_SCHULTE?.tables?.[0];
+ const preview=Array.isArray(first)&&first.length===25?
+   '<div class="psy-schulte-portfolio-preview"><strong>Пример: таблица № 1</strong>'+
+   '<div class="psy-schulte-portfolio-matrix" aria-label="Первая таблица Шульте с числами от 1 до 25">'+
+   first.map(n=>'<span>'+escapeHTML(n)+'</span>').join("")+
+   '</div><small>Пять разных таблиц предъявляют последовательно, по одной.</small></div>':"";
+ const formulas=[
+  ["ЭР","(T1 + T2 + T3 + T4 + T5) / 5","Среднее время выполнения, секунды"],
+  ["ВР","T1 / ЭР","Время первой таблицы относительно среднего"],
+  ["ПУ","T4 / ЭР","Время четвёртой таблицы относительно среднего"]
+ ];
+ return '<h3>Как проводится диагностика</h3>'+
+  '<div class="psy-schulte-portfolio-procedure"><ol>'+
+  '<li>Подготовьте пять разных таблиц 5×5, секундомер и протокол.</li>'+
+  '<li>Предъявляйте таблицы по одной: участник находит и называет числа от 1 до 25 по возрастанию.</li>'+
+  '<li>Запишите времена T1–T5 в секундах и отдельно ошибки на каждой таблице.</li>'+
+  '</ol>'+preview+'</div>'+
+  '<h3>Подсчёт результатов</h3>'+
+  '<div class="psy-schulte-portfolio-formulas">'+formulas.map(([name,formula,meaning])=>
+   '<div class="psy-schulte-portfolio-formula"><strong>'+escapeHTML(name)+'</strong>'+
+   '<b>'+escapeHTML(formula)+'</b><span>'+escapeHTML(meaning)+'</span></div>'
+  ).join("")+'</div>'+
+  '<p class="psy-schulte-portfolio-caption">Дополнительно фиксируются время каждой таблицы, разница T5 − T1 и ошибки. Если отсутствует хотя бы одно время, расчёт ЭР, ВР и ПУ не выполняется.</p>'+
+  '<div class="psy-schulte-portfolio-caution"><strong>Особенности интерпретации</strong><p>'+
+  escapeHTML(d.warning||"Показатели описывают выполненную пробу и сами по себе не являются диагнозом.")+
+  '</p></div>';
+}
+
 function viewOverview(m){
  const d=DETAILS[m.name]||{},o=window.PSY_PORTFOLIO_EDITS?.[m.name]||{};
  const author=profileText(o.author||d.author||m.author||"");
@@ -183,7 +213,7 @@ function viewOverview(m){
    escapeHTML(label+' · '+(/\.docx$/i.test(url)?"Word":/\.html$/i.test(url)?"А4":"Файл"))+'</a>'
  );
  const packLinks=links.length?'<section class="psy-profile-files"><h3>Материалы методики</h3><div class="psy-portfolio-file-links">'+links.join("")+'</div></section>':"";
- return '<section class="psy-portfolio-reference psy-portfolio-unified"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div>'+goalHtml+indicatorHtml+sourceHtml+packLinks+'</section>';
+ return '<section class="psy-portfolio-reference psy-portfolio-unified"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div>'+goalHtml+indicatorHtml+(m.name==="Таблицы Шульте"?schultePortfolioExtra(d):"")+sourceHtml+packLinks+'</section>';
 }
 
 function viewInstruction(m){
