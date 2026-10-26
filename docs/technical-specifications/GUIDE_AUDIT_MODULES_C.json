@@ -1,0 +1,66 @@
+{
+  "auditDate": "2026-10-26",
+  "kind": "module-coverage-C",
+  "moduleNames": [
+    "method-color-relations.js",
+    "method-digit-span.js",
+    "method-dynamic-praxis.js",
+    "method-simple-analogies.js",
+    "method-paired-associations.js",
+    "method-reviewed-worksheets.js",
+    "method-analogies-mspss.js"
+  ],
+  "errors": [],
+  "methods": {
+    "Тест цветовых отношений": {
+      "age": "Школьники с достаточным различением цветов и пониманием задания; конкретная возрастная стандартизация не заявлена",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "colorRelations8",
+      "source": true,
+      "options": 0
+    },
+    "Повторение цифровых рядов (прямой и обратный порядок)": {
+      "age": "Школьники и взрослые, способные воспринимать числа на слух; возрастные нормы для этих рядов отсутствуют",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "digitSpanPsy",
+      "source": true,
+      "options": 0
+    },
+    "Проба на динамический праксис «Кулак – ребро – ладонь»": {
+      "age": "Дети школьного возраста и взрослые; возрастная пригодность и ограничения определяются специалистом",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "dynamicPraxisLuria",
+      "source": true,
+      "options": 0
+    },
+    "Простые аналогии (словесно-логическое мышление)": {
+      "age": "Ориентировочно с 10 лет",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "simpleAnalogies12",
+      "source": true,
+      "options": 0
+    },
+    "Парные ассоциации (смысловая и механическая память)": {
+      "age": "Ориентировочно с 9 лет",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "pairedAssoc20",
+      "source": true,
+      "options": 0
+    }
+  }
+}
