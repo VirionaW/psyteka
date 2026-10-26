@@ -32,7 +32,7 @@ function initial(n){return n===PICT?{age:"",delay:"",sourceComplete:"",recall:Ar
 function state(){return data[current]||(data[current]=initial(current))}
 function ready(n=current,d=data[n]||initial(n)){
  if(n===PICT)return (d.age==="6"||d.age==="7")&&(d.sourceComplete==="yes"||d.sourceComplete==="no")&&d.recall.length===12&&d.recall.every(x=>x==="yes"||x==="no")&&Number.isInteger(+d.delay)&&+d.delay>=20&&+d.delay<=240&&d.delay!==""&&!!d.notes.trim();
- return d.rows.length===26&&d.rows.every(x=>x.status==="skip"||x.status==="done"&&!!x.same.trim()&&!!x.different.trim())&&d.rows.some(x=>x.status==="done")&&!!d.summary.trim();
+ return d.rows.length===26&&d.rows.every(x=>x.status==="skip"&&!!x.note.trim()||x.status==="done"&&!!x.same.trim()&&!!x.different.trim())&&d.rows.some(x=>x.status==="done")&&!!d.summary.trim();
 }
 function outcome(d=state()){
  if(!ready(PICT,d))return null;
@@ -71,7 +71,7 @@ function comparisonProcessing(){const d=state(),complete=d.rows.filter(r=>r.stat
 return '<div class="pmpk-method-box"><h3>Обработка: 26 пар понятий</h3><p class="pmpk-note">Ответы фиксируются дословно. Если пара не предъявлялась, выберите «Не проводилась»; пустое поле не равно ошибке.</p>'+
  '<div class="pmpk-method-grid">'+pairs.map(([x,y],i)=>{const r=d.rows[i];
  return '<section class="pmpk-method-answer"><h4>'+(i+1)+'. '+esc(x)+' – '+esc(y)+'</h4><label>Предъявление<select data-sourced-row="'+i+'" data-sourced-prop="status">'+opt([["done","Проводилась"],["skip","Не проводилась"]],r.status)+'</select></label>'+
- (r.status==="done"?'<label>Сходство *<input data-sourced-row="'+i+'" data-sourced-prop="same" value="'+esc(r.same)+'"></label><label>Различие *<input data-sourced-row="'+i+'" data-sourced-prop="different" value="'+esc(r.different)+'"></label>':'')+
+ (r.status==="done"?'<label>Сходство *<input data-sourced-row="'+i+'" data-sourced-prop="same" value="'+esc(r.same)+'"></label><label>Различие *<input data-sourced-row="'+i+'" data-sourced-prop="different" value="'+esc(r.different)+'"></label>':r.status==="skip"?'<label>Причина непредъявления *<input data-sourced-row="'+i+'" data-sourced-prop="note" value="'+esc(r.note)+'"></label>':'')+
  '</section>'}).join("")+'</div>'+
  '<p class="pmpk-note">Полные ответы зафиксированы для '+complete+' из 26 пар. Методика не имеет автоматического правильного/неправильного балла.</p>'+
  '<label class="pmpk-method-blockfield">Качественное заключение по предъявленным парам *<textarea data-sourced-field="summary" rows="4" placeholder="Какие существенные признаки были выделены, какие способы решения и помощь наблюдались">'+esc(d.summary)+'</textarea></label></div>';
@@ -122,7 +122,7 @@ function word(type){
  const text=type==="blank"?[current,"Бланк специалиста","Возраст ______; дата ______; код ______",...(current===PICT?words.map((x,i)=>(i+1)+". "+x+" / рисунок ______ / ответ ______"):pairs.map(([x,y],i)=>(i+1)+". "+x+" – "+y+" / сходство ______ / различие ______"))]:
  [current,definitions[current].author,definitions[current].age,
  ...(current===PICT?["Возраст: "+state().age,"Отсрочка: "+state().delay+" минут","Полный протокол: "+(state().sourceComplete==="yes"?"подтвержден":"не подтвержден"),"Вспомнил: "+(outcome()?.score??"не заполнено")+" из 12","Заключение: "+(outcome()?.category||""),"Наблюдения: "+state().notes]:
- ["Зарегистрировано: "+state().rows.filter(x=>x.status==="done").length+" пар",...state().rows.map((x,i)=>x.status==="done"?(i+1)+". "+pairs[i][0]+" – "+pairs[i][1]+": сходство: "+x.same+"; различие: "+x.different:"Не предъявлено: "+pairs[i][0]+" – "+pairs[i][1]),"Качественное заключение: "+state().summary])];
+ ["Зарегистрировано: "+state().rows.filter(x=>x.status==="done").length+" пар",...state().rows.map((x,i)=>x.status==="done"?(i+1)+". "+pairs[i][0]+" – "+pairs[i][1]+": сходство: "+x.same+"; различие: "+x.different:"Не предъявлено: "+pairs[i][0]+" – "+pairs[i][1]+"; причина: "+x.note),"Качественное заключение: "+state().summary])];
  const xml=s=>esc(s).replace(/&#39;/g,"&apos;");
  const doc='<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+
  text.map(x=>'<w:p><w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr><w:t xml:space="preserve">'+xml(x)+'</w:t></w:r></w:p>').join("")+
