@@ -10,14 +10,15 @@
  // r = рекомендуемая процедура с руководством в первоисточнике (без полного цифрового комплекта).
  const c=(name,detail)=>({name,detail,kind:"catalog"});
  const w=(name,id,detail)=>({name,detail,kind:"working",id});
+ const early=(name,id,detail)=>({name,detail,kind:"early",id});
  const r=(name,detail)=>({name,detail,kind:"reference"});
  const catalogue=[
  // 3-5 лет
  [
-  [r("Коробка форм","Наглядно-действенное мышление и соотнесение формы"),r("Классификация по заданному признаку","С 4 лет; группировка предметов"),r("Конструирование по образцу","Копирование предметной модели")],
+  [early("Коробка форм («Почтовый ящик»)","forms","Издание под ред. Е. А. Стребелевой · 3-4 года: 4 формы; 4-5 лет: 5 форм"),r("Классификация по заданному признаку","С 4 лет; группировка предметов"),r("Конструирование по образцу","Копирование предметной модели")],
   [r("Повторение слов и предложений","Непосредственное слухоречевое запоминание"),r("Вопросы по картинкам","Удержание информации при ответе")],
   [r("«Повторяй за мной»","Удержание инструкции и подражание"),r("Игра в мяч","Переключение действия в игровом контакте")],
-  [r("Пирамидка и мисочки","Размер, последовательность и координация"),r("Коробка форм","Восприятие формы через действие")],
+  [early("Разборка и складывание пирамидки","pyramid","Под ред. Е. А. Стребелевой · 3-4 года: 4 кольца; 4-5 лет: 6 колец"),early("Коробка форм («Почтовый ящик»)","forms","Подбор вкладышей к отверстиям; две возрастные версии")],
   [r("Вопросы по картинкам","Понимание обращенной речи"),r("Повторение слов и предложений","Воспроизведение речевого образца")],
   [r("Конструирование по образцу","Принятие показа и повторное выполнение"),r("Классификация по заданному признаку","С 4 лет; перенос правила")],
   [r("Наблюдение за контактом и поведением","Обязательное качественное сопровождение обследования"),r("Рисунок семьи","С 4 лет; описание сюжета и беседа")]
@@ -54,6 +55,8 @@
  ]
  ];
  const METHOD_META={
+  "Коробка форм («Почтовый ящик»)":{author:"Диагностическое задание по изданию под ред. Е. А. Стребелевой (1998) · описание и протокол Психотеки"},
+  "Разборка и складывание пирамидки":{author:"Диагностическое задание по изданию под ред. Е. А. Стребелевой (1998) · описание и протокол Психотеки"},
   "Заучивание 10 слов":{display:"Заучивание 10 слов – проба А. Р. Лурии",author:"А. Р. Лурия · собственный словесный список Психотеки, 5 предъявлений и отсрочка через 60 минут"},
   "Повторение цифровых рядов (прямой и обратный порядок)":{author:"Дж. Джекобс, Д. Векслер · словесные ряды редакции Психотеки"},
   "Таблицы Шульте":{author:"В. Шульте · набор таблиц и процедура указаны в портфолио"},
@@ -79,8 +82,8 @@
  const authorFor=m=>METHOD_META[m.name]?.author||(m.kind==="working"?"Авторская рабочая проба Психотеки, без возрастных нормативов":"");
  const selections=Array.from({length:4},()=>Array(7).fill(""));
  const esc=x=>String(x??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
- function idFor(m){return m.kind==="working"?"working:"+m.id:m.kind==="catalog"?"catalog:"+m.name:"reference:"+m.name}
- function hasPortfolio(m){return m.kind==="working"&&!!window.PSY_PMPK_METHODS?.open||m.kind==="catalog"&&!!window.PSY_CATALOG?.find(x=>x.name===m.name)&&!!window.PSY_FULL_METHODS?.[m.name]}
+ function idFor(m){return m.kind==="working"?"working:"+m.id:m.kind==="early"?"early:"+m.id:m.kind==="catalog"?"catalog:"+m.name:"reference:"+m.name}
+ function hasPortfolio(m){return (m.kind==="working"&&!!window.PSY_PMPK_METHODS?.open)||(m.kind==="early"&&!!window.PSY_PMPK_EARLY?.has?.(m.id))||(m.kind==="catalog"&&!!window.PSY_CATALOG?.find(x=>x.name===m.name)&&!!window.PSY_FULL_METHODS?.[m.name])}
  function CSSsafe(s){return String(s).replace(/["\\]/g,"\\$&")}
  function portfolioCount(age){return (catalogue[age]||[]).flat().filter(m=>hasPortfolio(m)).length}
  function render(age,task){
@@ -89,7 +92,7 @@
    '<p class="pmpk-choices-hint">Выберите методику для протокола. Для проведения используйте ее собственное руководство и материалы.</p>'+
    '<div class="pmpk-choices-list">'+items.map((m,i)=>{
     const id=idFor(m),selected=selections[age][task]===id,has=hasPortfolio(m);
-    const tag=m.kind==="working"?"Дополнительная проба":has?"Портфолио Психотеки":"Методическое описание";
+    const tag=m.kind==="working"?"Дополнительная проба":m.kind==="early"?"Возрастная предметная проба":has?"Портфолио Психотеки":"Методическое описание";
     return '<article class="pmpk-choice'+(selected?" is-chosen":"")+'">'+
      '<div class="pmpk-choice-copy"><span class="pmpk-choice-tag">'+esc(tag)+'</span>'+
      '<h4>'+esc(titleFor(m))+'</h4>'+
@@ -118,6 +121,7 @@
    return true;
   }
   if(m.kind==="working")window.PSY_PMPK_METHODS?.open?.(m.id);
+  if(m.kind==="early")window.PSY_PMPK_EARLY?.open?.(m.id);
   if(m.kind==="catalog"){
    const item=window.PSY_CATALOG?.find(x=>x.name===m.name);
    if(item){
