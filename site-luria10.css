@@ -121,3 +121,18 @@
  }
  .library-page #modal .modalfoot .psy-luria-footer-right{width:100%}
 }
+
+/* Hard anchor to the modal's right edge, unaffected by footer flex centering. */
+.library-page #modal.psy-luria-mode .modalfoot{position:relative!important;min-height:72px!important;width:100%!important}
+.library-page #modal.psy-luria-mode .modalfoot .psy-luria-footer #bottomProcessing:not([hidden]){
+ position:absolute!important;
+ right:22px!important;left:auto!important;
+ bottom:11px!important;top:auto!important;
+ margin:0!important;transform:none!important;
+ width:auto!important;min-width:0!important;flex:none!important;
+}
+@media(max-width:700px){
+ .library-page #modal.psy-luria-mode .modalfoot .psy-luria-footer #bottomProcessing:not([hidden]){
+  right:12px!important;bottom:10px!important;
+ }
+}
