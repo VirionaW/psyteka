@@ -79,7 +79,11 @@ return '<div class="pmpk-method-box"><h3>Обработка: 26 пар поня�
 function printContent(type){
  const n=current,d=state(),m=definitions[n];
  const title='<h1>'+esc(n)+'</h1><p>Автор/версия: '+esc(m.author)+'</p><p>Возраст: '+esc(m.age)+'</p>';
- const guide=title+'<h2>Руководство</h2><p>Цель: '+esc(m.goal)+'</p><p>Полные инструкции, процедура, подсчет и интерпретация – во вкладке «Методика / руководство». Не заменяйте исходный комплект иной редакцией.</p><p>Источник: '+esc(m.source)+'</p>';
+ const guide=title+'<h2>Цель</h2><p>'+esc(m.goal)+'</p>'+
+ (n===PICT?
+ '<h2>Инструкция ребенку</h2><p>Нарисуй к каждому названному слову рисунок, который поможет потом вспомнить эти слова. Все двенадцать рисунков размести на одной стороне листа.</p><h2>Проведение</h2><ol><li>Подготовить лист А4 и карандаши.</li><li>Зачитывать 12 слов только с отдельного стимульного листа специалиста.</li><li>После каждого рисунка записать его связь со словом и объяснение ребенка.</li><li>Отложить рисунки минимум на 20 минут, затем попросить назвать исходные слова и зафиксировать воспроизведение.</li></ol><h2>Ключ и интерпретация</h2><p>За каждое верно названное слово – 1 балл, сумма 0-12. В 6 лет: 0-4 ниже межквартильного диапазона, 5-9 внутри, 10-12 выше; в 7 лет: 0-7 ниже, 8-11 внутри, 12 выше. Другие качественные шкалы автоматически не рассчитываются.</p>':
+ '<h2>Инструкция ребенку</h2><p>Для каждой пары слов сначала назови сходства, затем различия.</p><h2>Проведение</h2><ol><li>Предъявлять по порядку 26 пар из отдельного листа специалиста.</li><li>Полностью записывать ответы о сходстве и различии.</li><li>Отмечать помощь и непредъявленные пары.</li></ol><h2>Интерпретация</h2><p>Описывать существенность признаков, конкретность или отвлеченность сравнения, логичность и связность рассуждения. Возрастных балльных нормативов данной серии нет.</p>')+
+ '<p>Источник: '+esc(m.source)+'</p>';
  const child=n===PICT?'<section class="child"><h2>Лист ребенка для рисунков</h2><div class="empty"></div></section>':'<section class="child"><h2>Свободный лист ребенка</h2><div class="empty"></div></section>';
  const stimuli=title+'<h2>Рабочий протокол специалиста</h2><p>Код ребенка __________ Дата __________ </p>'+
  (n===PICT?'<table><thead><tr><th>№</th><th>Стимул</th><th>Связь рисунка со словом</th><th>Воспроизвел (да/нет)</th></tr></thead><tbody>'+words.map((x,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(x)+'</td><td>____________________</td><td>_________</td></tr>').join("")+'</tbody></table><p>Фактическая отсрочка: ______ минут (не менее 20)</p>':
@@ -88,7 +92,7 @@ function printContent(type){
  const report=title+'<h2>Регистрация результатов</h2>'+
  (n===PICT?'<p>Возраст: '+esc(d.age)+'. Интервал: '+esc(d.delay)+' мин. Результат: '+(outcome(d)?.score??"___")+'/12. '+esc(outcome(d)?.category||"")+'</p><p>Наблюдения: '+esc(d.notes)+'</p>':
  '<p>Проведено пар: '+d.rows.filter(r=>r.status==="done").length+'. Качественный вывод: '+esc(d.summary)+'</p>'+
- d.rows.filter(r=>r.status==="done").map((r,i)=>'<p>Сходство: '+esc(r.same)+'; различие: '+esc(r.different)+'</p>').join(""))+
+ d.rows.map((r,i)=>r.status==="done"?'<p>'+(i+1)+'. '+esc(pairs[i][0])+' – '+esc(pairs[i][1])+': сходство – '+esc(r.same)+'; различие – '+esc(r.different)+'</p>':"").join(""))+
  '<p>Без автоматических диагнозов или переносимых нормативов.</p>';
  if(type==="guide")return guide;
  if(type==="combined")return guide+'<div class="pagebreak"></div>'+child;
@@ -118,7 +122,7 @@ function word(type){
  const text=type==="blank"?[current,"Бланк специалиста","Возраст ______; дата ______; код ______",...(current===PICT?words.map((x,i)=>(i+1)+". "+x+" / рисунок ______ / ответ ______"):pairs.map(([x,y],i)=>(i+1)+". "+x+" – "+y+" / сходство ______ / различие ______"))]:
  [current,definitions[current].author,definitions[current].age,
  ...(current===PICT?["Возраст: "+state().age,"Отсрочка: "+state().delay+" минут","Вспомнил: "+(outcome()?.score??"не заполнено")+" из 12","Заключение: "+(outcome()?.category||""),"Наблюдения: "+state().notes]:
- ["Зарегистрировано: "+state().rows.filter(x=>x.status==="done").length+" пар",...state().rows.filter(x=>x.status==="done").map(x=>"Сходство: "+x.same+" / различие: "+x.different),"Качественное заключение: "+state().summary])];
+ ["Зарегистрировано: "+state().rows.filter(x=>x.status==="done").length+" пар",...state().rows.map((x,i)=>x.status==="done"?(i+1)+". "+pairs[i][0]+" – "+pairs[i][1]+": сходство: "+x.same+"; различие: "+x.different:"Не предъявлено: "+pairs[i][0]+" – "+pairs[i][1]),"Качественное заключение: "+state().summary])];
  const xml=s=>esc(s).replace(/&#39;/g,"&apos;");
  const doc='<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+
  text.map(x=>'<w:p><w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr><w:t xml:space="preserve">'+xml(x)+'</w:t></w:r></w:p>').join("")+
