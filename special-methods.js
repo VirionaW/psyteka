@@ -120,13 +120,13 @@
  function calculator(d){
   const s=get(d),gas=d.toolkitId==="special-gas-01",done=complete(d);
   const head='<section class="special-toolkit-calc"><div class="special-result-head"><div><h3>Обработка результатов</h3><p>'+(gas?'Один индивидуальный результат по пяти уровням':'Описательная обработка наблюдений A-B-C')+'</p></div><span class="special-status '+(done?'complete':'pending')+'">'+(done?'Данные заполнены':'Требуется заполнение')+'</span></div>';
-  const gasForm='<div class="special-toolkit-fields"><label>Наблюдаемая цель<textarea data-toolkit-field="goal" rows="2" placeholder="Одно конкретное действие, а не диагноз">'+esc(s.goal)+'</textarea></label>'+
+  const gasForm=gas?'<div class="special-toolkit-fields"><label>Наблюдаемая цель<textarea data-toolkit-field="goal" rows="2" placeholder="Одно конкретное действие, а не диагноз">'+esc(s.goal)+'</textarea></label>'+
    '<label>Условия и способ поддержки<input data-toolkit-field="context" value="'+esc(s.context)+'" placeholder="Без персональных данных"></label>'+
    '<label>Период оценки<input data-toolkit-field="period" value="'+esc(s.period)+'" placeholder="Например, несколько недель"></label></div>'+
    '<h4>Заранее описанные уровни одной цели</h4><div class="special-toolkit-levels">'+gasLevels.map(([n,label],i)=>'<label><strong>'+esc(n)+' – '+esc(label)+'</strong><textarea rows="2" data-toolkit-level="'+i+'" placeholder="Наблюдаемый результат на этом уровне">'+esc(s.levels[i])+'</textarea></label>').join("")+'</div>'+
    '<label class="special-toolkit-outcome">Достигнутый уровень<select data-toolkit-field="selected"><option value="">Еще не оценено</option>'+gasLevels.map(([n,label])=>'<option value="'+n+'" '+(s.selected===n?'selected':'')+'>'+esc(n)+' – '+esc(label)+'</option>').join("")+'</select></label>'+
-   '<label class="special-toolkit-outcome">Фактическое наблюдение, подтверждающее выбор<textarea rows="3" data-toolkit-field="evidence" placeholder="Опишите конкретный результат">'+esc(s.evidence)+'</textarea></label>';
-  const abcForm='<label class="special-toolkit-outcome">Контекст наблюдения (без персональных данных)<textarea rows="2" data-toolkit-field="context" placeholder="Условия и доступная поддержка">'+esc(s.context)+'</textarea></label>'+
+   '<label class="special-toolkit-outcome">Фактическое наблюдение, подтверждающее выбор<textarea rows="3" data-toolkit-field="evidence" placeholder="Опишите конкретный результат">'+esc(s.evidence)+'</textarea></label>':"";
+  const abcForm=gas?'':'<label class="special-toolkit-outcome">Контекст наблюдения (без персональных данных)<textarea rows="2" data-toolkit-field="context" placeholder="Условия и доступная поддержка">'+esc(s.context)+'</textarea></label>'+
    '<div class="special-toolkit-events">'+s.events.map((e,i)=>'<fieldset class="special-toolkit-event"><legend>Событие '+(i+1)+'</legend>'+
    '<label>A – что было непосредственно до действия<textarea rows="2" data-toolkit-event="'+i+'" data-part="a" placeholder="Наблюдаемая ситуация">'+esc(e.a)+'</textarea></label>'+
    '<label>B – само наблюдаемое действие<textarea rows="2" data-toolkit-event="'+i+'" data-part="b" placeholder="Что фактически сделал участник">'+esc(e.b)+'</textarea></label>'+
