@@ -97,6 +97,10 @@ function setTab(name){
  name==="materials"?viewMaterials(methodNow):
  name==="processing"?viewProcessing(methodNow):viewCalculator(methodNow);
  if(name==='instruction'||name==='materials')body.innerHTML=enhanceMethodView(name,body.innerHTML);
+ if(name==='instruction'&&window.PSY_GUIDE_STANDARD){
+   body.innerHTML=window.PSY_GUIDE_STANDARD.supplement(methodNow.name,DETAILS[methodNow.name],methodNow,body.innerHTML);
+   window.PSY_GUIDE_STANDARD.bind(()=>setTab('instruction'));
+ }
  body.scrollTop=0;
  const bottom=$("#bottomProcessing");
  if(bottom){
@@ -221,7 +225,7 @@ function viewOverview(m){
  const d=DETAILS[m.name]||{},o=window.PSY_PORTFOLIO_EDITS?.[m.name]||{};
  const author=profileText(o.author||d.author||m.author||"");
  const verifiedAuthor=author&&!/сведения об авторе уточняются/i.test(author)?author:"Автор не установлен";
- const age=profileText(o.age||d.age||m.age||"");
+ const age=profileText(window.PSY_GUIDE_STANDARD?.age(m.name,DETAILS[m.name],m)||o.age||d.age||m.age||"");
  const kind=profileText(o.kind||d.kind||m.format||"");
  const count=profileText(o.count||d.count||m.count||"");
  const name=profileText(m.name);
