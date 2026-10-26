@@ -22,6 +22,7 @@
 #preschoolView .preschool-method .actions{margin-top:auto}
 #preschoolView .preschool-method .actions .btn{max-width:100%}
 #preschoolView .preschool-empty{padding:25px;border:1px dashed var(--area-border);border-radius:14px;grid-column:1/-1}
+#modal.psy-main-tabs.psy-preschool-current .modalfoot #bottomProcessing:not([hidden]){position:static!important;right:auto!important;left:auto!important;bottom:auto!important;top:auto!important;margin-left:auto!important;transform:none!important;flex:0 0 auto!important;max-width:100%!important}
 #modal.psy-preschool-current .psy-preschool-shared-footer{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0;width:100%}
 #modal.psy-preschool-current .psy-preschool-shared-footer #bottomProcessing{margin-left:auto;white-space:normal}
 #modal.psy-preschool-current .psy-preschool-footer-state{font:700 12px/1.4 system-ui;border-radius:100px;padding:8px 12px;white-space:nowrap}
