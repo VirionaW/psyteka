@@ -41,9 +41,31 @@ function materials(d){
  '<p>Для выполнения используйте исходный бланк конкретной возрастной или авторской версии. Печатный лист другой редакции не заменяет оригинал.</p>';
  return '<section class="psy-six-materials"><p>Оригинальный источник: '+a(d.forms[0].url,"Открыть опубликованную форму")+'</p>'+grid+variants(d)+'</section>';
 }
-function results(d,answers){if(!d.scaleMax||!Array.isArray(answers))return null;let list=Array.from({length:d.questionsCount},(_,i)=>answers[i]);if(list.some(v=>v===""||v==null||!Number.isInteger(Number(v))||Number(v)<d.scaleMin||Number(v)>d.scaleMax))return null;return d.scales.map(scale=>{const val=scale.indices.reduce((s,n)=>s+Number(list[n-1]),0);let band=scale.bands?(val<=scale.bands[0]?"Низкий":val<=scale.bands[1]?"Средний":"Высокий"):null;return {title:scale.title,raw:val,min:scale.indices.length*d.scaleMin,max:scale.indices.length*d.scaleMax,band};});}
-function score(d,answers){const ss=results(d,answers);return ss?{raw:ss.map(x=>x.raw).join(" / "),max:"По шкалам",caption:ss.map(x=>x.title+": "+x.raw).join("; "),scales:ss}:null;}
-function processing(d){return '<h3>Ключ и обработка</h3><p>'+escape(d.scoring)+'</p><h3>Интерпретация</h3><p>'+escape(d.interpret)+'</p>';}
+function results(d,answers,version){
+ if(d.id==="morosanova-ssp-family"){
+  if(String(version)!=="3"||!Array.isArray(answers))return null;
+  const a=Array.from({length:28},(_,i)=>answers[i]);
+  if(a.some(v=>v==null||v===""||!Number.isInteger(Number(v))||Number(v)<1||Number(v)>5))return null;
+  const scales=d.ssp2020Scales.map(sc=>{
+   const raw=sc.indices.reduce((sum,key)=>{
+    const value=Number(a[Math.abs(key)-1]);return sum+(key<0?6-value:value);
+   },0);
+   return {title:sc.title,raw,min:4,max:20,band:null};
+  });
+  return [...scales,{title:"Общий уровень саморегуляции",raw:scales.reduce((acc,x)=>acc+x.raw,0),min:28,max:140,band:null}];
+ }
+ if(!d.scaleMax||!Array.isArray(answers))return null;
+ const a=Array.from({length:d.questionsCount},(_,i)=>answers[i]);
+ if(a.some(v=>v==null||v===""||!Number.isInteger(Number(v))||Number(v)<d.scaleMin||Number(v)>d.scaleMax))return null;
+ return d.scales.map(sc=>{
+  const raw=sc.indices.reduce((sum,key)=>sum+Number(a[key-1]),0);
+  return {title:sc.title,raw,min:sc.indices.length*d.scaleMin,max:sc.indices.length*d.scaleMax,band:sc.bands?(raw<=sc.bands[0]?"Низкий":raw<=sc.bands[1]?"Средний":"Высокий"):null};
+ });
+}
+function score(d,answers,version){
+ const scales=results(d,answers,version);
+ return scales?{raw:scales.map(x=>x.raw).join(" / "),max:"По шкалам",caption:scales.map(x=>x.title+": "+x.raw).join("; "),scales}:null;
+}
 function status(r,d){return !!(d.scaleMax&&results(d,r.answers));}
 function summary(d,r){const res=results(d,r.answers);if(!d.scaleMax)return '<p>Регистрируйте наблюдения без расчета тестовых баллов. Официальный подсчет производится по опубликованному руководству выбранной редакции.</p>';return res?'<div class="psy-six-results">'+res.map(x=>'<div><strong>'+escape(x.title)+'</strong><span>'+x.raw+' ('+x.min+'-'+x.max+')'+(x.band?' · '+x.band:'')+'</span></div>').join("")+'</div>':'<p>До заполнения всех '+d.questionsCount+' ответов итог не рассчитывается.</p>';}
 function table(d,rows){return '<h3>Сводная таблица группы</h3><div class="results-table"><table><thead><tr><th>Код</th><th>Полнота</th><th>Результат</th></tr></thead><tbody>'+rows.map((r,i)=>{const res=results(d,r.answers);return '<tr><td>'+escape(r.name||"Участник "+(i+1))+'</td><td>'+(status(r,d)?"Заполнено":"Нет полного результата")+'</td><td>'+escape(res?res.map(x=>x.raw).join(" / "):"–")+'</td></tr>'}).join("")+'</tbody></table></div>';}
