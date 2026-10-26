@@ -1,0 +1,10 @@
+#psyOwnerNav[hidden]{display:none!important}
+#psyOwnerNav{color:#f3f7f0;background:#256b4f;border-radius:10px;
+padding:9px 13px;font-size:12px;font-weight:800;white-space:nowrap;
+text-decoration:none;line-height:1.35;align-self:center}
+#psyOwnerNav:hover{background:#18563b;color:#fff}
+#psyOwnerNav:focus-visible{outline:3px solid #d5aa65;outline-offset:3px}
+html.dark #psyOwnerNav{background:#38674c;color:#f6f9f2}
+.library-page #psyOwnerNav{background:#e5f2e9;color:#24523c;border:1px solid #c3dbc8}
+.library-page #psyOwnerNav:hover{background:#d3e7d9}
+@media(max-width:760px){#psyOwnerNav{font-size:11px;padding:7px 9px}}
