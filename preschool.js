@@ -111,5 +111,6 @@
   frame.onload=()=>{try{frame.contentWindow.focus();frame.contentWindow.print()}finally{setTimeout(()=>frame.remove(),1800)}};
   frame.srcdoc=html;
  }
+ if(document.body.dataset.area==="preschool"){tree.hidden=false;document.querySelector('[data-view="preschool"]')?.setAttribute("aria-expanded","true")}
  show();
 })();
