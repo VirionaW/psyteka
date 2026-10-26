@@ -1,0 +1,101 @@
+/* Детский сад – изолированная структура без изменений школьного каталога. */
+#preschoolTree .preschool-tree-nested{margin-left:15px}
+#preschoolTree .preschool-tree-nested[hidden],#preschoolTree[hidden]{display:none!important}
+#preschoolTree .section-toggle{font-size:13px}
+#preschoolTree .topic-btn{width:100%;text-align:left}
+#preschoolView{padding-bottom:60px}
+.preschool-filters{background:var(--paper,#fff);border:1px solid var(--area-border,#ddc8e8);border-radius:17px;padding:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:24px 0 17px}
+.preschool-search-label{flex:1 1 280px}
+.preschool-filters input,.preschool-filters select{width:100%;font:inherit;color:var(--ink,#222);background:var(--paper,#fff);border:1px solid var(--area-border,#ddd);padding:12px 14px;border-radius:11px;outline-offset:2px}
+.preschool-age-label{font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px;color:var(--ink,#222)}
+.preschool-age-label select{min-width:160px}
+.preschool-subbar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.preschool-subbar h2{font-size:clamp(22px,2.3vw,30px);margin:8px 0}
+.preschool-subbar span{font-size:13px;color:var(--muted,#6d7770)}
+.preschool-intro{max-width:950px;color:var(--muted,#68796e);margin:4px 0 24px;line-height:1.6}
+.preschool-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:17px;align-items:stretch}
+.preschool-card{border:1px solid var(--area-border,#e1d6e9);background:var(--paper,#fff);border-radius:18px;padding:19px;min-height:290px;display:flex;flex-direction:column;gap:10px;box-shadow:0 4px 16px #38204f0a}
+.preschool-card-top{display:flex;align-items:center;justify-content:space-between;gap:9px;font-size:11px;font-weight:800}
+.preschool-card-kind{background:#f5ebfa;color:#704a8e;border-radius:100px;padding:6px 10px}
+.preschool-card-age{color:var(--muted,#667469)}
+.preschool-card h3{font-size:18px;line-height:1.34;overflow-wrap:anywhere;margin:0;color:var(--ink,#22382f)}
+.preschool-card .preschool-credit{font-size:12px;margin:0;color:var(--muted,#6f7670)}
+.preschool-card p:not(.preschool-credit){font-size:14px;line-height:1.6;margin:0;color:var(--muted,#5b6e62)}
+.preschool-card-bottom{margin-top:auto;padding-top:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line,#e4e8e2);flex-wrap:wrap}
+.preschool-card-bottom span{font-size:12px;font-weight:750;color:var(--area,#815895)}
+.preschool-card-bottom button{font-size:13px;padding:9px 13px}
+.preschool-empty{padding:30px;border:1px dashed var(--area-border,#ddd);border-radius:15px}
+.preschool-overlay[hidden]{display:none!important}
+.preschool-overlay{position:fixed;inset:0;z-index:2400;background:rgba(17,18,29,.74);padding:clamp(10px,2vw,30px);display:grid;place-items:center}
+body.preschool-dialog-open{overflow:hidden}
+.preschool-dialog{display:flex;flex-direction:column;width:min(980px,100%);max-height:95dvh;height:min(790px,95dvh);border-radius:21px;background:var(--paper,#fff);color:var(--ink,#26372f);overflow:hidden;box-shadow:0 25px 90px #0004}
+.preschool-dialog-head{padding:19px 25px;border-bottom:1px solid var(--line,#e6e6e6);display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-shrink:0}
+.preschool-dialog-head>div{min-width:0}
+.preschool-dialog-head h2{font-size:clamp(18px,2.3vw,25px);line-height:1.3;margin:0 0 5px;overflow-wrap:anywhere}
+.preschool-dialog-head p{font-size:12px;color:var(--muted,#607769);margin:0}
+.preschool-close{border:1px solid var(--line,#ddd);background:transparent;color:var(--ink,#333);border-radius:10px;width:42px;height:42px;cursor:pointer;font-size:27px;line-height:1;flex:none}
+.preschool-tabs{display:flex;overflow-x:auto;padding:9px 22px;gap:6px;border-bottom:1px solid var(--line,#ddd);flex-shrink:0}
+.preschool-tabs button{border:1px solid transparent;border-radius:10px;padding:10px 12px;background:transparent;color:var(--muted,#666);font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer}
+.preschool-tabs button.active{color:var(--area,#78508b);background:var(--area-soft,#f5eafa);border-color:var(--area-border,#dfcde5)}
+.preschool-dialog-body{padding:23px 29px;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;font-size:15px;line-height:1.65}
+.preschool-dialog-body h3{font-size:17px;margin:17px 0 7px;color:var(--ink,#333)}
+.preschool-dialog-body p{margin:8px 0}
+.preschool-dialog-foot{flex-shrink:0;border-top:1px solid var(--line,#ddd);background:var(--paper,#fff);padding:14px 22px;min-height:70px;display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+.preschool-foot-spacer{flex:1}
+.preschool-primary,.preschool-secondary,.preschool-print-actions button,.preschool-print-head>button{border:1px solid var(--area-border,#dec9e6);border-radius:10px;min-height:42px;padding:10px 15px;background:var(--paper,#fff);color:var(--ink,#333);font-weight:750;cursor:pointer}
+.preschool-primary{background:#79508f;color:#fff;border-color:#79508f;display:inline-flex;align-items:center;gap:11px}
+.preschool-primary:disabled{opacity:.5;cursor:not-allowed}
+.preschool-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.preschool-dot.pending{background:#ffc069}
+.preschool-dot.complete{background:#65c184}
+.preschool-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.preschool-facts span{border:1px solid var(--line,#ddd);border-radius:12px;padding:12px 14px;overflow-wrap:anywhere}
+.preschool-facts b{display:block;font-size:12px;color:var(--muted,#777);margin-bottom:4px}
+.preschool-note{border-left:3px solid var(--area,#815c99);padding:10px 14px;background:var(--area-soft,#f6ebfa);border-radius:0 9px 9px 0;margin-top:20px!important}
+.preschool-print-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.preschool-print-head h3{margin:0}
+.preschool-print-actions{display:flex;gap:7px;flex-wrap:wrap}
+.preschool-print-actions button,.preschool-print-head>button{font-size:12px}
+.preschool-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;table-layout:fixed}
+.preschool-table td,.preschool-table th{border:1px solid var(--area-border,#ddd);padding:9px 10px;vertical-align:top;overflow-wrap:anywhere}
+.preschool-table th:first-child{width:68%}
+.preschool-table th:not(:first-child),.preschool-table td:not(:first-child){text-align:center}
+.preschool-results-head{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.preschool-results-head h3{margin:0}
+.preschool-results-head p{color:var(--muted,#777)}
+.preschool-status{font-size:12px;font-weight:800;border-radius:100px;padding:8px 13px}
+.preschool-status.pending{background:#fff1d8;color:#96570a}
+.preschool-status.complete{background:#def4e6;color:#216e43}
+.preschool-answer-list{display:grid;gap:9px;margin-bottom:17px}
+.preschool-answer{border:1px solid var(--line,#ddd);padding:11px 13px;border-radius:11px;display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,200px);gap:12px;align-items:center;font-size:14px}
+.preschool-answer select{width:100%;border:1px solid var(--area-border,#ddd);border-radius:9px;padding:9px;background:var(--paper,#fff);color:var(--ink,#333);font:inherit}
+.preschool-note-label{font-weight:700;font-size:13px;display:block}
+.preschool-note-label textarea{display:block;width:100%;margin-top:8px;border:1px solid var(--area-border,#ddd);border-radius:10px;padding:10px 13px;background:var(--paper,#fff);color:var(--ink,#333);font:inherit;font-weight:400;min-height:86px;resize:vertical}
+.preschool-summary{padding:13px 16px;border-radius:12px;border:1px solid var(--area-border,#ddd);background:var(--area-soft,#f6f0f8);margin-top:16px}
+.preschool-summary h4{margin:2px 0 8px}
+.preschool-summary p{font-size:14px;overflow-wrap:anywhere}
+.preschool-primary:focus-visible,.preschool-secondary:focus-visible,.preschool-overlay button:focus-visible,.preschool-answer select:focus-visible{outline:3px solid #e1ae57;outline-offset:2px}
+html.dark .preschool-card-kind{background:#43354e;color:#e3c7ee}
+html.dark .preschool-card{background:#28343a}
+html.dark .preschool-dialog{background:#203238;color:#e9f5ef}
+html.dark .preschool-dialog-foot{background:#203238}
+html.dark .preschool-primary{background:#a377ba;color:#17131b;border-color:#a377ba}
+html.dark .preschool-status.pending{background:#51432e;color:#ffcb7b}
+html.dark .preschool-status.complete{background:#204f35;color:#9cdeb3}
+@media(max-width:720px){
+ .preschool-filters{padding:12px;gap:9px}
+ .preschool-age-label{width:100%;justify-content:space-between}
+ .preschool-card{min-height:240px}
+ .preschool-overlay{padding:0;align-items:stretch}
+ .preschool-dialog{height:100dvh;max-height:100dvh;width:100%;border-radius:0}
+ .preschool-dialog-head{padding:14px 15px}
+ .preschool-tabs{padding:7px 11px}
+ .preschool-tabs button{font-size:13px;padding:8px}
+ .preschool-dialog-body{padding:15px}
+ .preschool-dialog-foot{padding:10px 12px max(10px,env(safe-area-inset-bottom));gap:7px}
+ .preschool-facts{grid-template-columns:1fr}
+ .preschool-answer{grid-template-columns:1fr}
+ .preschool-print-head{align-items:stretch}
+ .preschool-table{font-size:12px}
+ .preschool-table td,.preschool-table th{padding:6px}
+}
