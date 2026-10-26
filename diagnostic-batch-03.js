@@ -7,6 +7,9 @@ if(!r)throw new Error("Missing existing Rosenberg card");
 Object.assign(r,{
  workflow:"diagnostic03",
  diagnosticType:"rses",
+ guideFile:"downloads/rses_guide.html",
+ guideWithBlankFile:"downloads/rses_guide_with_blank.html",
+ answerFile:"downloads/rses_student_blank.html",
  age:"Подростки (ориентировочно от 12 лет) и взрослые; проверяйте пригодность русской версии",
  source:"https://socy.umd.edu/about-us/using-rosenberg-self-esteem-scale",
  officialBlank:"https://socy.umd.edu/about-us/using-rosenberg-self-esteem-scale",
