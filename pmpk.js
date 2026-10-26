@@ -305,8 +305,12 @@
  window.PSY_PMPK_BRIDGE={
   getAge:()=>state.age,
   transfer:(task,data)=>{
-   if(state.age!==2||![0,1].includes(task)||!data||!RESULTS.includes(data.result)||!HELP.includes(data.help)||!String(data.notes||"").trim())return false;
-   if(rec().items[task].status&&rec().items[task].notes&& !window.confirm("Заменить ранее введенные данные этого задания результатами методики?"))return false;
+   if(!Number.isInteger(task)||!data||!RESULTS.includes(data.result)||!HELP.includes(data.help)||!String(data.notes||"").trim())return false;
+   const allowed=(state.age===2&&[0,1].includes(task))||(state.age===0&&[0,3].includes(task));
+   if(!allowed)return false;
+   const selected=window.PSY_PMPK_CHOICES?.getMethod(state.age,task);
+   if(!selected||selected.id!==(data.sourceId||(task===0?"thinking":"memory")))return false;
+   if(rec().items[task].status&&rec().items[task].notes&&!window.confirm("Заменить ранее введенные данные этого задания результатами методики?"))return false;
    rec().items[task]={status:"done",result:data.result,help:data.help,notes:data.notes,reason:"",duration:""};
    state.tab="processing";render();return true;
   }
