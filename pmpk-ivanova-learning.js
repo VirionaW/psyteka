@@ -31,7 +31,8 @@ function scoring(s=state){
 }
 function options(items,v){return '<option value="">Выберите</option>'+items.map(([key,label])=>'<option value="'+ESC(key)+'"'+(v===key?" selected":"")+'>'+ESC(label)+'</option>').join("")}
 function cardSvg(f){
- const size=f.small?30:46,mid=50,lo=mid-size/2,hi=mid+size/2;
+ const specs={circle:[75,50],square:[70,46.67],triangle:[70,46.67],diamond:[70,41.67],pentagon:[70,46.67]};
+ const size=specs[f.shape][f.small?1:0],mid=50,lo=mid-size/2,hi=mid+size/2;
  const square='<rect x="'+lo+'" y="'+lo+'" width="'+size+'" height="'+size+'"/>';
  const circle='<circle cx="50" cy="50" r="'+size/2+'"/>';
  const triangle='<polygon points="50,'+lo+' '+lo+','+hi+' '+hi+','+hi+'"/>';
