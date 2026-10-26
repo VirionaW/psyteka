@@ -117,7 +117,7 @@
    '<div class="pmpk-method-fields"><label>Имя или код обследуемого (по желанию)<input data-m-field="code" autocomplete="off" value="'+ESC(d.code)+'"></label><label>Дата обследования<input type="date" data-m-field="date" value="'+ESC(d.date)+'"></label></div></div>';
   let rows="";
   if(current.code===METHODS.thinking.code){
-   rows='<div class="pmpk-method-box"><h3>Результаты 8 заданий</h3><div class="pmpk-method-grid">'+current.items.map((x,i)=>'<div class="pmpk-method-answer"><p><strong>'+(i+1)+'. '+ESC(x.group)+'</strong></p><p>'+ESC(x.prompt)+'</p><label>Результат *<select data-m-thinking="'+i+'"><option value="">Выберите</option>'+RESULTS.map(a=>'<option '+(d.answers[i]===a?"selected":"")+'>'+a+'</option>').join("")+'</select></label><label>Фактический ответ, объяснение<input data-m-literal="'+i+'" value="'+ESC(d.literal[i])+'" placeholder="Запишите ответ ребенка"></label></div>').join("")+'</div></div>';
+   rows='<div class="pmpk-method-box"><h3>Результаты 8 заданий</h3><p class="pmpk-note" data-m-thinking-total>Заполнено 0 из 8</p><div class="pmpk-method-grid">'+current.items.map((x,i)=>'<div class="pmpk-method-answer"><p><strong>'+(i+1)+'. '+ESC(x.group)+'</strong></p><p>'+ESC(x.prompt)+'</p><label>Результат *<select data-m-thinking="'+i+'"><option value="">Выберите</option>'+RESULTS.map(a=>'<option '+(d.answers[i]===a?"selected":"")+'>'+a+'</option>').join("")+'</select></label><label>Фактический ответ, объяснение<input data-m-literal="'+i+'" value="'+ESC(d.literal[i])+'" placeholder="Запишите ответ ребенка"></label></div>').join("")+'</div></div>';
   }else{
    rows='<div class="pmpk-method-box"><h3>Воспроизведение шести слов</h3><p class="pmpk-note">«Не проводилось» выбирается сознательно; отсутствие ответа остается незаполненным. Первое предъявление обязательно.</p>'+
    ROUNDS.map(([k,title],index)=>{
@@ -125,7 +125,7 @@
     return '<section class="pmpk-method-round"><div class="pmpk-method-round-head"><h4>'+ESC(title)+'</h4>'+(index===0?'<span>Обязательное</span>':'<label>Проведение <select data-m-round="'+k+'"><option value="">Выберите</option><option value="done" '+(mode==="done"?"selected":"")+'>Проводилось</option><option value="skip" '+(mode==="skip"?"selected":"")+'>Не проводилось</option></select></label>')+'</div>'+
     (mode==="done"?'<div class="pmpk-method-grid">'+current.words.map((word,i)=>'<label class="pmpk-method-answer">'+ESC(word)+'<select data-m-word="'+k+':'+i+'"><option value="">Выберите</option><option value="yes" '+(d.rows[k][i]==="yes"?"selected":"")+'>Воспроизведено</option><option value="no" '+(d.rows[k][i]==="no"?"selected":"")+'>Не воспроизведено</option></select></label>').join("")+'</div>':'')+
     (k==="delayed"&&mode==="done"?'<label class="pmpk-method-delay">Фактическая отсрочка в минутах *<input type="number" min="0.1" max="240" step="0.1" data-m-field="delay" value="'+ESC(d.delay)+'"></label>':'')+
-    (mode==="done"&&d.rows[k].every(x=>x==="yes"||x==="no")?'<p class="pmpk-note">Воспроизведено '+d.rows[k].filter(x=>x==="yes").length+' из 6 слов (без нормативной оценки).</p>':'')+'</section>';
+    (mode==="done"?'<p class="pmpk-note" data-m-round-total="'+k+'">'+(d.rows[k].every(x=>x==="yes"||x==="no")?"Воспроизведено "+d.rows[k].filter(x=>x==="yes").length+" из 6 слов":"Заполнено "+d.rows[k].filter(Boolean).length+" из 6")+'</p>':'')+'</section>';
    }).join("")+
    '<label class="pmpk-method-blockfield">Привнесения и повторы<textarea rows="2" data-m-field="intrusions">'+ESC(d.intrusions)+'</textarea></label></div>';
   }
@@ -143,6 +143,12 @@
   const done=complete();
   overlay.querySelectorAll("[data-m-progress]").forEach(x=>{x.textContent=done?(tab==="processing"?"Заполнено":"Обработка заполнена"):(tab==="processing"?"Заполнено "+count()+"; требуется полный протокол":"Обработка не заполнена");x.classList.toggle("is-done",done)});
   overlay.querySelectorAll('[data-m-action="print-report"],[data-m-action="word-report"],[data-m-action="transfer"]').forEach(x=>x.disabled=!done);
+  const d=state(),think=overlay.querySelector("[data-m-thinking-total]");
+  if(think)think.textContent="Заполнено "+d.answers.filter(x=>x!=="").length+" из 8"+(d.answers.includes("С помощью")&&d.help==="Без помощи"?". Укажите фактически оказанную помощь.":"");
+  overlay.querySelectorAll("[data-m-round-total]").forEach(el=>{
+   const answers=d.rows[el.dataset.mRoundTotal],n=answers.filter(x=>x!=="").length;
+   el.textContent=n===6?"Воспроизведено "+answers.filter(x=>x==="yes").length+" из 6 слов (без нормативной оценки)":"Заполнено "+n+" из 6";
+  });
  }
  function close(){
   if(!overlay)return;
