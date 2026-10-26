@@ -72,3 +72,5 @@ html.dark .pmpk-ages button[aria-pressed=true],html.dark .pmpk-tabs button[aria-
 html.dark .pmpk-number{background:#2a5251;color:#d0e9e4}
 @media(max-width:760px){.pmpk-root{padding:12px 0 36px}.pmpk-hero{border-radius:15px;padding:22px}.pmpk-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.pmpk-hero-time{min-width:85px;padding:8px}.pmpk-hero-time strong{font-size:25px}.pmpk-card{padding:15px}.pmpk-formgrid{grid-template-columns:1fr}.pmpk-bottom{border-radius:0;bottom:0;padding:12px}.pmpk-bottom .pmpk-status{margin-right:auto}}
 @media(max-width:470px){.pmpk-hero{display:block}.pmpk-hero-time{display:inline-flex;gap:8px;align-items:baseline;margin-top:14px}.pmpk-ages button{flex:1;white-space:nowrap}.pmpk-task-head{gap:5px}.pmpk-task{padding:14px}.pmpk-tabs button{flex:1;padding:9px 7px;font-size:12px}}
+
+.library-page[data-area=pmpk] .hero{display:none!important}
