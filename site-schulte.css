@@ -144,3 +144,14 @@ html.dark .library-page #modal.psy-schulte-example .psy-schulte-entry.is-complet
  .library-page #modal.psy-schulte-example .psy-schulte-entry-heading{flex-wrap:wrap;gap:4px}
  .library-page #modal.psy-schulte-example .psy-schulte-entry-status{font-size:11px}
 }
+
+/* Последнее правило для кнопки портфолио Шульте: строго справа. */
+.library-page #modal.psy-schulte-example .modalfoot{position:relative!important;width:100%!important}
+.library-page #modal.psy-schulte-example .modalfoot #bottomProcessing{
+ position:absolute!important;right:24px!important;left:auto!important;
+ top:auto!important;bottom:10px!important;transform:none!important;
+ margin:0!important;
+}
+@media(max-width:650px){
+ .library-page #modal.psy-schulte-example .modalfoot #bottomProcessing{right:12px!important;bottom:10px!important}
+}
