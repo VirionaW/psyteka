@@ -60,15 +60,16 @@ function materials(d){
 }
 function processing(d){return '<h3>Обработка результатов</h3><p>'+escape(d.scoring)+'</p><p>'+escape(d.interpret)+'</p>';}
 function ready(a){return Array.isArray(a)&&Array.from({length:6},(_,i)=>completed(a,i)).every(Boolean);}
-function results(a){
+function validDelay(v){return /^\d{1,3}$/.test(String(v??''))&&Number(v)>0&&Number(v)<=240;}
+function results(a,delay){
  const done=Array.from({length:6},(_,i)=>completed(a,i)).filter(Boolean).length;
- const ok=ready(a),res=score(d,a);
+ const ok=ready(a)&&validDelay(delay),res=score(d,a);
  let h='<section class="psy-luria-results"><div class="psy-luria-result-head"><h3>Профиль запоминания</h3><span class="psy-luria-status '+(ok?'is-ready':'is-waiting')+'" role="status">'+(ok?'Данные заполнены':'Требуется заполнение')+'</span></div>';
- if(!res)return h+'<p>Завершено '+done+' из 6 проб. Для расчета нужны пять предъявлений, для окончательного отчета также отсроченное воспроизведение. Завершенная проба с нулем правильных слов отличается от непроведенной.</p></section>';
+ if(!res)return h+'<p>Завершено '+done+' из 6 проб. Для расчета нужны пять предъявлений, для окончательного отчета также отсроченное воспроизведение и фактическое время отсрочки. Завершенная проба с нулем правильных слов отличается от непроведенной.</p></section>';
  const stats=[["1-я проба",res.first],["5-я проба",res.fifth],["Лучший результат",res.peak],["Среднее за 5 проб",res.mean],["Разность 5-й и 1-й",res.gain],["Через 60 минут",res.delayed??"–"]];
  h+='<div class="psy-luria-stats">'+stats.map(([l,v])=>'<div><span>'+escape(l)+'</span><strong>'+escape(v)+'</strong></div>').join("")+'</div>';
  h+='<h4>Кривая по пяти предъявлениям</h4><div class="psy-luria-bars">'+res.trials.map((v,i)=>'<div><span>'+(i+1)+'</span><div class="psy-luria-track"><i style="width:'+(v*10)+'%"></i></div><b>'+v+' / 10</b></div>').join("")+'</div>';
- if(!ok)h+='<p><strong>Предварительный расчет.</strong> Отсроченная проба не завершена, итоговый отчет пока недоступен.</p>';
+ if(!ok)h+='<p><strong>Предварительный расчет.</strong> Для итогового отчета отметьте отсроченную пробу и фактическое время в минутах.</p>';
  h+='<div class="notice">Результаты описательные: возрастные уровни и диагнозы автоматически не назначаются.</div></section>';
  return h;
 }
@@ -83,7 +84,7 @@ function calculator(d,ctx){
   '<div class="psy-luria-choices">'+WORDS.map((word,j)=>'<label><input type="checkbox" data-luria-word="'+(t*10+j)+'" '+(truth(a[t*10+j])?'checked':'')+'> '+escape(word)+'</label>').join("")+'</div>'+
   '<div class="psy-luria-notes"><label>«Лишние» слова / повторы<textarea data-luria-note="'+t+'" rows="2" placeholder="Посторонние слова и повторы отдельно">'+escape(notes[t]?.extra||"")+'</textarea></label></div></section>';
  });
- h+='</div><div id="luriaResult">'+results(a)+'</div>';
+ h+='</div><div id="luriaResult">'+results(a,r.luriaDelay)+'</div>';
  if(ctx.calcMode==="class")h+='<h3>Сводка участников</h3><div class="results-table"><table id="luriaGroupSummary"><thead><tr><th>Код</th><th>1-я</th><th>5-я</th><th>Пик</th><th>Через 60 мин</th></tr></thead><tbody>'+rs.map((u,i)=>{let z=score(d,u.answers);return '<tr><td>'+escape(u.name||"Код "+(i+1))+'</td><td>'+(z?.first??"–")+'</td><td>'+(z?.fifth??"–")+'</td><td>'+(z?.peak??"–")+'</td><td>'+(z?.delayed??"–")+'</td></tr>';}).join("")+'</tbody></table></div>';
  return h;
 }
@@ -91,18 +92,18 @@ function csv(x){let t=String(x??"");if(/^\s*[=+\-@]/.test(t))t="'"+t;return '"'+
 function download(name,value,type){const blob=new Blob([value],{type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1250);}
 function bind(d,ctx){
  const row=ctx.rows[ctx.rowIndex];row.luriaNotes||=[];
- const refresh=()=>{const target=document.getElementById("luriaResult");if(target)target.innerHTML=results(row.answers);const tbody=document.querySelector('#luriaGroupSummary tbody');if(tbody)tbody.innerHTML=ctx.rows.map((u,i)=>{const z=score(d,u.answers);return '<tr><td>'+escape(u.name||'Код '+(i+1))+'</td><td>'+(z?.first??'–')+'</td><td>'+(z?.fifth??'–')+'</td><td>'+(z?.peak??'–')+'</td><td>'+(z?.delayed??'–')+'</td></tr>';}).join('');ctx.onChange?.();};
+ const refresh=()=>{const target=document.getElementById("luriaResult");if(target)target.innerHTML=results(row.answers,row.luriaDelay);const tbody=document.querySelector('#luriaGroupSummary tbody');if(tbody)tbody.innerHTML=ctx.rows.map((u,i)=>{const z=score(d,u.answers);return '<tr><td>'+escape(u.name||'Код '+(i+1))+'</td><td>'+(z?.first??'–')+'</td><td>'+(z?.fifth??'–')+'</td><td>'+(z?.peak??'–')+'</td><td>'+(z?.delayed??'–')+'</td></tr>';}).join('');ctx.onChange?.();};
  document.querySelectorAll("[data-luria-word]").forEach(x=>x.addEventListener("change",()=>{row.answers[Number(x.dataset.luriaWord)]=x.checked?1:0;refresh();}));
  document.querySelectorAll("[data-luria-done]").forEach(x=>x.addEventListener("change",()=>{row.answers[60+Number(x.dataset.luriaDone)]=x.checked?1:0;refresh();}));
  document.querySelector('[data-luria-date]')?.addEventListener('change',e=>{row.luriaDate=e.target.value;});
- document.querySelector('[data-luria-delay]')?.addEventListener('input',e=>{row.luriaDelay=e.target.value;});
+ document.querySelector('[data-luria-delay]')?.addEventListener('input',e=>{row.luriaDelay=e.target.value;refresh();});
  document.querySelectorAll("[data-luria-note]").forEach(x=>x.addEventListener("input",()=>{const i=Number(x.dataset.luriaNote);row.luriaNotes[i] ||= {};row.luriaNotes[i].extra=x.value;}));
 
 }
 
 function report(d,records,mode,index){
  const selected=mode==="class"?records:[records[index]];
- if(!selected.length||selected.some(r=>!ready(r.answers)))return false;
+ if(!selected.length||selected.some(r=>!ready(r.answers)||!validDelay(r.luriaDelay)))return false;
  const rows=selected.map((r,i)=>{
   const z=score(d,r.answers),code=escape(r.name||"Код "+(i+1)),date=escape(r.luriaDate||"Не указана");
   const minutes=/^\d{1,3}$/.test(String(r.luriaDelay||""))&&Number(r.luriaDelay)>0?escape(r.luriaDelay)+" мин":"Не указано";
@@ -120,7 +121,7 @@ function report(d,records,mode,index){
 }
 function status(records,mode,index){
  const selected=mode==="class"?records:[records[index]];
- return selected.length>0&&selected.every(r=>ready(r.answers));
+ return selected.length>0&&selected.every(r=>ready(r.answers)&&validDelay(r.luriaDelay));
 }
 window.PSY_LURIA={words:WORDS.slice(),trials:TRIALS.slice(),score,completed,ready,status,report,grid,instruction,materials,processing,calculator,bind};
 })();
