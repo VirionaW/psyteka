@@ -1,8 +1,63 @@
-"use strict";(function(){
- let hasCode=false,passedHome=false;
- try{const data=JSON.parse(localStorage.getItem("psy-public-preview-access")||"null");hasCode=!!(data&&typeof data.until==="number"&&data.until>Date.now())}catch(_){}
- try{passedHome=sessionStorage.getItem("psy-entry-completed")==="1"}catch(_){}
- if(hasCode&&passedHome){document.documentElement.classList.add("psy-access-ok");return}
- try{sessionStorage.setItem("psy-requested-page",location.pathname+location.search)}catch(_){}
- location.replace("index.html?access=1");
+"use strict";
+/* Entry coordinator, not a DRM layer. Static files remain public.
+   Real subscriptions later require a server-mediated file store. */
+(function(){
+ const root=document.documentElement;
+ const config=window.PSY_AUTH_CONFIG||{};
+ const enabled=config.registrationEnabled===true;
+ // The landing page shows non-interactive real catalog previews in iframes.
+ if(window.self!==window.top){root.classList.add("psy-access-ok");return}
+ function goHome(){
+  try{
+   const destination=location.pathname.slice(location.pathname.lastIndexOf("/")+1)+location.search+location.hash;
+   sessionStorage.setItem("psy-intended-destination",destination);
+  }catch(_){}
+  location.replace("index.html?home=1&entry=1");
+ }
+ function pill(text,clockEnd){
+  document.addEventListener("DOMContentLoaded",()=>{
+   const bar=document.querySelector(".topbar");if(!bar)return;
+   const old=bar.querySelector("#psyLibraryTrial");if(old)old.remove();
+   const item=document.createElement("span");item.id="psyLibraryTrial";item.className="psy-entry-pill";
+   const anchor=bar.querySelector(".header-avatar");bar.insertBefore(item,anchor||null);
+   if(!clockEnd){item.textContent=text;return;}
+   const update=()=>{
+    const left=new Date(clockEnd).getTime()-Date.now();
+    if(left<=0){item.textContent="Пробный период завершен";clearInterval(interval);return}
+    const s=Math.floor(left/1000),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);
+    item.textContent="Пробный доступ: "+(d?d+" д. ":"")+String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
+   };
+   update();const interval=setInterval(update,30000);
+  });
+ }
+ if(!enabled){
+  let demo=false;
+  try{demo=sessionStorage.getItem("psy-demo-entry")==="1"}catch(_){}
+  if(demo){root.classList.add("psy-access-ok");pill("Демоверсия");return}
+  goHome();return;
+ }
+ if(!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||"")||
+    !/^sb_publishable_[A-Za-z0-9_-]+$/.test(config.publishableKey||"")||
+    !window.supabase?.createClient){goHome();return}
+ const client=window.supabase.createClient(config.url,config.publishableKey,{
+  auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
+ });
+ (async()=>{
+  try{
+   const {data,error}=await client.auth.getUser();
+   if(error||!data?.user||data.user.is_anonymous){goHome();return}
+   const uid=data.user.id;
+   const [r,t]=await Promise.all([
+    client.from("psy_account_roles").select("role").eq("user_id",uid).maybeSingle(),
+    client.from("psy_trial_access").select("expires_at").eq("user_id",uid).maybeSingle()
+   ]);
+   if(r.error||t.error){goHome();return}
+   if(r.data?.role==="owner"||r.data?.role==="moderator"){
+    root.classList.add("psy-access-ok");
+    pill(r.data.role==="owner"?"Владелец":"Модератор");return;
+   }
+   if(!t.data?.expires_at||new Date(t.data.expires_at).getTime()<=Date.now()){goHome();return}
+   root.classList.add("psy-access-ok");pill("Пробный доступ",t.data.expires_at);
+  }catch(_){goHome()}
+ })();
 })();
