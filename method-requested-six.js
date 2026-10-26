@@ -29,7 +29,7 @@ const luk=config.find(x=>x.id==="lukyanova-kalinina-motivation-2004");luk.instru
 const D=window.PSY_FULL_METHODS||(window.PSY_FULL_METHODS={});
 config.forEach(p=>{const c={...p,workflow:"verifiedSix",calculator:true,questions:Array.from({length:p.questionsCount||0},(_,i)=>"Пункт "+(i+1)),options:Array.from({length:p.scaleMax||0},(_,i)=>String(i+1)),verifiedCopyright:"Тексты оригинальных утверждений доступны в публикациях. Психотека не перепечатывает защищенный бланк в регистрационной форме."};D[p.name]=c;});
 const a=(url,label)=>'<a href="'+escape(url)+'" target="_blank" rel="noopener noreferrer">'+escape(label)+'</a>';
-function variants(d){return '<div class="psy-six-versions"><h3>Версии и оригинальные материалы</h3><ul>'+d.forms.map(f=>'<li>'+a(f.url,f.label)+'</li>').join("")+'</ul></div>';}
+function variants(d){return '<div class="psy-six-versions"><h3>Версии и опубликованные материалы</h3><ul>'+d.forms.map(f=>'<li>'+a(f.url,f.label)+'</li>').join("")+'</ul></div>';}
 function instruction(d){return '<section class="psy-six-guide"><h3>Цель</h3><p>'+escape(d.goal)+'</p><h3>Инструкция обследуемому</h3><blockquote class="kid-instruction">'+escape(d.instructions)+'</blockquote><h3>Порядок проведения для психолога</h3><p>'+escape(d.procedure)+'</p><h3>Ключ и обработка</h3><p>'+escape(d.scoring)+'</p><h3>Интерпретация и ограничения</h3><p>'+escape(d.interpret)+'</p>'+variants(d)+'<p class="privacy-inline">Полный оригинальный опросник предъявляется по опубликованному источнику, регистрационный лист не заменяет текст утверждений.</p></section>';}
 function materials(d){
  const count=d.questionsCount||0, min=d.scaleMin||d.responseMin||1,max=d.scaleMax||d.responseMax||0;
@@ -39,7 +39,7 @@ function materials(d){
  const grid=hasSheet?'<div class="psy-six-sheet"><h3>Лист регистрации ответов · А4</h3><p>Код участника: __________________　Дата: _______________</p><p>Перенос ответов выполняйте из оригинального бланка без изменения номера пункта. Этот регистрационный лист не заменяет текст методики.</p>'+legend+
  '<table class="questions-table"><thead><tr><th>№</th><th>Ответ ('+min+'-'+max+')</th><th>№</th><th>Ответ ('+min+'-'+max+')</th></tr></thead><tbody>'+Array.from({length:half},(_,i)=>'<tr><td>'+(i+1)+'</td><td class="blank-cell"></td><td>'+(i+half<count?i+half+1:"")+'</td><td class="blank-cell"></td></tr>').join("")+'</tbody></table></div>':
  '<p>Для выполнения используйте исходный бланк конкретной возрастной или авторской версии. Печатный лист другой редакции не заменяет оригинал.</p>';
- return '<section class="psy-six-materials"><p>Оригинальный источник: '+a(d.forms[0].url,"Открыть опубликованную форму")+'</p>'+grid+variants(d)+'</section>';
+ return '<section class="psy-six-materials"><p>Сведения о выбранной форме: '+a(d.forms[0].url,"Перейти к материалам по методике")+'</p>'+grid+variants(d)+'</section>';
 }
 function results(d,answers,version){
  if(d.id==="morosanova-ssp-family"){
@@ -77,8 +77,8 @@ function calculator(d,ctx){
  html+='<label class="psy-six-label">Код участника (без ФИО)<input id="participantName" type="text" maxlength="50" value="'+escape(r.name||"")+'" placeholder="Например, 7А-01"></label>';
  if(d.forms.length>1){
   const sel=r.sixVersion??"";
-  html+='<label class="psy-six-label">Авторская или возрастная редакция<select data-six-version aria-label="Редакция опросника"><option value="">Выберите редакцию</option>'+d.forms.map((f,i)=>'<option value="'+i+'" '+(String(sel)===String(i)?"selected":"")+'>'+escape(f.label)+'</option>').join("")+'</select></label><p id="sixVersionLink">'+(sel!==""&&d.forms[Number(sel)]?a(d.forms[Number(sel)].url,"Открыть оригинальный бланк выбранной редакции"):"Выберите нужную редакцию до проведения.")+'</p>';
- }else html+='<p>Источник ответов: '+a(d.forms[0].url,"Оригинальный бланк методики")+'</p>';
+  html+='<label class="psy-six-label">Авторская или возрастная редакция<select data-six-version aria-label="Редакция опросника"><option value="">Выберите редакцию</option>'+d.forms.map((f,i)=>'<option value="'+i+'" '+(String(sel)===String(i)?"selected":"")+'>'+escape(f.label)+'</option>').join("")+'</select></label><p id="sixVersionLink">'+(sel!==""&&d.forms[Number(sel)]?a(d.forms[Number(sel)].url,"Открыть страницу выбранной редакции"):"Выберите нужную редакцию до проведения.")+'</p>';
+ }else html+='<p>Источник ответов: '+a(d.forms[0].url,"Страница методики и материалов")+'</p>';
  const ssp=d.id==="morosanova-ssp-family",ssp2020=ssp&&String(r.sixVersion)==="3";
  const qCount=ssp?28:(d.questionsCount||0),ansMax=ssp?5:(d.scaleMax||d.responseMax||0);
  if(qCount&&ansMax){
@@ -132,7 +132,7 @@ function bind(d,ctx){
   r.sixVersion=e.target.value;
   const sheet=root.querySelector("#sixSspAnswers");if(sheet)sheet.hidden=String(r.sixVersion)!=="3";
   const target=root.querySelector("#sixVersionLink"),v=r.sixVersion;
-  if(target)target.innerHTML=v!==""&&d.forms[Number(v)]?a(d.forms[Number(v)].url,"Открыть оригинальный бланк выбранной редакции"):"Выберите нужную редакцию до проведения.";
+  if(target)target.innerHTML=v!==""&&d.forms[Number(v)]?a(d.forms[Number(v)].url,"Открыть страницу выбранной редакции"):"Выберите нужную редакцию до проведения.";
   update();
  });
  root.querySelector("[data-six-notes]")?.addEventListener("input",e=>{r.sixProtocol=e.target.value;update();});
@@ -159,7 +159,7 @@ function printPage(d,blank,combined,row){
  const guide='<article><h1>'+escape(d.name)+'</h1><p>'+escape(d.author)+'</p><p>Возраст: '+escape(d.age)+'</p><p>Редакция: '+escape(chosen.label)+'</p><h2>Цель</h2><p>'+escape(d.goal)+'</p><h2>Инструкция обследуемому</h2><blockquote>'+escape(d.instructions)+'</blockquote><h2>Порядок проведения</h2><p>'+escape(d.procedure)+'</p><h2>Ключ и правила подсчета</h2><p>'+escape(d.scoring)+'</p><h2>Интерпретация и ограничения</h2><p>'+escape(d.interpret)+'</p>'+source+'</article>';
  const ssp2020=d.id==="morosanova-ssp-family"&&String(row?.sixVersion)==="3";
  const sspSheet=ssp2020?'<section class="psy-six-sheet"><h2>Лист регистрации ССПМ-2020 · 28 пунктов</h2><p>Код участника: __________________　Дата: ___________</p><p>Для ответов используйте только оригинальные утверждения ССПМ-2020. Оценка каждого утверждения – 1-5. Здесь нет ключа.</p><table><thead><tr><th>№</th><th>Ответ</th><th>№</th><th>Ответ</th></tr></thead><tbody>'+Array.from({length:14},(_,i)=>'<tr><td>'+(i+1)+'</td><td class="blank-cell"></td><td>'+(i+15)+'</td><td class="blank-cell"></td></tr>').join("")+'</tbody></table></section>':"";
- const sheet=(d.scaleMax||d.responseMax)?materials(d):(ssp2020?sspSheet:'<section><h2>Оригинальный бланк выбранной редакции</h2><p>'+a(chosen.url,"Открыть проверенную форму")+'</p></section>');
+ const sheet=(d.scaleMax||d.responseMax)?materials(d):(ssp2020?sspSheet:'<section><h2>Материалы выбранной редакции</h2><p>'+a(chosen.url,"Открыть опубликованный источник")+'</p></section>');
  const title='<html lang="ru"><head><meta charset="utf-8"><title>'+escape(d.name)+' · А4</title><style>'+css+'</style></head><body>';
  return '<!doctype html>'+title+(blank?sheet:guide)+(combined?'<div class="psy-six-print-break">'+sheet+'</div>':"")+'</body></html>';
 }
