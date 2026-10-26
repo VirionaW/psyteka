@@ -185,3 +185,18 @@ body.pmpk-method-open{overflow:hidden}
 .pmpk-choice-source{font-size:12px;font-weight:650;color:var(--green);text-decoration:underline;text-underline-offset:3px;padding:6px 2px;white-space:nowrap}
 .pmpk-choice-source:focus-visible{outline:3px solid #d6aa5c;outline-offset:2px}
 @media(max-width:650px){.pmpk-choice{flex-direction:column;align-items:stretch}.pmpk-choice-controls{justify-content:flex-start;max-width:none}.pmpk-choice-controls button{flex:0 0 auto}}
+
+/* Единая ширина баннеров – как в разделах «Школа» и «Детский сад». */
+.library-page[data-area="pmpk"] #pmpkView{width:100%;max-width:none;min-width:0}
+.library-page[data-area="pmpk"] .pmpk-root{
+ width:100%;max-width:none;min-width:0;box-sizing:border-box;
+ margin:0;padding:0 0 45px;
+}
+.library-page[data-area="pmpk"] .pmpk-hero{
+ width:100%;min-height:clamp(315px,29vw,390px);box-sizing:border-box;
+}
+@media(max-width:760px){
+ .library-page[data-area="pmpk"] .pmpk-root{padding:0 0 35px}
+ .library-page[data-area="pmpk"] .pmpk-hero{min-height:265px}
+}
+.pmpk-choice-author{font-size:12px;font-weight:650;color:var(--muted);line-height:1.45;margin-top:2px}
