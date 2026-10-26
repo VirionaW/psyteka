@@ -79,3 +79,35 @@ html.dark .site-landing :is(.site-logo,.gate-top-logo,.psy-footer-brand) .psy-br
     height:45px!important;
   }
 }
+
+/* Двухстрочная подпись бренда в шапке главной. */
+.site-landing #siteHome .site-logo .psy-site-wordbox{
+ display:flex;
+ flex-direction:column;
+ align-items:flex-start;
+ min-width:0;
+ gap:2px;
+}
+.site-landing #siteHome .site-logo .psy-site-wordbox .psy-wordmark{
+ display:inline-flex!important;
+ align-items:baseline;
+ line-height:1!important;
+ font-size:23px!important;
+ margin:0!important;
+}
+.site-landing #siteHome .site-logo .psy-site-wordbox small{
+ display:block;
+ color:#648071;
+ letter-spacing:.015em;
+ font-size:11px;
+ line-height:1.3;
+ font-weight:550;
+ white-space:nowrap;
+}
+html.dark .site-landing #siteHome .site-logo .psy-site-wordbox small{
+ color:#c8d9ce!important;
+}
+@media(max-width:560px){
+ .site-landing #siteHome .site-logo .psy-site-wordbox .psy-wordmark{font-size:18px!important}
+ .site-landing #siteHome .site-logo .psy-site-wordbox small{font-size:9px}
+}
