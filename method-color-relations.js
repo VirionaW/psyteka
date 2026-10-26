@@ -21,7 +21,7 @@ function summarize(a,ranking){
 function resultHtml(row){
  const a=row.answers||[], ranking=row.colorRanking||[];
  const z=summarize(a,ranking);
- let html='<h3>Описательный протокол</h3><p>Ассоциации записаны для '+z.complete+' из 8 понятий. Совпадающий цвет — повод обсудить связь, а не доказательство эмоционального состояния.</p>';
+ const ok=z.complete===8&&z.rankValid;const badge='<span class="psy-data-state '+(ok?'is-ready':'is-waiting')+'" role="status">'+(ok?'Данные заполнены':'Требуется заполнить ассоциации и ранжирование')+'</span>';let html='<h3>Описательный протокол</h3>'+badge+'<p>Ассоциации записаны для '+z.complete+' из 8 понятий. Совпадающий цвет — повод обсудить связь, а не доказательство эмоционального состояния.</p>';
  const shared=[...z.groups.entries()].filter(([color,names])=>names.length>1);
  html+=shared.length?'<h4>Совпадающие цветовые ассоциации</h4><ul>'+shared.map(([id,names])=>'<li>'+shade(COLORS[id])+E(COLORS[id].name)+': '+names.map(E).join(' · ')+'</li>').join("")+'</ul>':'<p>Совпадающих цветов среди отмеченных понятий нет.</p>';
  if(z.rankValid){
