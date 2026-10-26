@@ -78,18 +78,19 @@ function calculator(d,ctx){
   const sel=r.sixVersion??"";
   html+='<label class="psy-six-label">Авторская или возрастная редакция<select data-six-version aria-label="Редакция опросника"><option value="">Выберите редакцию</option>'+d.forms.map((f,i)=>'<option value="'+i+'" '+(String(sel)===String(i)?"selected":"")+'>'+escape(f.label)+'</option>').join("")+'</select></label><p id="sixVersionLink">'+(sel!==""&&d.forms[Number(sel)]?a(d.forms[Number(sel)].url,"Открыть оригинальный бланк выбранной редакции"):"Выберите нужную редакцию до проведения.")+'</p>';
  }else html+='<p>Источник ответов: '+a(d.forms[0].url,"Оригинальный бланк методики")+'</p>';
- const qCount=d.questionsCount||0,ansMax=d.scaleMax||d.responseMax||0;
+ const ssp=d.id==="morosanova-ssp-family",ssp2020=ssp&&String(r.sixVersion)==="3";
+ const qCount=ssp?28:(d.questionsCount||0),ansMax=ssp?5:(d.scaleMax||d.responseMax||0);
  if(qCount&&ansMax){
-   html+='<p class="privacy-inline">Внесите ответы строго по номерам из оригинальной формы. Незаполненное поле не считается нулевым ответом.</p><div class="psy-six-answer-grid">'+Array.from({length:qCount},(_,i)=>{
-    const scored=!!d.scaleMax,values=scored?r.answers:r.sixAnswers;
+   html+='<p class="privacy-inline">Внесите ответы строго по номерам из оригинальной формы. Незаполненное поле не считается нулевым ответом.</p><div class="psy-six-answer-grid" '+(ssp&&!ssp2020?'hidden':'')+' '+(ssp?'id="sixSspAnswers"':'')+'>'+Array.from({length:qCount},(_,i)=>{
+    const scored=!!d.scaleMax||ssp,values=scored?r.answers:r.sixAnswers;
     const v=values?.[i];
     return '<label><span>Пункт '+(i+1)+'</span><select '+(scored?'data-six-answer':'data-six-unverified')+'="'+i+'" aria-label="Ответ на пункт '+(i+1)+'"><option value="">–</option>'+Array.from({length:ansMax},(_,n)=>'<option value="'+(n+1)+'" '+(String(v??"")===String(n+1)?"selected":"")+'>'+(n+1)+'</option>').join("")+'</select></label>';
    }).join("")+'</div>';
  }
- if(!d.scaleMax)html+='<p class="privacy-inline">Ответы можно зарегистрировать, но тестовый балл здесь не рассчитывается до проверки авторского ключа. Никаких условных уровней не выводится.</p>';
+ if(!d.scaleMax)html+='<p class="privacy-inline">'+(ssp?'Числовая обработка поддерживается исключительно для ССПМ-2020 (28 пунктов); остальные редакции используют другие ключи.':'Ответы можно зарегистрировать, но тестовый балл здесь не рассчитывается до проверки авторского ключа. Никаких условных уровней не выводится.')+'</p>';
  html+='<label class="psy-six-label">Наблюдения специалиста<textarea rows="4" data-six-notes placeholder="Особенности проведения, реакции, пояснения">'+escape(r.sixProtocol||"")+'</textarea></label>';
- html+='<div class="psy-six-state '+(d.scaleMax?(done?"ready":"pending"):"neutral")+'" id="sixStatus">'+(d.scaleMax?(done?"Результат рассчитан":"Требуется заполнение"):"Протокол наблюдения")+'</div><div id="sixSummary">'+summary(d,r)+'</div>';
- html+='<div class="actions"><button type="button" class="btn primary" data-six-report '+(d.scaleMax&&!done?'disabled title="Заполните все обязательные ответы"':'')+'>Скачать протокол · А4</button><button type="button" class="btn" data-six-clear>Очистить ответы</button></div>';
+ html+='<div class="psy-six-state '+((d.scaleMax||ssp2020)?(done?"ready":"pending"):"neutral")+'" id="sixStatus">'+((d.scaleMax||ssp2020)?(done?"Результат рассчитан":"Требуется заполнение"):"Протокол наблюдения")+'</div><div id="sixSummary">'+summary(d,r)+'</div>';
+ html+='<div class="actions"><button type="button" class="btn primary" data-six-report '+((d.scaleMax||ssp2020)&&!done?'disabled title="Заполните все обязательные ответы"':'')+'>Скачать протокол · А4</button><button type="button" class="btn" data-six-clear>Очистить ответы</button></div>';
  if(ctx.calcMode==="class")html+='<div id="sixClass">'+table(d,rows)+'</div><button type="button" class="btn" data-six-csv>Экспорт класса · CSV</button>';
  return html+'</section>';
 }
