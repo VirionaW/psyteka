@@ -47,7 +47,7 @@
  records["Самооценка Дембо – Рубинштейн"].age="10-16 лет – действующая модификация А. М. Прихожан; иной школьный вариант требует другого бланка";
  records["Самооценка Дембо – Рубинштейн"].ages=[
   {id:"prikhozhan1016",label:"10-16 лет · модификация Прихожан, 7 линий",age:"10-16 лет",status:"ready",source:"https://psytests.org/trait/demborp.html"},
-  {id:"junior711",label:"7-11 лет · другой опубликованный школьный вариант, комплект не подготовлен",age:"7-11 лет",status:"source",source:"https://infolesson.kz/metodicheskoe-posobie-dlya-uchitelya-nachalnyh-klassov-diagnosticheskie-metodiki-dlya-opredeleniya-samootsenki-mladshih-shkolniko-7920305.html"}
+  {id:"junior711",label:"7-11 лет · другой опубликованный школьный вариант, комплект не подготовлен",age:"7-11 лет",status:"source",source:"https://infolesson.kz/metodicheskoe-posobie-dlya-uchitelya-nachalnyh-klassov-diagnosticheskie-metodiki-dlya-opredeleniya-samoocenki-mladshih-shkolniko-7920305.html"}
  ];
 
  // Вводные реплики только там, где порядок и адресат понятны из существующей редакции.
