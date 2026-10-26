@@ -140,6 +140,7 @@ function setTab(name){
    }
  }
  bindControls();
+ if(DETAILS[methodNow?.name]?.workflow==='preschoolSheet')window.PSY_PRESCHOOL.updateFooter(DETAILS[methodNow.name],mainTab);
  document.querySelectorAll('[data-generic-print]').forEach(button=>button.addEventListener('click',()=>printMaterial(button.dataset.genericPrint)));
  updateLuriaFooter();
 }
@@ -245,6 +246,7 @@ function viewOverview(m){
 }
 
 function viewInstruction(m){
+ if(DETAILS[m.name]?.workflow==='preschoolSheet')return window.PSY_PRESCHOOL.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='simpleAnalogies12')return window.PSY_ANALOGIES.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='pairedAssoc20')return window.PSY_PAIRED_ASSOC.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='digitSpanPsy')return window.PSY_DIGIT_SPAN.instruction(DETAILS[m.name]);
@@ -377,6 +379,7 @@ function materials(m,blank){
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
 function viewMaterials(m){
+ if(DETAILS[m.name]?.workflow==='preschoolSheet')return window.PSY_PRESCHOOL.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='simpleAnalogies12')return window.PSY_ANALOGIES.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='pairedAssoc20')return window.PSY_PAIRED_ASSOC.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='digitSpanPsy')return window.PSY_DIGIT_SPAN.materials(DETAILS[m.name]);
@@ -406,6 +409,7 @@ function viewMaterials(m){
  return '<h3>Стимульный материал и бланк</h3>'+materials(m,false)+(d.questions?.length && d.graphic ? '<h3>Протокол беседы</h3><table class="questions-table"><thead><tr><th>№</th><th>Вопрос психолога</th><th>Ответ / наблюдение</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td>________________</td></tr>').join('')+'</tbody></table>':"");
 }
 function viewProcessing(m){
+ if(DETAILS[m.name]?.workflow==='preschoolSheet')return window.PSY_PRESCHOOL.calculator(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='simpleAnalogies12')return window.PSY_ANALOGIES.processing(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='pairedAssoc20')return window.PSY_PAIRED_ASSOC.processing(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='digitSpanPsy')return window.PSY_DIGIT_SPAN.processing(DETAILS[m.name]);
@@ -480,6 +484,7 @@ function getScores(d,answers){
  return {raw,index:null,max:n*(d.options.length-1),caption:'Сырая сумма'};
 }
 function viewCalculator(m){
+ if(DETAILS[m.name]?.workflow==='preschoolSheet')return window.PSY_PRESCHOOL.calculator(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='simpleAnalogies12')return window.PSY_ANALOGIES.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  if(DETAILS[m.name]?.workflow==='pairedAssoc20')return window.PSY_PAIRED_ASSOC.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  if(DETAILS[m.name]?.workflow==='digitSpanPsy')return window.PSY_DIGIT_SPAN.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
@@ -537,6 +542,7 @@ function viewCalculator(m){
  return head+'<div class="notice">Ответы вводятся цифрами от 0 до '+(d.options.length-1)+'. После ввода курсор переходит к следующему полю.</div>'+qhtml+results+'<div class="class-actions"><button class="btn" id="resetParticipant">Сбросить ответы участника</button></div>';
 }
 function bindControls(){
+ if(DETAILS[methodNow?.name]?.workflow==='preschoolSheet'){window.PSY_PRESCHOOL.bind(DETAILS[methodNow.name]);return;}
  if(DETAILS[methodNow.name]?.workflow==='simpleAnalogies12')window.PSY_ANALOGIES.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode,
  onSelect:i=>{rowIndex=i;modeIndices.class=i;setTab('score');},
  onBulkAdd:names=>{
@@ -713,6 +719,7 @@ function makePrintPage(d,blank,combined=false){
  return head+(blank?blankHtml:guide)+(combined?blankHtml:'')+'</body></html>';
 }
 function printMaterial(blank){
+ if(DETAILS[methodNow?.name]?.workflow==='preschoolSheet'){window.PSY_PRESCHOOL.print(DETAILS[methodNow.name],blank);return;}
  const d=DETAILS[methodNow?.name];if(!d)return;
  if(['colorRelations8','digitSpanPsy','dynamicPraxisLuria','simpleAnalogies12','pairedAssoc20'].includes(d.workflow)){window.open(blank?d.answerFile:d.guideFile,'_blank','noopener');return;}
  const html=makePrintPage(d,blank===true||blank==='blank',blank==='combined');
@@ -740,6 +747,7 @@ function openMethod(m){
  $('#modalBody').innerHTML='';
  const header=$('#modal').querySelector('.modalhead');
  let old=$('#methodTabs');if(old)old.remove();
+ const preschoolPilot=d?.workflow==='preschoolSheet';
  const mspssPilot=d?.workflow==='mspss';
  const schultePilot=d?.workflow==='schulte5';
  const luriaPilot=d?.workflow==='luria10x5';
@@ -754,7 +762,7 @@ function openMethod(m){
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
  footer.hidden=!d;
- footer.innerHTML=luriaPilot?'<div class="psy-luria-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button><button type="button" class="btn" id="luriaBack" hidden>Вернуться к портфолио</button><div class="psy-luria-footer-right"><span class="psy-luria-status is-waiting" id="luriaFooterStatus" hidden>Требуется заполнение</span><button type="button" class="btn" id="luriaReportBottom" disabled hidden>Скачать отчет участника</button><button type="button" class="btn" id="luriaResetBottom" hidden>Очистить ответы</button></div></div>':analogyPilot?'<div class="psy-analogies-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button><button type="button" class="btn psy-analogies-back" id="anaBack" hidden>Вернуться к портфолио</button><div class="psy-analogies-footer-right"><button type="button" class="btn psy-analogies-report" id="anaReportBottom" disabled hidden>Скачать отчет участника</button><button type="button" class="btn psy-analogies-reset" id="anaResetBottom" hidden>Очистить ответы</button></div></div>':schultePilot?'<div class="psy-schulte-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button type="button" class="btn psy-schulte-back" id="schulteBack" hidden>← Вернуться к портфолио</button><div class="psy-schulte-footer-right"><button type="button" class="btn psy-schulte-report" id="schulteReportBottom" disabled hidden>Скачать отчёт участника</button><button type="button" class="btn psy-schulte-reset" id="schulteResetBottom" hidden>Очистить ответы</button></div></div>':matchMSPSS?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button></div>':mspssPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="mspssBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="mspssReportBottom" disabled hidden>Скачать отчет участника</button><button class="btn psy-mspss-reset" id="mspssResetBottom" hidden>Очистить ответы</button></div></div>':'<div class="psy-standard-footer">'+(d?'<button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button>':'')+'</div>';
+ footer.innerHTML=preschoolPilot?'<div class="psy-preschool-shared-footer"><span id="preschoolFooterStatus" class="psy-preschool-footer-state pending">Требуется заполнение</span><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button></div>':luriaPilot?'<div class="psy-luria-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button><button type="button" class="btn" id="luriaBack" hidden>Вернуться к портфолио</button><div class="psy-luria-footer-right"><span class="psy-luria-status is-waiting" id="luriaFooterStatus" hidden>Требуется заполнение</span><button type="button" class="btn" id="luriaReportBottom" disabled hidden>Скачать отчет участника</button><button type="button" class="btn" id="luriaResetBottom" hidden>Очистить ответы</button></div></div>':analogyPilot?'<div class="psy-analogies-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button><button type="button" class="btn psy-analogies-back" id="anaBack" hidden>Вернуться к портфолио</button><div class="psy-analogies-footer-right"><button type="button" class="btn psy-analogies-report" id="anaReportBottom" disabled hidden>Скачать отчет участника</button><button type="button" class="btn psy-analogies-reset" id="anaResetBottom" hidden>Очистить ответы</button></div></div>':schultePilot?'<div class="psy-schulte-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button type="button" class="btn psy-schulte-back" id="schulteBack" hidden>← Вернуться к портфолио</button><div class="psy-schulte-footer-right"><button type="button" class="btn psy-schulte-report" id="schulteReportBottom" disabled hidden>Скачать отчёт участника</button><button type="button" class="btn psy-schulte-reset" id="schulteResetBottom" hidden>Очистить ответы</button></div></div>':matchMSPSS?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button></div>':mspssPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="mspssBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="mspssReportBottom" disabled hidden>Скачать отчет участника</button><button class="btn psy-mspss-reset" id="mspssResetBottom" hidden>Очистить ответы</button></div></div>':'<div class="psy-standard-footer">'+(d?'<button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button>':'')+'</div>';
  // Schulte has exactly one primary action in the overview.
  // Anchor it to the right edge of the modal footer, independently of flex/grid
  // styles that may have been introduced by shared modal themes.
