@@ -217,6 +217,7 @@ function profileGoal(m,d,o){
  return m.summary||"";
 }
 function viewOverview(m){
+ if(DETAILS[m.name]?.workflow==='preschoolSheet'&&DETAILS[m.name].portfolioFilled)return window.PSY_PRESCHOOL.portfolio(DETAILS[m.name]);
  const d=DETAILS[m.name]||{},o=window.PSY_PORTFOLIO_EDITS?.[m.name]||{};
  const author=profileText(o.author||d.author||m.author||"");
  const verifiedAuthor=author&&!/сведения об авторе уточняются/i.test(author)?author:"Автор не установлен";
