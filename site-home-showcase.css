@@ -156,3 +156,21 @@ html.dark .site-landing #siteHome .site-sections .section-card:after{opacity:.18
 @media(prefers-reduced-motion:reduce){
  .site-landing #siteHome .psy-screen-card *{transition:none!important}
 }
+/* Резервные иллюстрации на время загрузки и при недоступном предпросмотре. */
+.site-landing #siteHome .psy-frame-window,
+.site-landing #siteHome .psy-screen-canvas{
+ background-color:#eaf1e7;
+ background-image:linear-gradient(90deg,#e8f1eb55,#f5f8f380),url("assets/psyteka-banner-school-approved.webp");
+ background-position:center;
+ background-size:cover;
+ background-repeat:no-repeat;
+}
+.site-landing #siteHome .psy-screen-card:last-child .psy-screen-canvas{
+ background-image:linear-gradient(90deg,#ece5f080,#f8f4fb80),url("assets/psyteka-banner-preschool-approved.webp");
+}
+.site-landing #siteHome .psy-frame-window iframe,
+.site-landing #siteHome .psy-screen-canvas iframe{opacity:0}
+.site-landing #siteHome :is(.psy-frame-window,.psy-screen-canvas) iframe.psy-preview-loaded{
+ opacity:1;
+ background:#f9fbf8;
+}
