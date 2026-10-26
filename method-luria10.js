@@ -60,19 +60,22 @@ function materials(d){
  '<p class="psy-luria-stimulus-link"><a href="'+escape(d.stimulusFile)+'" target="_blank" rel="noopener noreferrer">Открыть отдельные стимулы для специалиста</a></p>';
 }
 function processing(d){return '<h3>Обработка результатов</h3><p>'+escape(d.scoring)+'</p><p>'+escape(d.interpret)+'</p>';}
+function ready(a){return Array.isArray(a)&&Array.from({length:6},(_,i)=>completed(a,i)).every(Boolean);}
 function results(a){
- let done=Array.from({length:5},(_,i)=>completed(a,i)).filter(Boolean).length;
- const res=score(d,a);let h='<section class="psy-luria-results"><h3>Профиль запоминания</h3>';
- if(!res)return h+'<p>Проведено '+done+' из 5 обязательных проб. Отмечайте флажок «Проба завершена» в каждой строке, даже если не названо ни одного слова.</p></section>';
- const stats=[["1-я проба",res.first],["5-я проба",res.fifth],["Лучший результат",res.peak],["Среднее за 5 проб",res.mean],["Изменение 5-я − 1-я",res.gain],["Через 60 минут",res.delayed??"–"]];
- h+='<div class="psy-luria-stats">'+stats.map(([l,v])=>'<div><span>'+escape(l)+'</span><strong>'+v+'</strong></div>').join("")+'</div>';
+ const done=Array.from({length:6},(_,i)=>completed(a,i)).filter(Boolean).length;
+ const ok=ready(a),res=score(d,a);
+ let h='<section class="psy-luria-results"><div class="psy-luria-result-head"><h3>Профиль запоминания</h3><span class="psy-luria-status '+(ok?'is-ready':'is-waiting')+'" role="status">'+(ok?'Данные заполнены':'Требуется заполнение')+'</span></div>';
+ if(!res)return h+'<p>Завершено '+done+' из 6 проб. Для расчета нужны пять предъявлений, для окончательного отчета также отсроченное воспроизведение. Завершенная проба с нулем правильных слов отличается от непроведенной.</p></section>';
+ const stats=[["1-я проба",res.first],["5-я проба",res.fifth],["Лучший результат",res.peak],["Среднее за 5 проб",res.mean],["Разность 5-й и 1-й",res.gain],["Через 60 минут",res.delayed??"–"]];
+ h+='<div class="psy-luria-stats">'+stats.map(([l,v])=>'<div><span>'+escape(l)+'</span><strong>'+escape(v)+'</strong></div>').join("")+'</div>';
  h+='<h4>Кривая по пяти предъявлениям</h4><div class="psy-luria-bars">'+res.trials.map((v,i)=>'<div><span>'+(i+1)+'</span><div class="psy-luria-track"><i style="width:'+(v*10)+'%"></i></div><b>'+v+' / 10</b></div>').join("")+'</div>';
- if(res.delayed===null)h+='<p><strong>Отсроченная проба не проведена или не отмечена.</strong> Это не нулевой результат.</p>';
- h+='<div class="notice">Описательная кривая; нормативные возрастные уровни автоматически не назначаются.</div></section>';return h;
+ if(!ok)h+='<p><strong>Предварительный расчет.</strong> Отсроченная проба не завершена, итоговый отчет пока недоступен.</p>';
+ h+='<div class="notice">Результаты описательные: возрастные уровни и диагнозы автоматически не назначаются.</div></section>';
+ return h;
 }
 function calculator(d,ctx){
  const rs=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rs[ctx.rowIndex]||rs[0],a=r.answers||[],notes=r.luriaNotes||[];
- let h='<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа по кодам</button></div>'+
+ let h='<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>'+
  '<div class="notice">Внесите услышанные ответы после предъявления слов. Ставьте галочку «Проба завершена», даже если воспроизведено 0 слов. <strong>Шестая строка – только через 60 минут, без повторного чтения.</strong></div>';
  if(ctx.calcMode==="class")h+='<div class="group-tools"><label>Участник<select id="participantSelect">'+rs.map((u,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+(i+1)+'. '+escape(u.name||"Код "+(i+1))+'</option>').join("")+'</select></label><label>Код, не ФИО<input id="participantName" value="'+escape(r.name||"")+'" placeholder="Код"></label><button class="btn" id="addParticipant">Добавить</button></div>';
  h+='<div class="psy-luria-trials">';
@@ -81,9 +84,8 @@ function calculator(d,ctx){
   '<div class="psy-luria-choices">'+WORDS.map((word,j)=>'<label><input type="checkbox" data-luria-word="'+(t*10+j)+'" '+(truth(a[t*10+j])?'checked':'')+'> '+escape(word)+'</label>').join("")+'</div>'+
   '<div class="psy-luria-notes"><label>«Лишние» слова / повторы<textarea data-luria-note="'+t+'" rows="2" placeholder="Посторонние слова и повторы отдельно">'+escape(notes[t]?.extra||"")+'</textarea></label></div></section>';
  });
- h+='</div><div id="luriaResult">'+results(a)+'</div>'+
- '<div class="psy-luria-actions"><button class="btn" id="resetParticipant">Очистить запись</button><button class="btn primary" id="luriaJSON">Скачать индивидуальный протокол JSON</button></div>';
- if(ctx.calcMode==="class")h+='<h3>Сводка участников</h3><div class="results-table"><table><thead><tr><th>Код</th><th>1-я</th><th>5-я</th><th>Пик</th><th>Через 60 мин</th></tr></thead><tbody>'+rs.map((u,i)=>{let z=score(d,u.answers);return '<tr><td>'+escape(u.name||"Код "+(i+1))+'</td><td>'+(z?.first??"–")+'</td><td>'+(z?.fifth??"–")+'</td><td>'+(z?.peak??"–")+'</td><td>'+(z?.delayed??"–")+'</td></tr>';}).join("")+'</tbody></table></div><div class="psy-luria-actions"><button class="btn primary" id="luriaCSV">Скачать CSV группы</button></div>';
+ h+='</div><div id="luriaResult">'+results(a)+'</div>';
+ if(ctx.calcMode==="class")h+='<h3>Сводка участников</h3><div class="results-table"><table><thead><tr><th>Код</th><th>1-я</th><th>5-я</th><th>Пик</th><th>Через 60 мин</th></tr></thead><tbody>'+rs.map((u,i)=>{let z=score(d,u.answers);return '<tr><td>'+escape(u.name||"Код "+(i+1))+'</td><td>'+(z?.first??"–")+'</td><td>'+(z?.fifth??"–")+'</td><td>'+(z?.peak??"–")+'</td><td>'+(z?.delayed??"–")+'</td></tr>';}).join("")+'</tbody></table></div>';
  return h;
 }
 function csv(x){let t=String(x??"");if(/^\s*[=+\-@]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"';}
