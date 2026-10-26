@@ -61,9 +61,20 @@ function calculator(d,ctx){
  return html+'</section>';
 }
 function save(filename,contents,mime){const url=URL.createObjectURL(new Blob([contents],{type:mime})),node=document.createElement("a");node.href=url;node.download=filename;document.body.appendChild(node);node.click();node.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
-function printable(d,r){const res=results(d,r.answers),body='<h1>'+escape(d.name)+'</h1><p>'+escape(d.author)+'</p><p>Код участника: '+escape(r.name||"Без идентификатора")+'</p><p>Версия: '+escape(d.age)+'</p><h2>Результаты</h2>'+(res?res.map(x=>'<p><b>'+escape(x.title)+'</b>: '+x.raw+(x.band?" – "+x.band:"")+'</p>').join(""):'<p>Количественная обработка не проводилась.</p>')+'<h2>Наблюдения</h2><p>'+escape(r.sixProtocol||"Не внесены")+'</p><h2>Ограничения</h2><p>'+escape(d.interpret)+'</p><p>Первоисточник: '+a(d.source,"Научная публикация")+'</p>';
-return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Протокол · '+escape(d.name)+'</title><style>@page{size:A4;margin:15mm}body{font:11pt/1.5 Arial;color:#244536}h1{font-size:17pt}h2{font-size:13pt;margin-top:17px}p{overflow-wrap:anywhere}</style></head><body>'+body+'</body></html>';}
-function csv(d,rows){const safe=x=>{const s=String(x??"");return '"'+(/^[\s]*[=+\-@]/.test(s)?"'"+s:s).replace(/"/g,'""')+'"';};return "\uFEFF"+[["Код участника","Статус",...(d.scales||[]).map(x=>x.title),"Наблюдения"],...rows.map((r,i)=>{let z=results(d,r.answers);return [r.name||"Участник "+(i+1),status(r,d)?"Заполнено":"Не заполнено",...(d.scales||[]).map((_,j)=>z?z[j].raw:""),r.sixProtocol||""];})].map(r=>r.map(safe).join(";")).join("\r\n");}
+function printable(d,r){
+ const res=results(d,r.answers),selected=d.forms[Number(r.sixVersion)]||d.forms[0];
+ const rows=res?res.map(x=>'<tr><td>'+escape(x.title)+'</td><td>'+x.raw+'</td><td>'+(x.band?escape(x.band):"Без нормативной категории")+'</td></tr>').join(""):"";
+ const score=res?'<h2>Обработка</h2><table><thead><tr><th>Шкала</th><th>Баллы</th><th>Уровень</th></tr></thead><tbody>'+rows+'</tbody></table>':'<h2>Обработка</h2><p>Количественный результат не вычислялся по данной редакции.</p>';
+ const list=d.responseCount?'<h2>Зарегистрированные ответы</h2><p>'+Array.from({length:d.responseCount},(_,i)=>(i+1)+": "+(r.sixAnswers?.[i]||"–")).map(escape).join(" · ")+'</p>':"";
+ const body='<h1>'+escape(d.name)+'</h1><p>'+escape(d.author)+'</p><p><b>Код участника:</b> '+escape(r.name||"Без персональных данных")+'</p><p><b>Редакция:</b> '+escape(selected.label)+'</p>'+score+list+'<h2>Наблюдения</h2><p>'+escape(r.sixProtocol||"Не записаны")+'</p><h2>Интерпретация и ограничения</h2><p>'+escape(d.interpret)+'</p><p>Первоисточник: '+a(d.source,"Научная публикация")+'</p>';
+ return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Протокол · '+escape(d.name)+'</title><style>@page{size:A4;margin:15mm}body{font:11pt/1.5 Arial;color:#244536}h1{font-size:17pt}h2{font-size:13pt;margin-top:16pt}p{overflow-wrap:anywhere}table{border-collapse:collapse;width:100%}th,td{padding:7pt;border:1px solid #b2c6bb;text-align:left}tr{break-inside:avoid}</style></head><body>'+body+'</body></html>';
+}
+function csv(d,rows){
+ const safe=x=>{const s=String(x??"");return '"'+(/^[\s]*[=+\-@]/.test(s)?"'"+s:s).replace(/"/g,'""')+'"';};
+ const head=["Код участника","Редакция","Состояние",...(d.scales||[]).map(x=>x.title),"Ответы без расчета","Наблюдения"];
+ const body=rows.map((r,i)=>{const scores=results(d,r.answers),selected=d.forms[Number(r.sixVersion)]||d.forms[0];return [r.name||"Участник "+(i+1),selected.label,scores?"Рассчитано":"Нет количественной обработки",...(d.scales||[]).map((_,j)=>scores?scores[j].raw:""),(r.sixAnswers||[]).join("|"),r.sixProtocol||""];});
+ return "\uFEFF"+[head,...body].map(row=>row.map(safe).join(";")).join("\r\n");
+}
 function bind(d,ctx){const rows=ctx.rows,r=rows[ctx.rowIndex];if(!r)return;const root=document.querySelector(".psy-six-calc");if(!root)return;const update=()=>{const okay=status(r,d);const badge=root.querySelector("#sixStatus");if(badge){badge.className="psy-six-state "+(d.scaleMax?(okay?"ready":"pending"):"neutral");badge.textContent=d.scaleMax?(okay?"Результат рассчитан":"Требуется заполнение"):"Протокол наблюдения";}const out=root.querySelector("#sixSummary");if(out)out.innerHTML=summary(d,r);const group=root.querySelector("#sixClass");if(group)group.innerHTML=table(d,rows);};
 root.querySelectorAll("[data-six-answer]").forEach(sel=>sel.addEventListener("change",()=>{r.answers ||= [];r.answers[Number(sel.dataset.sixAnswer)]=sel.value;update();}));
 root.querySelector("[data-six-notes]")?.addEventListener("input",e=>{r.sixProtocol=e.target.value;update();});
