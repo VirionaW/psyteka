@@ -166,10 +166,22 @@ document.addEventListener("click",e=>{if(!overlay||!overlay.contains(e.target))r
  else if(command==="print-child")print("child");else if(command==="print-stimuli")print("stimuli");
  else if(command==="print-report")print("report");else if(command==="word-blank")word("blank");else if(command==="word-report")word("report");
 });
+function downloadLines(id,lines){
+ const xml=x=>esc(x).replace(/&#39;/g,"&apos;");
+ const documentXml='<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+
+ lines.map(t=>'<w:p><w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr><w:t xml:space="preserve">'+xml(t)+'</w:t></w:r></w:p>').join("")+
+ '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:left="900" w:right="900" w:bottom="850"/></w:sectPr></w:body></w:document>';
+ const types='<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="xml" ContentType="application/xml"/><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
+ const rels='<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
+ const blob=pack({"[Content_Types].xml":types,"_rels/.rels":rels,"word/document.xml":documentXml});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=id+".docx";document.body.appendChild(a);a.click();a.remove();window.setTimeout(()=>URL.revokeObjectURL(url),60000);
+ return true;
+}
 function addToCatalog(){
  if(!window.PSY_CATALOG?.some(m=>m.name===COMP))window.PSY_CATALOG.push({id:definitions[COMP].id,name:COMP,author:"С. Я. Рубинштейн",age:"11-18 лет",theme:"Мышление",format:"Словесно-логическая проба",goal:definitions[COMP].goal,source:COMP_SOURCE});
 }
 function preschoolCatalog(){return [{id:definitions[PICT].id,existing:PICT,title:PICT,group:"Диагностика",topic:"Память",author:definitions[PICT].author,age:"6-7",format:"Диагностика опосредованной памяти",goal:definitions[PICT].goal,verified:true,source:PICT_SOURCE}]}
 addToCatalog();
-window.PSY_PMPK_SOURCED={definitions,has:name=>!!definitions[name],open,preschool:preschoolCatalog(),test:{ready:(n,d)=>ready(n,d),outcome,words:words.slice(),pairCount:pairs.length,initial}};
+window.PSY_PMPK_SOURCED={definitions,has:name=>!!definitions[name],open,downloadLines,preschool:preschoolCatalog(),test:{ready:(n,d)=>ready(n,d),outcome,words:words.slice(),pairCount:pairs.length,initial}};
 })();
