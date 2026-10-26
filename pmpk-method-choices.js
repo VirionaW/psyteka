@@ -14,6 +14,7 @@
  const r=(name,detail)=>({name,detail,kind:"reference"});
  const sourced=(name,detail)=>({name,detail,kind:"sourced"});
  const pieron=(detail)=>({name:"Проба Пьерона – Рузера (рабочий бланк)",detail,kind:"pieron"});
+ const object56=(id,name,detail)=>({id,name,detail,kind:"object56"});
  const catalogue=[
  // 3-5 лет
  [
@@ -27,10 +28,10 @@
  ],
  // 5-7 лет
  [
-  [c("Методика классификации предметов","6-7 лет · готовый комплект из 16 предметных карточек Психотеки для качественного исследования"),r("Исключение предметов","Обобщение и выделение существенного"),r("Детская предметная классификация","Группировка по родовому признаку"),r("Цветные прогрессивные матрицы Равена","Только с оригинальным комплектом стимулов")],
+  [object56("row","Включение в ряд (по материалам Е. А. Стребелевой)","Строго 5-6 лет · шесть матрешек, нахождение места в ряду"),object56("count","Счет палочек за экраном (по материалам Е. А. Стребелевой)","Строго 5-6 лет · счет в скрытых преобразованиях количества"),c("Методика классификации предметов","6-7 лет · готовый комплект из 16 предметных карточек Психотеки для качественного исследования"),r("Исключение предметов","Обобщение и выделение существенного"),r("Детская предметная классификация","Группировка по родовому признаку"),r("Цветные прогрессивные матрицы Равена","Только с оригинальным комплектом стимулов")],
   [r("Запоминание двух групп слов","Непосредственная слухоречевая память"),r("Узнавание фигур","С 6 лет; зрительная память"),sourced("Пиктограмма (А. Р. Лурия, модификация Е. И. Изотовой)","Строго 6-7 лет · 12 слов, отсрочка не менее 20 минут, опубликованные нормы опосредованного запоминания")],
   [pieron("5-7 лет · рабочая геометрическая таблица Психотеки, правила из опубликованной процедуры, без переносимых норм"),r("Графический диктант","С 6 лет · требуется оригинальная процедура и набор диктантов")],
-  [r("«Скопируй точки»","Пространственные отношения и зрительно-моторная координация"),r("Составная доска Сегена","Наглядное соотнесение частей")],
+  [object56("ladder","Конструирование лесенки из палочек (по материалам Е. А. Стребелевой)","Строго 5-6 лет · конструкция из восьми палочек, работа по памяти и после помощи"),r("«Скопируй точки»","Пространственные отношения и зрительно-моторная координация"),r("Составная доска Сегена","Наглядное соотнесение частей")],
   [c("Последовательные картинки","6-7 лет · готовый авторский набор Психотеки, три сюжета"),r("Рассказ по картинкам","Последовательность и связность речи"),r("Понимание логико-грамматических конструкций","С 6 лет")],
   [r("Классификация геометрических фигур (А.Я. Иванова)","С 6 лет; обучающий эксперимент"),r("«Угадай картинку»","С 6 лет; проверка использования помощи")],
   [c("Лесенка","С 6 лет; самооценка и объяснение выбора"),r("«Эмоциональные лица»","Распознавание эмоциональной экспрессии")]
@@ -57,6 +58,9 @@
  ]
  ];
  const METHOD_META={
+  "Включение в ряд (по материалам Е. А. Стребелевой)":{author:"Диагностическая проба из сборника под ред. Е. А. Стребелевой, 1998; 5-6 лет"},
+  "Конструирование лесенки из палочек (по материалам Е. А. Стребелевой)":{author:"Диагностическая проба из сборника под ред. Е. А. Стребелевой, 1998; 5-6 лет"},
+  "Счет палочек за экраном (по материалам Е. А. Стребелевой)":{author:"Диагностическая проба из сборника под ред. Е. А. Стребелевой, 1998; 5-6 лет"},
   "Проба Пьерона – Рузера (рабочий бланк)":{author:"Пьерон – Рузер; рабочая таблица Психотеки, не оригинальный нормированный стимульный бланк"},
   "Пиктограмма (А. Р. Лурия, модификация Е. И. Изотовой)":{author:"А. Р. Лурия · модификация Е. И. Изотовой; публикация Изотовой, Молчановой, Авдуловой, Хузеевой (2025)"},
   "Сравнение понятий (С. Я. Рубинштейн)":{author:"С. Я. Рубинштейн · полный список из 26 пар, качественный анализ"},
@@ -87,8 +91,8 @@
  const authorFor=m=>METHOD_META[m.name]?.author||(m.kind==="working"?"Авторская рабочая проба Психотеки, без возрастных нормативов":"");
  const selections=Array.from({length:4},()=>Array(7).fill(""));
  const esc=x=>String(x??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
- function idFor(m){return m.kind==="working"?"working:"+m.id:m.kind==="sourced"?"sourced:"+m.name:m.kind==="pieron"?"pieron:"+m.name:m.kind==="early"?"early:"+m.id:m.kind==="catalog"?"catalog:"+m.name:"reference:"+m.name}
- function hasPortfolio(m){return (m.kind==="working"&&!!window.PSY_PMPK_METHODS?.open)||(m.kind==="sourced"&&!!window.PSY_PMPK_SOURCED?.has?.(m.name))||(m.kind==="pieron"&&!!window.PSY_PMPK_PIERON?.has?.(m.name))||(m.kind==="early"&&!!window.PSY_PMPK_EARLY?.has?.(m.id))||(m.kind==="catalog"&&!!window.PSY_CATALOG?.find(x=>x.name===m.name)&&!!window.PSY_FULL_METHODS?.[m.name])}
+ function idFor(m){return m.kind==="working"?"working:"+m.id:m.kind==="sourced"?"sourced:"+m.name:m.kind==="pieron"?"pieron:"+m.name:m.kind==="object56"?"object56:"+m.id:m.kind==="early"?"early:"+m.id:m.kind==="catalog"?"catalog:"+m.name:"reference:"+m.name}
+ function hasPortfolio(m){return (m.kind==="working"&&!!window.PSY_PMPK_METHODS?.open)||(m.kind==="sourced"&&!!window.PSY_PMPK_SOURCED?.has?.(m.name))||(m.kind==="pieron"&&!!window.PSY_PMPK_PIERON?.has?.(m.name))||(m.kind==="object56"&&!!window.PSY_PMPK_OBJECT56?.has?.(m.id))||(m.kind==="early"&&!!window.PSY_PMPK_EARLY?.has?.(m.id))||(m.kind==="catalog"&&!!window.PSY_CATALOG?.find(x=>x.name===m.name)&&!!window.PSY_FULL_METHODS?.[m.name])}
  function CSSsafe(s){return String(s).replace(/["\\]/g,"\\$&")}
  function portfolioCount(age){return (catalogue[age]||[]).flat().filter(m=>hasPortfolio(m)).length}
  function render(age,task){
@@ -97,7 +101,7 @@
    '<p class="pmpk-choices-hint">Выберите методику для протокола. Для проведения используйте ее собственное руководство и материалы.</p>'+
    '<div class="pmpk-choices-list">'+items.map((m,i)=>{
     const id=idFor(m),selected=selections[age][task]===id,has=hasPortfolio(m);
-    const tag=m.kind==="working"?"Дополнительная проба":m.kind==="early"?"Возрастная предметная проба":m.kind==="sourced"?"Методика с проверенным источником":m.kind==="pieron"?"Рабочая графическая форма":has?"Портфолио Психотеки":"Методическое описание";
+    const tag=m.kind==="working"?"Дополнительная проба":m.kind==="early"?"Возрастная предметная проба":m.kind==="sourced"?"Методика с проверенным источником":m.kind==="pieron"?"Рабочая графическая форма":m.kind==="object56"?"Предметная проба 5-6 лет":has?"Портфолио Психотеки":"Методическое описание";
     return '<article class="pmpk-choice'+(selected?" is-chosen":"")+'">'+
      '<div class="pmpk-choice-copy"><span class="pmpk-choice-tag">'+esc(tag)+'</span>'+
      '<h4>'+esc(titleFor(m))+'</h4>'+
@@ -129,6 +133,7 @@
   if(m.kind==="early")window.PSY_PMPK_EARLY?.open?.(m.id,task);
   if(m.kind==="sourced")window.PSY_PMPK_SOURCED?.open?.(m.name);
   if(m.kind==="pieron")window.PSY_PMPK_PIERON?.open?.();
+  if(m.kind==="object56")window.PSY_PMPK_OBJECT56?.open?.(m.id);
   if(m.kind==="catalog"){
    const item=window.PSY_CATALOG?.find(x=>x.name===m.name);
    if(item){
