@@ -42,11 +42,12 @@ Object.assign(d,{
 D[NAME]=d;
 function sourceLinks(d){return '<div class="psy-luria-links"><a class="btn primary" href="'+escape(d.guideFile)+'" download>Методика и протокол · Word</a><a class="btn" href="'+escape(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк психолога · А4 ↗</a><a class="btn" href="'+escape(d.sourceAlternative)+'" target="_blank" rel="noopener noreferrer">Описание процедуры ↗</a></div>';}
 function instruction(d){
- return '<h3>Инструкция и порядок проведения</h3><p>'+escape(d.instructions)+'</p>'+sourceLinks(d)+
- '<h3>Список для чтения специалистом</h3><div class="psy-luria-words">'+WORDS.map((w,i)=>'<span><b>'+(i+1)+'</b> '+escape(w)+'</span>').join("")+'</div>'+
- '<p><strong>Произнесите:</strong> «Я прочту несколько слов. После того как я закончу, повтори столько слов, сколько сможешь, в любом порядке». Далее используйте тот же порядок 5 раз, записывая ответы в отдельную строку каждого предъявления.</p>'+
- '<p>При отсроченной пробе через 60 минут слова повторно не читайте. Фиксируйте реальное время отсрочки в бумажном протоколе.</p>'+
- '<div class="notice psy-luria-caution">'+escape(d.warning)+'</div>';
+ return '<div class="psy-luria-section-head"><h3>Методика и руководство</h3><div class="psy-luria-print-links"><a class="btn" href="'+escape(d.guideFile)+'?with_protocol=0" target="_blank" rel="noopener noreferrer">Без бланка</a><a class="btn primary" href="'+escape(d.guideFile)+'?with_protocol=1" target="_blank" rel="noopener noreferrer">С бланком</a></div></div>'+
+ '<h3>Цель и условия</h3><p>'+escape(d.goal)+'</p><p>Проводить в тишине. Подготовить отдельный список стимулов и протокол. Участник не видит написанные слова.</p>'+
+ '<h3>Инструкция участнику</h3><p>«Сейчас я зачитаю 10 слов. Внимательно слушайте и запоминайте. Ваша задача, после того как я закончу, повторить как можно больше слов в произвольном порядке».</p>'+
+ '<h3>Процедура</h3><ol><li>Прочитать список с интервалами 1-2 секунды.</li><li>Зафиксировать названные слова, повторы и посторонние слова.</li><li>Повторить предъявление еще четыре раза, каждый раз регистрируя ответы отдельно.</li><li>Через 60 минут попросить вспомнить слова без нового предъявления. Записать фактическое время отсрочки.</li></ol>'+
+ '<h3>Регистрация и подсчет</h3><p>'+escape(d.scoring)+'</p><h3>Интерпретация и ограничения</h3><p>'+escape(d.interpret)+'</p>'+
+ '<div class="notice psy-luria-caution">'+escape(d.warning)+'</div><p>Источник редакции: Налькин С. А., 2021, приложение 3. <a href="'+escape(d.source)+'" target="_blank" rel="noopener noreferrer">Открыть источник</a>.</p>';
 }
 function grid(d,preview=false){
  let html='<div class="psy-luria-grid-wrap"><table class="psy-luria-grid"><thead><tr><th>Проба</th>'+WORDS.map(w=>'<th>'+escape(w)+'</th>').join("")+'<th>Итог</th></tr></thead><tbody>';
