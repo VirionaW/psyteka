@@ -157,7 +157,9 @@ function printPage(d,blank,combined,row){
  const source='<p class="print-source">Источник: '+a(d.source,"Научная публикация")+'</p>';
  const chosen=d.forms[Number(row?.sixVersion)]||d.forms[0];
  const guide='<article><h1>'+escape(d.name)+'</h1><p>'+escape(d.author)+'</p><p>Возраст: '+escape(d.age)+'</p><p>Редакция: '+escape(chosen.label)+'</p><h2>Цель</h2><p>'+escape(d.goal)+'</p><h2>Инструкция обследуемому</h2><blockquote>'+escape(d.instructions)+'</blockquote><h2>Порядок проведения</h2><p>'+escape(d.procedure)+'</p><h2>Ключ и правила подсчета</h2><p>'+escape(d.scoring)+'</p><h2>Интерпретация и ограничения</h2><p>'+escape(d.interpret)+'</p>'+source+'</article>';
- const sheet=(d.scaleMax||d.responseMax)?materials(d):'<section><h2>Оригинальный бланк выбранной редакции</h2><p>'+a(chosen.url,"Открыть проверенную форму")+'</p></section>';
+ const ssp2020=d.id==="morosanova-ssp-family"&&String(row?.sixVersion)==="3";
+ const sspSheet=ssp2020?'<section class="psy-six-sheet"><h2>Лист регистрации ССПМ-2020 · 28 пунктов</h2><p>Код участника: __________________　Дата: ___________</p><p>Для ответов используйте только оригинальные утверждения ССПМ-2020. Оценка каждого утверждения – 1-5. Здесь нет ключа.</p><table><thead><tr><th>№</th><th>Ответ</th><th>№</th><th>Ответ</th></tr></thead><tbody>'+Array.from({length:14},(_,i)=>'<tr><td>'+(i+1)+'</td><td class="blank-cell"></td><td>'+(i+15)+'</td><td class="blank-cell"></td></tr>').join("")+'</tbody></table></section>':"";
+ const sheet=(d.scaleMax||d.responseMax)?materials(d):(ssp2020?sspSheet:'<section><h2>Оригинальный бланк выбранной редакции</h2><p>'+a(chosen.url,"Открыть проверенную форму")+'</p></section>');
  const title='<html lang="ru"><head><meta charset="utf-8"><title>'+escape(d.name)+' · А4</title><style>'+css+'</style></head><body>';
  return '<!doctype html>'+title+(blank?sheet:guide)+(combined?'<div class="psy-six-print-break">'+sheet+'</div>':"")+'</body></html>';
 }
