@@ -206,6 +206,16 @@
   currentUser=null;trial=null;role="participant";if(timer)clearInterval(timer);
   el("psyHomeTrial").hidden=true;step("psyEntryEmail");
  });
+ if(authEnabled&&client){
+  client.auth.getUser().then(async ({data, error:authError})=>{
+   if(authError||!data?.user)return;
+   const {data:access,error:readError}=await client.from("psy_trial_access")
+      .select("started_at,expires_at").eq("user_id",data.user.id).maybeSingle();
+   if(!readError&&access&&new Date(access.expires_at).getTime()>Date.now()){
+    trial=access;clock();
+   }
+  }).catch(()=>{});
+ }
  try{
   const params=new URLSearchParams(location.search);
   if(params.has("entry")||params.get("access")==="1"){
