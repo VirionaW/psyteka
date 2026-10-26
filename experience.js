@@ -189,7 +189,7 @@ function viewOverview(m){
    '<a class="btn psy-portfolio-document" href="'+escapeHTML(url)+'" target="_blank" rel="noopener noreferrer">'+
    escapeHTML(label+' · '+(/\.docx$/i.test(url)?"Word":/\.html$/i.test(url)?"А4":"Файл"))+'</a>'
  );
- const packLinks=links.length&&m.name!=="Таблицы Шульте"?'<section class="psy-profile-files"><h3>Материалы методики</h3><div class="psy-portfolio-file-links">'+links.join("")+'</div></section>':"";
+ const packLinks=links.length&&m.name!=="Таблицы Шульте"&&!["pairedAssoc20","simpleAnalogies12"].includes(d?.workflow)?'<section class="psy-profile-files"><h3>Материалы методики</h3><div class="psy-portfolio-file-links">'+links.join("")+'</div></section>':"";
  return '<section class="psy-portfolio-reference psy-portfolio-unified"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div>'+goalHtml+indicatorHtml+sourceHtml+packLinks+'</section>';
 }
 
