@@ -167,3 +167,21 @@ body.pmpk-method-open{overflow:hidden}
  .pmpk-method-footer .pmpk-status{margin-right:auto}
 }
 @media(prefers-reduced-motion:reduce){.pmpk-method-overlay *{scroll-behavior:auto}}
+
+/* Список методик непосредственно внутри заданий ПМПК. */
+.pmpk-choices{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.pmpk-choices-heading{font-size:14px;font-weight:800;margin:0 0 11px!important;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pmpk-choices-heading span{font-size:12px;font-weight:500;color:var(--muted)}
+.pmpk-choices-list{display:grid;gap:9px}
+.pmpk-choice{display:flex;gap:15px;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:11px;background:var(--soft);padding:13px 15px}
+.pmpk-choice.is-chosen{border-color:#5b9580;background:var(--area-soft,#e9f4f0)}
+.pmpk-choice-copy{min-width:0;flex:1}
+.pmpk-choice h4{font-size:15px;line-height:1.4;margin:4px 0;color:var(--ink)}
+.pmpk-choice p{font-size:13px;line-height:1.5;margin:3px 0!important;color:var(--muted)}
+.pmpk-choice-tag{font-size:11px;font-weight:750;letter-spacing:.02em;color:var(--muted)}
+.pmpk-choice-controls{display:flex;gap:7px;align-items:center;justify-content:flex-end;flex-wrap:wrap;flex-shrink:0;max-width:310px}
+.pmpk-choice-controls button{font-size:12px;padding:8px 11px;min-height:36px}
+.pmpk-choice-controls button[aria-pressed="true"]{background:#d8ece5;border-color:#6c9b87;color:#1c5b44}
+.pmpk-choice-source{font-size:12px;font-weight:650;color:var(--green);text-decoration:underline;text-underline-offset:3px;padding:6px 2px;white-space:nowrap}
+.pmpk-choice-source:focus-visible{outline:3px solid #d6aa5c;outline-offset:2px}
+@media(max-width:650px){.pmpk-choice{flex-direction:column;align-items:stretch}.pmpk-choice-controls{justify-content:flex-start;max-width:none}.pmpk-choice-controls button{flex:0 0 auto}}
