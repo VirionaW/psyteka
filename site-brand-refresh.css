@@ -111,3 +111,30 @@ html.dark .site-landing #siteHome .site-logo .psy-site-wordbox small{
  .site-landing #siteHome .site-logo .psy-site-wordbox .psy-wordmark{font-size:18px!important}
  .site-landing #siteHome .site-logo .psy-site-wordbox small{font-size:9px}
 }
+
+/* Защита от старого универсального правила .site-logo span. */
+.site-landing #siteHome .site-header .site-logo .psy-site-wordbox{
+ display:flex!important;
+ align-items:flex-start!important;
+ flex-direction:column!important;
+ width:auto!important;
+ height:auto!important;
+ min-width:0!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+}
+.site-landing #siteHome .site-header .site-logo .psy-site-wordbox>.psy-wordmark{
+ display:inline-flex!important;
+ align-items:baseline!important;
+ width:auto!important;
+ height:auto!important;
+ margin:0!important;
+ padding:0!important;
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+}
