@@ -196,18 +196,21 @@
   return x;
  }
  function printHTML(type){
-  const title=type==="report"?"Качественный протокол":type==="stimuli"?"Стимулы специалиста":type==="child"?"Рабочий лист":type==="blank"?"Протокол специалиста":"Методика и руководство";
+  const title=type==="report"?"Качественный протокол":type==="blank"?"Протокол специалиста":"Руководство по маршруту";
   const head='<h1>'+esc(title)+'</h1><p>Возраст: '+AGE_LABELS[state.age]+' · Психотека · Рабочий нестандартизированный маршрут</p>';
   const list=lines=>lines.map(x=>x===""?'<div style="height:13px"></div>':'<p>'+esc(x)+'</p>').join("");
   let html="";
   if(type==="blank")html=head+list(blankLines());
   else if(type==="report")html=head+list(reportLines());
-  else if(type==="stimuli")html=head+'<p><strong>Только для специалиста. Не выдавать ребенку.</strong></p>'+TASKS.map((t,i)=>'<section class="task"><h2>'+(i+1)+'. '+esc(t.title)+'</h2>'+route(i).stimuli.map(s=>'<p>'+esc(s)+'</p>').join("")+'</section>').join("");
-  else if(type==="child")html=childSheet();
   else {
-   html=head+'<p>Авторская рабочая серия Психотеки. Проводится индивидуально с качественной регистрацией, без нормативных уровней. План до 40 минут; корректируйте по утомляемости и состоянию.</p>'+
-    TASKS.map((t,i)=>{const v=route(i);return '<section class="task"><h2>'+(i+1)+'. '+esc(t.title)+' · '+SCHEDULE[i]+' мин</h2><p>Цель: '+esc(t.goal)+'</p><p>Вариант: '+esc(v.name)+'. Материалы: '+esc(v.materials)+'</p><ol>'+v.procedure.map(s=>'<li>'+esc(s)+'</li>').join("")+'</ol><p>Регистрация: самостоятельность, помощь, ошибки, утомление, самокоррекция.</p></section>'}).join("");
-   if(type==="guide-blank")html+='<div class="page-break"></div>'+list(blankLines());
+    html=head+'<p>Это общий маршрут обследования ПМПК, а не руководство конкретного теста. Для предъявления стимулов, ключей и подсчета используйте материалы выбранной методики и ее оригинальную редакцию. Время определяется процедурой и состоянием ребенка.</p>'+
+    TASKS.map((t,i)=>{
+      const chosen=selectedMethod(i);
+      return '<section class="task"><h2>'+(i+1)+'. '+esc(t.title)+'</h2><p>Исследуется: '+esc(t.goal)+'</p>'+
+      '<p>Методика: '+esc(chosen?.name||"Не выбрана")+'</p>'+
+      '<p>Регистрировать: ответы и характер ошибок, самостоятельность, помощь, самокоррекцию, признаки утомления.</p></section>';
+    }).join("");
+    if(type==="guide-blank")html+='<div class="page-break"></div>'+list(blankLines());
   }
   return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>'+esc(title)+'</title><style>@page{size:A4;margin:16mm 17mm}body{font:11pt/1.42 Arial,sans-serif;color:#202b27}h1{font-size:17pt;margin:0 0 12pt}h2{font-size:12pt;margin:16pt 0 5pt}p{margin:4pt 0;overflow-wrap:break-word}li{margin:4pt 0}ol{padding-left:22px}.task{break-inside:avoid;page-break-inside:avoid;margin-bottom:13pt}.page-break{break-before:page;page-break-before:always}.shapes{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin:16pt 0}.shapes svg{width:22px;height:22px}.letter-grid{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;margin:14pt 0}.letter-grid span{text-align:center;font:16pt/1.5 monospace;border-bottom:1px solid #ddd}.copy-area{min-height:95pt;border:1px solid #ddd;margin-top:8pt;padding:9pt}.copy-area svg{width:90px;height:70px;vertical-align:middle;margin-right:25pt}.empty-area{height:120pt;border:1px solid #bbb;margin:8pt 0 20pt}</style></head><body>'+html+'</body></html>';
  }
@@ -223,6 +226,7 @@
   return '<h1>Рабочий лист</h1><p>Код: _____________________ Дата: _______________</p><h2>Задание 1</h2><p>'+(state.age===0?"Найди все круги.":state.age===1?"Отметь все треугольники.":state.age===2?"Зачеркни все буквы А.":"Зачеркни все буквы А, подчеркни все буквы О.")+'</p><div class="'+(state.age<2?"shapes":"letter-grid")+'">'+cells+'</div><div class="page-break"></div><h2>Задание 2</h2><p>Рассмотри образец и нарисуй так же на свободном поле.</p><div class="copy-area">'+shapeSvg(0)+shapeSvg(1)+shapeSvg(2)+'</div><div class="empty-area"></div><h2>Задание 3</h2><p>Повтори расположение фигур.</p><div class="copy-area">'+(state.age<2?shapeSvg(0)+shapeSvg(2):'<svg viewBox="0 0 110 70" style="width:120px"><rect x="8" y="10" width="64" height="45" stroke="black" fill="none" stroke-width="2"/><circle cx="59" cy="28" r="20" stroke="black" fill="none" stroke-width="2"/></svg>')+'</div><div class="empty-area"></div>';
  }
  function openPrint(type){
+  if(!["report","guide","guide-blank","blank"].includes(type))return;
   if(type==="report"&&!routeReady())return;
   const win=window.open("","_blank");
   if(!win){window.alert("Разрешите открытие окна для печати в браузере.");return}
