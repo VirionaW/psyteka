@@ -737,6 +737,7 @@ function exportGroup(d){
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Психотека_результаты.csv';a.click();URL.revokeObjectURL(url);
 }
 function makePrintPage(d,blank,combined=false){
+ if(d?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.printPage(d,blank,combined,rows[rowIndex]);
  const css='@page{size:A4 portrait;margin:15mm}*{box-sizing:border-box}body{font:11pt/1.45 Arial,sans-serif;color:#233a2f}h1{font-size:19pt;margin:0 0 9px}h2{font-size:13pt;margin:20px 0 7px}p{margin:8px 0}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #8da998;padding:7px;vertical-align:top;font-size:9pt;overflow-wrap:anywhere}tr{break-inside:avoid}svg{max-width:100%;height:auto}.drawing-space{min-height:500px;border:1px solid #9eb9a7}.print-student{break-before:page;page-break-before:always}.print-note{font-size:9pt;color:#526b5d}button,.actions,.toolbar,.print-links{display:none!important}';
  const head='<html lang="ru"><head><meta charset="utf-8"><title>'+escapeHTML(methodNow?.name||'Материалы специалиста')+'</title><style>'+css+'</style></head><body>';
  const instruction=String(d.instructions||'');
