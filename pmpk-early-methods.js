@@ -34,7 +34,7 @@
  function blankState(){return {version:"",code:"",date:new Date().toISOString().slice(0,10),mode:"",strategy:"",help:"",count:"",rubric:"",notes:"",reason:""}}
  function current(){return sessions[active]||(sessions[active]=blankState())}
  function method(){return METHODS[active]}
- function expected(){const n=Number(current().version);return Number.isInteger(n)&&n>=0&&n<=1?versions[n].count[active]:0}
+ function expected(){const raw=current().version;if(raw!=="0"&&raw!=="1")return 0;return versions[Number(raw)].count[active]}
  function ready(){const d=current(),n=expected();return !!n&&d.mode!==""&&(d.mode==="Не проводилось"?!!d.reason.trim():d.count!==""&&Number.isInteger(+d.count)&&+d.count>=0&&+d.count<=n&&!!d.strategy&&!!d.help&&!!d.notes.trim()&&/^[1-4]$/.test(d.rubric))}
  function chooseOptions(options,value){return '<option value="">Выберите</option>'+options.map(x=>'<option value="'+ESC(x)+'"'+(value===x?" selected":"")+'>'+ESC(x)+'</option>').join("")}
  function overview(){const m=method();return '<div class="pmpk-method-box"><h3>Общие сведения</h3><div class="pmpk-method-facts">'+[
