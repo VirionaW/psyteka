@@ -72,7 +72,7 @@
   }
  };
  const verified=window.PSY_PRESCHOOL_VERIFIED?.catalog||[];
- const data=subjects.concat(reuse,verified,window.PSY_PMPK_SOURCED?.preschool||[]).map((m,i)=>Object.assign({
+ const data=subjects.concat(reuse,verified,window.PSY_PMPK_SOURCED?.preschool||[],window.PSY_PMPK_PIERON?.preschool||[]).map((m,i)=>Object.assign({
   id:"preschool-"+String(i+1).padStart(2,"0"),
   format:m.existing?"Диагностическая методика":m.group==="Диагностика"?"Карта наблюдения / протокол":"Рабочий материал",
   author:m.existing?"":"Психотека"
