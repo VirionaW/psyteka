@@ -8,7 +8,7 @@
 <script defer src="auth-config.js?v=20261026a1"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
 <script defer src="registration.js?v=20261026a1"></script>
-</head>
+ <style>[hidden]{display:none!important}</style></head>
 <body>
 <header class="auth-header"><a href="index.html?home=1" class="auth-brand"><img src="brand-mark.svg?v=20261025c" width="45" height="45" alt=""><span><strong>Психотека</strong><small>Методическая библиотека</small></span></a><a class="auth-back" href="index.html?home=1">На главную</a></header>
 <main class="auth-wrap">
@@ -40,6 +40,7 @@
    <p id="authEmailLabel"></p>
    <p class="auth-help">Профиль пока сохраняет сведения локально. Синхронизация избранного и папок будет подключена отдельно.</p>
    <a href="profile.html" class="auth-button-link">Открыть профиль</a>
+   <a href="manage-users.html" class="auth-button-link" id="authManageLink" hidden>Управление пользователями</a>
    <button class="auth-secondary" id="authSignOut" type="button">Выйти</button>
   </div>
   <p class="auth-status" id="authStatus" role="status" aria-live="polite"></p>
