@@ -78,7 +78,20 @@
   author:m.existing?"":"Психотека"
  },m));
  const detailById=new Map(data.filter(m=>!m.existing).map(m=>[m.id,m]));
- for(const m of detailById.values())m.detailed=portfolioDetails[m.title]||null;
+ // Все 21 рабочие записи ДОУ должны иметь портфолио, а не пустую вкладку.
+ const derivedDetails=m=>({
+  format:m.title.startsWith("Протокол беседы")?"Протокол беседы специалиста":m.group==="Диагностика"?"Карта качественного наблюдения":"Рабочая карта сопровождения",
+  goal:m.goal,
+  conditions:"Возраст выбранной рабочей формы: "+m.age+" лет. Наблюдение и беседа проводятся в доступной ребенку, безопасной и привычной ситуации. Запишите конкретные условия наблюдения.",
+  indicators:m.items.slice(),
+  materials:["Регистрационный протокол специалиста","Реальные материалы группы или беседы, предусмотренные описанной процедурой"],
+  steps:[m.steps],
+  registration:"Пункты фиксируются отдельно. «Отмечено» – действие наблюдалось в указанной ситуации; «Не отмечено» – в данной ситуации не наблюдалось; пустое поле – данных нет. Ни один вариант не заменяет заметки о контексте и помощи.",
+  reading:m.recommend,
+  limits:"Это описательный рабочий протокол без опубликованных возрастных нормативов и клинических порогов. Отметки нельзя переводить в диагноз или уровень развития.",
+  outcome:"Качественная запись с датой, ситуацией, наблюдаемыми действиями и следующим шагом сопровождения."
+ });
+ for(const m of detailById.values())m.detailed=portfolioDetails[m.title]||derivedDetails(m);
  for(const m of detailById.values()){
   if(m.verified){window.PSY_FULL_METHODS[m.title]={workflow:"preschoolSheet",preschoolId:m.id,verified:true,verifiedKey:m.verifiedKey,portfolioFilled:true,author:m.author,age:m.age+" лет",kind:m.format,goal:m.goal,count:m.verifiedKey==="mittens"?"5 критериев":"3 выбора",source:m.source,calculator:true};continue;}
   window.PSY_FULL_METHODS[m.title]={
@@ -174,6 +187,10 @@
   return '<div class="psy-preschool-guide">'+
    '<h3>Назначение</h3><p>'+esc(p.goal)+'</p>'+
    '<h3>Условия проведения</h3><p>'+esc(p.conditions)+'</p>'+
+   '<h3>Инструкция ребенку / условия предъявления</h3>'+
+   (m.title.startsWith("Протокол беседы")?
+     '<blockquote class="kid-instruction">Я хочу немного поговорить с тобой. Ты можешь отвечать своими словами, не отвечать на вопрос или попросить меня повторить его. Правильных и неправильных ответов здесь нет.</blockquote><p>Это вводная реплика специалиста; содержательные вопросы берутся из выбранного протокола беседы.</p>':
+     '<p>Это карта наблюдения, а не задания, которые нужно предъявлять ребенку. Пункты протокола ребенку не зачитываются. При необходимости объясните наблюдение доступными словами и получите предусмотренное согласие.</p>')+
    '<h3>Подготовка и материалы</h3><ul>'+p.materials.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>'+
    '<h3>Порядок проведения для специалиста</h3><ol>'+p.steps.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol>'+
    '<h3>Регистрация и обработка</h3><p>'+esc(p.registration)+'</p>'+
