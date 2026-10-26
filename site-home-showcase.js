@@ -13,6 +13,12 @@
   try{win=frame.contentWindow;doc=frame.contentDocument}catch(_){return}
   if(!win||!doc)return;
   const area=frame.dataset.psyLibraryPreview||"school";
+  if(area==="portfolio"){
+   const method=(win.PSY_CATALOG||[]).find(m=>m.name==="Таблицы Шульте");
+   if(method&&typeof win.openMethod==="function")win.openMethod(method);
+   win.scrollTo({top:0,behavior:"instant"});
+   return;
+  }
   let target;
   if(area==="preschool")target=doc.querySelector("#preschoolView .subbar, #preschoolView .preschool-subbar, #preschoolView");
   else target=doc.querySelector("#schoolView .subbar, #schoolView .catalog, #schoolView");
