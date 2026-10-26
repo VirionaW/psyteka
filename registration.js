@@ -25,6 +25,14 @@
   form.hidden=true;codeForm.hidden=true;panel.hidden=false;
   emailLabel.textContent=user.email||"Почта подтверждена";
   message("Электронная почта подтверждена. Вход выполнен.");
+  const manager=document.getElementById("authManageLink");
+  if(manager){
+   manager.hidden=true;
+   client.from("psy_account_roles").select("role")
+    .eq("user_id",user.id).maybeSingle()
+    .then(({data,error})=>{if(!error&&data?.role==="owner")manager.hidden=false;})
+    .catch(()=>{manager.hidden=true;});
+  }
  }
  async function sessionCheck(){
   try{
@@ -34,7 +42,7 @@
  }
  client.auth.onAuthStateChange((event,session)=>{
   if(event==="SIGNED_IN"&&session?.user)signedIn(session.user);
-  if(event==="SIGNED_OUT"){panel.hidden=true;form.hidden=false;codeForm.hidden=true;message("Вы вышли из аккаунта.")}
+  if(event==="SIGNED_OUT"){panel.hidden=true;form.hidden=false;codeForm.hidden=true;const manager=document.getElementById("authManageLink");if(manager)manager.hidden=true;message("Вы вышли из аккаунта.")}
  });
  sessionCheck();
  form.addEventListener("submit",async e=>{
