@@ -73,3 +73,5 @@ html.dark #modal.psy-special-current .psy-special-footer-state.complete,html.dar
 #modal.psy-special-current .special-table th:not(:first-child){width:11%}
 #modal.psy-special-current .special-table th:first-child{width:67%}
 #specialView .special-method .head h3{overflow-wrap:anywhere}
+
+@media(max-width:700px){#modal.psy-special-current .special-table th:first-child{width:55%}#modal.psy-special-current .special-table th:not(:first-child){width:15%}}
