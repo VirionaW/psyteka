@@ -1,0 +1,47 @@
+/* Единая нижняя панель диагностик. ТЗ 03: обработка всегда справа. */
+.library-page #modal.psy-main-tabs .modalfoot{
+ position:relative!important;
+ width:100%!important;
+ min-height:72px!important;
+ justify-content:flex-end!important;
+ align-items:center!important;
+}
+.library-page #modal.psy-main-tabs .modalfoot #bottomProcessing:not([hidden]){
+ position:absolute!important;
+ right:24px!important;
+ left:auto!important;
+ top:auto!important;
+ bottom:10px!important;
+ margin:0!important;
+ margin-left:0!important;
+ margin-right:0!important;
+ transform:none!important;
+ flex:0 0 auto!important;
+ width:auto!important;
+ min-width:0!important;
+}
+.library-page #modal .modalfoot .psy-standard-footer{
+ display:flex;
+ width:100%;
+ min-width:0;
+ align-items:center;
+ justify-content:flex-end!important;
+}
+.library-page #modal .modalfoot [hidden]{display:none!important}
+.library-page #modal .psy-common-guide-head{
+ display:flex;align-items:center;justify-content:space-between;
+ flex-wrap:wrap;gap:12px;margin:0 0 18px;
+}
+.library-page #modal .psy-common-guide-head h3{margin:0}
+.library-page #modal .psy-common-guide-actions{display:flex;gap:9px;align-items:center;justify-content:flex-end;flex-wrap:wrap;margin-left:auto}
+.library-page #modal .psy-common-guide-actions .btn{min-height:42px}
+@media(max-width:700px){
+ .library-page #modal.psy-main-tabs .modalfoot{min-height:65px!important}
+ .library-page #modal.psy-main-tabs .modalfoot #bottomProcessing:not([hidden]){
+   right:12px!important;bottom:10px!important;flex:0 0 auto!important;
+   max-width:calc(100% - 24px)!important;
+ }
+ .library-page #modal .psy-common-guide-head{align-items:stretch}
+ .library-page #modal .psy-common-guide-actions{width:100%;margin-left:0}
+ .library-page #modal .psy-common-guide-actions .btn{flex:1 1 140px;white-space:normal;text-align:center}
+}
