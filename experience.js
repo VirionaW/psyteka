@@ -66,7 +66,7 @@ function enhanceMethodView(tab,html){
     (directGuide?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" target="_blank" rel="noopener noreferrer">Без бланка</a>':
      '<button type="button" class="btn" data-generic-print="guide">Без бланка</button>')+
     (directCombined?'<a class="btn primary" href="'+escapeHTML(d.guideWithBlankFile)+'" target="_blank" rel="noopener noreferrer">С бланком</a>':
-      d.answerFile||d.studentFile||d.childFile||d.questions?.length||d.graphic?
+      d.answerFile||d.studentFile||d.childFile||d.questions?.length||d.graphic||(d.ssp2020Scales&&String(rows[rowIndex]?.sixVersion)==='3')?
       '<button type="button" class="btn primary" data-generic-print="combined">С бланком</button>':'')+
     '</div></div>';
    return buttons+html;
