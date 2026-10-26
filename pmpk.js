@@ -136,6 +136,40 @@
   }
   return '<div class="pmpk-bottom"><span class="pmpk-status '+(ready?"is-done":"")+'" data-main-status>'+(ready?"Обработка заполнена":"Обработка не заполнена")+'</span><button type="button" class="pmpk-action primary" data-action="processing">Обработка результатов</button></div>';
  }
+ function expandTask(i,open){
+  if(!Number.isInteger(i)||i<0||i>=TASKS.length)return;
+  if(open)state.opened[state.age].add(i);else state.opened[state.age].delete(i);
+  const area=root.querySelector('[data-pmpk-content="'+i+'"]');
+  const btn=root.querySelector('[data-pmpk-expand="'+i+'"]');
+  if(area)area.hidden=!open;
+  if(btn)btn.setAttribute("aria-expanded",String(open));
+ }
+ function jumpToTask(i){
+  if(!Number.isInteger(i)||i<0||i>=TASKS.length)return;
+  if(state.tab!=="portfolio"){state.tab="portfolio";render();}
+  expandTask(i,true);
+  const section=root.querySelector("#pmpk-task-"+i);
+  if(section)section.scrollIntoView?.({behavior:"smooth",block:"start"});
+ }
+ function choiceRefresh(change){
+  const i=change.task;
+  const existing=rec().items[i];
+  if(change.before)return existing?.status!=="done"||window.confirm("При смене методики результаты этого задания нужно очистить, чтобы не смешивать разные процедуры. Продолжить?");
+  if(change.choiceChanged&&existing?.status==="done"){
+   rec().items[i]={status:"",result:"",help:"",notes:"",reason:"",duration:""};
+  }
+  if(state.tab!=="portfolio"){render();return;}
+  const container=root.querySelector("#pmpk-task-"+i+" .pmpk-choices");
+  if(container)container.outerHTML=window.PSY_PMPK_CHOICES?.render(state.age,i)||"";
+  const name=root.querySelector('[data-pmpk-chosen-label="'+i+'"]');
+  const choice=selectedMethod(i),count=window.PSY_PMPK_CHOICES?.counts?.[state.age]?.[i]||0;
+  if(name)name.textContent=choice?"Выбрано: "+choice.name:count+" методики на выбор";
+  const selected=root.querySelector("[data-pmpk-selected-count]");
+  if(selected)selected.textContent=selectedCount()+" / 7";
+  const index=window.PSY_PMPK_CHOICES?.getSelectedIndex?.(state.age,i);
+  if(index>=0)root.querySelector('[data-pmpk-select="'+state.age+":"+i+":"+index+'"]')?.focus?.({preventScroll:true});
+  syncProgress();
+ }
  function render(){
   root.innerHTML=header()+(state.tab==="portfolio"?portfolio():state.tab==="guide"?guide():state.tab==="blank"?blank():processing())+bottom();
  }
@@ -149,14 +183,14 @@
  }
  function blankLines(){
   const x=["ПРОТОКОЛ СПЕЦИАЛИСТА · ПМПК", "Возраст: "+AGE_LABELS[state.age], "Участник / код: _____________________________________", "Дата: __________________  Условия: ______________________", "Оценка качественная. Нормативные уровни не предусмотрены.",""];
-  TASKS.forEach((t,i)=>{x.push((i+1)+". "+t.title+" – "+(window.PSY_PMPK_CHOICES?.getMethod(state.age,i)?.name||route(i).name));x.push("Выполнение: __________________  Помощь: __________________");x.push("Время: ______  Наблюдения: _____________________________");x.push("______________________________________________________");x.push("");});
+  TASKS.forEach((t,i)=>{x.push((i+1)+". "+t.title+" – "+(selectedMethod(i)?.name||"Методика не выбрана"));x.push("Выполнение: __________________  Помощь: __________________");x.push("Время: ______  Наблюдения: _____________________________");x.push("______________________________________________________");x.push("");});
   x.push("Наблюдение за контактом и утомляемостью: __________________");x.push("______________________________________________________");
   x.push("Качественное заключение специалиста: ____________________");x.push("______________________________________________________");
   return x;
  }
  function reportLines(){
   const d=rec(),x=["ПМПК · КАЧЕСТВЕННЫЙ ПРОТОКОЛ", "Возраст: "+AGE_LABELS[state.age],"Имя / код: "+(d.code||"не указан"),"Дата: "+(d.date||"не указана"),"Условия: "+(d.conditions||"не указаны"),"Рабочий маршрут Психотеки без нормативных порогов",""];
-  TASKS.forEach((t,i)=>{const y=d.items[i],choice=window.PSY_PMPK_CHOICES?.getMethod(state.age,i);x.push((i+1)+". "+t.title+" · "+(choice?"Выбрана: "+choice.name:route(i).name));if(y.status==="skip")x.push("Не проводилось. Причина: "+y.reason);else {x.push("Выполнение: "+y.result+"; помощь: "+y.help+(y.duration?" · "+y.duration+" сек":""));x.push("Наблюдения: "+y.notes)}x.push("");});
+  TASKS.forEach((t,i)=>{const y=d.items[i],choice=window.PSY_PMPK_CHOICES?.getMethod(state.age,i);x.push((i+1)+". "+t.title+" · "+(choice?"Выбрана: "+choice.name:"Методика не выбрана"));if(y.status==="skip")x.push("Не проводилось. Причина: "+y.reason);else {x.push("Выполнение: "+y.result+"; помощь: "+y.help+(y.duration?" · "+y.duration+" сек":""));x.push("Наблюдения: "+y.notes)}x.push("");});
   x.push("Качественное заключение специалиста: "+(d.summary||"Не заполнено"));
   x.push("Автоматическое диагностическое заключение не формировалось.");
   return x;
@@ -229,7 +263,12 @@
  }
  root.addEventListener("click",e=>{
   const button=e.target.closest("button");if(!button||!root.contains(button))return;
-  if(window.PSY_PMPK_CHOICES?.eventClick(button,state.age,render))return;
+  if(window.PSY_PMPK_CHOICES?.eventClick(button,state.age,choiceRefresh))return;
+  if(button.dataset.pmpkExpand!==undefined){const i=Number(button.dataset.pmpkExpand);expandTask(i,!state.opened[state.age].has(i));return;}
+  if(button.dataset.pmpkJump!==undefined){jumpToTask(Number(button.dataset.pmpkJump));return;}
+  if(button.dataset.pmpkExpandAll!==undefined){const open=button.dataset.pmpkExpandAll==="true";TASKS.forEach((_,i)=>expandTask(i,open));return;}
+  if(button.dataset.pmpkOpenSelected!==undefined){window.PSY_PMPK_CHOICES?.openSelected?.(state.age,Number(button.dataset.pmpkOpenSelected));return;}
+  if(button.dataset.pmpkGoSelect!==undefined){jumpToTask(Number(button.dataset.pmpkGoSelect));return;}
   if(button.hasAttribute("data-age")){state.age=Number(button.dataset.age);state.tab="portfolio";render();}
   else if(button.dataset.tab){state.tab=button.dataset.tab;render();}
   else if(button.dataset.action==="processing"){state.tab="processing";render();}
