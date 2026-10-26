@@ -112,9 +112,9 @@ function csv(d,rows){
 function bind(d,ctx){
  const rows=ctx.rows,r=rows?.[ctx.rowIndex],root=document.querySelector(".psy-six-calc");if(!r||!root)return;
  const update=()=>{
-  const ok=status(r,d),badge=root.querySelector("#sixStatus"),report=root.querySelector("[data-six-report]");
-  if(badge){badge.className="psy-six-state "+(d.scaleMax?(ok?"ready":"pending"):"neutral");badge.textContent=d.scaleMax?(ok?"Результат рассчитан":"Требуется заполнение"):"Протокол наблюдения";}
-  if(report&&d.scaleMax)report.disabled=!ok;
+  const ok=status(r,d),badge=root.querySelector("#sixStatus"),report=root.querySelector("[data-six-report]"),scored=!!d.scaleMax||(d.id==="morosanova-ssp-family"&&String(r.sixVersion)==="3");
+  if(badge){badge.className="psy-six-state "+(scored?(ok?"ready":"pending"):"neutral");badge.textContent=scored?(ok?"Результат рассчитан":"Требуется заполнение"):"Протокол наблюдения";}
+  if(report)report.disabled=scored&&!ok;
   const result=root.querySelector("#sixSummary");if(result)result.innerHTML=summary(d,r);
   const group=root.querySelector("#sixClass");if(group)group.innerHTML=table(d,rows);
  };
@@ -126,19 +126,21 @@ function bind(d,ctx){
  }));
  root.querySelector("[data-six-version]")?.addEventListener("change",e=>{
   r.sixVersion=e.target.value;
+  const sheet=root.querySelector("#sixSspAnswers");if(sheet)sheet.hidden=String(r.sixVersion)!=="3";
   const target=root.querySelector("#sixVersionLink"),v=r.sixVersion;
   if(target)target.innerHTML=v!==""&&d.forms[Number(v)]?a(d.forms[Number(v)].url,"Открыть оригинальный бланк выбранной редакции"):"Выберите нужную редакцию до проведения.";
   update();
  });
  root.querySelector("[data-six-notes]")?.addEventListener("input",e=>{r.sixProtocol=e.target.value;update();});
  root.querySelector("[data-six-report]")?.addEventListener("click",()=>{
-  if(d.scaleMax&&!status(r,d))return;
+  if((d.scaleMax||(d.id==="morosanova-ssp-family"&&String(r.sixVersion)==="3"))&&!status(r,d))return;
   save("psyteka_"+d.id+"_protocol.html",printable(d,r),"text/html;charset=utf-8");
  });
  root.querySelector("[data-six-clear]")?.addEventListener("click",()=>{
   if(!confirm("Очистить ответы участника?"))return;
   r.answers=[];r.sixAnswers=[];r.sixVersion="";r.sixProtocol="";
   root.querySelectorAll("[data-six-answer],[data-six-unverified],[data-six-version]").forEach(el=>el.value="");
+  const sheet=root.querySelector("#sixSspAnswers");if(sheet)sheet.hidden=true;
   const nt=root.querySelector("[data-six-notes]");if(nt)nt.value="";
   const linkNode=root.querySelector("#sixVersionLink");if(linkNode)linkNode.textContent="Выберите нужную редакцию до проведения.";
   update();
