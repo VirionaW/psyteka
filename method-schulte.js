@@ -91,25 +91,82 @@
    h+='<p><strong>Ошибки:</strong> '+(res.errorsComplete?'всего '+res.errorsTotal:'заполнены не для всех таблиц; сумма не рассчитывается')+'.</p>'+
    '<div class="notice">Показатели являются описательными. Не используйте автоматически возрастные нормы из другой редакции теста.</div></section>';return h;
  }
+
+ function done(answers){return Array.from({length:5},(_,i)=>answers?.[i*2]).filter(v=>v!==""&&v!=null&&Number.isFinite(Number(v))&&Number(v)>0&&Number(v)<=3600).length;}
+ const sorted=rows=>rows.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||"","ru",{sensitivity:"base"}));
+ function group(rows){
+  const people=sorted(rows).filter(x=>x.name?.trim()||done(x.answers));
+  return '<section class="psy-schulte-group"><h3>Результаты класса</h3><div class="psy-schulte-group-scroll"><table><thead><tr><th>Участник</th><th>ЭР, сек.</th><th>ВР</th><th>ПУ</th><th>Ошибки</th></tr></thead><tbody>'+
+   people.map(x=>{const z=score(d,x.answers);return '<tr><td>'+esc(x.name||"Без имени")+'</td><td>'+(z?z.mean:"—")+'</td><td>'+(z?z.vr:"—")+'</td><td>'+(z?z.pu:"—")+'</td><td>'+(z?(z.errorsTotal??"Не указаны"):"—")+'</td></tr>';}).join("")+
+   '</tbody></table></div></section>';
+ }
  function calculator(d,ctx){
-   const people=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],row=people[ctx.rowIndex]||people[0],a=row.answers||[];
-   let h='<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>';
-   h+='<div class="notice">После обследования внесите время выполнения каждой таблицы (секунды). Количество ошибок не входит в формулу ЭР, но сохраняется отдельно. 0 ошибок запишите цифрой 0. Персональные данные не отправляются на сервер.</div>';
-   if(ctx.calcMode==="class")h+='<div class="group-tools"><label>Участник<select id="participantSelect">'+people.map((p,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+(i+1)+'. '+esc(p.name||"Код "+(i+1))+'</option>').join("")+'</select></label><label>Код<input id="participantName" value="'+esc(row.name||"")+'" placeholder="Без ФИО"></label><button class="btn" id="addParticipant">Добавить</button></div>';
-   h+='<div class="psy-schulte-inputs">'+MATRIX.map((_,i)=>'<section class="psy-schulte-entry"><h4>Таблица '+(i+1)+'</h4><div class="psy-schulte-entry-fields"><label>Время, сек.<input data-schulte="'+(i*2)+'" type="number" inputmode="decimal" min="0.1" max="3600" step="0.1" value="'+esc(a[i*2]??"")+'" placeholder="Напр. 45.5"></label><label>Ошибок<input data-schulte="'+(i*2+1)+'" type="number" inputmode="numeric" min="0" max="999" step="1" value="'+esc(a[i*2+1]??"")+'" placeholder="0"></label></div></section>').join("")+'</div>';
-   h+='<div id="schulteResult">'+visual(d,a)+'</div><div class="psy-schulte-actions"><button class="btn" id="resetParticipant">Очистить ответы</button><button class="btn primary" id="schulteIndividual">Скачать протокол JSON</button></div>';
-   if(ctx.calcMode==="class")h+='<h3>Сводка по группе</h3><div class="results-table"><table><thead><tr><th>Код</th><th>ЭР, сек.</th><th>ВР</th><th>ПУ</th><th>Ошибок</th></tr></thead><tbody>'+people.map((p,i)=>{const z=score(d,p.answers);return '<tr><td>'+esc(p.name||"Код "+(i+1))+'</td><td>'+(z?.mean??"—")+'</td><td>'+(z?.vr??"—")+'</td><td>'+(z?.pu??"—")+'</td><td>'+(z?.errorsTotal??"—")+'</td></tr>'}).join("")+'</tbody></table></div><div class="psy-schulte-actions"><button class="btn primary" id="schulteCSV">Скачать таблицу класса CSV</button></div>';
-   return h;
+  const people=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],row=people[ctx.rowIndex]||people[0],a=row.answers||[];
+  let h='<section class="psy-schulte-calculator"><div class="psy-schulte-modes"><button type="button" class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button type="button" class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>';
+  if(ctx.calcMode==="class"){
+   h+='<div class="psy-schulte-workspace"><aside class="psy-schulte-sidebar"><h3>Список учащихся</h3><p>Каждое имя — с новой строки.</p>'+
+     '<label class="psy-schulte-label" for="schulteBulkNames">Добавить участников</label><textarea id="schulteBulkNames" rows="5" placeholder="Иванов Иван&#10;Петрова Мария"></textarea>'+
+     '<button type="button" class="btn primary" id="schulteAddNames">Добавить в список</button>'+
+     '<button type="button" class="btn" id="schulteSort">По алфавиту А – Я</button>'+
+     '<div class="psy-schulte-person-list">'+people.map((p,i)=>(p.name?.trim()||done(p.answers))?
+      '<div class="psy-schulte-person-row"><button type="button" class="psy-schulte-person '+(i===ctx.rowIndex?"active":"")+'" data-schulte-person="'+i+'"><span>'+esc(p.name||"Участник без имени")+'</span><small>'+done(p.answers)+'/5</small></button><button type="button" class="psy-schulte-person-delete" data-schulte-delete="'+i+'" aria-label="Удалить участника '+esc(p.name||"")+'">×</button></div>':"").join("")+'</div>'+
+     '<button type="button" class="btn psy-schulte-delete-all" id="schulteDeleteAll">Удалить всех участников</button></aside><div class="psy-schulte-entry-main">';
+  }else h+='<div class="psy-schulte-entry-main">';
+  h+='<label class="psy-schulte-name"><span>Фамилия и имя</span><input id="schulteCurrentName" autocomplete="off" maxlength="120" placeholder="Введите ФИО" value="'+esc(row.name||"")+'"></label>'+
+   '<p class="psy-schulte-progress" id="schulteProgress">Заполнено '+done(a)+' из 5 таблиц</p>'+
+   '<div class="psy-schulte-inputs">'+MATRIX.map((_,i)=>'<section class="psy-schulte-entry"><h4>Таблица '+(i+1)+'</h4><div class="psy-schulte-entry-fields"><label>Время, сек.<input data-schulte="'+(i*2)+'" type="number" inputmode="decimal" min="0.1" max="3600" step="any" value="'+esc(a[i*2]??"")+'" placeholder="Например, 45.5"></label><label>Ошибок<input data-schulte="'+(i*2+1)+'" type="number" inputmode="numeric" min="0" max="999" step="1" value="'+esc(a[i*2+1]??"")+'" placeholder="0"></label></div></section>').join("")+'</div>';
+  if(ctx.calcMode==="class")h+='<div class="psy-schulte-next"><button type="button" class="btn primary" id="schulteNext" '+(ctx.rowIndex>=people.length-1?"disabled":"")+'>Следующий участник →</button></div>';
+  h+='<div id="schulteResult">'+visual(d,a)+'</div></div>';
+  if(ctx.calcMode==="class")h+='</div><div id="schulteGroup">'+group(people)+'</div>';
+  return h+'</section>';
  }
  function csvSafe(s){let t=String(s??"");if(/^\s*[=+\-@]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"';}
  function download(n,content,mime){const blob=new Blob([content],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
- function bind(d,ctx){
-   document.querySelectorAll("[data-schulte]").forEach(el=>el.addEventListener("input",()=>{
-    ctx.rows[ctx.rowIndex].answers[Number(el.dataset.schulte)]=el.value===""?"":Number(el.value);
-    const box=document.getElementById("schulteResult");if(box)box.innerHTML=visual(d,ctx.rows[ctx.rowIndex].answers);
-   }));
-   document.querySelector("#schulteIndividual")?.addEventListener("click",()=>{const r=ctx.rows[ctx.rowIndex];download("schulte_individual.json",JSON.stringify({method:NAME,version:"Five tables, 1-25",code:r.name||"",answers:r.answers||[],result:score(d,r.answers),source:d.source,warning:d.warning},null,2),"application/json;charset=utf-8");});
-   document.querySelector("#schulteCSV")?.addEventListener("click",()=>{const tab=[["Код","ЭР","ВР","ПУ","Ошибок"],...ctx.rows.map((r,i)=>{const z=score(d,r.answers);return [r.name||"Код "+(i+1),z?.mean??"",z?.vr??"",z?.pu??"",z?.errorsTotal??""];})];download("schulte_class.csv","\uFEFF"+tab.map(row=>row.map(csvSafe).join(";")).join("\r\n"),"text/csv;charset=utf-8");});
+
+ function report(d,rows,calcMode,rowIndex){
+  const list=calcMode==="class"?sorted(rows).filter(x=>score(d,x.answers)):rows.slice(rowIndex,rowIndex+1).filter(x=>score(d,x.answers));
+  if(!list.length)return false;
+  const records=list.map(x=>{const z=score(d,x.answers);return '<tr><td>'+esc(x.name||"Участник")+'</td><td>'+z.mean+'</td><td>'+z.vr+'</td><td>'+z.pu+'</td><td>'+(z.errorsTotal??"Не указано")+'</td><td>'+z.times.join(" / ")+'</td></tr>';}).join("");
+  const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Таблицы Шульте — отчёт</title>'+
+   '<style>body{font:16px/1.55 Arial,sans-serif;color:#183d30;max-width:1100px;margin:32px auto;padding:0 24px}h1{font-size:24px}table{border-collapse:collapse;width:100%;margin:25px 0}th,td{border:1px solid #afc7ba;text-align:left;padding:10px}th{background:#e9f2ec}.note{font-size:13px;color:#526358}@media print{body{margin:0}table{font-size:12px}}</style></head><body>'+
+   '<h1>Таблицы Шульте — '+(calcMode==="class"?"отчёт класса":"отчёт участника")+'</h1><p>Дата: '+new Date().toLocaleDateString("ru-RU")+'</p>'+
+   '<table><thead><tr><th>Участник</th><th>ЭР, сек.</th><th>ВР</th><th>ПУ</th><th>Ошибки</th><th>T1–T5, сек.</th></tr></thead><tbody>'+records+'</tbody></table>'+
+   '<p class="note">'+esc(d.interpret)+'</p><p class="note">Результат носит описательный характер. Не является диагнозом.</p></body></html>';
+  download(calcMode==="class"?"Таблицы_Шульте_класс.html":"Таблицы_Шульте_участник.html",html,"text/html;charset=utf-8");
+  return true;
  }
- window.PSY_SCHULTE={tables:MATRIX.map(x=>x.slice()),score,tableHTML,instruction,materials,processing,calculator,bind};
+ function bind(d,ctx){
+  const rows=ctx.rows||[],person=rows[ctx.rowIndex];if(!person)return;
+  const refresh=()=>{
+   const out=document.getElementById("schulteResult");if(out)out.innerHTML=visual(d,person.answers);
+   const summary=document.getElementById("schulteGroup");if(summary)summary.innerHTML=group(rows);
+   const progress=document.getElementById("schulteProgress");if(progress)progress.textContent="Заполнено "+done(person.answers)+" из 5 таблиц";
+   const status=document.querySelector(".psy-schulte-person.active small");if(status)status.textContent=done(person.answers)+"/5";
+   const downloadBtn=document.getElementById("schulteReportBottom");if(downloadBtn)downloadBtn.disabled=!(ctx.calcMode==="class"?rows.some(x=>score(d,x.answers)):score(d,person.answers));
+  };
+  document.querySelectorAll("[data-schulte]").forEach(el=>el.addEventListener("input",()=>{
+   person.answers[Number(el.dataset.schulte)]=el.value===""?"":Number(el.value);
+   refresh();
+  }));
+  document.getElementById("schulteCurrentName")?.addEventListener("input",e=>{
+   person.name=e.target.value;
+   const selected=document.querySelector(".psy-schulte-person.active span");if(selected)selected.textContent=person.name||"Участник";
+   refresh();
+  });
+  document.querySelectorAll("[data-schulte-person]").forEach(el=>el.addEventListener("click",()=>ctx.onSelect?.(Number(el.dataset.schultePerson))));
+  document.querySelectorAll("[data-schulte-delete]").forEach(el=>el.addEventListener("click",()=>{if(confirm("Удалить участника из списка?"))ctx.onDelete?.(Number(el.dataset.schulteDelete));}));
+  document.getElementById("schulteAddNames")?.addEventListener("click",()=>{
+   const box=document.getElementById("schulteBulkNames");const names=(box?.value||"").split(/[\r\n]+/).map(x=>x.trim()).filter(Boolean);
+   if(names.length)ctx.onBulkAdd?.(names);else box?.focus();
+  });
+  document.getElementById("schulteSort")?.addEventListener("click",()=>{
+   const box=document.getElementById("schulteBulkNames");const names=(box?.value||"").split(/[\r\n]+/).map(x=>x.trim()).filter(Boolean);
+   ctx.onSort?.(names);
+  });
+  document.getElementById("schulteDeleteAll")?.addEventListener("click",()=>{
+   if(confirm("Удалить всех участников и результаты?"))ctx.onDeleteAll?.();
+  });
+  document.getElementById("schulteNext")?.addEventListener("click",()=>ctx.onNext?.());
+ }
+ window.PSY_SCHULTE={tables:MATRIX.map(x=>x.slice()),score,done,report,tableHTML,instruction,materials,processing,calculator,bind};
 })();
