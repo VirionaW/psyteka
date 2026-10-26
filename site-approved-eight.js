@@ -17,8 +17,17 @@
    const name=card.querySelector("h3")?.textContent?.trim()||"";
    const pos=approved.get(name);
    if(pos===undefined)continue;
-   const glyph=card.querySelector(".glyph");
-   if(!glyph||glyph.querySelector(".psy-approved-eight"))continue;
+   const head=card.querySelector(".head");
+   if(!head)continue;
+   let glyph=head.querySelector(".glyph");
+   if(!glyph){
+    // site-art.js sometimes removes an unmatched icon before this approved override runs.
+    glyph=document.createElement("div");
+    glyph.className="glyph";
+    glyph.setAttribute("aria-hidden","true");
+    head.prepend(glyph);
+   }
+   if(glyph.querySelector(".psy-approved-eight"))continue;
    const picture=document.createElement("span");
    picture.className="psy-approved-eight";
    picture.setAttribute("role","img");
@@ -26,6 +35,7 @@
    picture.style.backgroundPosition=((pos%4)/3*100)+"% "+Math.floor(pos/4)*100+"%";
    glyph.replaceChildren(picture);
    glyph.classList.remove("psy-art-glyph");
+   glyph.classList.add("psy-approved-eight-glyph");
    card.classList.add("psy-has-art");
    card.classList.remove("psy-no-art");
   }
