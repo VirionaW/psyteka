@@ -1,0 +1,113 @@
+
+/* Simple Analogies: fixed width key and MSPSS-style answer workspace. */
+.library-page #modal.psy-mspss-example .psy-analogies-key-grid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:10px;margin:15px 0 24px;max-width:100%;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-key-cell{
+ min-width:0;display:grid;grid-template-columns:auto 46px;
+ align-items:center;gap:6px 10px;border:1px solid #cee3d5;
+ border-radius:11px;background:#f4f9f5;padding:12px;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-key-num{
+ font-size:14px;font-weight:800;white-space:nowrap;color:#284a39;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-key-letter{
+ text-align:center;display:inline-flex;align-items:center;justify-content:center;
+ width:44px;height:40px;border-radius:9px;background:#d9ecde;color:#176446;font-size:20px;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-key-relation{
+ grid-column:1/-1;overflow-wrap:break-word;word-break:normal;
+ font-size:13px;line-height:1.45;color:#516d5c;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-grid{
+ grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:16px 0;
+}
+.library-page #modal.psy-mspss-example .psy-analogy-card{
+ background:#fff2dd;border:1px solid #f1c278;border-radius:15px;
+ padding:17px 19px;min-width:0;display:flex;flex-direction:column;gap:10px;
+}
+.library-page #modal.psy-mspss-example .psy-analogy-card.is-complete{
+ border-color:#aacfb5;background:#f0f8f1;
+}
+.library-page #modal.psy-mspss-example .psy-analogy-card .psy-analogy-question{
+ display:block;font-size:15px;line-height:1.45;font-weight:750;
+ overflow-wrap:anywhere;
+}
+.library-page #modal.psy-mspss-example .psy-analogy-card .psy-analogy-choices{
+ color:#526d60;font-size:13px;line-height:1.5;display:block;overflow-wrap:anywhere;
+}
+.library-page #modal.psy-mspss-example .psy-analogy-card .psy-analogy-letter{
+ display:block;max-width:96px;width:96px!important;height:54px;
+ font-size:23px;font-weight:800;text-align:center;border:2px solid #e5b568;
+ border-radius:10px;background:#fffaf1;
+}
+.library-page #modal.psy-mspss-example .psy-analogy-card.is-complete .psy-analogy-letter{
+ border-color:#8cbea3;background:white;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-name-field{
+ max-width:630px;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-name-field input{
+ display:block;width:100%;max-width:630px;box-sizing:border-box;padding:12px 14px;
+}
+.library-page #modal.psy-mspss-example .psy-analogy-summary{
+ margin:18px 0;padding:16px 19px;border-radius:13px;border:1px solid #d5e6da;background:#f7faf7;
+}
+.library-page #modal.psy-mspss-example .psy-analogy-summary strong{
+ color:#176647;font-size:24px;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-workspace{
+ display:grid;grid-template-columns:minmax(220px,290px) minmax(0,1fr);gap:18px;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-sidebar{
+ padding:15px;border-radius:12px;border:1px solid #dbe8de;background:#f5f9f6;min-width:0;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-sidebar textarea{
+ display:block;width:100%;min-width:0;box-sizing:border-box;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-sidebar .btn{
+ margin-top:9px;max-width:100%;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-person-row{
+ display:flex;align-items:center;gap:4px;border-bottom:1px solid #dbe6df;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-person{
+ display:flex;align-items:center;justify-content:space-between;flex:1;gap:5px;
+ border:0;background:transparent;padding:10px 6px;text-align:left;color:#26503b;
+ cursor:pointer;min-width:0;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-person.active{
+ color:#106344;font-weight:800;background:#e2f1e7;border-radius:8px;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-delete-person{
+ border:0;background:transparent;color:#a13139;cursor:pointer;font-size:20px;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-after-questions{
+ display:flex;justify-content:flex-end;margin:14px 0;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-footer{
+ display:flex;align-items:center;justify-content:space-between;width:100%;gap:10px;flex-wrap:wrap;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-footer-right{
+ display:flex;gap:11px;align-items:center;margin-left:auto;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-footer .psy-analogies-report{
+ background:#fbe2ad;border-color:#e7be67;color:#805021;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-footer .psy-analogies-reset{
+ background:#b73040;border-color:#b73040;color:white;
+}
+.library-page #modal.psy-mspss-example .psy-analogies-footer button[hidden]{
+ display:none!important;
+}
+@media(max-width:950px){
+ .library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-workspace{grid-template-columns:1fr}
+ .library-page #modal.psy-mspss-example .psy-analogies-key-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+ .library-page #modal.psy-mspss-example .psy-analogies-key-grid,
+ .library-page #modal.psy-mspss-example .psy-analogies-calculator .psy-mspss-grid{grid-template-columns:minmax(0,1fr)}
+ .library-page #modal.psy-mspss-example .psy-analogies-footer-right{margin-left:0;width:100%;flex-wrap:wrap}
+ .library-page #modal.psy-mspss-example .psy-analogies-footer-right .btn{flex:1}
+}
