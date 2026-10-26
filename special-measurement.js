@@ -71,7 +71,7 @@
    '<h3>Цель</h3><p class="psy-profile-description">'+esc(m.goal)+'</p>'+
    '<h3>Исследуемые показатели</h3><div class="psy-profile-indicators">'+m.indicators.map(v=>'<div class="psy-profile-indicator"><span>'+esc(v)+'</span></div>').join("")+'</div>'+
    '<h3>Методические источники</h3><p><a href="'+source+'" target="_blank" rel="noopener noreferrer">IRIS Center – Measuring Behavior</a></p><p><a href="'+source2+'" target="_blank" rel="noopener noreferrer">IRIS Center – Frequency and Interval Recording</a></p>'+
-   '<h3>Интерпретация и ограничения</h3><p class="psy-profile-description">'+esc(m.limitation)+'</p><p>Это процедура систематического наблюдения, не стандартизированный психологический тест с возрастными нормами.</p></section>';
+   '<h3>Ограничения и интерпретация</h3><p class="psy-profile-description">'+esc(m.limitation)+'</p><p>Это процедура систематического наблюдения, не стандартизированный психологический тест с возрастными нормами.</p></section>';
  }
  function guideContent(m){
   const f=m.id==="special-frequency-01";
