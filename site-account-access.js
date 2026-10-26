@@ -12,6 +12,8 @@
  const login=document.getElementById("psyAccountLogin");
  const signOut=document.getElementById("psyAccountSignOut");
  const config=window.PSY_AUTH_CONFIG||{};
+ login.href=config.registrationEnabled===true?"index.html?home=1&entry=1":"register.html?test=1";
+ login.textContent=config.registrationEnabled===true?"Войти или зарегистрироваться":"Проверить вход по почте";
  function message(t){hint.textContent=t;}
  function hidePrivate(){
   manage.hidden=true;ownerNote.hidden=true;email.hidden=true;roleBadge.hidden=true;signOut.hidden=true;login.hidden=false;
