@@ -1,0 +1,1120 @@
+{
+  "batch": "A",
+  "date": "2026-10-26",
+  "loadErrors": [],
+  "viewLoadError": null,
+  "records": {
+    "Шкала самооценки Розенберга (RSES)": {
+      "sourceModule": "methods.js",
+      "age": "Подростки (ориентировочно от 12 лет) и взрослые; проверяйте пригодность русской версии",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "diagnostic03",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/rses_guide.html",
+          "exists": true
+        },
+        {
+          "field": "guideWithBlankFile",
+          "path": "downloads/rses_guide_with_blank.html",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/rses_student_blank.html",
+          "exists": true
+        },
+        {
+          "field": "answerWordFile",
+          "path": "downloads/rses_student_blank.docx",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": false,
+          "error": "TypeError: Cannot read properties of undefined (reading 'instructions')"
+        },
+        "blank": {
+          "ok": false,
+          "error": "TypeError: Cannot read properties of undefined (reading 'materials')"
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1163,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": "downloads/rses_guide.html",
+      "answerFile": "downloads/rses_student_blank.html"
+    },
+    "Индекс хорошего самочувствия WHO-5": {
+      "sourceModule": "methods.js",
+      "age": "В первую очередь подростки старшего возраста и взрослые; возрастные нормы для детей проверяйте отдельно",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "diagnostic",
+      "calculator": true,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": false,
+          "error": "TypeError: Cannot read properties of undefined (reading 'instructions')"
+        },
+        "blank": {
+          "ok": false,
+          "error": "TypeError: Cannot read properties of undefined (reading 'materials')"
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1293,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "Лесенка": {
+      "sourceModule": "methods.js",
+      "age": "6-10 лет (по модификации)",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": false,
+      "workflow": null,
+      "calculator": false,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 888,
+          "mentionsSource": false,
+          "hasSpoken": true,
+          "hasScoring": false,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 1924,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1112,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "Школа зверей": {
+      "sourceModule": "methods.js",
+      "age": "6-8 лет",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": null,
+      "calculator": false,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 830,
+          "mentionsSource": false,
+          "hasSpoken": true,
+          "hasScoring": false,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 687,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1259,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "Что мне нравится в школе": {
+      "sourceModule": "methods.js",
+      "age": "6-10 лет",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": false,
+      "workflow": null,
+      "calculator": false,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 814,
+          "mentionsSource": false,
+          "hasSpoken": true,
+          "hasScoring": false,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 648,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1098,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "Рисунок семьи": {
+      "sourceModule": "methods.js",
+      "age": "Школьный возраст по выбранной версии",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": null,
+      "calculator": false,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 809,
+          "mentionsSource": false,
+          "hasSpoken": true,
+          "hasScoring": false,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 646,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1336,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "Таблицы Шульте": {
+      "sourceModule": "methods.js",
+      "age": "От 7 лет (по варианту)",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": false,
+      "workflow": null,
+      "calculator": false,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 804,
+          "mentionsSource": false,
+          "hasSpoken": true,
+          "hasScoring": false,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 460,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1221,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "Семейная социограмма": {
+      "sourceModule": "methods.js",
+      "age": "От 6-7 лет и взрослые - в зависимости от процедуры",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": false,
+      "workflow": null,
+      "calculator": false,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 888,
+          "mentionsSource": false,
+          "hasSpoken": true,
+          "hasScoring": false,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 709,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1424,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "Самооценка Дембо – Рубинштейн": {
+      "sourceModule": "methods.js",
+      "age": "10-17 лет в соответствующей версии",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": false,
+      "workflow": null,
+      "calculator": false,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 923,
+          "mentionsSource": false,
+          "hasSpoken": true,
+          "hasScoring": false,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 2257,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1328,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "Кинетический рисунок семьи": {
+      "sourceModule": "methods.js",
+      "age": "Школьный возраст; с учетом возможностей ребенка",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": null,
+      "calculator": false,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 824,
+          "mentionsSource": false,
+          "hasSpoken": true,
+          "hasScoring": false,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 914,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1333,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "Графический диктант": {
+      "sourceModule": "methods.js",
+      "age": "Старший дошкольный и младший школьный возраст (по выбранной версии)",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "elkonin4",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/elkonin_graphic_dictation_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/elkonin_graphic_dictation_student.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 2732,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 6044,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1426,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": "downloads/elkonin_graphic_dictation_guide.docx",
+      "answerFile": "downloads/elkonin_graphic_dictation_student.html"
+    },
+    "Заучивание 10 слов": {
+      "sourceModule": "method-batch-02.js",
+      "age": "Школьники и взрослые; применимость версии по возрасту проверяет специалист",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": null,
+      "calculator": true,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": false,
+          "error": "TypeError: Cannot read properties of undefined (reading 'extraInstructions')"
+        },
+        "blank": {
+          "ok": false,
+          "error": "TypeError: Cannot read properties of undefined (reading 'materials')"
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1521,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "Исключение четвертого лишнего (словесный вариант)": {
+      "sourceModule": "method-batch-02.js",
+      "age": "Ориентировочно от 8 лет при сформированном чтении; возрастные нормы не заявлены",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": null,
+      "calculator": true,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": false,
+          "error": "TypeError: Cannot read properties of undefined (reading 'extraInstructions')"
+        },
+        "blank": {
+          "ok": false,
+          "error": "TypeError: Cannot read properties of undefined (reading 'materials')"
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1148,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "SCARED": {
+      "sourceModule": "diagnostics-methods.js",
+      "age": "8-18 лет (детский самоотчет); для 8-11 лет нужна помощь с пониманием вопросов",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "diagnostic",
+      "calculator": true,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": false,
+          "error": "TypeError: Cannot read properties of undefined (reading 'instructions')"
+        },
+        "blank": {
+          "ok": false,
+          "error": "TypeError: Cannot read properties of undefined (reading 'materials')"
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1709,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "Vanderbilt Assessment Scales": {
+      "sourceModule": "diagnostic-batch-03.js",
+      "age": "6-12 лет; версия NICHQ (первое издание 2002 года)",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "diagnostic03",
+      "calculator": true,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": false,
+          "error": "TypeError: Cannot read properties of undefined (reading 'instructions')"
+        },
+        "blank": {
+          "ok": false,
+          "error": "TypeError: Cannot read properties of undefined (reading 'materials')"
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1185,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "GAD-7 - краткая шкала тревожных симптомов": {
+      "sourceModule": "diagnostic-batch-04.js",
+      "age": "Взрослые, 18+; применение у детей требует отдельной валидизации",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "diagnostic04",
+      "calculator": true,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 893,
+          "mentionsSource": false,
+          "hasSpoken": true,
+          "hasScoring": false,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 1849,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1229,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "Краткий опросник PHQ-4": {
+      "sourceModule": "diagnostic-batch-04.js",
+      "age": "Взрослые, 18-60 лет - возраст исследованной русской адаптации",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "diagnostic04",
+      "calculator": true,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 879,
+          "mentionsSource": false,
+          "hasSpoken": true,
+          "hasScoring": false,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 1451,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1451,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": null,
+      "answerFile": null
+    },
+    "Оценка школьной мотивации": {
+      "sourceModule": "method-luskanova.js",
+      "age": "7-10 лет · младшие школьники",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "luskanova",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/luskanova_method_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/luskanova_answer_sheet.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1380,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 1835,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1181,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": "downloads/luskanova_method_guide.docx",
+      "answerFile": "downloads/luskanova_answer_sheet.html"
+    },
+    "Краткий опросник настроения (SMFQ)": {
+      "sourceModule": "method-smfq.js",
+      "age": "6-17 лет; для самостоятельного заполнения ориентируйтесь на способность читать и понимать пункты",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "smfq",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/smfq_child_method_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/smfq_child_answer_sheet.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1605,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 2136,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1408,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": "downloads/smfq_child_method_guide.docx",
+      "answerFile": "downloads/smfq_child_answer_sheet.html"
+    },
+    "Корректурная проба Бурдона - Анфимова": {
+      "sourceModule": "method-bourdon.js",
+      "age": "Младший школьный возраст и старше; без подтвержденных возрастных норм для данного листа",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "bourdon30",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/bourdon_anfimov_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/bourdon_anfimov_student.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1890,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 9918,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1603,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": "downloads/bourdon_anfimov_guide.docx",
+      "answerFile": "downloads/bourdon_anfimov_student.html"
+    },
+    "Социометрическое исследование класса": {
+      "sourceModule": "method-sociometry-classification.js",
+      "age": "Ориентировочно с 9 лет при понимании критерия выбора; решение специалиста",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "fresh06",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/class_sociometry_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/class_sociometry_blank.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 978,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 637,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1458,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": "downloads/class_sociometry_guide.docx",
+      "answerFile": "downloads/class_sociometry_blank.html"
+    },
+    "Классификация предметов (словесный вариант)": {
+      "sourceModule": "method-sociometry-classification.js",
+      "age": "Ориентировочно 7-11 лет, с учетом словаря и учебных возможностей",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "fresh06",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/verbal_classification_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/verbal_classification_blank.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 921,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 2194,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1653,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": "downloads/verbal_classification_guide.docx",
+      "answerFile": "downloads/verbal_classification_blank.html"
+    },
+    "Шкала воспринимаемой социальной поддержки (MSPSS)": {
+      "sourceModule": "method-mspss.js",
+      "age": "Подростки и взрослые",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "mspss",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/mspss_method_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/mspss_answer_sheet.html",
+          "exists": true
+        },
+        {
+          "field": "studentFile",
+          "path": "downloads/mspss_student_working_ru.html",
+          "exists": true
+        },
+        {
+          "field": "studentWordFile",
+          "path": "downloads/mspss_student_sheet.docx",
+          "exists": true
+        },
+        {
+          "field": "methodPage",
+          "path": "downloads/mspss_method.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 2331,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 5569,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1322,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": "downloads/mspss_method_guide.docx",
+      "answerFile": "downloads/mspss_answer_sheet.html"
+    },
+    "Последовательные картинки": {
+      "sourceModule": "method-storycards.js",
+      "age": "От 5 лет ориентировочно, нормативная валидизация этих серий отсутствует",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "storycards",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/sequential_pictures_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/sequential_pictures_cards.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1349,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 5712,
+          "mentionsSource": false,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1621,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      },
+      "guideFile": "downloads/sequential_pictures_guide.docx",
+      "answerFile": "downloads/sequential_pictures_cards.html"
+    },
+    "Тест школьной тревожности": {
+      "sourceModule": "method-phillips.js",
+      "age": "Младший и средний школьный возраст; уточняйте возрастные ограничения применяемой версии",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "phillips58",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/phillips_school_anxiety_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/phillips_school_anxiety_student.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1949,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 1402,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 2188,
+          "mentionsSource": true,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": true
+        }
+      },
+      "guideFile": "downloads/phillips_school_anxiety_guide.docx",
+      "answerFile": "downloads/phillips_school_anxiety_student.html"
+    }
+  }
+}
