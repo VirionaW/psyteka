@@ -53,6 +53,34 @@ function render(){
  document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openMethod(C.find(m=>m.id===b.dataset.open)));
  document.querySelectorAll('[data-score]').forEach(b=>b.onclick=()=>{openMethod(C.find(m=>m.id===b.dataset.score));setTab("score")});
 }
+function enhanceMethodView(tab,html){
+ const d=DETAILS[methodNow?.name];
+ if(!d||typeof html!=='string')return html;
+ if(tab==='instruction'&&!html.includes('Без бланка')&&!html.includes('С бланком')){
+  const hasWrittenGuide=!!(d.instructions||d.guideFile||d.goal);
+  if(hasWrittenGuide){
+   const buttons='<div class="psy-common-guide-head"><h3>Методика и руководство</h3><div class="psy-common-guide-actions">'+
+    '<button type="button" class="btn" data-generic-print="guide">Без бланка</button>'+
+    (d.answerFile||d.studentFile||d.childFile||d.questions?.length||d.graphic?
+      '<button type="button" class="btn primary" data-generic-print="combined">С бланком</button>':'')+
+    '</div></div>';
+   return buttons+html;
+  }
+ }
+ if(tab==='materials'){
+  const file=d.answerFile||d.studentFile||d.childFile||d.specialistFile;
+  const containsFileLinks=html.includes('Посмотреть и распечатать')||html.includes('Скачать Word');
+  if(!containsFileLinks){
+   const controls='<div class="psy-common-guide-head"><h3>Бланк</h3><div class="psy-common-guide-actions">'+
+    (typeof file==='string'&&/^downloads\/[a-z0-9_.-]+$/i.test(file)?
+      '<a class="btn primary" href="'+escapeHTML(file)+'" target="_blank" rel="noopener noreferrer">Открыть бланк</a>':
+      '<button class="btn primary" type="button" data-generic-print="blank">Распечатать А4</button>')+
+    '</div></div>';
+   return controls+html;
+  }
+ }
+ return html;
+}
 function setTab(name){
  tabNow=name;
  document.querySelectorAll(".modal-tab").forEach(x=>{x.classList.toggle("active",x.dataset.tab===name);x.setAttribute("aria-selected",String(x.dataset.tab===name))});
@@ -64,6 +92,7 @@ function setTab(name){
  name==="instruction"?viewInstruction(methodNow):
  name==="materials"?viewMaterials(methodNow):
  name==="processing"?viewProcessing(methodNow):viewCalculator(methodNow);
+ if(name==='instruction'||name==='materials')body.innerHTML=enhanceMethodView(name,body.innerHTML);
  body.scrollTop=0;
  const bottom=$("#bottomProcessing");
  if(bottom){
