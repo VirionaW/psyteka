@@ -6,6 +6,18 @@
  const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  // Каталог состоит только из опубликованных методических подходов.
  const data=(window.PSY_SPECIAL_TOOLKIT?.methods||[]).slice();
+ // В ОВЗ метод SCARED представлен ссылкой на его уже существующее общее портфолио.
+ // Не создаем копию вопросов, регистра, ключа или обработчика.
+ const scared=window.PSY_FULL_METHODS?.["SCARED"];
+ const sourceScared=window.PSY_CATALOG?.find(m=>m?.name==="SCARED");
+ if(scared?.workflow==="scared41"&&sourceScared?.id&&window.PSY_SCARED41){
+  data.push({
+   id:sourceScared.id,title:"SCARED",author:scared.author,
+   group:"Диагностика и наблюдение",topic:"Тревожность",
+   ages:["Школьники"],ageLabel:"8-18 лет · детская и родительская версии",
+   format:"Скрининговый опросник",goal:scared.goal
+  });
+ }
  const byId=new Map(data.map(m=>[m.id,m]));
  const groups=["Диагностика и наблюдение","Мониторинг"];
  const chevron='<span class="nav-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path class="chevron-right" d="m9 6 6 6-6 6"></path><path class="chevron-down" d="m6 9 6 6 6-6"></path></svg></span>';
