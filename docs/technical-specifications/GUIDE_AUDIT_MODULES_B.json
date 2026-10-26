@@ -1,0 +1,186 @@
+{
+  "auditDate": "2026-10-26",
+  "kind": "module-coverage-B",
+  "moduleNames": [
+    "method-ladder.js",
+    "method-who5.js",
+    "method-schulte.js",
+    "method-family-sociogram.js",
+    "method-phq4.js",
+    "method-luria10.js",
+    "method-gad7.js",
+    "method-kfd.js",
+    "method-corman.js",
+    "method-odd4-verbal.js",
+    "method-luskanova-drawing.js",
+    "method-object-cards.js",
+    "method-object-classification.js",
+    "method-observation-sequences.js",
+    "method-school-adaptation.js",
+    "method-motivation-interview.js",
+    "method-independent-living.js"
+  ],
+  "errors": [],
+  "methods": {
+    "Лесенка": {
+      "age": "5-10 лет; семиступенчатая редакция, 1 – нижняя, 7 – верхняя",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "ladder7",
+      "source": true,
+      "options": 0
+    },
+    "Индекс хорошего самочувствия WHO-5": {
+      "age": "Преимущественно подростки и взрослые; для младших школьников применять только с учетом возрастной и языковой пригодности конкретной версии.",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "who5",
+      "source": true,
+      "options": 0
+    },
+    "Таблицы Шульте": {
+      "age": "От 7 лет",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "schulte5",
+      "source": true,
+      "options": 0
+    },
+    "Семейная социограмма": {
+      "age": "Дети, умеющие понять инструкцию и обозначить семью кружками, подростки и взрослые; возрастные нормы не заданы",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "familySocio110",
+      "source": true,
+      "options": 0
+    },
+    "Краткий опросник PHQ-4": {
+      "age": "Основная русскоязычная валидация: взрослые 18-60 лет. Исследования подростковых версий имеются, но нет основания переносить взрослые русские нормы на школьников.",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "phq4",
+      "source": true,
+      "options": 0
+    },
+    "Заучивание 10 слов": {
+      "age": "Дети от 7 лет и взрослые",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "luria10x5",
+      "source": true,
+      "options": 0
+    },
+    "GAD-7 - краткая шкала тревожных симптомов": {
+      "age": "Для самоотчёта старших школьников и подростков — при проверенной возрастной и языковой версии. Первичные нормативные интервалы получены для взрослых; для младших школьников без отдельной валидации не использовать как возрастную норму.",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "gad7",
+      "source": true,
+      "options": 0
+    },
+    "Кинетический рисунок семьи": {
+      "age": "Дети, способные выполнить рисунок и рассказать о нем; интерпретация учитывает возраст",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "kfdBurns72",
+      "source": true,
+      "options": 0
+    },
+    "Рисунок семьи в концепции Л. Кормана": {
+      "age": "Преимущественно старший дошкольный и младший школьный возраст; интерпретация индивидуальна",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "cormanFamily",
+      "source": true,
+      "options": 0
+    },
+    "Исключение четвертого лишнего (словесный вариант)": {
+      "age": "Ориентировочно младший школьный возраст (2–5 классы); подбирать с учетом словаря и образовательного опыта",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "odd4verbal",
+      "source": true,
+      "options": 0
+    },
+    "Что мне нравится в школе": {
+      "age": "Учащиеся начальных классов, преимущественно 1–4 классы",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "schoolDrawingL",
+      "source": true,
+      "options": 0
+    },
+    "Методика классификации предметов": {
+      "age": "Проба в выбранной схеме рассчитана преимущественно на 6–7 лет; нормативы к новому набору карточек не применяются",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "objectClass16",
+      "source": true,
+      "options": 0
+    },
+    "Последовательные картинки": {
+      "age": "Ориентировочно 6–10 лет; сложность адаптируется специалистом",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "",
+      "source": true,
+      "options": 0
+    },
+    "Показатели школьной дезадаптации": {
+      "age": "Школьный возраст, с учётом условий класса",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "schoolAdaptObserve",
+      "source": false,
+      "options": 0
+    },
+    "Исследование мотивационной сферы": {
+      "age": "Ориентировочно 9–17 лет; адаптировать лексику под возраст и потребности",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "motivationInterview",
+      "source": false,
+      "options": 0
+    },
+    "Опросник готовности подростков к самостоятельной жизни": {
+      "age": "Ориентировочно 12–18 лет с адаптацией формулировок",
+      "goal": true,
+      "instructions": true,
+      "scoring": true,
+      "interpret": true,
+      "workflow": "independentLiving12",
+      "source": false,
+      "options": 0
+    }
+  }
+}
