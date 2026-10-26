@@ -74,3 +74,4 @@ html.dark .pmpk-number{background:#2a5251;color:#d0e9e4}
 @media(max-width:470px){.pmpk-hero{display:block}.pmpk-hero-time{display:inline-flex;gap:8px;align-items:baseline;margin-top:14px}.pmpk-ages button{flex:1;white-space:nowrap}.pmpk-task-head{gap:5px}.pmpk-task{padding:14px}.pmpk-tabs button{flex:1;padding:9px 7px;font-size:12px}}
 
 .library-page[data-area=pmpk] .hero{display:none!important}
+@media(max-width:820px){.library-page .mobile-area-switch{grid-template-columns:repeat(5,minmax(0,1fr))}}
