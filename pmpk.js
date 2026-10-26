@@ -60,7 +60,7 @@
   return (item.status==="done"&&!!item.result&&!!item.help&&!!item.notes.trim())||(item.status==="skip"&&!!item.reason.trim());
  }
  function progress(){return rec().items.filter(valid).length}
- function routeReady(){return progress()===TASKS.length}
+ function routeReady(){return progress()===TASKS.length&&rec().items.some(x=>x.status==="done")&&!!rec().summary.trim()}
  function facts(){
   return '<div class="pmpk-facts"><div class="pmpk-fact"><small>Возраст</small><strong>'+AGE_LABELS[state.age]+'</strong></div><div class="pmpk-fact"><small>Планирование</small><strong>До 40 минут</strong></div><div class="pmpk-fact"><small>Формат</small><strong>7 заданий</strong></div><div class="pmpk-fact"><small>Оценка</small><strong>Качественная</strong></div></div>';
  }
@@ -97,7 +97,7 @@
   const count=progress(),ready=routeReady();
   return '<div class="pmpk-card"><div class="pmpk-toolbar"><div><h2>Обработка результатов</h2><p class="pmpk-note">Индивидуальный протокол. Никакие результаты не отправляются и не сохраняются на сервере. Перед закрытием страницы скачайте отчет.</p></div><span class="pmpk-status '+(ready?"is-done":"")+'" data-main-status>'+ (ready?"Обработка заполнена":"Нужно заполнить")+'</span></div><div class="pmpk-progress" aria-hidden="true"><div id="pmpkProgressFill" style="width:'+(count/TASKS.length*100)+'%"></div></div><p class="pmpk-steps-count" id="pmpkProgressLabel">Заполнено '+count+' из 7</p><div class="pmpk-formgrid"><div class="pmpk-field"><label for="pmpk-code">Имя или код обследуемого (по выбору)</label><input id="pmpk-code" data-meta="code" autocomplete="off" value="'+esc(rec().code)+'"></div><div class="pmpk-field"><label for="pmpk-date">Дата обследования</label><input id="pmpk-date" type="date" data-meta="date" value="'+esc(rec().date)+'"></div><div class="pmpk-field wide"><label for="pmpk-conditions">Условия проведения и общее наблюдение</label><textarea id="pmpk-conditions" data-meta="conditions" rows="2">'+esc(rec().conditions)+'</textarea></div></div></div>'+
   '<div class="pmpk-list">'+TASKS.map(oneProcess).join("")+'</div>'+
-  '<div class="pmpk-card"><h2>Описание результата</h2><p class="pmpk-note">Это поле заполняет специалист. Не используйте автоматические диагностические ярлыки и выводы по единственной пробе.</p><div class="pmpk-field"><label for="pmpk-summary">Качественное заключение, условия и рекомендации</label><textarea id="pmpk-summary" data-meta="summary" rows="5">'+esc(rec().summary)+'</textarea></div></div>';
+  '<div class="pmpk-card"><h2>Описание результата</h2><p class="pmpk-note">Это поле заполняет специалист. Не используйте автоматические диагностические ярлыки и выводы по единственной пробе.</p><div class="pmpk-field"><label for="pmpk-summary">Качественное заключение, условия и рекомендации *</label><textarea id="pmpk-summary" data-meta="summary" rows="5">'+esc(rec().summary)+'</textarea></div></div>';
  }
  function bottom(){
   const ready=routeReady();
@@ -208,7 +208,7 @@
   else if(button.dataset.docx)downloadDocx(button.dataset.docx);
  });
  function storeValue(el){
-  if(el.dataset.meta){rec()[el.dataset.meta]=el.value;return}
+  if(el.dataset.meta){rec()[el.dataset.meta]=el.value;syncProgress();return}
   if(el.dataset.task===undefined)return;
   const item=rec().items[Number(el.dataset.task)],key=el.dataset.field;
   if(key==="duration"&&el.value!==""&&(!Number.isInteger(Number(el.value))||Number(el.value)<0||Number(el.value)>3600)){el.setCustomValidity("Введите целое число секунд от 0 до 3600.");el.reportValidity();return}
