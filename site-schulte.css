@@ -31,3 +31,71 @@
 .library-page #modal .psy-schulte-actions{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0}
 @media(max-width:900px){.library-page #modal .psy-schulte-all,.library-page #modal .psy-schulte-inputs{grid-template-columns:1fr}.library-page #modal .psy-schulte-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.library-page #modal .psy-schulte-formulas,.library-page #modal .psy-schulte-stats{grid-template-columns:1fr}.library-page #modal .psy-schulte-links{flex-direction:column}.library-page #modal .psy-schulte-bars>div{grid-template-columns:22px minmax(65px,1fr) 64px;gap:6px}.library-page #modal .psy-schulte-bars small{grid-column:2/4}}
+
+/* Таблицы Шульте: управление и бланки по образцу MSPSS, без лишней нижней панели. */
+.library-page #modal.psy-schulte-example .modalfoot{padding:11px 25px;min-height:66px;box-shadow:0 -2px 14px rgba(19,57,40,.06)}
+.library-page #modal.psy-schulte-example .modalbody{padding-bottom:32px}
+.library-page #modal.psy-schulte-example .psy-schulte-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%}
+.library-page #modal.psy-schulte-example .psy-schulte-footer-right{display:flex;gap:10px;align-items:center;margin-left:auto}
+.library-page #modal.psy-schulte-example .psy-schulte-footer [hidden]{display:none!important}
+.library-page #modal.psy-schulte-example .psy-bottom-processing{margin-left:auto;min-height:48px;background:#217c58!important;border-color:#217c58!important;color:#fff!important;font-weight:750}
+.library-page #modal.psy-schulte-example .psy-schulte-back{margin-right:auto;min-height:45px;border:0;background:transparent;color:var(--green);font-weight:750}
+.library-page #modal.psy-schulte-example .psy-schulte-report{min-height:45px;background:#268459;color:#fff;border-color:#268459;font-weight:750}
+.library-page #modal.psy-schulte-example .psy-schulte-report:disabled{background:#f8dfb8!important;border-color:#efc783!important;color:#83551d!important;opacity:1;cursor:not-allowed}
+.library-page #modal.psy-schulte-example .psy-schulte-reset{min-height:45px;background:#b92e3b!important;color:#fff!important;border-color:#b92e3b!important;font-weight:750}
+.library-page #modal.psy-schulte-example .psy-schulte-manual,.library-page #modal.psy-schulte-example .psy-schulte-blank{max-width:1110px;margin:0 auto}
+.library-page #modal.psy-schulte-example .psy-schulte-manual h3{font-size:19px;color:var(--green);margin:26px 0 12px}
+.library-page #modal.psy-schulte-example .psy-schulte-manual p,.library-page #modal.psy-schulte-example .psy-schulte-manual li{font-size:16px;line-height:1.7}
+.library-page #modal.psy-schulte-example .psy-schulte-manual ol{padding-left:28px}
+.library-page #modal.psy-schulte-example .psy-schulte-manual li{margin-bottom:8px}
+.library-page #modal.psy-schulte-example .psy-schulte-document-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin:0 0 20px}
+.library-page #modal.psy-schulte-example .psy-schulte-document-head h3{margin:0;font-size:20px}
+.library-page #modal.psy-schulte-example .psy-schulte-document-head .btn{min-height:45px;display:inline-flex;align-items:center;justify-content:center}
+.library-page #modal.psy-schulte-example .psy-schulte-script{border-left:4px solid var(--green);background:var(--soft);border-radius:9px;padding:15px 19px;font-size:16px;line-height:1.7}
+.library-page #modal.psy-schulte-example .psy-schulte-key{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin:14px 0}
+.library-page #modal.psy-schulte-example .psy-schulte-key table{border-collapse:collapse;width:100%;font-size:15px}
+.library-page #modal.psy-schulte-example .psy-schulte-key th,.library-page #modal.psy-schulte-example .psy-schulte-key td{text-align:left;border-bottom:1px solid var(--line);padding:12px 14px}
+.library-page #modal.psy-schulte-example .psy-schulte-key th{background:var(--soft)}
+.library-page #modal.psy-schulte-example .psy-schulte-modes{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 23px}
+.library-page #modal.psy-schulte-example .psy-schulte-modes .btn{font-size:17px;min-height:52px;padding:12px 24px;border-radius:12px;font-weight:750}
+.library-page #modal.psy-schulte-example .psy-schulte-workspace{display:grid;grid-template-columns:minmax(235px,300px) minmax(0,1fr);gap:22px;align-items:start}
+.library-page #modal.psy-schulte-example .psy-schulte-sidebar{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:17px;min-width:0}
+.library-page #modal.psy-schulte-example .psy-schulte-sidebar h3{margin:0 0 8px;font-size:18px}
+.library-page #modal.psy-schulte-example .psy-schulte-sidebar p{font-size:13px;color:var(--muted);line-height:1.5;margin:0 0 10px}
+.library-page #modal.psy-schulte-example .psy-schulte-label{display:block;font-weight:750;font-size:14px;margin:12px 0 6px}
+.library-page #modal.psy-schulte-example #schulteBulkNames{width:100%;min-height:112px;resize:vertical;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:11px;font:15px/1.5 system-ui}
+.library-page #modal.psy-schulte-example .psy-schulte-sidebar>.btn{display:flex;justify-content:center;width:100%;margin-top:9px;min-height:43px}
+.library-page #modal.psy-schulte-example .psy-schulte-person-list{display:flex;flex-direction:column;gap:7px;max-height:380px;overflow:auto;margin-top:15px}
+.library-page #modal.psy-schulte-example .psy-schulte-person-row{display:flex;gap:4px;min-width:0}
+.library-page #modal.psy-schulte-example .psy-schulte-person{display:flex;flex:1;align-items:center;justify-content:space-between;gap:6px;min-width:0;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);padding:9px;text-align:left;font:600 13px/1.4 system-ui;cursor:pointer}
+.library-page #modal.psy-schulte-example .psy-schulte-person span{overflow-wrap:anywhere}
+.library-page #modal.psy-schulte-example .psy-schulte-person small{flex-shrink:0;font-size:11px}
+.library-page #modal.psy-schulte-example .psy-schulte-person.active{background:#def0e4;border-color:#35865d;color:#176044}
+.library-page #modal.psy-schulte-example .psy-schulte-person-delete{flex:0 0 30px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:#a62c37;font-size:20px;cursor:pointer}
+.library-page #modal.psy-schulte-example .psy-schulte-entry-main{min-width:0}
+.library-page #modal.psy-schulte-example .psy-schulte-name{display:flex;flex-direction:column;gap:7px;max-width:550px;font-size:15px;font-weight:750}
+.library-page #modal.psy-schulte-example .psy-schulte-name input{min-height:47px;border:1px solid var(--line);border-radius:9px;padding:9px 12px;background:var(--paper);color:var(--ink);font:16px system-ui}
+.library-page #modal.psy-schulte-example .psy-schulte-progress{font-size:14px;color:var(--muted);margin:15px 0}
+.library-page #modal.psy-schulte-example .psy-schulte-workspace .psy-schulte-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}
+.library-page #modal.psy-schulte-example .psy-schulte-next{display:flex;justify-content:flex-end;margin:0 0 22px}
+.library-page #modal.psy-schulte-example .psy-schulte-next .btn{min-height:45px;padding:10px 23px}
+.library-page #modal.psy-schulte-example .psy-schulte-group{margin:28px 0 0}
+.library-page #modal.psy-schulte-example .psy-schulte-group h3{font-size:20px;color:var(--green);margin:0 0 12px}
+.library-page #modal.psy-schulte-example .psy-schulte-group-scroll{max-width:100%;overflow:auto;border:1px solid var(--line);border-radius:12px}
+.library-page #modal.psy-schulte-example .psy-schulte-group table{border-collapse:collapse;width:100%;font-size:14px;min-width:580px}
+.library-page #modal.psy-schulte-example .psy-schulte-group th,.library-page #modal.psy-schulte-example .psy-schulte-group td{padding:12px;border-bottom:1px solid var(--line);text-align:left}
+.library-page #modal.psy-schulte-example .psy-schulte-group th{background:var(--soft)}
+@media(max-width:850px){
+ .library-page #modal.psy-schulte-example .psy-schulte-workspace{grid-template-columns:1fr}
+ .library-page #modal.psy-schulte-example .psy-schulte-sidebar{max-width:none}
+ .library-page #modal.psy-schulte-example .psy-schulte-workspace .psy-schulte-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:650px){
+ .library-page #modal.psy-schulte-example .psy-schulte-document-head{align-items:stretch;flex-direction:column}
+ .library-page #modal.psy-schulte-example .psy-schulte-document-head .btn{width:100%}
+ .library-page #modal.psy-schulte-example .psy-schulte-workspace .psy-schulte-inputs{grid-template-columns:1fr}
+ .library-page #modal.psy-schulte-example .psy-schulte-footer{gap:6px}
+ .library-page #modal.psy-schulte-example .psy-schulte-back,.library-page #modal.psy-schulte-example .psy-schulte-report,.library-page #modal.psy-schulte-example .psy-schulte-reset{font-size:12px;min-height:43px;padding:8px}
+ .library-page #modal.psy-schulte-example .psy-schulte-footer-right{gap:6px}
+ .library-page #modal.psy-schulte-example .modalfoot{padding:10px 12px max(10px,env(safe-area-inset-bottom))}
+}
