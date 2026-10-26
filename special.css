@@ -105,3 +105,14 @@ html.dark #modal.psy-special-current .psy-special-footer-state.complete,html.dar
  #modal.psy-special-current .special-toolkit-table{font-size:11px}
  #modal.psy-special-current .special-toolkit-table th,#modal.psy-special-current .special-toolkit-table td{padding:6px}
 }
+
+/* Specialized monitoring forms: scoped to the existing OVZ dialog. */
+#modal.psy-special-current .special-measure-sessions,#modal.psy-special-current .special-measure-interval-list{display:grid;gap:12px}
+#modal.psy-special-current .special-measure-line{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#modal.psy-special-current .special-measure-line label{display:grid;gap:8px;font-size:13px;font-weight:700}
+#modal.psy-special-current .special-measure-line input{width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font:400 14px system-ui}
+#modal.psy-special-current .special-measure-interval-list{grid-template-columns:repeat(2,minmax(0,1fr));margin:16px 0}
+#modal.psy-special-current .special-measure-interval{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px}
+#modal.psy-special-current .special-measure-interval select{min-width:0;max-width:135px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);padding:7px}
+#modal.psy-special-current .special-measure-table th,#modal.psy-special-current .special-measure-table td{text-align:left}
+@media(max-width:700px){#modal.psy-special-current .special-measure-line,#modal.psy-special-current .special-measure-interval-list{grid-template-columns:1fr}}
