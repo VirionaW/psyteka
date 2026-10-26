@@ -75,11 +75,42 @@ function csv(d,rows){
  const body=rows.map((r,i)=>{const scores=results(d,r.answers),selected=d.forms[Number(r.sixVersion)]||d.forms[0];return [r.name||"Участник "+(i+1),selected.label,scores?"Рассчитано":"Нет количественной обработки",...(d.scales||[]).map((_,j)=>scores?scores[j].raw:""),(r.sixAnswers||[]).join("|"),r.sixProtocol||""];});
  return "\uFEFF"+[head,...body].map(row=>row.map(safe).join(";")).join("\r\n");
 }
-function bind(d,ctx){const rows=ctx.rows,r=rows[ctx.rowIndex];if(!r)return;const root=document.querySelector(".psy-six-calc");if(!root)return;const update=()=>{const okay=status(r,d);const badge=root.querySelector("#sixStatus");if(badge){badge.className="psy-six-state "+(d.scaleMax?(okay?"ready":"pending"):"neutral");badge.textContent=d.scaleMax?(okay?"Результат рассчитан":"Требуется заполнение"):"Протокол наблюдения";}const out=root.querySelector("#sixSummary");if(out)out.innerHTML=summary(d,r);const group=root.querySelector("#sixClass");if(group)group.innerHTML=table(d,rows);};
-root.querySelectorAll("[data-six-answer]").forEach(sel=>sel.addEventListener("change",()=>{r.answers ||= [];r.answers[Number(sel.dataset.sixAnswer)]=sel.value;update();}));
-root.querySelector("[data-six-notes]")?.addEventListener("input",e=>{r.sixProtocol=e.target.value;update();});
-root.querySelector("[data-six-report]")?.addEventListener("click",()=>save("psyteka_"+d.id+"_protocol.html",printable(d,r),"text/html;charset=utf-8"));
-root.querySelector("[data-six-clear]")?.addEventListener("click",()=>{if(!confirm("Очистить ответы участника?"))return;r.answers=[];r.sixProtocol="";root.querySelectorAll("[data-six-answer]").forEach(x=>x.value="");const nt=root.querySelector("[data-six-notes]");if(nt)nt.value="";update();});
-root.querySelector("[data-six-csv]")?.addEventListener("click",()=>save("psyteka_"+d.id+"_group.csv",csv(d,rows),"text/csv;charset=utf-8"));}
+function bind(d,ctx){
+ const rows=ctx.rows,r=rows?.[ctx.rowIndex],root=document.querySelector(".psy-six-calc");if(!r||!root)return;
+ const update=()=>{
+  const ok=status(r,d),badge=root.querySelector("#sixStatus"),report=root.querySelector("[data-six-report]");
+  if(badge){badge.className="psy-six-state "+(d.scaleMax?(ok?"ready":"pending"):"neutral");badge.textContent=d.scaleMax?(ok?"Результат рассчитан":"Требуется заполнение"):"Протокол наблюдения";}
+  if(report&&d.scaleMax)report.disabled=!ok;
+  const result=root.querySelector("#sixSummary");if(result)result.innerHTML=summary(d,r);
+  const group=root.querySelector("#sixClass");if(group)group.innerHTML=table(d,rows);
+ };
+ root.querySelectorAll("[data-six-answer]").forEach(sel=>sel.addEventListener("change",()=>{
+  r.answers ||= [];r.answers[Number(sel.dataset.sixAnswer)]=sel.value;update();
+ }));
+ root.querySelectorAll("[data-six-unverified]").forEach(sel=>sel.addEventListener("change",()=>{
+  r.sixAnswers ||= [];r.sixAnswers[Number(sel.dataset.sixUnverified)]=sel.value;update();
+ }));
+ root.querySelector("[data-six-version]")?.addEventListener("change",e=>{
+  r.sixVersion=e.target.value;
+  const target=root.querySelector("#sixVersionLink"),v=r.sixVersion;
+  if(target)target.innerHTML=v!==""&&d.forms[Number(v)]?a(d.forms[Number(v)].url,"Открыть оригинальный бланк выбранной редакции"):"Выберите нужную редакцию до проведения.";
+  update();
+ });
+ root.querySelector("[data-six-notes]")?.addEventListener("input",e=>{r.sixProtocol=e.target.value;update();});
+ root.querySelector("[data-six-report]")?.addEventListener("click",()=>{
+  if(d.scaleMax&&!status(r,d))return;
+  save("psyteka_"+d.id+"_protocol.html",printable(d,r),"text/html;charset=utf-8");
+ });
+ root.querySelector("[data-six-clear]")?.addEventListener("click",()=>{
+  if(!confirm("Очистить ответы участника?"))return;
+  r.answers=[];r.sixAnswers=[];r.sixVersion="";r.sixProtocol="";
+  root.querySelectorAll("[data-six-answer],[data-six-unverified],[data-six-version]").forEach(el=>el.value="");
+  const nt=root.querySelector("[data-six-notes]");if(nt)nt.value="";
+  const linkNode=root.querySelector("#sixVersionLink");if(linkNode)linkNode.textContent="Выберите нужную редакцию до проведения.";
+  update();
+ });
+ root.querySelector("[data-six-csv]")?.addEventListener("click",()=>save("psyteka_"+d.id+"_group.csv",csv(d,rows),"text/csv;charset=utf-8"));
+ update();
+}
 window.PSY_REQUESTED_SIX={config,results,score,instruction,materials,processing,calculator,bind};
 })();
