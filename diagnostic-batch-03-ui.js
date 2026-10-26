@@ -65,12 +65,12 @@
  }
  function outcome(d,r){
   const z=score(d,r),n=completion(d,r),req=required(d,r);
-  if(!z)return '<div class="diag03-result"><h3>Результат</h3><p>Перенесено '+n+' из '+req.count+' ответов. Незавершенный бланк не получает балл и заключение. Ответ 0 считается заполненным, пропуск – нет.</p><div class="diag-progress"><span style="width:'+(100*n/req.count)+'%"></span></div></div>';
-  if(isR(d))return '<div class="diag03-result"><h3>Результат</h3><strong class="diag03-value">'+z.raw+' / 30</strong><p>'+E(z.summary)+'</p><p class="privacy-inline">Не используйте фиксированные категории «низкий / средний / высокий» без возрастных норм конкретной русскоязычной адаптации.</p></div>';
+  if(!z)return '<div class="diag03-result"><h3>Результат</h3><span class="psy-data-state is-waiting" role="status">Данные не заполнены</span><p>Перенесено '+n+' из '+req.count+' ответов. Незавершенный бланк не получает балл и заключение. Ответ 0 считается заполненным, пропуск – нет.</p><div class="diag-progress"><span style="width:'+(100*n/req.count)+'%"></span></div></div>';
+  if(isR(d))return '<div class="diag03-result"><h3>Результат</h3><span class="psy-data-state is-ready" role="status">Данные заполнены</span><strong class="diag03-value">'+z.raw+' / 30</strong><p>'+E(z.summary)+'</p><p class="privacy-inline">Не используйте фиксированные категории «низкий / средний / высокий» без возрастных норм конкретной русскоязычной адаптации.</p></div>';
   const byId=id=>z.groups.find(g=>g.id===id);
   const attention=byId("inattention").screenPositive, hyper=byId("hyperactivity").screenPositive;
   const combined=attention&&hyper;
-  return '<div class="diag03-result"><h3>Результат · '+E(z.variantName)+'</h3><p><strong>Сумма 18 основных симптомов: '+z.symptomTotal+' / 54.</strong> Средняя оценка функционирования: '+z.averagePerformance.toFixed(2)+' / 5.</p>'+
+  return '<div class="diag03-result"><span class="psy-data-state is-ready" role="status">Данные заполнены</span><h3>Результат · '+E(z.variantName)+'</h3><p><strong>Сумма 18 основных симптомов: '+z.symptomTotal+' / 54.</strong> Средняя оценка функционирования: '+z.averagePerformance.toFixed(2)+' / 5.</p>'+
    '<p>Показателей затруднений функционирования (4-5): <b>'+z.perfPositive+' / 8</b>.</p>'+
    '<table class="diag-questions-table"><thead><tr><th>Область</th><th>Выраженных ответов</th><th>Порог с учетом функционирования</th></tr></thead><tbody>'+
    z.groups.map(g=>'<tr><td>'+E(g.name)+'</td><td>'+g.positive+' / '+g.total+' (порог '+g.cutoff+')</td><td>'+(g.screenPositive?'Достигнут':'Не достигнут')+'</td></tr>').join('')+
