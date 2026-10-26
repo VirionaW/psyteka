@@ -707,6 +707,7 @@ function openMethod(m){
  const luriaPilot=d?.workflow==='luria10x5';
  const analogyPilot=d?.workflow==='simpleAnalogies12';
  $('#modal').classList.toggle('psy-schulte-example',schultePilot);
+ $('#modal').classList.toggle('psy-luria-mode',luriaPilot);
  const matchMSPSS=['simpleAnalogies12','pairedAssoc20'].includes(d?.workflow);
  $('#modal').classList.toggle('psy-mspss-example',mspssPilot||matchMSPSS);
  const tabs=[['overview','Портфолио'],['instruction','Методика / руководство'],['materials','Бланк']];
