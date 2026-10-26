@@ -66,10 +66,11 @@ function results(a,delay){
  const ok=ready(a)&&validDelay(delay),res=score(d,a);
  let h='<section class="psy-luria-results"><div class="psy-luria-result-head"><h3>Профиль запоминания</h3><span class="psy-luria-status '+(ok?'is-ready':'is-waiting')+'" role="status">'+(ok?'Данные заполнены':'Требуется заполнение')+'</span></div>';
  if(!res)return h+'<p>Завершено '+done+' из 6 проб. Для расчета нужны пять предъявлений, для окончательного отчета также отсроченное воспроизведение и фактическое время отсрочки. Завершенная проба с нулем правильных слов отличается от непроведенной.</p></section>';
- const stats=[["1-я проба",res.first],["5-я проба",res.fifth],["Лучший результат",res.peak],["Среднее за 5 проб",res.mean],["Разность 5-й и 1-й",res.gain],["Через 60 минут",res.delayed??"–"]];
+ const stats=[["1-я проба",res.first],["5-я проба",res.fifth],["Лучший результат",res.peak],["Среднее за 5 проб",res.mean],["Разность 5-й и 1-й",res.gain],["Отсроченная проба",res.delayed??"–"]];
  h+='<div class="psy-luria-stats">'+stats.map(([l,v])=>'<div><span>'+escape(l)+'</span><strong>'+escape(v)+'</strong></div>').join("")+'</div>';
  h+='<h4>Кривая по пяти предъявлениям</h4><div class="psy-luria-bars">'+res.trials.map((v,i)=>'<div><span>'+(i+1)+'</span><div class="psy-luria-track"><i style="width:'+(v*10)+'%"></i></div><b>'+v+' / 10</b></div>').join("")+'</div>';
  if(!ok)h+='<p><strong>Предварительный расчет.</strong> Для итогового отчета отметьте отсроченную пробу и фактическое время в минутах.</p>';
+ if(ok&&Number(delay)!==60)h+='<p class="notice">Фактическая отсрочка составляет '+escape(delay)+' минут вместо 60. Это отклонение от выбранного протокола; результат интерпретируйте с учетом обстоятельств.</p>';
  h+='<div class="notice">Результаты описательные: возрастные уровни и диагнозы автоматически не назначаются.</div></section>';
  return h;
 }
@@ -85,7 +86,7 @@ function calculator(d,ctx){
   '<div class="psy-luria-notes"><label>«Лишние» слова / повторы<textarea data-luria-note="'+t+'" rows="2" placeholder="Посторонние слова и повторы отдельно">'+escape(notes[t]?.extra||"")+'</textarea></label></div></section>';
  });
  h+='</div><div id="luriaResult">'+results(a,r.luriaDelay)+'</div>';
- if(ctx.calcMode==="class")h+='<h3>Сводка участников</h3><div class="results-table"><table id="luriaGroupSummary"><thead><tr><th>Код</th><th>1-я</th><th>5-я</th><th>Пик</th><th>Через 60 мин</th></tr></thead><tbody>'+rs.map((u,i)=>{let z=score(d,u.answers);return '<tr><td>'+escape(u.name||"Код "+(i+1))+'</td><td>'+(z?.first??"–")+'</td><td>'+(z?.fifth??"–")+'</td><td>'+(z?.peak??"–")+'</td><td>'+(z?.delayed??"–")+'</td></tr>';}).join("")+'</tbody></table></div>';
+ if(ctx.calcMode==="class")h+='<h3>Сводка участников</h3><div class="results-table"><table id="luriaGroupSummary"><thead><tr><th>Код</th><th>1-я</th><th>5-я</th><th>Пик</th><th>Отсрочка</th></tr></thead><tbody>'+rs.map((u,i)=>{let z=score(d,u.answers);return '<tr><td>'+escape(u.name||"Код "+(i+1))+'</td><td>'+(z?.first??"–")+'</td><td>'+(z?.fifth??"–")+'</td><td>'+(z?.peak??"–")+'</td><td>'+(z?.delayed??"–")+'</td></tr>';}).join("")+'</tbody></table></div>';
  return h;
 }
 function csv(x){let t=String(x??"");if(/^\s*[=+\-@]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"';}
@@ -109,12 +110,12 @@ function report(d,records,mode,index){
   const minutes=/^\d{1,3}$/.test(String(r.luriaDelay||""))&&Number(r.luriaDelay)>0?escape(r.luriaDelay)+" мин":"Не указано";
   const trace=z.trials.map((v,t)=>'<tr><td>'+(t+1)+'-я проба</td><td>'+v+' / 10</td><td>'+WORDS.filter((word,j)=>truth(r.answers[t*10+j])).map(escape).join(", ")+'</td><td>'+escape((r.luriaNotes||[])[t]?.extra||"–")+'</td></tr>').join("");
   const delay='<tr><td>Отсрочка ('+minutes+')</td><td>'+z.delayed+' / 10</td><td>'+WORDS.filter((word,j)=>truth(r.answers[50+j])).map(escape).join(", ")+'</td><td>'+escape((r.luriaNotes||[])[5]?.extra||"–")+'</td></tr>';
-  return '<section class="person"><h2>Участник: '+code+'</h2><p>Первое предъявление: <b>'+z.first+'</b>. Пятое: <b>'+z.fifth+'</b>. Лучший результат: <b>'+z.peak+'</b>. Среднее пяти проб: <b>'+z.mean+'</b>. Через 60 минут: <b>'+z.delayed+'</b>.</p>'+
+  return '<section class="person"><h2>Участник: '+code+'</h2><p>Первое предъявление: <b>'+z.first+'</b>. Пятое: <b>'+z.fifth+'</b>. Лучший результат: <b>'+z.peak+'</b>. Среднее пяти проб: <b>'+z.mean+'</b>. Отсроченная проба: <b>'+z.delayed+'</b>.</p>'+
    '<p>Дата обследования: '+date+'. Фактический интервал отсрочки: '+minutes+'.</p><table><thead><tr><th>Проба</th><th>Верные слова</th><th>Отмеченные слова</th><th>Повторы и посторонние слова</th></tr></thead><tbody>'+trace+delay+'</tbody></table></section>';
  }).join("");
  const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Заучивание 10 слов – отчет</title>'+
  '<style>@page{size:A4;margin:16mm}body{font:11pt/1.4 Arial,sans-serif;color:#27372d;max-width:850px;margin:auto;padding:20px}h1{font-size:19pt;color:#21674a}h2{font-size:14pt;color:#21674a}table{border-collapse:collapse;width:100%;table-layout:fixed}th,td{border:1px solid #9bafa2;padding:7px;text-align:left;overflow-wrap:anywhere}th:first-child{width:20%}th:nth-child(2){width:14%}th:nth-child(3){width:34%}.person{break-inside:avoid;margin:22px 0}.notice{padding:10px;background:#f1f6f2}.printbtn{padding:10px;background:#18794e;color:white;border:0}@media print{body{padding:0;max-width:none}.printbtn{display:none}.person{break-inside:auto}.person:not(:first-of-type){break-before:page}}</style></head><body>'+
- '<h1>Заучивание 10 слов – '+escape(d.author)+'</h1><p>Редакция: приложение 3, С. А. Налькин, 2021. Пять предъявлений и отсрочка через 60 минут.</p>'+
+ '<h1>Заучивание 10 слов – '+escape(d.author)+'</h1><p>Редакция: приложение 3, С. А. Налькин, 2021. Пять предъявлений, планируемая отсрочка 60 минут (фактическая указана отдельно).</p>'+
  '<p class="notice">Описательные результаты, не клинический диагноз и не оценка по возрастной норме. Указанное время отсрочки является временем протокола, фактический интервал следует фиксировать отдельно.</p>'+rows+
  '<p>Источник: '+escape(d.source)+'</p><button class="printbtn" onclick="window.print()">Распечатать / сохранить PDF</button></body></html>';
  download(mode==="class"?"luria_10_words_group_report.html":"luria_10_words_report.html",html,"text/html;charset=utf-8");return true;
