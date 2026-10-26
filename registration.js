@@ -6,14 +6,14 @@
  const emailField=document.getElementById("authEmail");
  const codeField=document.getElementById("authCode");
  const status=document.getElementById("authStatus");
- const ready=Boolean(/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||"")&&/^sb_publishable_[A-Za-z0-9_-]+$/.test(config.publishableKey||"")&&window.supabase?.createClient);
+ const ready=Boolean(/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||"")&&/^sb_publishable_[A-Za-z0-9_-]+$/.test(config.publishableKey||"")&&config.registrationEnabled===true&&window.supabase?.createClient);
  function message(text,error=false){status.textContent=text;status.classList.toggle("error",error)}
  const send=document.getElementById("authSend"),verify=document.getElementById("authVerify");
  const disabledNote=document.getElementById("authNotConfigured");
  let client=null;
  if(!ready){
   disabledNote.hidden=false;emailField.disabled=true;send.disabled=true;
-  message("Отправка писем будет доступна после подключения базы аккаунтов.");
+  message("Отправка писем будет доступна после настройки почтового сервиса и подтверждения ссылок для входа.");
   return;
  }
  client=window.supabase.createClient(config.url,config.publishableKey,{
