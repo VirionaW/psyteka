@@ -4,13 +4,13 @@
  flex:0 0 82px!important;width:82px!important;height:82px!important;
  min-width:82px!important;max-width:82px!important;
  overflow:hidden!important;padding:0!important;border-radius:14px!important;
- background:#1c1c1c!important;border:1px solid #d1e4d7!important;
+ background:#f7faf7!important;border:1px solid #d1e4d7!important;
 }
 .library-page #catalog article.method .psy-approved-eight{
  display:block!important;width:100%!important;height:100%!important;
  min-width:100%!important;min-height:100%!important;
  border-radius:13px!important;
- background-image:url("assets/psyteka-approved-eight-v2.webp?v=20261026hq2")!important;
+ background-image:url("assets/psyteka-approved-eight-light.webp?v=20261026bgfix1")!important;
  background-repeat:no-repeat!important;background-size:400% 200%!important;
  image-rendering:auto!important;
 }
