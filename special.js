@@ -385,6 +385,8 @@
   indicators:m.items,calculator:true,scoring:"Описательная обработка наблюдений без баллов, порогов и диагнозов.",
   interpret:m.recommend
  };
+ const additionalMethods=window.PSY_SPECIAL_TOOLKIT?.methods||[];
+ for(const m of additionalMethods){if(byId.has(m.id))throw Error("Дубликат ID: "+m.id);data.push(m);byId.set(m.id,m);}
  const groups=["Диагностика и наблюдение","Коррекционно-развивающая работа","Индивидуальное сопровождение","Работа с родителями","Работа с педагогами","Мониторинг"];
  const chevron='<span class="nav-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path class="chevron-right" d="m9 6 6 6-6 6"></path><path class="chevron-down" d="m6 9 6 6 6-6"></path></svg></span>';
  tree.innerHTML='<button class="topic-btn topic-all" type="button" data-special-all>Все материалы</button>'+groups.map((g,i)=>{
@@ -411,7 +413,7 @@
   root.querySelector("#specialCount").textContent="Найдено: "+matches.length;
   root.querySelector("#specialCards").innerHTML=matches.map(m=>{
    const pic=typeof iconSvg==="function"?iconSvg(m.group==="Коррекционно-развивающая работа"?"Программы":m.topic==="Эмоциональная сфера"?"Настроение":m.topic==="Саморегуляция"?"Внимание":m.topic==="Коммуникация"?"Общение":"Адаптация"):"";
-   return '<article class="method special-method" data-kind="'+(m.group==="Диагностика и наблюдение"?"scale":"other")+'"><div class="head"><div class="glyph" aria-hidden="true">'+pic+'</div><div><h3>'+esc(m.title)+'</h3><p class="method-card-author">Психотека</p></div></div>'+
+   return '<article class="method special-method" data-kind="'+(m.group==="Диагностика и наблюдение"?"scale":"other")+'"><div class="head"><div class="glyph" aria-hidden="true">'+pic+'</div><div><h3>'+esc(m.title)+'</h3><p class="method-card-author">'+esc(m.author||'Психотека')+'</p></div></div>'+
    '<div class="tags"><span class="tag">'+esc(m.format)+'</span><span class="tag">'+esc(m.ageLabel)+'</span></div><p class="method-card-summary">'+esc(m.goal)+'</p>'+
    '<div class="actions"><button type="button" class="btn primary" data-special-open="'+esc(m.id)+'">Открыть методику</button></div></article>';
   }).join("")||'<p class="special-empty">По выбранным параметрам материалов нет. Измените направление или возрастную группу.</p>';
@@ -431,7 +433,7 @@
  root.addEventListener("click",e=>{
   const b=e.target.closest("[data-special-open]");if(!b)return;
   const m=byId.get(b.dataset.specialOpen);if(!m||typeof window.openMethod!=="function")return;
-  window.openMethod({id:m.id,name:m.title,theme:m.topic,author:"Психотека",format:m.format,age:m.ageLabel,goal:m.goal});
+  window.openMethod({id:m.id,name:m.title,theme:m.topic,author:m.author||"Психотека",format:m.format,age:m.ageLabel,goal:m.goal});
  });
  const table=(m,values)=>'<table class="special-table"><thead><tr><th>Наблюдение / действие</th><th>Да</th><th>Нет</th><th>Н/п</th></tr></thead><tbody>'+
   m.items.map((t,i)=>'<tr><td>'+esc(String(i+1)+". "+t)+'</td>'+["Наблюдалось","Не наблюдалось","Не применимо"].map(v=>'<td>'+(values?.[i]===v?"✓":"")+'</td>').join("")+'</tr>').join("")+'</tbody></table>';
