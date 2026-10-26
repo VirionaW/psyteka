@@ -113,13 +113,13 @@ function bind(d,ctx){
  update();
 }
 function printPage(d,blank,combined,row){
- const css='@page{size:A4 portrait;margin:15mm}*{box-sizing:border-box}body{font:10.5pt/1.45 Arial,sans-serif;color:#243a30}h1{font-size:18pt;margin:0 0 10pt}h2{font-size:13pt;margin:15pt 0 7pt}p{margin:7pt 0}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{border:1px solid #9db5a7;padding:6pt;font-size:9pt;overflow-wrap:anywhere}tr{break-inside:avoid}.blank-cell{height:25pt}.psy-six-sheet{break-before:page;page-break-before:always}.psy-six-versions ul{padding-left:18pt}li{margin-bottom:5pt}.psy-six-scale-legend{font-size:9pt}.psy-six-sheet p{font-size:9pt}a{color:#225c47;text-decoration:underline}.print-source{font-size:9pt}h3{font-size:11pt;margin:9pt 0 4pt}blockquote{margin:7pt 0 9pt;padding:6pt 9pt;border-left:3pt solid #9fc6b4}';
+ const css='@page{size:A4 portrait;margin:15mm}*{box-sizing:border-box}body{font:10.5pt/1.45 Arial,sans-serif;color:#243a30}h1{font-size:18pt;margin:0 0 10pt}h2{font-size:13pt;margin:15pt 0 7pt}p{margin:7pt 0}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{border:1px solid #9db5a7;padding:6pt;font-size:9pt;overflow-wrap:anywhere}tr{break-inside:avoid}.blank-cell{height:25pt}.psy-six-print-break{break-before:page;page-break-before:always}.psy-six-versions ul{padding-left:18pt}li{margin-bottom:5pt}.psy-six-scale-legend{font-size:9pt}.psy-six-sheet p{font-size:9pt}a{color:#225c47;text-decoration:underline}.print-source{font-size:9pt}h3{font-size:11pt;margin:9pt 0 4pt}blockquote{margin:7pt 0 9pt;padding:6pt 9pt;border-left:3pt solid #9fc6b4}';
  const source='<p class="print-source">Источник: '+a(d.source,"Научная публикация")+'</p>';
  const chosen=d.forms[Number(row?.sixVersion)]||d.forms[0];
  const guide='<article><h1>'+escape(d.name)+'</h1><p>'+escape(d.author)+'</p><p>Возраст: '+escape(d.age)+'</p><p>Редакция: '+escape(chosen.label)+'</p><h2>Цель</h2><p>'+escape(d.goal)+'</p><h2>Инструкция обследуемому</h2><blockquote>'+escape(d.instructions)+'</blockquote><h2>Порядок проведения</h2><p>'+escape(d.procedure)+'</p><h2>Ключ и правила подсчета</h2><p>'+escape(d.scoring)+'</p><h2>Интерпретация и ограничения</h2><p>'+escape(d.interpret)+'</p>'+source+'</article>';
- const sheet=(d.scaleMax||d.responseMax)?'<div class="psy-six-sheet">'+materials(d)+'</div>':'<div class="psy-six-sheet"><h2>Оригинальный бланк выбранной редакции</h2><p>'+a(chosen.url,"Открыть проверенную форму")+'</p></div>';
+ const sheet=(d.scaleMax||d.responseMax)?materials(d):'<section><h2>Оригинальный бланк выбранной редакции</h2><p>'+a(chosen.url,"Открыть проверенную форму")+'</p></section>';
  const title='<html lang="ru"><head><meta charset="utf-8"><title>'+escape(d.name)+' · А4</title><style>'+css+'</style></head><body>';
- return '<!doctype html>'+title+(blank?sheet:guide)+(combined?sheet:"")+'</body></html>';
+ return '<!doctype html>'+title+(blank?sheet:guide)+(combined?'<div class="psy-six-print-break">'+sheet+'</div>':"")+'</body></html>';
 }
 
 window.PSY_REQUESTED_SIX={config,results,score,instruction,materials,processing,calculator,bind,printPage};
