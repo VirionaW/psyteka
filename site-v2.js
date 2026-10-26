@@ -1,11 +1,11 @@
 "use strict";
 (function(){
  const page=document.body;
- const available=['school','preschool','adults','special','documents','spt','prevention','information'];
+ const available=['school','preschool','adults','special','documents','spt','prevention','information','pmpk'];
  const params=new URLSearchParams(location.search);
  const source=params.get('area');
  let now=available.includes(source)?source:'school';
- const title={school:['Школа','Диагностика и сопровождение'],preschool:['Детский сад','Дошкольные материалы'],adults:['Взрослые','Работа со взрослыми'],special:['ОВЗ и инвалидность','Сопровождение и доступность'],documents:['Документация','Рабочие формы'],spt:['СПТ в России','О процедуре и порядке проведения'],prevention:['Профилактика и просвещение','Конспекты, памятки, занятия'],information:['Информация','Справочные материалы и навигация']};
+ const title={school:['Школа','Диагностика и сопровождение'],preschool:['Детский сад','Дошкольные материалы'],adults:['Взрослые','Работа со взрослыми'],special:['ОВЗ и инвалидность','Сопровождение и доступность'],documents:['Документация','Рабочие формы'],spt:['СПТ в России','О процедуре и порядке проведения'],prevention:['Профилактика и просвещение','Конспекты, памятки, занятия'],information:['Информация','Справочные материалы и навигация'],pmpk:['ПМПК','Возрастное комплексное обследование']};
  const heroTitle=document.querySelector('.hero h1'),heroLead=document.querySelector('.hero p'),heroLabel=document.querySelector('.hero .eyebrow');
  function apply(area){
   if(!available.includes(area))return;now=area;page.dataset.area=area;
