@@ -36,3 +36,35 @@
 .library-page #modal .psy-luria-actions{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0}
 @media(max-width:1000px){.library-page #modal .psy-luria-trials{grid-template-columns:1fr}}
 @media(max-width:700px){.library-page #modal .psy-luria-words{grid-template-columns:repeat(2,minmax(0,1fr))}.library-page #modal .psy-luria-choices{grid-template-columns:repeat(2,minmax(0,1fr))}.library-page #modal .psy-luria-concepts,.library-page #modal .psy-luria-stats{grid-template-columns:1fr}.library-page #modal .psy-luria-links{flex-direction:column}}
+
+/* Luria-specific portfolio controls. No changes to other methods. */
+.library-page #modal .psy-luria-section-head{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 17px
+}
+.library-page #modal .psy-luria-section-head h3{margin:0}
+.library-page #modal .psy-luria-print-links{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-left:auto}
+.library-page #modal .psy-luria-stimulus-link a,
+.library-page #modal .psy-luria-source a{color:var(--green);font-weight:700;text-underline-offset:3px}
+.library-page #modal .psy-luria-footer{
+ display:flex;align-items:center;justify-content:flex-end;gap:10px;width:100%;min-width:0;
+}
+.library-page #modal .psy-luria-footer>.psy-bottom-processing{margin-left:auto}
+.library-page #modal .psy-luria-footer-right{display:flex;gap:9px;align-items:center;justify-content:flex-end;flex-wrap:wrap;margin-left:auto}
+.library-page #modal .psy-luria-footer [hidden]{display:none!important}
+.library-page #modal .psy-luria-status{
+ display:inline-flex;align-items:center;border-radius:999px;padding:7px 12px;
+ font-size:12px;font-weight:700;line-height:1.25;white-space:normal;
+}
+.library-page #modal .psy-luria-status.is-waiting{background:#fff0d7;color:#94570f;border:1px solid #dba653}
+.library-page #modal .psy-luria-status.is-ready{background:#e1f4e8;color:#196c43;border:1px solid #80bf9b}
+.library-page #modal .psy-luria-result-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.library-page #modal .psy-luria-result-head h3{margin:0}
+.library-page #modal .psy-luria-footer button:disabled{opacity:.48;cursor:not-allowed}
+@media(max-width:700px){
+ .library-page #modal .psy-luria-section-head{align-items:stretch}
+ .library-page #modal .psy-luria-print-links{width:100%;margin-left:0}
+ .library-page #modal .psy-luria-print-links .btn{flex:1 1 140px;text-align:center}
+ .library-page #modal .psy-luria-footer{flex-direction:column;align-items:stretch}
+ .library-page #modal .psy-luria-footer-right{margin-left:0;width:100%;justify-content:flex-end}
+ .library-page #modal .psy-luria-footer>.psy-bottom-processing{margin-left:auto}
+}
