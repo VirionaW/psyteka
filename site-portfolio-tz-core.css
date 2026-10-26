@@ -57,3 +57,5 @@
 .library-page #modal .psy-data-state.is-ready{
  background:#e4f5e8;color:#206b45;border:1px solid #88c59d;
 }
+
+.library-page #modal .modalfoot[hidden]{display:none!important}
