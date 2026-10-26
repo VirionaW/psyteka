@@ -86,6 +86,7 @@ function enhanceMethodView(tab,html){
  return html;
 }
 function setTab(name){
+ if((name==="score"||name==="processing")&&window.PSY_GUIDE_STANDARD?.selectionUnsupported(methodNow?.name))name="instruction";
  tabNow=name;
  document.querySelectorAll(".modal-tab").forEach(x=>{x.classList.toggle("active",x.dataset.tab===name);x.setAttribute("aria-selected",String(x.dataset.tab===name))});
  const body=$("#modalBody");
@@ -132,6 +133,9 @@ function setTab(name){
     const back=document.getElementById('luriaBack');if(back)back.hidden=!insideProcessing;
     const controls=['luriaReportBottom','luriaResetBottom','luriaFooterStatus'];controls.forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=!insideProcessing;});
    }
+   const unsupportedVersion=window.PSY_GUIDE_STANDARD?.selectionUnsupported(methodNow?.name);
+   bottom.disabled=Boolean(unsupportedVersion);
+   bottom.title=unsupportedVersion?"Обработка не поддерживается для выбранной возрастной версии":"";
    if(methodNow&&DETAILS[methodNow.name]?.workflow==='schulte5'){
     bottom.hidden=insideProcessing;
     const back=document.getElementById('schulteBack');if(back)back.hidden=!insideProcessing;
