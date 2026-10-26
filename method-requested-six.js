@@ -36,18 +36,30 @@ function processing(d){return '<h3>Ключ и обработка</h3><p>'+escap
 function status(r,d){return !!(d.scaleMax&&results(d,r.answers));}
 function summary(d,r){const res=results(d,r.answers);if(!d.scaleMax)return '<p>Регистрируйте наблюдения без расчета тестовых баллов. Официальный подсчет производится по опубликованному руководству выбранной редакции.</p>';return res?'<div class="psy-six-results">'+res.map(x=>'<div><strong>'+escape(x.title)+'</strong><span>'+x.raw+' ('+x.min+'-'+x.max+')'+(x.band?' · '+x.band:'')+'</span></div>').join("")+'</div>':'<p>До заполнения всех '+d.questionsCount+' ответов итог не рассчитывается.</p>';}
 function table(d,rows){return '<h3>Сводная таблица группы</h3><div class="results-table"><table><thead><tr><th>Код</th><th>Полнота</th><th>Результат</th></tr></thead><tbody>'+rows.map((r,i)=>{const res=results(d,r.answers);return '<tr><td>'+escape(r.name||"Участник "+(i+1))+'</td><td>'+(status(r,d)?"Заполнено":"Нет полного результата")+'</td><td>'+escape(res?res.map(x=>x.raw).join(" / "):"–")+'</td></tr>'}).join("")+'</tbody></table></div>';}
-function calculator(d,ctx){const rows=ctx.rows&&ctx.rows.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],done=status(r,d);
-let html='<section class="psy-six-calc" data-six-id="'+escape(d.id)+'"><div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one" type="button">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class" type="button">Группа / класс</button></div>';
-if(ctx.calcMode==="class")html+='<div class="group-tools"><label>Участник <select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+escape((i+1)+". "+(x.name||"Участник"))+'</option>').join("")+'</select></label><button class="btn" type="button" id="addParticipant">Добавить участника</button></div>';
-html+='<label class="psy-six-label">Код участника (без ФИО)<input id="participantName" type="text" maxlength="50" value="'+escape(r.name||"")+'" placeholder="Например, 7А-01"></label>';
-html+='<p>Источник ответов: '+a(d.forms[0].url,"оригинальный бланк методики")+'.</p>';
-if(d.scaleMax){html+='<div class="psy-six-answer-grid">'+Array.from({length:d.questionsCount},(_,i)=>'<label><span>Пункт '+(i+1)+'</span><select data-six-answer="'+i+'"><option value="">–</option>'+Array.from({length:d.scaleMax},(_,n)=>{const v=n+1;return '<option value="'+v+'" '+(String(r.answers?.[i]??"")===String(v)?"selected":"")+'>'+v+'</option>'}).join("")+'</select></label>').join("")+'</div>';}
-else html+='<p class="privacy-inline">Числовая обработка отключена: для данной редакции необходим сверенный комплект оригинальных вопросов, порядка пунктов и ключей. Можно оформить качественный протокол наблюдений.</p>';
-html+='<label class="psy-six-label">Наблюдения специалиста<textarea rows="4" data-six-notes placeholder="Особенности проведения, реакции, пояснения">'+escape(r.sixProtocol||"")+'</textarea></label>';
-html+='<div class="psy-six-state '+(d.scaleMax?(done?"ready":"pending"):"neutral")+'" id="sixStatus">'+(d.scaleMax?(done?"Результат рассчитан":"Требуется заполнение"):"Протокол наблюдения")+'</div><div id="sixSummary">'+summary(d,r)+'</div>';
-html+='<div class="actions"><button type="button" class="btn primary" data-six-report>Скачать протокол · А4</button><button type="button" class="btn" data-six-clear>Очистить ответы</button></div>';
-if(ctx.calcMode==="class")html+='<div id="sixClass">'+table(d,rows)+'</div><button type="button" class="btn" data-six-csv>Экспорт класса · CSV</button>';
-return html+'</section>';}
+function calculator(d,ctx){
+ const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],done=status(r,d);
+ let html='<section class="psy-six-calc" data-six-id="'+escape(d.id)+'"><div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one" type="button">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class" type="button">Группа / класс</button></div>';
+ if(ctx.calcMode==="class")html+='<div class="group-tools"><label>Участник <select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+escape((i+1)+". "+(x.name||"Участник"))+'</option>').join("")+'</select></label><button class="btn" type="button" id="addParticipant">Добавить участника</button></div>';
+ html+='<label class="psy-six-label">Код участника (без ФИО)<input id="participantName" type="text" maxlength="50" value="'+escape(r.name||"")+'" placeholder="Например, 7А-01"></label>';
+ if(d.forms.length>1){
+  const sel=r.sixVersion??"";
+  html+='<label class="psy-six-label">Авторская или возрастная редакция<select data-six-version aria-label="Редакция опросника"><option value="">Выберите редакцию</option>'+d.forms.map((f,i)=>'<option value="'+i+'" '+(String(sel)===String(i)?"selected":"")+'>'+escape(f.label)+'</option>').join("")+'</select></label><p id="sixVersionLink">'+(sel!==""&&d.forms[Number(sel)]?a(d.forms[Number(sel)].url,"Открыть оригинальный бланк выбранной редакции"):"Выберите нужную редакцию до проведения.")+'</p>';
+ }else html+='<p>Источник ответов: '+a(d.forms[0].url,"Оригинальный бланк методики")+'</p>';
+ const qCount=d.questionsCount||0,ansMax=d.scaleMax||d.responseMax||0;
+ if(qCount&&ansMax){
+   html+='<p class="privacy-inline">Внесите ответы строго по номерам из оригинальной формы. Незаполненное поле не считается нулевым ответом.</p><div class="psy-six-answer-grid">'+Array.from({length:qCount},(_,i)=>{
+    const scored=!!d.scaleMax,values=scored?r.answers:r.sixAnswers;
+    const v=values?.[i];
+    return '<label><span>Пункт '+(i+1)+'</span><select '+(scored?'data-six-answer':'data-six-unverified')+'="'+i+'" aria-label="Ответ на пункт '+(i+1)+'"><option value="">–</option>'+Array.from({length:ansMax},(_,n)=>'<option value="'+(n+1)+'" '+(String(v??"")===String(n+1)?"selected":"")+'>'+(n+1)+'</option>').join("")+'</select></label>';
+   }).join("")+'</div>';
+ }
+ if(!d.scaleMax)html+='<p class="privacy-inline">Ответы можно зарегистрировать, но тестовый балл здесь не рассчитывается до проверки авторского ключа. Никаких условных уровней не выводится.</p>';
+ html+='<label class="psy-six-label">Наблюдения специалиста<textarea rows="4" data-six-notes placeholder="Особенности проведения, реакции, пояснения">'+escape(r.sixProtocol||"")+'</textarea></label>';
+ html+='<div class="psy-six-state '+(d.scaleMax?(done?"ready":"pending"):"neutral")+'" id="sixStatus">'+(d.scaleMax?(done?"Результат рассчитан":"Требуется заполнение"):"Протокол наблюдения")+'</div><div id="sixSummary">'+summary(d,r)+'</div>';
+ html+='<div class="actions"><button type="button" class="btn primary" data-six-report '+(d.scaleMax&&!done?'disabled title="Заполните все обязательные ответы"':'')+'>Скачать протокол · А4</button><button type="button" class="btn" data-six-clear>Очистить ответы</button></div>';
+ if(ctx.calcMode==="class")html+='<div id="sixClass">'+table(d,rows)+'</div><button type="button" class="btn" data-six-csv>Экспорт класса · CSV</button>';
+ return html+'</section>';
+}
 function save(filename,contents,mime){const url=URL.createObjectURL(new Blob([contents],{type:mime})),node=document.createElement("a");node.href=url;node.download=filename;document.body.appendChild(node);node.click();node.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
 function printable(d,r){const res=results(d,r.answers),body='<h1>'+escape(d.name)+'</h1><p>'+escape(d.author)+'</p><p>Код участника: '+escape(r.name||"Без идентификатора")+'</p><p>Версия: '+escape(d.age)+'</p><h2>Результаты</h2>'+(res?res.map(x=>'<p><b>'+escape(x.title)+'</b>: '+x.raw+(x.band?" – "+x.band:"")+'</p>').join(""):'<p>Количественная обработка не проводилась.</p>')+'<h2>Наблюдения</h2><p>'+escape(r.sixProtocol||"Не внесены")+'</p><h2>Ограничения</h2><p>'+escape(d.interpret)+'</p><p>Первоисточник: '+a(d.source,"Научная публикация")+'</p>';
 return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Протокол · '+escape(d.name)+'</title><style>@page{size:A4;margin:15mm}body{font:11pt/1.5 Arial;color:#244536}h1{font-size:17pt}h2{font-size:13pt;margin-top:17px}p{overflow-wrap:anywhere}</style></head><body>'+body+'</body></html>';}
