@@ -22,7 +22,7 @@ Deno.serve(async (request: Request) => {
   if (origin && origin !== siteOrigin) {
     return output(403, { error: "Недопустимый источник запроса." });
   }
-  if (request.method === "OPTIONS") return output(204, {});
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: baseHeaders });
   if (request.method !== "POST") return output(405, { error: "Метод недоступен." });
   const jwt = /^Bearer (.+)$/i.exec(request.headers.get("Authorization") ?? "")?.[1];
   if (!jwt) return output(401, { error: "Необходим вход в аккаунт." });
