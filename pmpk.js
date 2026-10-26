@@ -65,7 +65,7 @@
   return '<div class="pmpk-facts"><div class="pmpk-fact"><small>Возраст</small><strong>'+AGE_LABELS[state.age]+'</strong></div><div class="pmpk-fact"><small>Планирование</small><strong>До 40 минут</strong></div><div class="pmpk-fact"><small>Формат</small><strong>7 заданий</strong></div><div class="pmpk-fact"><small>Оценка</small><strong>Качественная</strong></div></div>';
  }
  function header(){
-  return '<div class="pmpk-hero"><div><div class="pmpk-eyebrow">Самостоятельный раздел · Комплексное обследование</div><h1>ПМПК – маршрут психолога</h1><p>Возрастные задания, рабочие бланки специалиста и единый протокол. Время ориентировочное; состав и продолжительность специалист адаптирует под ребенка.</p></div><div class="pmpk-hero-time"><strong>40</strong><span>минут · ориентир</span></div></div>'+
+  return '<div class="pmpk-hero"><div><div class="pmpk-eyebrow">ПМПК · Комплексное обследование</div><h1>ПМПК</h1><p>Возрастные задания, методики, рабочие бланки и единый протокол для комплексного обследования.</p></div></div>'+
   '<div class="pmpk-card pmpk-toolbar"><div><label>Возраст обследуемого</label><div class="pmpk-ages" role="group" aria-label="Возраст">'+AGE_LABELS.map((a,i)=>'<button type="button" data-age="'+i+'" aria-pressed="'+(state.age===i)+'">'+a+'</button>').join("")+'</div></div><p class="pmpk-note">Программа индивидуальная. Для детей младше 3 лет и при выраженных особенностях развития нужен отдельный возрастной маршрут.</p></div>'+
   '<div class="pmpk-tabs" role="tablist" aria-label="Материалы ПМПК">'+[["portfolio","Портфолио"],["guide","Методика / руководство"],["blank","Бланк"]].map(a=>'<button role="tab" type="button" data-tab="'+a[0]+'" aria-selected="'+(state.tab===a[0])+'">'+a[1]+'</button>').join("")+'</div>';
  }
