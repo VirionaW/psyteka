@@ -45,3 +45,15 @@
  .library-page #modal .psy-common-guide-actions{width:100%;margin-left:0}
  .library-page #modal .psy-common-guide-actions .btn{flex:1 1 140px;white-space:normal;text-align:center}
 }
+
+/* Response completeness is not a clinical result classification. */
+.library-page #modal .psy-data-state{
+ display:inline-flex;align-items:center;border-radius:999px;
+ padding:6px 12px;margin:5px 0 10px;font-size:13px;font-weight:750;
+}
+.library-page #modal .psy-data-state.is-waiting{
+ background:#fff0d9;color:#8f5716;border:1px solid #dfaa5d;
+}
+.library-page #modal .psy-data-state.is-ready{
+ background:#e4f5e8;color:#206b45;border:1px solid #88c59d;
+}
