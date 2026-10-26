@@ -60,9 +60,9 @@
   ["emotion","Эмоциональный характер работы",[["","Нет ответа"],["positive","Позитивный"],["neutral","Нейтральный"],["negative","Напряженный"]]],
   ["level","Уровень по заключению специалиста",[["","Нет ответа"],["high","Высокий"],["medium","Средний"],["low","Низкий"]]]
  ];
- function mitReady(d){const a=get(d);return fieldsMit.every(([k])=>a[k])}
+ function mitReady(d){const a=get(d);return fieldsMit.every(([k])=>a[k])&&(a.level!=="high"||(a.similarity==="equal"&&a.agreement==="yes"))&&(a.level!=="low"||(a.similarity==="different"&&a.agreement==="no"))}
  function mitSummary(d){
-  if(!mitReady(d))return '<p>Заполните все критерии и выберите экспертный уровень. Пустые наблюдения не считаются отрицательными.</p>';
+  if(!mitReady(d))return '<p>Заполните все критерии и выберите экспертный уровень по руководству. Для высокого уровня необходимы близкие узоры и согласование, для низкого – выраженные различия и отсутствие договоренности. Пустые наблюдения не считаются отрицательными.</p>';
   const a=get(d),label=(k,v)=>fieldsMit.find(x=>x[0]===k)?.[2].find(x=>x[0]===v)?.[1]||v;
   return '<h3>Описание выполнения</h3><p>'+fieldsMit.map(([key,name])=>'<b>'+esc(name)+':</b> '+esc(label(key,a[key]))).join(". ")+'</p><p><b>Комментарий:</b> '+esc(a.note||"не указан")+'</p><p>Уровень является профессиональной оценкой наблюдавшегося сотрудничества, а не автоматическим баллом.</p>';
  }
@@ -126,6 +126,7 @@
    if(!Number.isInteger(n)||n<4||n>40){alert("Укажите целое число участников от 4 до 40.");return;}
    const s=get(d);
    if(s.size!==n&&s.rows.some(r=>r.status||r.choices.some(Boolean))&&!confirm("Изменение численности сбросит сделанные выборы. Продолжить?"))return;
+   if(s.size===n&&s.rows.length===n){rerender();return;}
    s.size=n;s.rows=Array.from({length:n},()=>({status:"",choices:["","",""]}));rerender();
   });
   body.querySelectorAll("[data-pv-secret-status]").forEach(el=>el.addEventListener("change",()=>{
