@@ -150,10 +150,36 @@
  function summaryMarkup(d){
   const s=summary(d);return s?'<h3>Описательное резюме</h3><p><b>Отмечено:</b> '+(s.yes.length?esc(s.yes.join("; ")):"нет отмеченных пунктов")+'.</p><p><b>Не отмечено:</b> '+(s.no.length?esc(s.no.join("; ")):"нет пунктов")+'.</p><p>Отметки фиксируют наблюдения, а не являются суммой баллов или диагнозом.</p>':'<p>Заполните все наблюдения для получения описательного резюме. Пустой ответ не равен «Не отмечено».</p>';
  }
+ function portfolio(d){
+  const m=detailById.get(d.preschoolId),p=m?.detailed;
+  if(!m||!p)return "";
+  const rows=[["Материал",m.title],["Составитель","Психотека"],["Возраст",m.age+" лет"],["Вид",p.format],["Количество пунктов",String(m.items.length)],["Заполняет",m.audience]];
+  const fields=rows.map(([label,value])=>'<div class="psy-profile-row"><strong>'+esc(label)+'</strong><span>'+esc(value)+'</span></div>').join("");
+  const indicators=p.indicators.map(value=>'<div class="psy-profile-indicator"><span>'+esc(value)+'</span></div>').join("");
+  return '<section class="psy-portfolio-reference psy-portfolio-unified">'+
+   '<h3>Общие сведения</h3><div class="psy-profile-lines">'+fields+'</div>'+
+   '<h3>Цель</h3><p class="psy-profile-description">'+esc(p.goal)+'</p>'+
+   '<h3>Области наблюдения</h3><div class="psy-profile-indicators">'+indicators+'</div>'+
+   '<h3>Условия применения</h3><p class="psy-profile-description">'+esc(p.conditions)+'</p>'+
+   '<h3>Результат работы</h3><p class="psy-profile-description">'+esc(p.outcome)+'</p>'+
+   '<h3>Ограничения</h3><p class="psy-profile-description">'+esc(p.limits)+'</p></section>';
+ }
+ function guideContent(m){
+  const p=m.detailed;
+  if(!p)return '<div class="psy-preschool-guide"><h3>Цель</h3><p>'+esc(m.goal)+'</p><h3>Для кого предназначено</h3><p>'+esc(m.audience)+'. Возраст: '+esc(m.age)+' лет.</p><h3>Порядок проведения</h3><p>'+esc(m.steps)+'</p><h3>Регистрация результатов</h3><p>Пункты отмечаются по наблюдаемому действию, без суммарного балла. Отдельно фиксируйте обстоятельства и помощь.</p><h3>Интерпретация и ограничения</h3><p>'+esc(m.recommend)+'</p></div>';
+  return '<div class="psy-preschool-guide">'+
+   '<h3>Назначение</h3><p>'+esc(p.goal)+'</p>'+
+   '<h3>Условия проведения</h3><p>'+esc(p.conditions)+'</p>'+
+   '<h3>Подготовка и материалы</h3><ul>'+p.materials.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>'+
+   '<h3>Порядок проведения для специалиста</h3><ol>'+p.steps.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol>'+
+   '<h3>Регистрация и обработка</h3><p>'+esc(p.registration)+'</p>'+
+   '<h3>Интерпретация</h3><p>'+esc(p.reading)+'</p>'+
+   '<h3>Ограничения</h3><p>'+esc(p.limits)+'</p>'+
+   '<h3>Итоговая запись</h3><p>'+esc(p.outcome)+'</p></div>';
+ }
  function instruction(d){
   const m=detailById.get(d.preschoolId);
-  return '<div class="psy-common-guide-head"><h3>Методика / руководство</h3><div class="psy-common-guide-actions"><button class="btn" type="button" data-preschool-print="guide">Без бланка</button><button class="btn primary" type="button" data-preschool-print="combined">С бланком</button></div></div>'+
-  '<div class="psy-preschool-guide"><h3>Цель</h3><p>'+esc(m.goal)+'</p><h3>Для кого предназначено</h3><p>'+esc(m.audience)+'. Возраст: '+esc(m.age)+' лет.</p><h3>Порядок проведения</h3><p>'+esc(m.steps)+'</p><h3>Регистрация результатов</h3><p>Каждый пункт заполняется отдельно: «Отмечено», «Не отмечено» или «Нет ответа». Сведения о ситуации и помощи фиксируются в примечании.</p><h3>Интерпретация и ограничения</h3><p>'+esc(m.recommend)+'</p><p>Эта рабочая карта используется для качественного сопровождения и не является стандартизированной диагностической шкалой.</p></div>';
+  return '<div class="psy-common-guide-head"><h3>Методика / руководство</h3><div class="psy-common-guide-actions"><button class="btn" type="button" data-preschool-print="guide">Без бланка</button><button class="btn primary" type="button" data-preschool-print="combined">С бланком</button></div></div>'+guideContent(m);
  }
  function materials(d){
   const m=detailById.get(d.preschoolId);
@@ -200,7 +226,7 @@
  function print(d,mode){
   const m=detailById.get(d.preschoolId);if(!m)return;
   if(mode==="result"&&!complete(d))return;
-  const s=ownedState(d),printGuide='<section><h2>'+esc(m.title)+'</h2><p><b>Возраст:</b> '+esc(m.age)+' лет</p><h3>Цель</h3><p>'+esc(m.goal)+'</p><h3>Порядок проведения</h3><p>'+esc(m.steps)+'</p><h3>Регистрация и интерпретация</h3><p>Качественная регистрация без суммарного балла. '+esc(m.recommend)+'</p></section>';
+  const s=ownedState(d),printGuide='<section><h2>'+esc(m.title)+'</h2><p><b>Возраст:</b> '+esc(m.age)+' лет</p>'+guideContent(m)+'</section>';
   const printBlank='<section class="print-blank"><h2>Протокол специалиста</h2><p>Дата: _____________________　Группа: _____________________</p>'+rowTable(m,mode==="result"?s.values:null)+'<p>Контекст: '+(mode==="result"?esc(s.note||"Не указан"):"____________________________")+'</p><p>Следующий шаг: ___________________________________________</p></section>';
   const result=mode==="result"?'<section>'+summaryMarkup(d)+'</section>':"";
   const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>'+esc(m.title)+'</title><style>@page{size:A4 portrait;margin:16mm}*{box-sizing:border-box}body{font:11pt/1.45 Arial,sans-serif;color:#212121}h2{font-size:17pt}h3{font-size:12pt}table{border-collapse:collapse;width:100%;table-layout:fixed;font-size:9pt}td,th{border:1px solid #777;padding:6px;text-align:left;overflow-wrap:anywhere;vertical-align:top}th:first-child{width:65%}tr{break-inside:avoid}.print-blank:not(:first-child){break-before:page}p{margin:8px 0}</style></head><body>'+(mode==="guide"||mode==="combined"?printGuide:"")+(mode==="guide"?"":printBlank)+result+'</body></html>';
@@ -209,7 +235,7 @@
   frame.onload=()=>{try{frame.contentWindow.focus();frame.contentWindow.print()}finally{setTimeout(()=>frame.remove(),1800)}};
   frame.srcdoc=html;
  }
- window.PSY_PRESCHOOL={instruction,materials,calculator,bind,updateFooter,print};
+ window.PSY_PRESCHOOL={portfolio,instruction,materials,calculator,bind,updateFooter,print};
  if(document.body.dataset.area==="preschool"){tree.hidden=false;document.querySelector('[data-view="preschool"]')?.setAttribute("aria-expanded","true")}
  show();
 })();
