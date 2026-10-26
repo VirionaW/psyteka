@@ -1,0 +1,671 @@
+{
+  "batch": "C",
+  "date": "2026-10-26",
+  "loadErrors": [],
+  "viewLoadError": null,
+  "records": {
+    "Исключение четвертого лишнего (словесный вариант)": {
+      "sourceModule": "method-odd4-verbal.js",
+      "age": "Ориентировочно младший школьный возраст (2–5 классы); подбирать с учетом словаря и образовательного опыта",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "odd4verbal",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/fourth_odd_verbal_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/fourth_odd_verbal_student.html",
+          "exists": true
+        },
+        {
+          "field": "officialBlank",
+          "path": "downloads/fourth_odd_verbal_student.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1359,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 1163,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1285,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Что мне нравится в школе": {
+      "sourceModule": "method-luskanova-drawing.js",
+      "age": "Учащиеся начальных классов, преимущественно 1–4 классы",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "schoolDrawingL",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/luskanova_favorite_school_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/luskanova_favorite_school_student.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1448,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 688,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1410,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Методика классификации предметов": {
+      "sourceModule": "method-object-classification.js",
+      "age": "Проба в выбранной схеме рассчитана преимущественно на 6–7 лет; нормативы к новому набору карточек не применяются",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "objectClass16",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/object_classification_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/object_classification_16_cards.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 2029,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 9097,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1799,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Последовательные картинки": {
+      "sourceModule": "method-observation-sequences.js",
+      "age": "Ориентировочно 6–10 лет; сложность адаптируется специалистом",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": null,
+      "calculator": false,
+      "localFiles": [],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1007,
+          "hasSpoken": true,
+          "hasScoring": false,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 1279,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1626,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Показатели школьной дезадаптации": {
+      "sourceModule": "method-observation-sequences.js",
+      "age": "Школьный возраст, с учётом условий класса",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": false,
+      "workflow": "schoolAdaptObserve",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/school_adaptation_guide.html",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/school_adaptation_blank.html",
+          "exists": true
+        },
+        {
+          "field": "processingFile",
+          "path": "downloads/school_adaptation_scoring.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 771,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 3040,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1093,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Исследование мотивационной сферы": {
+      "sourceModule": "method-motivation-interview.js",
+      "age": "Ориентировочно 9–17 лет; адаптировать лексику под возраст и потребности",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": false,
+      "workflow": "motivationInterview",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/motivation_interview_guide.html",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/motivation_interview_blank.html",
+          "exists": true
+        },
+        {
+          "field": "processingFile",
+          "path": "downloads/motivation_interview_scoring.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1034,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 1896,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1888,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Опросник готовности подростков к самостоятельной жизни": {
+      "sourceModule": "method-independent-living.js",
+      "age": "Ориентировочно 12–18 лет с адаптацией формулировок",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": false,
+      "workflow": "independentLiving12",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/independent_living_guide.html",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/independent_living_blank.html",
+          "exists": true
+        },
+        {
+          "field": "processingFile",
+          "path": "downloads/independent_living_scoring.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1173,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 2061,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1601,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Тест цветовых отношений": {
+      "sourceModule": "method-color-relations.js",
+      "age": "Школьники с достаточным различением цветов и пониманием задания; конкретная возрастная стандартизация не заявлена",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "colorRelations8",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/color_relations_guide.html",
+          "exists": true
+        },
+        {
+          "field": "guideWithBlankFile",
+          "path": "downloads/color_relations_guide_with_blank.html",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/color_relations_blank.html",
+          "exists": true
+        },
+        {
+          "field": "protocolWordFile",
+          "path": "downloads/color_relations_blank.docx",
+          "exists": true
+        },
+        {
+          "field": "processingFile",
+          "path": "downloads/color_relations_processing.html",
+          "exists": true
+        },
+        {
+          "field": "stimulusFile",
+          "path": "downloads/color_relations_cards.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1370,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 2636,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1776,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": true
+        }
+      }
+    },
+    "Повторение цифровых рядов (прямой и обратный порядок)": {
+      "sourceModule": "method-digit-span.js",
+      "age": "Школьники и взрослые, способные воспринимать числа на слух; возрастные нормы для этих рядов отсутствуют",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "digitSpanPsy",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/digit_span_guide.html",
+          "exists": true
+        },
+        {
+          "field": "guideWithBlankFile",
+          "path": "downloads/digit_span_guide_with_protocol.html",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/digit_span_protocol.html",
+          "exists": true
+        },
+        {
+          "field": "protocolWordFile",
+          "path": "downloads/digit_span_protocol.docx",
+          "exists": true
+        },
+        {
+          "field": "processingFile",
+          "path": "downloads/digit_span_scoring.html",
+          "exists": true
+        },
+        {
+          "field": "stimulusFile",
+          "path": "downloads/digit_span_examiner.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 900,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 610,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1738,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Проба на динамический праксис «Кулак – ребро – ладонь»": {
+      "sourceModule": "method-dynamic-praxis.js",
+      "age": "Дети школьного возраста и взрослые; возрастная пригодность и ограничения определяются специалистом",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "dynamicPraxisLuria",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/luria_praxis_guide.html",
+          "exists": true
+        },
+        {
+          "field": "guideWithBlankFile",
+          "path": "downloads/luria_praxis_guide_with_protocol.html",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/luria_praxis_protocol.html",
+          "exists": true
+        },
+        {
+          "field": "protocolWordFile",
+          "path": "downloads/luria_praxis_protocol.docx",
+          "exists": true
+        },
+        {
+          "field": "processingFile",
+          "path": "downloads/luria_praxis_scoring.html",
+          "exists": true
+        },
+        {
+          "field": "stimulusFile",
+          "path": "downloads/luria_praxis_stimulus.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1202,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 960,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1758,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": true
+        }
+      }
+    },
+    "Простые аналогии (словесно-логическое мышление)": {
+      "sourceModule": "method-simple-analogies.js",
+      "age": "Ориентировочно с 10 лет",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "simpleAnalogies12",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/analogies_guide.html",
+          "exists": true
+        },
+        {
+          "field": "guideWithBlankFile",
+          "path": "downloads/analogies_with_blank.html",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/analogies_blank.html",
+          "exists": true
+        },
+        {
+          "field": "processingFile",
+          "path": "downloads/analogies_scoring.html",
+          "exists": true
+        },
+        {
+          "field": "stimulusFile",
+          "path": "downloads/analogies_examiners_key.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 5148,
+          "hasSpoken": true,
+          "hasScoring": true,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 2198,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1603,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Парные ассоциации (смысловая и механическая память)": {
+      "sourceModule": "method-paired-associations.js",
+      "age": "Ориентировочно с 9 лет",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "pairedAssoc20",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/paired_associations_guide.html",
+          "exists": true
+        },
+        {
+          "field": "guideWithBlankFile",
+          "path": "downloads/paired_associations_with_blank.html",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/paired_associations_blank.html",
+          "exists": true
+        },
+        {
+          "field": "processingFile",
+          "path": "downloads/paired_associations_scoring.html",
+          "exists": true
+        },
+        {
+          "field": "stimulusFile",
+          "path": "downloads/paired_associations_examiner.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 2735,
+          "hasSpoken": true,
+          "hasScoring": true,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 2424,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1637,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      }
+    }
+  }
+}
