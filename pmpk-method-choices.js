@@ -82,31 +82,49 @@
  function idFor(m){return m.kind==="working"?"working:"+m.id:m.kind==="catalog"?"catalog:"+m.name:"reference:"+m.name}
  function hasPortfolio(m){return m.kind==="working"&&!!window.PSY_PMPK_METHODS?.open||m.kind==="catalog"&&!!window.PSY_CATALOG?.find(x=>x.name===m.name)&&!!window.PSY_FULL_METHODS?.[m.name]}
  function CSSsafe(s){return String(s).replace(/["\\]/g,"\\$&")}
+ function portfolioCount(age){return (catalogue[age]||[]).flat().filter(m=>hasPortfolio(m)).length}
  function render(age,task){
-  const items=catalogue[age]?.[task]||[];
-  return '<div class="pmpk-choices"><p class="pmpk-choices-heading">Методики на выбор <span>Одна или несколько по показаниям; полный комплект может требовать больше 40 минут</span></p><div class="pmpk-choices-list">'+items.map((m,i)=>{
-   const id=idFor(m),selected=selections[age][task]===id,has=hasPortfolio(m);
-   const tag=m.kind==="working"?"Дополнительная проба Психотеки":m.kind==="reference"?"Методика из рекомендаций · нужен комплект":"Методика с портфолио в Психотеке";
-   return '<article class="pmpk-choice'+(selected?" is-chosen":"")+'"><div class="pmpk-choice-copy"><div class="pmpk-choice-tag">'+esc(tag)+'</div><h4>'+esc(titleFor(m))+'</h4>'+(authorFor(m)?'<div class="pmpk-choice-author">'+esc(authorFor(m))+'</div>':'')+'<p>'+esc(m.detail)+'</p></div><div class="pmpk-choice-controls">'+
-   '<button type="button" class="pmpk-mini" data-pmpk-select="'+age+':'+task+':'+i+'" aria-pressed="'+selected+'">'+(selected?"Выбрано":"Выбрать")+'</button>'+
-   (has?'<button type="button" class="pmpk-action primary" data-pmpk-open="'+age+':'+task+':'+i+'">Открыть портфолио</button>':
-   '<a class="pmpk-choice-source" target="_blank" rel="noopener noreferrer" href="'+REF+'">Перечень методик</a>')+
-   '</div></article>';
-  }).join("")+'</div></div>';
+  const items=catalogue[age]?.[task]||[],full=items.filter(hasPortfolio).length;
+  return '<div class="pmpk-choices"><div class="pmpk-choices-top"><p class="pmpk-choices-heading">Выбор методики</p><span class="pmpk-choices-counter">'+full+' из '+items.length+' с портфолио</span></div>'+
+   '<p class="pmpk-choices-hint">Выберите методику для протокола. Для проведения используйте ее собственное руководство и материалы.</p>'+
+   '<div class="pmpk-choices-list">'+items.map((m,i)=>{
+    const id=idFor(m),selected=selections[age][task]===id,has=hasPortfolio(m);
+    const tag=m.kind==="working"?"Дополнительная проба":has?"Портфолио Психотеки":"Методическое описание";
+    return '<article class="pmpk-choice'+(selected?" is-chosen":"")+'">'+
+     '<div class="pmpk-choice-copy"><span class="pmpk-choice-tag">'+esc(tag)+'</span>'+
+     '<h4>'+esc(titleFor(m))+'</h4>'+
+     (authorFor(m)?'<div class="pmpk-choice-author">'+esc(authorFor(m))+'</div>':'')+
+     '<p>'+esc(m.detail)+'</p></div>'+
+     '<div class="pmpk-choice-controls">'+
+     '<button type="button" class="pmpk-mini" data-pmpk-select="'+age+':'+task+':'+i+'" aria-pressed="'+selected+'" aria-label="'+(selected?"Снять выбор: ":"Выбрать: ")+esc(titleFor(m))+'">'+(selected?"Выбрана":"Выбрать")+'</button>'+
+     (has?'<button type="button" class="pmpk-action primary" data-pmpk-open="'+age+':'+task+':'+i+'">Открыть портфолио</button>':
+      '<a class="pmpk-choice-source" href="'+REF+'" target="_blank" rel="noopener noreferrer" title="Примерный перечень методик, не полный комплект материалов">Смотреть перечень</a>')+
+     '</div></article>';
+   }).join("")+'</div></div>';
  }
  function getMethod(age,task){const key=selections[age]?.[task];return catalogue[age]?.[task]?.find(m=>idFor(m)===key)||null}
  function eventClick(btn,currentAge,refresh){
   const code=btn.dataset.pmpkSelect??btn.dataset.pmpkOpen;
   if(!code)return false;
-  const [age,task,ix]=code.split(":").map(Number);if(age!==currentAge||!catalogue[age]?.[task]?.[ix])return true;
+  const [age,task,ix]=code.split(":").map(Number);
+  if(age!==currentAge||!catalogue[age]?.[task]?.[ix])return true;
   const m=catalogue[age][task][ix];
-  if(btn.dataset.pmpkSelect!==undefined){selections[age][task]=idFor(m);refresh();return true;}
+  if(btn.dataset.pmpkSelect!==undefined){
+   const id=idFor(m);
+   selections[age][task]=selections[age][task]===id?"":id;
+   if(typeof refresh==="function")refresh({task,choiceChanged:true});
+   return true;
+  }
   if(m.kind==="working")window.PSY_PMPK_METHODS?.open?.(m.id);
   if(m.kind==="catalog"){
    const item=window.PSY_CATALOG?.find(x=>x.name===m.name);
-   if(item){const action=document.querySelector('[data-open="'+CSSsafe(item.id)+'"]');if(action)action.click();else if(typeof window.openMethod==="function")window.openMethod(item);}
+   if(item){
+    const action=document.querySelector('[data-open="'+CSSsafe(item.id)+'"]');
+    if(action)action.click();
+    else if(typeof window.openMethod==="function")window.openMethod(item);
+   }
   }
   return true;
  }
- window.PSY_PMPK_CHOICES={render,getMethod,eventClick,source:REF,counts:catalogue.map(g=>g.map(a=>a.length))};
+ window.PSY_PMPK_CHOICES={render,getMethod,eventClick,portfolioCount,source:REF,counts:catalogue.map(g=>g.map(a=>a.length))};
 })();
