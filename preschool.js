@@ -63,7 +63,7 @@
  const ageMatch=m=>{if(!age)return true;const [lo,hi]=m.age.split("-").map(Number),[a,b]=age.split("-").map(Number);return lo<=a&&hi>=b};
  const themeName=m=>{
   const map={"Эмоциональная сфера":"Настроение","Поведение":"Агрессия","Страхи":"Тревожность","Саморегуляция":"Внимание","Готовность к школе":"Мышление","Адаптация группы":"Адаптация"};
-  return map[m.topic]||(["Диагностика","Коррекционно-развивающая работа"].includes(m.group)?(m.topic in (window.categoryIcons||{})?m.topic:"ПМПК"):"Программы");
+  return map[m.topic]||(["Адаптация","Тревожность","Самооценка","Внимание","Память","Мышление","Семья","Общение","Агрессия","Настроение"].includes(m.topic)?m.topic:"Программы");
  };
  function picture(m){
   if(m.existing&&typeof artForMethod==="function")return artForMethod({name:m.existing,theme:themeName(m)});
@@ -134,7 +134,6 @@
   if(!badge)return;
   const ready=complete(d);badge.className="psy-preschool-footer-state "+(ready?"complete":"pending");
   badge.textContent=ready?"Данные заполнены":"Требуется заполнение";
-  document.getElementById("modal")?.classList.toggle("psy-preschool-current",true);
  }
  function bind(d){
   const body=document.getElementById("modalBody");if(!body)return;
