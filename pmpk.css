@@ -102,3 +102,68 @@ html.dark .library-page[data-area="pmpk"] .pmpk-hero{background:#225c6b}
  .library-page[data-area="pmpk"] .pmpk-hero>div{flex:0 1 80%;max-width:80%}
 }
 @media(max-width:470px){.library-page[data-area="pmpk"] .pmpk-hero>div{max-width:100%}.library-page[data-area="pmpk"] .pmpk-hero::before{opacity:.35}.library-page[data-area="pmpk"] .pmpk-hero::after{background:linear-gradient(90deg,#225c6b 0%,rgba(34,92,107,.96) 60%,rgba(34,92,107,.75) 100%)}}
+
+
+/* Индивидуальные комплекты ПМПК – дизайн трех вкладок и протоколов. */
+.pmpk-task-actions{display:flex;justify-content:flex-end;align-items:center;gap:9px;margin-top:10px}
+.pmpk-task-actions button{font:700 13px system-ui;padding:9px 13px;min-height:38px}
+body.pmpk-method-open{overflow:hidden}
+.pmpk-method-overlay{position:fixed;inset:0;z-index:3100;background:rgba(18,35,38,.73);display:grid;place-items:center;padding:12px}
+.pmpk-method-shell{display:flex;flex-direction:column;width:min(1020px,96vw);height:min(89dvh,920px);min-height:300px;overflow:hidden;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:19px;box-shadow:0 20px 70px #0c20254d}
+.pmpk-method-header{display:flex;align-items:start;justify-content:space-between;gap:14px;padding:21px 24px 16px;flex-shrink:0}
+.pmpk-method-overline{font-size:12px;text-transform:uppercase;letter-spacing:.075em;font-weight:800;margin:0 0 6px;color:var(--muted)}
+.pmpk-method-header h2{font-size:clamp(19px,2.5vw,29px);line-height:1.28;margin:0}
+.pmpk-method-close{display:grid;place-items:center;width:42px;height:42px;flex:none;border:1px solid var(--line);border-radius:11px;background:var(--soft);color:var(--ink);font:25px/1 system-ui;cursor:pointer}
+.pmpk-method-tabs{display:flex;align-items:center;gap:6px;padding:4px 24px 11px;flex-shrink:0;border-bottom:1px solid var(--line);overflow-x:auto}
+.pmpk-method-tabs button{font:700 14px system-ui;white-space:nowrap;background:transparent;color:var(--muted);border:1px solid transparent;border-radius:11px;padding:10px 14px;cursor:pointer}
+.pmpk-method-tabs button[aria-selected="true"]{background:var(--soft);color:var(--green);border-color:var(--line)}
+.pmpk-method-tabs button:hover{color:var(--green)}
+.pmpk-method-content{overflow:auto;overscroll-behavior:contain;min-height:0;flex:1;padding:18px 24px 22px}
+.pmpk-method-box{border:1px solid var(--line);background:var(--paper);border-radius:14px;padding:18px 20px;margin-bottom:13px;overflow:hidden}
+.pmpk-method-box h3{font-size:19px;margin:0 0 10px}
+.pmpk-method-box h4{font-size:15px;margin:16px 0 6px}
+.pmpk-method-box p,.pmpk-method-box li{font-size:14px;line-height:1.65;margin:8px 0}
+.pmpk-method-box ol{padding-left:23px}
+.pmpk-method-box blockquote{border-left:3px solid var(--area,#3b907b);background:var(--soft);margin:12px 0;padding:14px 16px;border-radius:0 10px 10px 0;line-height:1.6;font-size:15px}
+.pmpk-method-box .pmpk-note{font-size:13px;color:var(--muted)}
+.pmpk-method-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pmpk-method-facts>div{border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--soft);min-width:0}
+.pmpk-method-facts small{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+.pmpk-method-facts strong{display:block;font-size:14px;font-weight:700;line-height:1.45}
+.pmpk-method-table{width:100%;table-layout:fixed;border-collapse:collapse;margin:10px 0;max-width:100%}
+.pmpk-method-table th,.pmpk-method-table td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.pmpk-method-table th{background:var(--soft);font-weight:750}
+.pmpk-method-table td:first-child{width:48px}
+.pmpk-blank-writing{height:45px}
+.pmpk-method-line{display:flex;justify-content:space-between;flex-wrap:wrap;gap:13px;padding:9px 0 13px;font-size:13px}
+.pmpk-method-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:12px 0}
+.pmpk-method-answer{background:var(--soft);border:1px solid var(--line);border-radius:11px;padding:13px 15px;min-width:0}
+.pmpk-method-answer p{margin:4px 0 10px}
+.pmpk-method-answer label{display:block;font-size:12px;font-weight:750;color:var(--ink);margin:9px 0}
+.pmpk-method-answer select,.pmpk-method-answer input,.pmpk-method-fields input,.pmpk-method-fields select,.pmpk-method-blockfield textarea,.pmpk-method-delay input,.pmpk-method-round-head select,.pmpk-method-blockfield input{display:block;width:100%;min-width:0;padding:10px 12px;margin-top:6px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);font:14px/1.4 system-ui}
+.pmpk-method-answer select:focus-visible,.pmpk-method-answer input:focus-visible,.pmpk-method-fields input:focus-visible,.pmpk-method-fields select:focus-visible,.pmpk-method-blockfield textarea:focus-visible,.pmpk-method-delay input:focus-visible,.pmpk-method-round-head select:focus-visible{outline:3px solid #d6aa5c;outline-offset:2px}
+.pmpk-method-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.pmpk-method-fields label,.pmpk-method-blockfield,.pmpk-method-delay{display:block;font-size:13px;font-weight:750;color:var(--ink)}
+.pmpk-method-blockfield{margin:16px 0}
+.pmpk-method-round{border:1px solid var(--line);border-radius:11px;padding:13px 15px;margin:13px 0}
+.pmpk-method-round-head{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.pmpk-method-round-head h4{margin:0!important}
+.pmpk-method-round-head label{font-size:12px;font-weight:750;min-width:160px}
+.pmpk-method-delay{max-width:220px;margin:12px 0}
+.pmpk-method-footer{flex:none;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:9px;padding:13px 24px;border-top:1px solid var(--line);background:var(--paper);box-shadow:0 -6px 18px #1224230a}
+.pmpk-method-footer .pmpk-method-processing{margin-left:auto}
+.pmpk-method-right{margin-left:auto;display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap}
+.pmpk-method-footer button{min-height:38px;font-size:12px;padding:8px 11px}
+.pmpk-method-overlay button:focus-visible{outline:3px solid #d6aa5c;outline-offset:2px}
+@media(max-width:760px){
+ .pmpk-method-overlay{padding:0}
+ .pmpk-method-shell{width:100%;height:100dvh;border-radius:0}
+ .pmpk-method-header,.pmpk-method-content{padding:16px}
+ .pmpk-method-tabs{padding:4px 16px 11px}
+ .pmpk-method-footer{padding:11px 16px}
+ .pmpk-method-facts,.pmpk-method-fields,.pmpk-method-grid{grid-template-columns:1fr}
+ .pmpk-method-box{padding:13px}
+ .pmpk-method-right{width:100%;margin-left:0}
+ .pmpk-method-footer .pmpk-status{margin-right:auto}
+}
+@media(prefers-reduced-motion:reduce){.pmpk-method-overlay *{scroll-behavior:auto}}
