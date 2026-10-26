@@ -82,6 +82,16 @@ function setTab(name){
     report.classList.toggle('psy-mspss-waiting',!eligible);
    }
    if(methodNow&&DETAILS[methodNow.name]?.workflow==='mspss')bottom.hidden=insideProcessing;
+   if(methodNow&&DETAILS[methodNow.name]?.workflow==='schulte5'){
+    bottom.hidden=insideProcessing;
+    const back=document.getElementById('schulteBack');if(back)back.hidden=!insideProcessing;
+    const report=document.getElementById('schulteReportBottom');if(report){
+     report.hidden=!insideProcessing;
+     report.textContent=calcMode==='class'?'Скачать отчёт класса':'Скачать отчёт участника';
+     report.disabled=calcMode==='class'?!rows.some(p=>window.PSY_SCHULTE.score(DETAILS[methodNow.name],p.answers)):!window.PSY_SCHULTE.score(DETAILS[methodNow.name],rows[rowIndex]?.answers);
+    }
+    const reset=document.getElementById('schulteResetBottom');if(reset)reset.hidden=!insideProcessing;
+   }
  }
  bindControls();
 }
@@ -494,7 +504,40 @@ function bindControls(){
  if(d?.workflow==='kfdBurns72')window.PSY_KFD.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='luria10x5')window.PSY_LURIA.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='familySocio110')window.PSY_FAMILY_SOCIO.bind(d,{rows,rowIndex,calcMode});
- if(d?.workflow==='schulte5')window.PSY_SCHULTE.bind(d,{rows,rowIndex,calcMode});
+ if(d?.workflow==='schulte5')window.PSY_SCHULTE.bind(d,{rows,rowIndex,calcMode,
+   onSelect:i=>{rowIndex=i;modeIndices.class=i;setTab('score');},
+   onBulkAdd:names=>{
+    if(rows.length===1&&!rows[0].name?.trim()&&!window.PSY_SCHULTE.done(rows[0].answers))rows.splice(0,1);
+    let first=-1;
+    for(const name of names){
+     if(!rows.some(x=>x.name?.trim().toLocaleLowerCase('ru')===name.trim().toLocaleLowerCase('ru'))){
+      if(first<0)first=rows.length;
+      rows.push({name:name.trim(),answers:[]});
+     }
+    }
+    if(!rows.length)rows.push({name:'',answers:[]});
+    rowIndex=first>=0?first:Math.max(0,rows.length-1);
+    modeIndices.class=rowIndex;setTab('score');
+   },
+   onSort:names=>{
+    if(names?.length){
+     if(rows.length===1&&!rows[0].name?.trim()&&!window.PSY_SCHULTE.done(rows[0].answers))rows.splice(0,1);
+     for(const name of names)if(!rows.some(x=>x.name?.trim().toLocaleLowerCase('ru')===name.trim().toLocaleLowerCase('ru')))rows.push({name:name.trim(),answers:[]});
+    }
+    if(!rows.length)rows.push({name:'',answers:[]});
+    const current=rows[rowIndex];
+    rows.sort((a,b)=>(a.name||'').localeCompare(b.name||'','ru',{sensitivity:'base'}));
+    rowIndex=names?.length?0:Math.max(0,rows.indexOf(current));
+    modeIndices.class=rowIndex;setTab('score');
+   },
+   onDelete:i=>{
+    rows.splice(i,1);if(!rows.length)rows.push({name:'',answers:[]});
+    rowIndex=Math.max(0,Math.min(rowIndex>i?rowIndex-1:rowIndex,rows.length-1));
+    modeIndices.class=rowIndex;setTab('score');
+   },
+   onDeleteAll:()=>{rows.splice(0,rows.length,{name:'',answers:[]});rowIndex=0;modeIndices.class=0;setTab('score');},
+   onNext:()=>{if(rowIndex>=rows.length-1)return;rowIndex++;modeIndices.class=rowIndex;setTab('score');}
+  });
  if(d?.workflow==='ladder7')window.PSY_LADDER.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='dembo7')window.PSY_DEMBO.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='elkonin4')window.PSY_ELKONIN.bind(d,{rows,rowIndex,calcMode});
@@ -621,6 +664,8 @@ function openMethod(m){
  const header=$('#modal').querySelector('.modalhead');
  let old=$('#methodTabs');if(old)old.remove();
  const mspssPilot=d?.workflow==='mspss';
+ const schultePilot=d?.workflow==='schulte5';
+ $('#modal').classList.toggle('psy-schulte-example',schultePilot);
  const matchMSPSS=['simpleAnalogies12','pairedAssoc20'].includes(d?.workflow);
  $('#modal').classList.toggle('psy-mspss-example',mspssPilot||matchMSPSS);
  const tabs=[['overview','Портфолио'],['instruction','Методика / руководство'],['materials','Бланк']];
@@ -631,11 +676,16 @@ function openMethod(m){
  header.insertAdjacentHTML('afterend','<nav class="method-tabs" id="methodTabs">'+tabs.map(([key,title])=>'<button class="modal-tab" data-tab="'+key+'">'+title+'</button>').join('')+'</nav>');
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
- footer.innerHTML=matchMSPSS?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button></div>':mspssPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="mspssBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="mspssReportBottom" disabled hidden>Скачать отчет участника</button><button class="btn psy-mspss-reset" id="mspssResetBottom" hidden>Очистить ответы</button></div></div>':'<div class="actions" id="methodButtons">'+((['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026','phillips58','scared41','ladder7','who5','schulte5','familySocio110','phq4','luria10x5','gad7','kfdBurns72','cormanFamily','odd4verbal','schoolDrawingL','objectClass16'].includes(d?.workflow))?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a>'+(d.workflow==='gad7'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':d.workflow==='odd4verbal'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':d.workflow==='phq4'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':d.workflow==='who5'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Полный русский WHO-5 · PDF ↗</a>':d.workflow==='scared41'?'<a class="btn" href="'+escapeHTML(d.childFile)+'" target="_blank" rel="noopener noreferrer">Бланк ребенка · А4</a><a class="btn" href="'+escapeHTML(d.parentFile)+'" target="_blank" rel="noopener noreferrer">Бланк родителя · А4</a><a class="btn" href="'+escapeHTML(d.parentPDF)+'" target="_blank" rel="noopener noreferrer">Оригинал родителю · PDF ↗</a>':d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.studentWordFile)+'" download>Бланк ученика · Word</a><a class="btn" href="'+escapeHTML(d.specialistFile)+'" target="_blank" rel="noopener noreferrer">Протокол психолога · А4</a>':d.workflow==='mspss'?'<a class="btn" href="'+escapeHTML(d.studentFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Регистрация ответов</a>':(d.workflow==='phillips58'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':'<a class="btn" href="'+escapeHTML(d.answerFile)+'" download>Бланк</a>')+(d?.workflow==='snap26'?'<a class="btn" href="'+escapeHTML(d.teacherFile)+'" target="_blank" rel="noopener">Бланк педагога · А4</a>':''))+(d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.source)+'" target="_blank" rel="noopener noreferrer">Рамка CASEL ↗</a>':'<a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">'+(d.workflow==='gad7'?'Полный текст ГТР-7 ↗':(d.workflow==='phillips58'?'Текст 58 вопросов и ключ ↗':'Первоисточник PDF ↗'))+'</a>'):d?(d.workflow==='fresh06'?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк · А4</a>':'')+'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions psy-footer-main"><button class="btn psy-footer-close" id="closeFooter">Закрыть</button>'+(d?'<button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button>':'')+'</div>';
+ footer.innerHTML=schultePilot?'<div class="psy-schulte-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button type="button" class="btn psy-schulte-back" id="schulteBack" hidden>← Вернуться к портфолио</button><div class="psy-schulte-footer-right"><button type="button" class="btn psy-schulte-report" id="schulteReportBottom" disabled hidden>Скачать отчёт участника</button><button type="button" class="btn psy-schulte-reset" id="schulteResetBottom" hidden>Очистить ответы</button></div></div>':matchMSPSS?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button></div>':mspssPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="mspssBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="mspssReportBottom" disabled hidden>Скачать отчет участника</button><button class="btn psy-mspss-reset" id="mspssResetBottom" hidden>Очистить ответы</button></div></div>':'<div class="actions" id="methodButtons">'+((['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026','phillips58','scared41','ladder7','who5','schulte5','familySocio110','phq4','luria10x5','gad7','kfdBurns72','cormanFamily','odd4verbal','schoolDrawingL','objectClass16'].includes(d?.workflow))?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a>'+(d.workflow==='gad7'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':d.workflow==='odd4verbal'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':d.workflow==='phq4'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':d.workflow==='who5'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">Полный русский WHO-5 · PDF ↗</a>':d.workflow==='scared41'?'<a class="btn" href="'+escapeHTML(d.childFile)+'" target="_blank" rel="noopener noreferrer">Бланк ребенка · А4</a><a class="btn" href="'+escapeHTML(d.parentFile)+'" target="_blank" rel="noopener noreferrer">Бланк родителя · А4</a><a class="btn" href="'+escapeHTML(d.parentPDF)+'" target="_blank" rel="noopener noreferrer">Оригинал родителю · PDF ↗</a>':d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.studentWordFile)+'" download>Бланк ученика · Word</a><a class="btn" href="'+escapeHTML(d.specialistFile)+'" target="_blank" rel="noopener noreferrer">Протокол психолога · А4</a>':d.workflow==='mspss'?'<a class="btn" href="'+escapeHTML(d.studentFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Регистрация ответов</a>':(d.workflow==='phillips58'?'<a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк ученика · А4</a>':'<a class="btn" href="'+escapeHTML(d.answerFile)+'" download>Бланк</a>')+(d?.workflow==='snap26'?'<a class="btn" href="'+escapeHTML(d.teacherFile)+'" target="_blank" rel="noopener">Бланк педагога · А4</a>':''))+(d.workflow==='selwork2026'?'<a class="btn" href="'+escapeHTML(d.source)+'" target="_blank" rel="noopener noreferrer">Рамка CASEL ↗</a>':'<a class="btn" href="'+escapeHTML(d.officialBlank)+'" target="_blank" rel="noopener noreferrer">'+(d.workflow==='gad7'?'Полный текст ГТР-7 ↗':(d.workflow==='phillips58'?'Текст 58 вопросов и ключ ↗':'Первоисточник PDF ↗'))+'</a>'):d?(d.workflow==='fresh06'?'<a class="btn" href="'+escapeHTML(d.guideFile)+'" download>Методика · Word</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк · А4</a>':'')+'<button class="btn" id="printFull">Распечатать всю методику</button><button class="btn" id="printBlank">'+(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'?'Оригинальный бланк PDF':d.special==='memory10'?'Протокол для психолога':'Бланк для ребенка')+'</button><button class="btn" id="saveMethod">Скачать методику</button>'+(d.workflow==='diagnostic03'&&d.diagnosticType==='rses'?'<button class="btn" id="saveBlank">Скачать бланк</button>':'')+'':'')+'</div><div class="actions psy-footer-main"><button class="btn psy-footer-close" id="closeFooter">Закрыть</button>'+(d?'<button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button>':'')+'</div>';
  if(d?.guideFile&&d?.answerFile&&d?.processingFile){const buttons=footer.querySelector('#methodButtons');if(buttons)buttons.insertAdjacentHTML('afterbegin','<a class="btn" href="'+escapeHTML(d.guideFile)+'" target="_blank" rel="noopener noreferrer">Руководство А4</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк А4</a><a class="btn" href="'+escapeHTML(d.processingFile)+'" target="_blank" rel="noopener noreferrer">Обработка А4</a>'+(d.stimulusFile?'<a class="btn" href="'+escapeHTML(d.stimulusFile)+'" target="_blank" rel="noopener noreferrer">Стимулы А4</a>':''));}
  if(d?.workflow==='storycards'||d?.workflow==='ladder7'||d?.workflow==='schulte5'||d?.workflow==='familySocio110'||d?.workflow==='luria10x5'){const link=[...footer.querySelectorAll('a')].find(a=>a.textContent.includes('Первоисточник'));if(link||d?.workflow==='kfdBurns72'){link.href=d.source;link.textContent=d.workflow==='ladder7'?'Опубликованное руководство PDF ↗':'Методическое описание ↗';}}
  if(!mspssPilot&&!matchMSPSS)$('#closeFooter').onclick=closeModal;
  if(d)$('#bottomProcessing').onclick=()=>setTab(tabNow==='score'||tabNow==='processing'?'overview':d.calculator?'score':'processing');
+ if(schultePilot){
+  $('#schulteBack').onclick=()=>setTab('overview');
+  $('#schulteReportBottom').onclick=()=>window.PSY_SCHULTE.report(d,rows,calcMode,rowIndex);
+  $('#schulteResetBottom').onclick=()=>{if(!confirm('Очистить результаты выбранного участника?'))return;rows[rowIndex].answers=[];setTab('score');};
+ }
  if(mspssPilot){$('#mspssBack').onclick=()=>setTab('overview');$('#mspssReportBottom').onclick=()=>calcMode==='class'?window.PSY_MSPSS.openClassReport(rows):window.PSY_MSPSS.openReport(rows[rowIndex]);$('#mspssResetBottom').onclick=()=>{if(!confirm('Очистить ответы выбранного участника?'))return;rows[rowIndex].answers=[];setTab('score');document.querySelector('input[data-mspss]')?.focus();};}
  if(d&&!matchMSPSS&&!['luskanova','smfq','bourdon30','mspss','storycards','elkonin4','snap26','dembo7','selwork2026','phillips58','scared41','ladder7','who5','schulte5','familySocio110','phq4','luria10x5','gad7','kfdBurns72','cormanFamily','odd4verbal','schoolDrawingL','objectClass16'].includes(d.workflow)){$('#printFull').onclick=()=>printMaterial(false);$('#printBlank').onclick=()=>{if(d.workflow==='diagnostic'||d.workflow==='diagnostic03'&&d.diagnosticType==='vanderbilt'){window.open(d.officialBlank,'_blank','noopener,noreferrer')}else printMaterial(true)};$('#saveMethod').onclick=saveMethodHTML;if(d.workflow==='diagnostic03'&&d.diagnosticType==='rses')$('#saveBlank').onclick=()=>window.PSY_DIAG03.saveBlank(d);}
  $('#modal').hidden=false;$('#shade').hidden=false;setTab('overview');
