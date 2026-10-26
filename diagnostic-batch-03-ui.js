@@ -53,10 +53,15 @@
  }
  function materials(d){
   if(!isR(d))return '<div class="diag-sheet"><h3>Оригинальный бланк Vanderbilt</h3><p>Для достоверного проведения обязательно используйте неизмененную официальную форму NICHQ.</p><p><a href="'+E(d.officialBlank)+'" target="_blank" rel="noopener noreferrer" class="btn primary">Открыть PDF: родитель и учитель ↗</a></p><p>Страницы 1-2 – первая родительская форма (55 пунктов), 3-4 – первая форма учителя (43 пункта). Последующие страницы PDF – формы для наблюдения в динамике, для которых в этой карточке обработка не реализована.</p><p class="diag-attribution">'+E(d.license)+'</p></div>';
-  return '<div class="diag-sheet"><h3>Шкала самооценки Розенберга</h3><p>Код участника: ____________ Класс/возраст: ______ Дата: ____________</p><p>'+E(d.instructions)+'</p>'+
-   '<p class="diag-options">'+d.options.map((x,i)=>i+' – '+E(x)).join(' · ')+'</p><table class="diag-questions-table"><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+
-   d.questions.map((x,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(x)+'</td><td>□ 0 &nbsp; □ 1 &nbsp; □ 2 &nbsp; □ 3</td></tr>').join('')+
-   '</tbody></table><p class="diag-attribution">М. Розенберг · общественное достояние · рабочий русский перевод (без подтвержденных возрастных нормативов)</p></div>';
+  return '<section class="diag-sheet"><div class="psy-common-guide-head"><h3>Опросник об отношении к себе</h3><div class="psy-common-guide-actions">'+
+    '<a class="btn" href="'+E(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать</a>'+
+    '<a class="btn primary" href="'+E(d.answerWordFile)+'" download>Скачать Word</a></div></div>'+
+    '<p>Код: ______________ Возраст: ________ Дата: ______________</p>'+
+    '<p>Отметьте один ответ на каждое утверждение. Правильных и неправильных ответов нет.</p>'+
+    '<p class="diag-options">'+d.options.map((x,i)=>i+' – '+E(x)).join('; ')+'</p>'+
+    '<table class="diag-questions-table"><thead><tr><th>№</th><th>Утверждение</th><th>0</th><th>1</th><th>2</th><th>3</th></tr></thead><tbody>'+
+    d.questions.map((x,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(x)+'</td><td></td><td></td><td></td><td></td></tr>').join('')+
+    '</tbody></table></section>';
  }
  function processing(d){
   const extra=isR(d)?'<p>Ключ: 0-3 для прямых пунктов 1, 2, 4, 6, 7; для 3, 5, 8, 9, 10-3 минус выбранный ответ. Итог – сумма 10 оценок.</p>':
