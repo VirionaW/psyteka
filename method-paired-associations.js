@@ -29,7 +29,7 @@ function instruction(d){
 const key='<table class="questions-table"><thead><tr><th>№</th><th>Первое слово</th><th>Второе слово (ключ)</th></tr></thead><tbody>'+
  GROUPS.map(g=>'<tr><th colspan="3">'+E(g.title)+'</th></tr>'+g.items.map((p,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(p[0])+'</td><td><b>'+E(p[1])+'</b></td></tr>').join("")).join("")+'</tbody></table>';
 return '<section class="psy-mspss-section psy-mspss-manual">'+
- '<div class="psy-mspss-manual-bar"><div><h3>Методика и руководство</h3><p>Материал для специалиста: обе серии, ключ и правила обработки.</p></div><div class="psy-mspss-manual-actions"><a class="btn primary" href="'+E(d.guideFile)+'" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать ↗</a></div></div>'+
+ '<div class="psy-mspss-manual-bar"><div><h3>Методика и руководство</h3><p>Материал для специалиста: обе серии, ключ и правила обработки.</p></div><div class="psy-mspss-manual-actions"><a class="btn primary" href="'+E(d.guideFile)+'?v=20261026complete2" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать ↗</a></div></div>'+
  '<h3>Цель</h3><p>'+E(d.goal)+'</p>'+
  '<h3>Описание методики</h3><p>Классическая проба парных ассоциаций исследует точное воспроизведение второго слова по первому. Предлагаются две серии по 10 пар — связанных и не связанных по смыслу. Предъявление слуховое, по одной серии за раз. Стимульные ряды составлены для Психотеки, без стандартизированных нормативов.</p>'+
  '<h3>Инструкция для ребёнка</h3><div class="psy-mspss-script">«'+E(d.instructions)+'»</div>'+
