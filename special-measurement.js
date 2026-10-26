@@ -50,7 +50,7 @@
  function validSeconds(v){const n=decimal(v);return Number.isSafeInteger(n)&&n>=1&&n<=3600;}
  function isFrequency(d){return d.toolkitId==="special-frequency-01";}
  function frequencyData(s){
-  const rows=s.sessions.filter(v=>String(v.duration).trim()!==""||String(v.count).trim()!=="");
+  const rows=s.sessions;
   const valid=!!s.target.trim()&&rows.length>0&&rows.every(v=>validDuration(v.duration)&&validCount(v.count));
   if(!valid)return {valid:false};
   const totalCount=rows.reduce((a,v)=>a+decimal(v.count),0),totalMinutes=rows.reduce((a,v)=>a+decimal(v.duration),0);
