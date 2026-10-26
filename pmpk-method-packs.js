@@ -11,7 +11,7 @@
    instruction:"Я прочитаю несколько заданий. Сначала нужно найти слово, которое не подходит к остальным, и объяснить свой выбор. Потом мы закончим пары слов. Если трудно, скажи мне об этом.",
    procedure:[
     "Установить контакт и убедиться, что ребенок понимает устную инструкцию. Допустимо заменить устное предъявление крупным шрифтом с фиксацией изменения условий.",
-    "Провести одно тренировочное обсуждение принципа исключения без подсказки ответов основной серии.",
+    "Провести одно тренировочное обсуждение принципа исключения по отдельному примеру, не раскрывая ответы основной серии.",
     "Предъявить последовательно четыре ряда на исключение и четыре словесные аналогии. Регистрировать дословный ответ, объяснение, самостоятельность и помощь.",
     "Если ребенок затрудняется, сначала повторить инструкцию, затем дать нейтральный вопрос об основании выбора. Записать каждую подсказку.",
     "Не оценивать нестандартный, но логично обоснованный ответ автоматически как ошибку. Завершить при выраженном утомлении."
@@ -67,7 +67,7 @@
   ROUNDS.reduce((a,[k])=>a+(state().rounds[k]==="skip"?6:state().rounds[k]==="done"?state().rows[k].filter(Boolean).length:0),0)}
  function outer(){
   const ready=complete(),d=state();
-  return '<div class="pmpk-method-shell"><div class="pmpk-method-header"><div><p class="pmpk-method-overline">ПМПК · '+ESC(current.kind)+' · 7-11 лет</p><h2 id="pmpkMethodTitle">'+ESC(current.title)+'</h2></div><button type="button" class="pmpk-method-close" data-m-action="close" aria-label="Закрыть">×</button></div>'+
+  return '<div class="pmpk-method-shell" role="dialog" aria-modal="true" aria-labelledby="pmpkMethodTitle"><div class="pmpk-method-header"><div><p class="pmpk-method-overline">ПМПК · '+ESC(current.kind)+' · 7-11 лет</p><h2 id="pmpkMethodTitle">'+ESC(current.title)+'</h2></div><button type="button" class="pmpk-method-close" data-m-action="close" aria-label="Закрыть">×</button></div>'+
   '<div class="pmpk-method-tabs" role="tablist" aria-label="Разделы методики">'+
   [["portfolio","Портфолио"],["guide","Методика / руководство"],["blank","Бланк"]].map(([id,title])=>'<button type="button" role="tab" data-m-tab="'+id+'" aria-selected="'+(tab===id)+'">'+title+'</button>').join("")+'</div>'+
   '<div class="pmpk-method-content">'+(tab==="portfolio"?portfolio():tab==="guide"?guide():tab==="blank"?blank():processing())+'</div>'+
@@ -99,7 +99,7 @@
  }
  function expertBlank(){
   if(current.code===METHODS.thinking.code){
-   return '<p>Задания зачитывает специалист. Ответы ребенка в протоколе не подсказываются.</p><table class="pmpk-method-table"><thead><tr><th>№</th><th>Задание для предъявления</th><th>Ответ и объяснение ребенка</th><th>Помощь</th></tr></thead><tbody>'+
+   return '<p>Задания зачитывает специалист. Тренировочный ряд: стол, стул, шкаф, яблоко. Тренировочные ответы в итог не входят.</p><table class="pmpk-method-table"><thead><tr><th>№</th><th>Задание для предъявления</th><th>Ответ и объяснение ребенка</th><th>Помощь</th></tr></thead><tbody>'+
    current.items.map((x,i)=>'<tr><td>'+(i+1)+'</td><td>'+ESC(x.prompt)+'</td><td class="pmpk-blank-writing"></td><td class="pmpk-blank-writing"></td></tr>').join("")+'</tbody></table>';
   }
   return '<p>Шесть слов специалист произносит по порядку: <strong>'+current.words.map(ESC).join(" · ")+'</strong>. Ребенку протокол не выдавать.</p><table class="pmpk-method-table"><thead><tr><th>Слово</th>'+ROUNDS.map(([k,l])=>'<th>'+ESC(l)+'</th>').join("")+'</tr></thead><tbody>'+
@@ -245,7 +245,7 @@
     (d.rounds.delayed==="done"?" (отсрочка "+d.delay+" мин)":"")+". Привнесения / повторы: "+(d.intrusions||"не отмечены")+".";
   }
   const bridge=window.PSY_PMPK_BRIDGE;
-  if(bridge&&bridge.getAge()===2){bridge.transfer(current.task,{result,help:d.help,notes:description+" Наблюдения специалиста: "+d.notes});close()}
+  if(bridge&&bridge.getAge()===2){if(bridge.transfer(current.task,{result,help:d.help,notes:description+" Наблюдения специалиста: "+d.notes}))close()}
   else window.alert("Для переноса в общий протокол сначала выберите возраст 7-11 лет.");
  }
  function takeValue(el){
