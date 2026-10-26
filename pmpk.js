@@ -143,6 +143,7 @@
   const btn=root.querySelector('[data-pmpk-expand="'+i+'"]');
   if(area)area.hidden=!open;
   if(btn)btn.setAttribute("aria-expanded",String(open));
+  root.querySelector('[data-pmpk-jump="'+i+'"]')?.classList.toggle("is-active",open);
  }
  function jumpToTask(i){
   if(!Number.isInteger(i)||i<0||i>=TASKS.length)return;
@@ -167,7 +168,8 @@
   const selected=root.querySelector("[data-pmpk-selected-count]");
   if(selected)selected.textContent=selectedCount()+" / 7";
   const index=window.PSY_PMPK_CHOICES?.getSelectedIndex?.(state.age,i);
-  if(index>=0)root.querySelector('[data-pmpk-select="'+state.age+":"+i+":"+index+'"]')?.focus?.({preventScroll:true});
+  const focusIndex=index>=0?index:Number(change.from?root.querySelector('[data-pmpk-select^="'+state.age+":"+i+'"]')?.dataset.pmpkSelect?.split(":")[2]:0);
+  if(Number.isInteger(focusIndex)&&focusIndex>=0)root.querySelector('[data-pmpk-select="'+state.age+":"+i+":"+focusIndex+'"]')?.focus?.({preventScroll:true});
   syncProgress();
  }
  function render(){
