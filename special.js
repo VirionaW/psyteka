@@ -403,7 +403,7 @@
   return '<h3>Описательное резюме</h3>'+blocks.map(([value,label])=>{
    const entries=m.items.filter((_,i)=>s[i]===value);
    return '<p><b>'+label+':</b> '+(entries.length?esc(entries.join("; ")):"нет")+'.</p>';
-  }).join("")+'<p>Это регистрация фактов и условий, а не шкала выраженности нарушения или диагноз.</p>';
+  }).join("")+'<p><b>Качественный анализ:</b> '+esc(m.profile.analysis)+'</p><p><b>Следующий шаг:</b> '+esc(m.profile.followUp)+'</p><p>Это регистрация фактов и условий, а не шкала выраженности нарушения или диагноз.</p>';
  };
  function cards(){
   const matches=data.filter(m=>(!group||m.group===group)&&(!topic||m.topic===topic)&&(!phase||m.ages.includes(phase))&&(!query||[m.title,m.topic,m.group,m.goal,m.format].join(" ").toLocaleLowerCase("ru").includes(query.toLocaleLowerCase("ru"))));
@@ -435,10 +435,55 @@
  });
  const table=(m,values)=>'<table class="special-table"><thead><tr><th>Наблюдение / действие</th><th>Да</th><th>Нет</th><th>Н/п</th></tr></thead><tbody>'+
   m.items.map((t,i)=>'<tr><td>'+esc(String(i+1)+". "+t)+'</td>'+["Наблюдалось","Не наблюдалось","Не применимо"].map(v=>'<td>'+(values?.[i]===v?"✓":"")+'</td>').join("")+'</tr>').join("")+'</tbody></table>';
- function instruction(d){const m=byId.get(d.specialId);return '<div class="psy-common-guide-head"><h3>Методика / руководство</h3><div class="psy-common-guide-actions"><button type="button" class="btn" data-special-print="guide">Без бланка</button><button type="button" class="btn primary" data-special-print="combined">С бланком</button></div></div>'+
-  '<div class="psy-special-guide"><h3>Цель</h3><p>'+esc(m.goal)+'</p><h3>Адресат</h3><p>'+esc(m.ageLabel)+'. Заполняет специалист; формат адаптируется к возможностям участника.</p><h3>Порядок работы</h3><p>'+esc(m.steps)+'</p><h3>Регистрация</h3><p>Для каждого пункта укажите «Наблюдалось», «Не наблюдалось» либо «Не применимо». Пустое значение сохраняет статус неполного ввода. Укажите контекст и фактически использованную помощь.</p><h3>Ограничения</h3><p>'+esc(m.recommend)+'</p><p>Рабочий протокол не является стандартизированной диагностической методикой и не содержит нормативных баллов.</p></div>';
+ function portfolio(d){
+  const m=byId.get(d.specialId),p=m.profile;
+  const details=[
+   ["Материал",m.title],["Составитель","Психотека"],["Возрастная группа",m.ageLabel],
+   ["Вид",m.format+" – авторская рабочая форма"],["Количество ориентиров",String(m.items.length)],
+   ["Редакция","26.10.2026"]
+  ];
+  return '<section class="psy-portfolio-reference psy-portfolio-unified psy-special-portfolio">'+
+   '<h3>Общие сведения</h3><div class="psy-profile-lines">'+details.map(([key,value])=>'<div class="psy-profile-row"><strong>'+esc(key)+'</strong><span>'+esc(value)+'</span></div>').join("")+'</div>'+
+   '<h3>Цель</h3><p class="psy-profile-description">'+esc(m.goal)+'</p>'+
+   '<h3>Условия применения</h3><p class="psy-profile-description">'+esc(p.setting)+'</p>'+
+   '<h3>Области наблюдения и работы</h3><div class="psy-profile-indicators">'+m.items.map((v,i)=>'<div class="psy-profile-indicator" data-profile-index="'+i+'"><span>'+esc(v)+'</span></div>').join("")+'</div>'+
+   '<h3>Результат работы</h3><p class="psy-profile-description">'+esc(p.analysis)+'</p>'+
+   '<h3>Источник и ограничения</h3><p class="psy-profile-description">Авторская рабочая карта Психотеки, редакция 26.10.2026. Это не стандартизированный тест: нормативов, клинических порогов и диагностического ключа нет. Методические ограничения и порядок регистрации приведены в руководстве.</p>'+
+   '</section>';
  }
- function materials(d){const m=byId.get(d.specialId);return '<div class="psy-common-guide-head"><h3>Протокол специалиста</h3><div class="psy-common-guide-actions"><button type="button" class="btn primary" data-special-print="blank">Посмотреть и распечатать</button></div></div><p>Дата: __________________　Условия: __________________</p>'+table(m,null)+'<p>Наблюдаемая ситуация: __________________________________________________</p><p>Предоставленная помощь: _________________________________________________</p><p>Следующее действие: _____________________________________________________</p><p class="privacy-inline">Бланк предназначен специалисту. Персональные данные не вводите на публичном сайте.</p>';}
+ function guideContents(m){
+  const p=m.profile;
+  return '<div class="psy-special-guide">'+
+   '<h3>Назначение и адресат</h3><p>'+esc(m.goal)+'</p><p><b>Возрастная группа:</b> '+esc(m.ageLabel)+'. Проводит и регистрирует специалист.</p>'+
+   '<h3>Условия проведения</h3><p>'+esc(p.setting)+'</p>'+
+   '<h3>Необходимые материалы</h3><p>'+esc(p.materials)+'</p>'+
+   '<h3>Подготовка</h3><p>'+esc(p.preparation)+'</p>'+
+   '<h3>Последовательность работы</h3><ol>'+p.sequence.map(step=>'<li>'+esc(step)+'</li>').join("")+'</ol>'+
+   '<h3>Регистрация результатов</h3><p>Отмечайте каждый ориентир отдельно: «Наблюдалось», «Не наблюдалось» либо «Не применимо». Если действия не было возможности наблюдать, оставьте поле пустым до уточнения; пустой ответ не равен отрицательному. При выборе «Не применимо» поясните причину в контексте. Фиксируйте условия, предоставленную помощь и следующий шаг.</p>'+
+   '<h3>Качественный анализ</h3><p>'+esc(p.analysis)+'</p><p>Пункты не суммируются. Протокол отражает наблюдаемые факты, а не баллы, нормы или диагнозы. Отделяйте самостоятельное действие от действия с поддержкой.</p>'+
+   '<h3>Дальнейшие действия</h3><p>'+esc(p.followUp)+'</p>'+
+   '<h3>Ограничения</h3><p>'+esc(m.recommend)+'</p><p>Источник: авторская рабочая форма Психотеки, редакция 26.10.2026. При использовании стандартизированного задания его собственные правила и ограничения применяются отдельно.</p>'+
+   '</div>';
+ }
+ function instruction(d){
+  const m=byId.get(d.specialId);
+  return '<div class="psy-common-guide-head"><h3>Методика / руководство</h3><div class="psy-common-guide-actions">'+
+   '<button type="button" class="btn" data-special-print="guide">Без бланка</button>'+
+   '<button type="button" class="btn primary" data-special-print="combined">С бланком</button></div></div>'+
+   guideContents(m);
+ }
+ function materials(d){
+  const m=byId.get(d.specialId);
+  return '<div class="psy-common-guide-head"><h3>Протокол специалиста</h3><div class="psy-common-guide-actions">'+
+   '<button type="button" class="btn primary" data-special-print="blank">Посмотреть и распечатать</button></div></div>'+
+   '<p><b>Материал:</b> '+esc(m.title)+'</p><p>Дата: __________________　Условия: __________________</p>'+
+   table(m,null)+
+   '<p>Ситуация и способ коммуникации: _____________________________________________</p>'+
+   '<p>Виды помощи и модификации процедуры: _______________________________________</p>'+
+   '<p>Основания для «Не применимо»: ______________________________________________</p>'+
+   '<p>Следующий шаг: _____________________________________________________________</p>'+
+   '<p class="privacy-inline">Лист заполняется специалистом, не является бланком ребенка. Не вводите персональные данные на публичном сайте.</p>';
+ }
  function calculator(d){
   const m=byId.get(d.specialId),s=own(d),ok=ready(d);
   return '<section class="psy-special-calc"><div class="special-result-head"><div><h3>Обработка результатов</h3><p>Фиксация наблюдений без диагностических баллов</p></div><span class="special-status '+(ok?"complete":"pending")+'">'+(ok?"Данные заполнены":"Требуется заполнение")+'</span></div>'+
@@ -472,16 +517,25 @@
   body.querySelectorAll("[data-special-print]").forEach(button=>button.addEventListener("click",()=>print(d,button.dataset.specialPrint)));
  }
  function print(d,mode){
-  const m=byId.get(d.specialId);if(!m||(mode==="result"&&!ready(d)))return;
+  const m=byId.get(d.specialId);
+  if(!m||(mode==="result"&&!ready(d)))return;
   const s=own(d);
-  const guide='<section><h2>'+esc(m.title)+'</h2><p><b>Адресат:</b> '+esc(m.ageLabel)+'</p><h3>Цель</h3><p>'+esc(m.goal)+'</p><h3>Проведение</h3><p>'+esc(m.steps)+'</p><h3>Регистрация и ограничения</h3><p>Описательная фиксация без баллов и диагностических норм. '+esc(m.recommend)+'</p></section>';
-  const blank='<section class="print-blank"><h2>Протокол специалиста</h2><p>Дата: __________________　Условия: __________________</p>'+table(m,mode==="result"?s.values:null)+'<p>Контекст и помощь: '+(mode==="result"?esc(s.note||"Не указаны"):"_____________________________________")+'</p><p>Следующий шаг: ______________________________________________</p></section>';
-  const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>'+esc(m.title)+'</title><style>@page{size:A4 portrait;margin:15mm}*{box-sizing:border-box}body{font:11pt/1.45 Arial,sans-serif;color:#222}h2{font-size:17pt}h3{font-size:12pt}table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:9pt}th,td{border:1px solid #777;padding:7px;vertical-align:top;overflow-wrap:anywhere}th:first-child{width:67%}th:not(:first-child),td:not(:first-child){text-align:center;width:11%}tr{break-inside:avoid}.print-blank:not(:first-child){break-before:page}p{margin:8px 0}</style></head><body>'+(mode==="guide"||mode==="combined"?guide:"")+(mode==="guide"?"":blank)+(mode==="result"?'<section>'+summary(d)+'</section>':"")+'</body></html>';
+  const guide='<section><h2>'+esc(m.title)+'</h2>'+guideContents(m)+'</section>';
+  const blank='<section class="print-blank"><h2>Протокол специалиста</h2><p><b>Материал:</b> '+esc(m.title)+'</p>'+
+   '<p>Дата: __________________　Условия: __________________</p>'+table(m,mode==="result"?s.values:null)+
+   '<p>Ситуация, способ коммуникации: '+(mode==="result"?esc(s.note||"Не указаны"):"_____________________________________")+'</p>'+
+   '<p>Предоставленная помощь: _______________________________________________</p>'+
+   '<p>Причины отметок «Не применимо»: ________________________________________</p>'+
+   '<p>Следующий шаг: ______________________________________________</p></section>';
+  const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>'+esc(m.title)+'</title>'+
+   '<style>@page{size:A4 portrait;margin:16mm}*{box-sizing:border-box}body{font:10.5pt/1.42 Arial,sans-serif;color:#222}h2{font-size:16pt}h3{font-size:11pt;margin:15px 0 6px;break-after:avoid}p{margin:7px 0;overflow-wrap:anywhere}ol{padding-left:20px;margin:8px 0}li{margin:5px 0}table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:9pt}th,td{border:1px solid #777;padding:7px;vertical-align:top;overflow-wrap:anywhere}th:first-child{width:67%}th:not(:first-child),td:not(:first-child){text-align:center;width:11%}tr{break-inside:avoid}.print-blank:not(:first-child){break-before:page}.psy-special-guide{max-width:100%}</style></head><body>'+
+   (mode==="guide"||mode==="combined"?guide:"")+(mode==="guide"?"":blank)+
+   (mode==="result"?'<section>'+summary(d)+'</section>':"")+'</body></html>';
   const f=document.createElement("iframe");f.title="Печать рабочей карты";f.style.cssText="position:fixed;width:0;height:0;border:0";document.body.appendChild(f);
   f.onload=()=>{try{f.contentWindow.focus();f.contentWindow.print();}finally{setTimeout(()=>f.remove(),1800);}};
   f.srcdoc=html;
  }
- window.PSY_SPECIAL={instruction,materials,calculator,bind,updateFooter,print};
+ window.PSY_SPECIAL={portfolio,instruction,materials,calculator,bind,updateFooter,print};
  if(document.body.dataset.area==="special"){tree.hidden=false;document.querySelector('[data-view="special"]')?.setAttribute("aria-expanded","true");}
  cards();
 })();
