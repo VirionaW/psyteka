@@ -7,7 +7,7 @@
 #preschoolView .preschool-filters{display:flex;align-items:center;gap:12px}
 #preschoolView .preschool-filters .search-wrap{flex:1 1 320px;min-width:250px}
 #preschoolView .preschool-filters .search-wrap input{height:50px}
-#preschoolView .preschool-age-field{flex:0 1 240px;min-width:210px;display:flex;align-items:center}
+#preschoolView .preschool-age-field{flex:0 0 238px;min-width:0;display:flex;align-items:center}
 #preschoolView .preschool-age-field select{height:50px;width:100%;min-width:0}
 #preschoolView .preschool-subbar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 #preschoolView .preschool-subbar h2{margin:0;font-size:clamp(22px,2vw,28px)}
