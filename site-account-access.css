@@ -1,0 +1,19 @@
+/* Аккаунт и роль на странице профиля – без влияния на остальные карточки. */
+.site-account #psyAccountAccess{display:grid;gap:12px;margin:0 0 22px;max-width:100%}
+#psyAccountAccess .psy-access-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#psyAccountAccess h2{margin:0 0 5px}
+#psyAccountAccess .account-info{margin:0;color:#648070;line-height:1.6}
+#psyAccountAccess .psy-access-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:5px}
+#psyAccountAccess .psy-access-actions .site-btn{display:inline-flex;min-height:43px;align-items:center;justify-content:center;text-decoration:none;padding:10px 16px;font-size:14px}
+#psyAccountAccess .psy-account-email{margin:0;font-weight:700;color:#275c44;overflow-wrap:anywhere}
+#psyAccountAccess .psy-role-badge{border:1px solid #b6d4bf;border-radius:100px;padding:7px 11px;background:#edf7ef;color:#215c40;font-size:13px;font-weight:800;white-space:nowrap}
+#psyAccountAccess .psy-role-badge.owner{background:#fff5df;border-color:#d9ba76;color:#74511c}
+#psyAccountAccess .psy-role-badge.moderator{background:#eef4ff;border-color:#9cb9db;color:#305b89}
+#psyAccountAccess .psy-signout-btn{min-height:43px;padding:9px 15px;border:1px solid #c8dacd;border-radius:10px;background:transparent;color:#286249;font-weight:700;font-size:14px;cursor:pointer}
+#psyAccountAccess [hidden]{display:none!important}
+html.dark #psyAccountAccess .psy-account-email{color:#bfdec8}
+html.dark #psyAccountAccess .psy-role-badge{background:#253d2d;border-color:#4e7258;color:#c7e5d0}
+html.dark #psyAccountAccess .psy-role-badge.owner{background:#473d2a;border-color:#806d41;color:#f4dda8}
+html.dark #psyAccountAccess .psy-role-badge.moderator{background:#263d54;border-color:#4b7193;color:#b9d7ef}
+html.dark #psyAccountAccess .psy-signout-btn{color:#c4e0cd;border-color:#527360}
+@media(max-width:600px){#psyAccountAccess .psy-access-actions{display:grid;grid-template-columns:1fr}#psyAccountAccess .psy-access-actions>*{width:100%;box-sizing:border-box}}
