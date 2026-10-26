@@ -27,7 +27,7 @@
     const s=Math.floor(left/1000),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);
     item.textContent="Пробный доступ: "+(d?d+" д. ":"")+String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
    };
-   update();const interval=setInterval(update,30000);
+   let interval=null;update();if(new Date(clockEnd).getTime()>Date.now())interval=setInterval(update,30000);
   });
  }
  if(!enabled){
