@@ -152,3 +152,150 @@ html.dark .library-page .method,html.dark .library-page .resource-card{
 }
 html.dark .library-page .sidebar,html.dark .library-page .main{background:var(--area-soft)!important}
 html.dark .library-page .sidebar{background:var(--area-sidebar)!important}
+
+
+/* Banner repair 7c: one continuous image for the FULL hero with a real gradient.
+   Do not split the image into right-hand panels, and keep ALL text on dark color. */
+.library-page .hero{
+  display:flex!important;
+  align-items:center!important;
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  height:auto!important;
+  min-height:clamp(328px,28vw,428px)!important;
+  padding:clamp(30px,4vw,56px)!important;
+  border-radius:28px!important;
+  background-color:var(--area-hero1)!important;
+  background-image:
+    linear-gradient(90deg,
+      var(--area-hero1) 0%,
+      var(--area-hero1) 23%,
+      color-mix(in srgb,var(--area-hero1) 99%,transparent) 34%,
+      color-mix(in srgb,var(--area-hero1) 96%,transparent) 43%,
+      color-mix(in srgb,var(--area-hero1) 82%,transparent) 55%,
+      color-mix(in srgb,var(--area-hero1) 49%,transparent) 67%,
+      color-mix(in srgb,var(--area-hero1) 13%,transparent) 82%,
+      transparent 100%),
+    var(--psy-banner)!important;
+  background-size:100% 100%,cover!important;
+  background-position:center center,center center!important;
+  background-repeat:no-repeat,no-repeat!important;
+}
+/* Remove decorative circles and all conflicting older picture layers. */
+.library-page .hero::before,
+.library-page .hero::after{display:none!important;content:none!important}
+.library-page .hero .hero-art,
+.library-page[data-area="special"] .hero .hero-art,
+.library-page[data-area="adults"] .hero .hero-art,
+.library-page[data-area="spt"] .hero .hero-art{
+  display:none!important;
+  visibility:hidden!important;
+  background-image:none!important;
+}
+.library-page .hero>div:first-child{
+  position:relative!important;
+  z-index:3!important;
+  width:46%!important;
+  max-width:46%!important;
+  min-width:0!important;
+  flex:0 0 46%!important;
+  box-sizing:border-box!important;
+}
+.library-page .hero h1,
+.library-page .hero p,
+.library-page .hero .eyebrow{
+  position:relative!important;
+  z-index:3!important;
+  max-width:100%!important;
+  color:#fff!important;
+  text-shadow:0 2px 5px rgba(0,0,0,.14)!important;
+  overflow-wrap:break-word!important;
+}
+.library-page .hero h1{
+  font-size:clamp(32px,3.5vw,54px)!important;
+  line-height:1.13!important;
+  text-wrap:balance;
+}
+.library-page .hero p{
+  color:rgba(255,255,255,.94)!important;
+  line-height:1.54!important;
+  font-size:clamp(15px,1.32vw,19px)!important;
+}
+.library-page .hero .eyebrow{
+  color:rgba(255,255,255,.94)!important;
+  font-size:clamp(11px,.95vw,14px)!important;
+  letter-spacing:.08em!important;
+  line-height:1.45!important;
+}
+/* Keep prevention copy inside the dark field, without cutting the illustration. */
+.library-page[data-area="prevention"] .hero{
+  background-position:center center,center center!important;
+}
+.library-page[data-area="prevention"] .hero>div:first-child{
+  width:45%!important;max-width:45%!important;flex-basis:45%!important;
+}
+/* The project logo always has its own readable, light neutral plate. */
+.library-page #sidebar .brand .psy-library-brand{
+  display:inline-flex!important;
+  align-items:center!important;
+  background:#ffffff!important;
+  border:1px solid rgba(30,55,46,.15)!important;
+  border-radius:15px!important;
+  padding:9px 12px!important;
+  box-shadow:0 4px 18px rgba(19,40,32,.09)!important;
+  max-width:100%!important;
+  isolation:isolate!important;
+  color:#28534a!important;
+}
+.library-page #sidebar .brand .psy-wordmark,
+.library-page #sidebar .brand .psy-word-start{
+  color:#28534a!important;
+}
+.library-page #sidebar .brand .psy-word-end{color:#81715e!important}
+.library-page #sidebar .brand .psy-library-brand small{color:#4b6759!important}
+.library-page #sidebar .brand .psy-brand-mark{
+  opacity:1!important;filter:none!important;flex-shrink:0!important;
+}
+html.dark .library-page #sidebar .brand .psy-library-brand{
+  background:#fff!important;border-color:rgba(30,55,46,.18)!important;
+}
+html.dark .library-page #sidebar .brand .psy-wordmark,
+html.dark .library-page #sidebar .brand .psy-word-start{color:#28534a!important}
+html.dark .library-page #sidebar .brand .psy-word-end{color:#81715e!important}
+html.dark .library-page #sidebar .brand .psy-library-brand small{color:#4b6759!important}
+html.dark .library-page #sidebar .brand .psy-brand-mark{filter:none!important}
+@media(max-width:1000px){
+  .library-page .hero{min-height:310px!important;padding:34px!important}
+  .library-page .hero>div:first-child{
+    width:56%!important;max-width:56%!important;flex:0 0 56%!important;
+  }
+  .library-page .hero{
+    background-image:linear-gradient(90deg,
+      var(--area-hero1) 0%,
+      var(--area-hero1) 25%,
+      color-mix(in srgb,var(--area-hero1) 95%,transparent) 50%,
+      color-mix(in srgb,var(--area-hero1) 45%,transparent) 80%,
+      transparent 100%),var(--psy-banner)!important;
+  }
+}
+@media(max-width:650px){
+  .library-page .hero{
+    min-height:250px!important;
+    padding:28px 24px!important;
+    background-image:linear-gradient(90deg,
+      var(--area-hero1) 0%,
+      color-mix(in srgb,var(--area-hero1) 97%,transparent) 36%,
+      color-mix(in srgb,var(--area-hero1) 88%,transparent) 67%,
+      color-mix(in srgb,var(--area-hero1) 56%,transparent) 100%),
+      var(--psy-banner)!important;
+    background-position:center center,66% center!important;
+  }
+  .library-page .hero>div:first-child{
+    width:100%!important;max-width:100%!important;flex:1 1 auto!important;
+  }
+  .library-page .hero h1{font-size:clamp(29px,7vw,40px)!important}
+  .library-page .hero p{font-size:15px!important}
+  .library-page .hero .eyebrow{font-size:11px!important}
+}
