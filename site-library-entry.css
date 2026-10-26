@@ -1,0 +1,53 @@
+/* Entrance to Psyteka library – overlay on the public landing page. */
+#psyEntryDialog{box-sizing:border-box;width:min(94vw,580px);max-height:min(91vh,790px);padding:0;border:1px solid #d6e4da;border-radius:23px;color:#214335;background:#fff;box-shadow:0 25px 95px #102b2780;overflow-y:auto}
+#psyEntryDialog::backdrop{background:rgba(14,35,31,.67);backdrop-filter:blur(5px)}
+#psyEntryDialog[hidden]{display:none}
+.psy-entry-inner{padding:clamp(22px,4vw,36px)}
+.psy-entry-top{display:flex;align-items:flex-start;justify-content:space-between;gap:15px}
+.psy-entry-eyebrow{margin:0;color:#9c825a;text-transform:uppercase;font-size:11px;letter-spacing:.13em;font-weight:850}
+#psyEntryDialog h2{font-size:clamp(26px,5vw,34px);line-height:1.2;letter-spacing:-.04em;margin:11px 0}
+#psyEntryDialog p{line-height:1.55}
+.psy-entry-lead{color:#617b6e;font-size:14px;margin:0 0 20px}
+.psy-entry-x{flex:0 0 35px;border:1px solid #d5e2d6;border-radius:50%;background:#fff;color:#244c3b;font-size:22px;line-height:32px;height:35px;cursor:pointer}
+.psy-entry-step[hidden],.psy-entry-error[hidden],.psy-entry-menu[hidden],#psyEntryDialog[hidden]{display:none!important}
+.psy-entry-step{margin-top:15px}
+.psy-entry-form{display:grid;gap:9px}
+.psy-entry-form label{font-size:13px;font-weight:750;color:#234c39}
+.psy-entry-form input{width:100%;box-sizing:border-box;padding:14px 16px;border:1px solid #c2d6c6;border-radius:12px;font-size:16px;color:#214638;background:#fafcf9}
+.psy-entry-form input:focus-visible,.psy-entry-btn:focus-visible,.psy-entry-x:focus-visible{outline:3px solid #bfcfb2;outline-offset:3px}
+.psy-entry-btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;border:0;border-radius:12px;background:#246c52;color:#fff;font-size:14px;font-weight:750;padding:13px 18px;min-height:47px;text-decoration:none;cursor:pointer}
+.psy-entry-btn:hover{background:#19553f}.psy-entry-btn:disabled{opacity:.56;cursor:not-allowed}
+.psy-entry-btn.secondary{background:#f0f6f0;color:#236047;border:1px solid #cfdfd0}
+.psy-entry-btn.secondary:hover{background:#e2efe5}
+.psy-entry-btn.light{background:transparent;color:#39745c;padding:9px}
+.psy-entry-form .psy-entry-btn{width:100%;margin-top:8px}
+.psy-entry-notice{border:1px solid #eedfc0;background:#fff8ea;border-radius:13px;padding:13px 15px;color:#805f36;font-size:13px}
+.psy-entry-error{font-size:13px;color:#a14739;margin:10px 0 0;font-weight:700}
+.psy-entry-divider{display:flex;align-items:center;gap:13px;color:#8b9e91;font-size:12px;margin:20px 0}
+.psy-entry-divider:before,.psy-entry-divider:after{content:"";flex:1;border-top:1px solid #dce7df}
+.psy-entry-demo{display:grid;gap:8px;margin-top:8px}
+.psy-entry-foot{color:#788e7e;font-size:12px;margin:18px 0 0}
+.psy-entry-choice{border:1px solid #cbdfcf;border-radius:15px;background:#f7fbf7;padding:19px;margin:18px 0}
+.psy-entry-choice>strong{font-size:20px;display:block;letter-spacing:-.02em}
+.psy-entry-choice p{font-size:14px;color:#5f786a;margin:8px 0}
+.psy-entry-choice .psy-entry-cost{font-weight:850;font-size:24px;color:#23593f}
+.psy-entry-choice .psy-entry-btn{width:100%}
+.psy-entry-secondary-choice{border-top:1px solid #dfe9e1;padding-top:16px;font-size:13px;color:#6b8374}
+.psy-entry-clock{font-size:clamp(27px,5.6vw,38px);font-weight:850;font-variant-numeric:tabular-nums;letter-spacing:-.015em;color:#215b41}
+.psy-entry-small{color:#708675;font-size:13px}
+.psy-entry-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+.psy-entry-actions>.psy-entry-btn{flex:1 1 180px}
+.psy-entry-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid #d3e5d7;border-radius:100px;padding:6px 12px;color:#285b45;background:#eef7ef;font:700 12px/1.4 system-ui,sans-serif;white-space:nowrap;font-variant-numeric:tabular-nums;text-decoration:none}
+.psy-entry-pill[hidden]{display:none!important}
+html.dark #psyEntryDialog{background:#1d312a;border-color:#4b6b55;color:#e7f3e7}
+html.dark #psyEntryDialog .psy-entry-lead,html.dark #psyEntryDialog .psy-entry-small,html.dark #psyEntryDialog .psy-entry-secondary-choice{color:#c4dac9}
+html.dark #psyEntryDialog .psy-entry-choice{background:#243e30;border-color:#4b6b55}
+html.dark #psyEntryDialog .psy-entry-choice p{color:#cbdece}
+html.dark #psyEntryDialog .psy-entry-choice .psy-entry-cost,html.dark #psyEntryDialog .psy-entry-clock{color:#aee2bb}
+html.dark #psyEntryDialog .psy-entry-form input{background:#152a21;border-color:#4d725a;color:#edf8ed}
+html.dark #psyEntryDialog .psy-entry-form label{color:#edf8ed}
+html.dark #psyEntryDialog .psy-entry-x{background:#2a4336;border-color:#587564;color:#f2f6f0}
+html.dark #psyEntryDialog .psy-entry-btn.secondary{background:#294636;border-color:#537761;color:#e6f4e9}
+html.dark #psyEntryDialog .psy-entry-notice{background:#443925;border-color:#655039;color:#f1deaf}
+@media(max-width:640px){#psyEntryDialog{width:calc(100vw - 20px);max-height:96vh;border-radius:17px}.psy-entry-inner{padding:22px}.psy-entry-actions{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){#psyEntryDialog::backdrop{backdrop-filter:none}}
