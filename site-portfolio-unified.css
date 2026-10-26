@@ -36,3 +36,13 @@ html.dark .library-page #modal .psy-portfolio-unified .psy-profile-indicator:nth
   .library-page #modal .psy-portfolio-unified .psy-profile-indicators{grid-template-columns:1fr;gap:8px;}
   .library-page #modal .psy-portfolio-unified .psy-profile-indicator{min-height:49px;padding:12px;font-size:15px;}
 }
+
+/* The same resource tray is used by every portfolio, including MSPSS. */
+.library-page #modal .psy-portfolio-unified .psy-profile-files{margin:24px 0 8px}
+.library-page #modal .psy-portfolio-unified .psy-portfolio-file-links{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 2px}
+.library-page #modal .psy-portfolio-unified .psy-portfolio-document{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 15px;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:10px;font-size:14px;font-weight:700;text-align:center;text-decoration:none}
+.library-page #modal .psy-portfolio-unified .psy-portfolio-document:hover{border-color:var(--green);color:var(--green)}
+@media(max-width:700px){
+ .library-page #modal .psy-portfolio-unified .psy-portfolio-file-links{display:grid;grid-template-columns:1fr;gap:8px}
+ .library-page #modal .psy-portfolio-unified .psy-portfolio-document{width:100%}
+}
