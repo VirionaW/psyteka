@@ -5,7 +5,7 @@
  const records={
   "Лесенка":{
    age:"5-10 лет (семь ступенек, выбранная опубликованная редакция)",
-   ages:[{id:"ladder7",label:"5-10 лет · семь ступенек (1 внизу, 7 наверху)",age:"5-10 лет",status:"ready",source:"https://www.art-talant.org/publikacii/65410-komplekt-elektronnyh-testov-kak-sredstvo-formirovaniya-adekvatnoy-samoocenki-rezultatov-uchebnoy-deyatelnosti-obuchayushchihsya-3-klassa"}],
+   ages:[{id:"ladder7",label:"5-10 лет · семь ступенек (1 внизу, 7 наверху)",age:"5-10 лет",status:"ready",source:"https://www.art-talant.org/publikacii/65410-komplekt-elektronnyh-testov-kak-sredstvo-formirovaniya-adekvatnoy-samoocenki-rezulytatov-uchebnoy-deyatelynosti-obuchayuschihsya-3-klassa"}],
    spoken:"Посмотри на лесенку. На верхних ступеньках стоят дети, которые считают себя хорошими. На нижних – те, кто думает о себе плохо. Посередине стоят те, кто не считает себя ни хорошим, ни плохим. Покажи, куда бы ты поставил себя. Почему ты выбрал эту ступеньку?",
    spokenNote:"Рабочая формулировка по семиступенчатому варианту. Перед стандартизированным обследованием сверяйте с текстом выбранного источника."
   },
