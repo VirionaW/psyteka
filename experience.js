@@ -98,6 +98,9 @@ function setTab(name){
  name==="materials"?viewMaterials(methodNow):
  name==="processing"?viewProcessing(methodNow):viewCalculator(methodNow);
  if(name==='instruction'||name==='materials')body.innerHTML=enhanceMethodView(name,body.innerHTML);
+ if(name==='materials'&&window.PSY_GUIDE_STANDARD?.selectionUnsupported(methodNow.name)){
+   body.innerHTML='<div class="notice">Для выбранной возрастной версии в Психотеке нет проверенного бланка или стимулов. Не используйте материалы другой редакции. Откройте вкладку «Методика / руководство» и перейдите к опубликованному источнику.</div>';
+ }
  if(name==='instruction'&&window.PSY_GUIDE_STANDARD){
    body.innerHTML=window.PSY_GUIDE_STANDARD.supplement(methodNow.name,DETAILS[methodNow.name],methodNow,body.innerHTML);
    window.PSY_GUIDE_STANDARD.bind(()=>setTab('instruction'));
