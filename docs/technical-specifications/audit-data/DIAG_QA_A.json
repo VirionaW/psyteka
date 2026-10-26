@@ -58,6 +58,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 762,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 4986,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": "downloads/rses_guide.html",
@@ -96,6 +108,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 670,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 4560,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -137,6 +161,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 311,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 111,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -178,6 +214,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 434,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 111,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -219,6 +267,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 252,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 111,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -260,6 +320,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 429,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 111,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -301,6 +373,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 318,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 111,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -342,6 +426,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 314,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 111,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -383,6 +479,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 428,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 111,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -424,6 +532,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 601,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 111,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -476,6 +596,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 1589,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 3281,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": "downloads/elkonin_graphic_dictation_guide.docx",
@@ -514,6 +646,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 751,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 10196,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -552,6 +696,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 783,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 11994,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -590,6 +746,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 1473,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 13134,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -628,6 +796,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 1762,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 19189,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -669,6 +849,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 810,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 3739,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -710,6 +902,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 999,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 2549,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": null,
@@ -762,6 +966,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 1812,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 3805,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": "downloads/luskanova_method_guide.docx",
@@ -814,6 +1030,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 1260,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 5219,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": "downloads/smfq_child_method_guide.docx",
@@ -866,6 +1094,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 1364,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 3533,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": "downloads/bourdon_anfimov_guide.docx",
@@ -918,6 +1158,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 616,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 1014,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": "downloads/class_sociometry_guide.docx",
@@ -970,6 +1222,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 863,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 11865,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": "downloads/verbal_classification_guide.docx",
@@ -1037,6 +1301,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 282,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 4253,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": "downloads/mspss_method_guide.docx",
@@ -1089,6 +1365,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 978,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 8607,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": "downloads/sequential_pictures_guide.docx",
@@ -1141,6 +1429,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": true
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 2606,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 14511,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       },
       "guideFile": "downloads/phillips_school_anxiety_guide.docx",
