@@ -1,0 +1,694 @@
+{
+  "batch": "B",
+  "date": "2026-10-26",
+  "loadErrors": [],
+  "viewLoadError": null,
+  "records": {
+    "SNAP-IV-26": {
+      "sourceModule": "method-snap-26.js",
+      "age": "Дети и подростки школьного возраста; применять с учетом возраста и валидности языковой версии",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "snap26",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/snap_iv_26_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/snap_iv_parent_register.html",
+          "exists": true
+        },
+        {
+          "field": "parentFile",
+          "path": "downloads/snap_iv_parent_register.html",
+          "exists": true
+        },
+        {
+          "field": "teacherFile",
+          "path": "downloads/snap_iv_teacher_register.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1846,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 3791,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1583,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Самооценка Дембо – Рубинштейн": {
+      "sourceModule": "method-dembo.js",
+      "age": "10-16 лет; модификация А. М. Прихожан, семь шкал по 100 мм",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "dembo7",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/dembo_prikhozhan_guide.html",
+          "exists": true
+        },
+        {
+          "field": "guideWithBlankFile",
+          "path": "downloads/dembo_prikhozhan_guide_with_blank.html",
+          "exists": true
+        },
+        {
+          "field": "guideWordFile",
+          "path": "downloads/dembo_prikhozhan_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/dembo_prikhozhan_student.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1582,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 2770,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1775,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Опросник социально-эмоциональных навыков": {
+      "sourceModule": "method-sel-skills.js",
+      "age": "Ориентировочно 10-17 лет, при понимании текста; возрастная валидизация отсутствует",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "selwork2026",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/sel_skills_working_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/sel_skills_student_blank.html",
+          "exists": true
+        },
+        {
+          "field": "studentWordFile",
+          "path": "downloads/sel_skills_student_blank.docx",
+          "exists": true
+        },
+        {
+          "field": "specialistFile",
+          "path": "downloads/sel_skills_specialist_protocol.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 2266,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 3618,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1695,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      }
+    },
+    "SCARED": {
+      "sourceModule": "method-scared41.js",
+      "age": "8–18 лет; для 8–11 лет рекомендуется помощь взрослого при понимании вопросов",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "scared41",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/scared41_method_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/scared41_child_register.html",
+          "exists": true
+        },
+        {
+          "field": "childFile",
+          "path": "downloads/scared41_child_register.html",
+          "exists": true
+        },
+        {
+          "field": "parentFile",
+          "path": "downloads/scared41_parent_register.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 2440,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 1572,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1820,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Лесенка": {
+      "sourceModule": "method-ladder.js",
+      "age": "5-10 лет; семиступенчатая редакция, 1 – нижняя, 7 – верхняя",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "ladder7",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/shchur_ladder_guide.html",
+          "exists": true
+        },
+        {
+          "field": "guideWithBlankFile",
+          "path": "downloads/shchur_ladder_guide_with_blank.html",
+          "exists": true
+        },
+        {
+          "field": "guideWordFile",
+          "path": "downloads/shchur_ladder_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/shchur_ladder_student.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1666,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 3270,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1432,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Индекс хорошего самочувствия WHO-5": {
+      "sourceModule": "method-who5.js",
+      "age": "Преимущественно подростки и взрослые; для младших школьников применять только с учетом возрастной и языковой пригодности конкретной версии.",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "who5",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/who5_guide.html",
+          "exists": true
+        },
+        {
+          "field": "guideWithBlankFile",
+          "path": "downloads/who5_guide_with_blank.html",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/who5_student_register.html",
+          "exists": true
+        },
+        {
+          "field": "answerWordFile",
+          "path": "downloads/who5_answers.docx",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 2132,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 1103,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1514,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Таблицы Шульте": {
+      "sourceModule": "method-schulte.js",
+      "age": "От 7 лет",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "schulte5",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/schulte_method_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/schulte_5_tables_student.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 2167,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 2849,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1375,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Семейная социограмма": {
+      "sourceModule": "method-family-sociogram.js",
+      "age": "Дети, умеющие понять инструкцию и обозначить семью кружками, подростки и взрослые; возрастные нормы не заданы",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "familySocio110",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/family_sociogram_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/family_sociogram_student.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1524,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 1019,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1552,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Краткий опросник PHQ-4": {
+      "sourceModule": "method-phq4.js",
+      "age": "Основная русскоязычная валидация: взрослые 18-60 лет. Исследования подростковых версий имеются, но нет основания переносить взрослые русские нормы на школьников.",
+      "ageBounded": true,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "phq4",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/phq4_guide.html",
+          "exists": true
+        },
+        {
+          "field": "guideWithBlankFile",
+          "path": "downloads/phq4_guide_with_blank.html",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/phq4_student_register.html",
+          "exists": true
+        },
+        {
+          "field": "answerWordFile",
+          "path": "downloads/phq4_answers.docx",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 2057,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 1037,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1651,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Заучивание 10 слов": {
+      "sourceModule": "method-luria10.js",
+      "age": "Дети от 7 лет и взрослые",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "luria10x5",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/luria_10_words_guide_print.html",
+          "exists": true
+        },
+        {
+          "field": "stimulusFile",
+          "path": "downloads/luria_10_words_stimuli.html",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/luria_10_words_psychologist.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 3323,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 2010,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1610,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        }
+      }
+    },
+    "GAD-7 - краткая шкала тревожных симптомов": {
+      "sourceModule": "method-gad7.js",
+      "age": "Для самоотчёта старших школьников и подростков — при проверенной возрастной и языковой версии. Первичные нормативные интервалы получены для взрослых; для младших школьников без отдельной валидации не использовать как возрастную норму.",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "gad7",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/gad7_method_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/gad7_student_a4.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 2205,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 1935,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1636,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        }
+      }
+    },
+    "Кинетический рисунок семьи": {
+      "sourceModule": "method-kfd.js",
+      "age": "Дети, способные выполнить рисунок и рассказать о нем; интерпретация учитывает возраст",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "kfdBurns72",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/kfd_burns_kaufman_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/kfd_burns_kaufman_student.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1657,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": true
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 845,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1554,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": true
+        }
+      }
+    },
+    "Рисунок семьи в концепции Л. Кормана": {
+      "sourceModule": "method-corman.js",
+      "age": "Преимущественно старший дошкольный и младший школьный возраст; интерпретация индивидуальна",
+      "ageBounded": false,
+      "goal": true,
+      "hasTextInstruction": true,
+      "scoring": true,
+      "interpret": true,
+      "sourceLink": true,
+      "workflow": "cormanFamily",
+      "calculator": true,
+      "localFiles": [
+        {
+          "field": "guideFile",
+          "path": "downloads/corman_family_drawing_guide.docx",
+          "exists": true
+        },
+        {
+          "field": "answerFile",
+          "path": "downloads/corman_family_drawing_student.html",
+          "exists": true
+        }
+      ],
+      "render": {
+        "guide": {
+          "ok": true,
+          "bytes": 1602,
+          "hasSpoken": false,
+          "hasScoring": true,
+          "hasInterpret": false
+        },
+        "blank": {
+          "ok": true,
+          "bytes": 760,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": false
+        },
+        "portfolio": {
+          "ok": true,
+          "bytes": 1582,
+          "hasSpoken": false,
+          "hasScoring": false,
+          "hasInterpret": true
+        }
+      }
+    }
+  }
+}
