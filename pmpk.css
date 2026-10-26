@@ -316,3 +316,11 @@ body.pmpk-method-open{overflow:hidden}
  .pmpk-method-content .pmpk-method-table th,
  .pmpk-method-content .pmpk-method-table td{padding:6px}
 }
+
+/* А. Я. Иванова: просмотр геометрических наборов, листы ребенка формируются отдельно в печати. */
+.pmpk-method-content .ivanova-cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin:12px 0;max-width:760px}
+.pmpk-method-content .ivanova-figure{border:1px dashed var(--line);background:var(--paper);aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;padding:5px;min-width:0}
+.pmpk-method-content .ivanova-transfer .ivanova-figure{aspect-ratio:1}
+.pmpk-method-content .ivanova-figure svg{width:100%;height:100%}
+@media(max-width:690px){.pmpk-method-content .ivanova-cards{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:410px){.pmpk-method-content .ivanova-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
