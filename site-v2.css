@@ -25,3 +25,22 @@ html.reduce-motion *,html.reduce-motion *::before,html.reduce-motion *::after{an
 .library-page[data-area=prevention]{--area:#5c8952;--area-soft:#edf6e9;--area-sidebar:#eaf4e5;--area-border:#d1e4c9;--area-hero1:#395f34;--area-hero2:#7caa69}
 html.dark .library-page[data-area=prevention]{--area:#acd49e;--area-soft:#28382a;--area-sidebar:#26392b;--area-border:#49644a}
 .library-page .navgroup[data-view=prevention]{border-left:3px solid #92b76f}
+
+
+/* Кнопка наверх: цвет активного раздела библиотеки. */
+.library-page .back-top{
+ background-color:var(--area,#2e805b)!important;
+ color:#fff!important;
+}
+.library-page .back-top:hover{
+ background-color:var(--area,#2e805b)!important;
+ filter:brightness(1.1);
+}
+html.dark .library-page .back-top{
+ background-color:var(--area-hero1,var(--area,#2e805b))!important;
+ color:#fff!important;
+}
+html.dark .library-page .back-top:hover{
+ background-color:var(--area-hero1,var(--area,#2e805b))!important;
+ filter:brightness(1.17);
+}
