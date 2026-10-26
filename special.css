@@ -75,3 +75,33 @@ html.dark #modal.psy-special-current .psy-special-footer-state.complete,html.dar
 #specialView .special-method .head h3{overflow-wrap:anywhere}
 
 @media(max-width:700px){#modal.psy-special-current .special-table th:first-child{width:55%}#modal.psy-special-current .special-table th:not(:first-child){width:15%}}
+
+/* GAS and ABC: individual method forms. No change to school or preschool. */
+#modal.psy-special-current .special-toolkit-calc{max-width:100%;margin:0}
+#modal.psy-special-current .special-toolkit-calc h4{font-size:15px;margin:22px 0 12px;color:var(--ink)}
+#modal.psy-special-current .special-toolkit-fields,#modal.psy-special-current .special-toolkit-levels,#modal.psy-special-current .special-toolkit-events{display:grid;gap:12px}
+#modal.psy-special-current .special-toolkit-fields label,#modal.psy-special-current .special-toolkit-levels label,#modal.psy-special-current .special-toolkit-event label,#modal.psy-special-current .special-toolkit-outcome{display:grid;gap:7px;font-size:13px;font-weight:700;color:var(--ink)}
+#modal.psy-special-current .special-toolkit-fields input,#modal.psy-special-current .special-toolkit-fields textarea,#modal.psy-special-current .special-toolkit-levels textarea,#modal.psy-special-current .special-toolkit-event textarea,#modal.psy-special-current .special-toolkit-outcome textarea,#modal.psy-special-current .special-toolkit-outcome select{width:100%;max-width:100%;min-width:0;min-height:42px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font:400 14px/1.5 system-ui;resize:vertical}
+#modal.psy-special-current .special-toolkit-fields textarea,#modal.psy-special-current .special-toolkit-levels textarea,#modal.psy-special-current .special-toolkit-event textarea,#modal.psy-special-current .special-toolkit-outcome textarea{min-height:76px}
+#modal.psy-special-current .special-toolkit-outcome{margin-top:16px}
+#modal.psy-special-current .special-toolkit-levels{grid-template-columns:repeat(2,minmax(0,1fr))}
+#modal.psy-special-current .special-toolkit-levels label:nth-child(3){grid-column:1/-1}
+#modal.psy-special-current .special-toolkit-levels label{border:1px solid var(--line);border-radius:12px;padding:13px;background:var(--soft)}
+#modal.psy-special-current .special-toolkit-event{display:grid;gap:12px;min-width:0;margin:0;border:1px solid var(--line);border-radius:14px;padding:17px}
+#modal.psy-special-current .special-toolkit-event legend{font-weight:700;padding:0 8px}
+#modal.psy-special-current .special-toolkit-event .btn{justify-self:end}
+#modal.psy-special-current .special-toolkit-event-actions{display:flex;justify-content:flex-end;margin-top:12px}
+#modal.psy-special-current .special-toolkit-table{width:100%;table-layout:fixed;border-collapse:collapse;margin:12px 0;font-size:13px}
+#modal.psy-special-current .special-toolkit-table th,#modal.psy-special-current .special-toolkit-table td{border:1px solid var(--line);padding:10px;vertical-align:top;overflow-wrap:anywhere}
+#modal.psy-special-current .special-toolkit-table:not(.abc) th:first-child{width:31%}
+#modal.psy-special-current .special-toolkit-table.abc th:first-child{width:8%}
+#modal.psy-special-current .special-toolkit-muted{display:block;color:var(--muted);font-size:11px}
+#modal.psy-special-current .special-toolkit-write-lines{height:48px}
+#modal.psy-special-current .special-toolkit-blank p{overflow-wrap:anywhere}
+#modal.psy-special-current .special-toolkit-level-list p{margin:6px 0}
+@media(max-width:700px){
+ #modal.psy-special-current .special-toolkit-levels{grid-template-columns:1fr}
+ #modal.psy-special-current .special-toolkit-levels label:nth-child(3){grid-column:auto}
+ #modal.psy-special-current .special-toolkit-table{font-size:11px}
+ #modal.psy-special-current .special-toolkit-table th,#modal.psy-special-current .special-toolkit-table td{padding:6px}
+}
