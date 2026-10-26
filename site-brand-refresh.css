@@ -138,3 +138,35 @@ html.dark .site-landing #siteHome .site-logo .psy-site-wordbox small{
  border:0!important;
  border-radius:0!important;
 }
+
+/* dark-contrast-v2: полностью прозрачный фон, отдельный двухцветный SVG без фильтров. */
+html.dark .library-page #sidebar .psy-library-brand,
+html.dark .library-page .brand .psy-library-brand{
+ background:transparent!important;
+ border:1px solid transparent!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ padding:10px 1px!important;
+ min-height:72px!important;
+}
+html.dark .library-page #sidebar .psy-library-brand:hover{
+ background:transparent!important;
+}
+html.dark :is(.library-page,.site-landing) .psy-brand-mark{
+ content:url("brand-mark-dark.svg?v=20261026dark2")!important;
+ background:transparent!important;
+ filter:none!important;
+ box-shadow:none!important;
+ border:0!important;
+ padding:0!important;
+ border-radius:0!important;
+ object-fit:contain;
+}
+html.dark .library-page #sidebar .psy-library-brand .psy-wordmark,
+html.dark .library-page #sidebar .psy-library-brand .psy-word-start,
+html.dark .library-page #sidebar .psy-library-brand .psy-word-end{
+ text-shadow:none!important;
+}
+html.dark .library-page #sidebar .psy-library-brand .psy-word-start{color:#e9f5ed!important}
+html.dark .library-page #sidebar .psy-library-brand .psy-word-end{color:#ddc8aa!important}
+html.dark .library-page #sidebar .psy-library-wordbox>small{color:#c8dfd2!important}
