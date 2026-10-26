@@ -79,8 +79,8 @@
  const bars=(row)=>'<div class="psy-dembo-bar-line"><span class="psy-dembo-actual" style="width:'+row.esteem+'%" aria-label="Самооценка '+row.esteem+'"></span><span class="psy-dembo-want" style="left:'+row.aspiration+'%" title="Притязания '+row.aspiration+'"></span></div>';
  function result(answers){
   const o=inspect(answers),partial='<div class="psy-dembo-result">';
-  if(o.status!=="complete")return partial+'<h3>Результаты</h3><p>Заполнено '+o.complete+' из 7 шкал. Для расчета заполните обе отметки каждой шкалы; пропуски не считаются нулями.</p></div>';
-  let html=partial+'<h3>Результаты по шести шкалам</h3><div class="psy-dembo-stats">'+[
+  if(o.status!=="complete")return partial+'<h3>Результаты</h3><span class="psy-data-state is-waiting" role="status">Данные не заполнены</span><p>Заполнено '+o.complete+' из 7 шкал. Для расчета заполните обе отметки каждой шкалы; пропуски не считаются нулями.</p></div>';
+  let html=partial+'<h3>Результаты по шести шкалам</h3><span class="psy-data-state is-ready" role="status">Данные заполнены</span><div class="psy-dembo-stats">'+[
    ["Средняя самооценка",o.mean.esteem],["Средние притязания",o.mean.aspiration],["Средняя разница",o.mean.gap]
   ].map(([name,value])=>'<div><span>'+esc(name)+'</span><strong>'+value+'</strong></div>').join("")+'</div>';
   html+='<p class="psy-dembo-hint">Заливка – самооценка, вертикальная отметка – притязания. Первая шкала «Здоровье» показана отдельно как тренировочная.</p>';
