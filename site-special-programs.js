@@ -36,6 +36,8 @@
  root.appendChild(section);
  const search=root.querySelector("#specialSearch");
  const age=root.querySelector("#specialAge");
+ const tree=document.getElementById("specialTree");
+ let group="";
  const update=()=>{
   const q=(search?.value||"").trim().toLocaleLowerCase("ru");
   const currentAge=age?.value||"";
@@ -43,7 +45,7 @@
   section.querySelectorAll(".psy-special-program-card").forEach((card,i)=>{
    const m=programs[i];
    const text=[m.name,m.author,m.goal,names[m.name]?.purpose].join(" ").toLocaleLowerCase("ru");
-   const show=(!q||text.includes(q))&&(!currentAge||currentAge==="Школьники");
+   const show=(!group||group==="Коррекционно-развивающая работа")&&(!q||text.includes(q))&&(!currentAge||currentAge==="Школьники");
    card.hidden=!show;
    if(show)visible++;
   });
@@ -51,6 +53,12 @@
  };
  search?.addEventListener("input",update);
  age?.addEventListener("change",update);
+ tree?.addEventListener("click",e=>{
+  const selected=e.target.closest("[data-special-group]");
+  if(selected)group=selected.dataset.specialGroup||"";
+  else if(e.target.closest("[data-special-all]"))group="";
+  update();
+ });
  section.addEventListener("click",e=>{
   const btn=e.target.closest("[data-psy-program-open]");
   if(!btn)return;
