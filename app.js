@@ -15,12 +15,13 @@ $('#showAllMaterials').onclick=()=>{state.topic='';state.query='';state.category
 $('#search').oninput=e=>{state.query=e.target.value;render()};$('#category').onchange=e=>{state.category=e.target.value;render()};$('#format').onchange=e=>{state.format=e.target.value;render()};
 document.querySelectorAll('[data-topic]').forEach(b=>b.onclick=()=>{state.topic=b.dataset.topic;state.category='';$('#category').value='';selectView('school');highlight();render();document.querySelector('.main').scrollTo?.({top:0})});
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{
- if(b.dataset.view==='school'&&state.view==='school'){
-  const tree=$('#schoolTree');tree.hidden=!tree.hidden;
+ if((b.dataset.view==='school'||b.dataset.view==='preschool')&&state.view===b.dataset.view){
+  const tree=$(b.dataset.view==='preschool'?'#preschoolTree':'#schoolTree');tree.hidden=!tree.hidden;
   b.setAttribute('aria-expanded',String(!tree.hidden));return;
  }
  state.topic='';selectView(b.dataset.view);highlight();
  if(b.dataset.view==='school'){$('#schoolTree').hidden=false;b.setAttribute('aria-expanded','true');}
+  if(b.dataset.view==='preschool'){$('#preschoolTree').hidden=false;b.setAttribute('aria-expanded','true');}
 });
 document.querySelectorAll('[data-section]').forEach(b=>b.onclick=()=>{
  const child=document.getElementById(b.dataset.section);if(!child)return;
@@ -28,7 +29,7 @@ document.querySelectorAll('[data-section]').forEach(b=>b.onclick=()=>{
  child.hidden=!child.hidden;b.setAttribute('aria-expanded',String(!child.hidden));
 });
 function highlight(){document.querySelectorAll('.navgroup,.topic-btn').forEach(b=>b.classList.toggle('active',b.id==='showAllMaterials'?state.view==='school'&&!state.topic&&!state.category&&!state.query&&!state.format:b.dataset.view===state.view||(!!b.dataset.topic&&b.dataset.topic===state.topic)))}
-function selectView(view){state.view=view;$('#schoolView').hidden=view!=='school';$('#resourceView').hidden=view==='school'||view==='pmpk';$('#pmpkView').hidden=view!=='pmpk';/* При выборе материала мобильное меню остается открытым до явного закрытия. */if(view==='school'){render();return}if(view==='pmpk')return;const content={
+function selectView(view){state.view=view;$('#schoolView').hidden=view!=='school';$('#resourceView').hidden=view==='school'||view==='pmpk'||view==='preschool';$('#preschoolView').hidden=view!=='preschool';$('#pmpkView').hidden=view!=='pmpk';/* При выборе материала мобильное меню остается открытым до явного закрытия. */if(view==='school'){render();return}if(view==='pmpk'||view==='preschool')return;const content={
 preschool:['Детский сад','Материалы для наблюдения, игровой деятельности, адаптации и развития детей дошкольного возраста.',[['Адаптация в детском саду','Маршруты сопровождения детей дошкольного возраста.'],['Познавательная и игровая деятельность','Наблюдение за игрой, общением и развитием.']]],
 adults:['Взрослые','Раздел для работы с родителями, педагогами и другими взрослыми.',[['Консультирование','Материалы для профессиональной беседы.'],['Профилактика выгорания','Инструменты и программы после проверки версий.']]],
 documents:['Документация','Рабочие документы, образцы и рекомендации для психологической службы.',[['Характеристики','Психологические характеристики и правила оформления.'],['Согласия','Письменные заявления и согласия на психологическую помощь.'],['Журналы','Учет консультаций, запросов и диагностики.'],['ППк и ПМПК','Заключения, протоколы, представления и сопровождение.'],['Аналитические справки','Обезличенная аналитика по классам.']]],
