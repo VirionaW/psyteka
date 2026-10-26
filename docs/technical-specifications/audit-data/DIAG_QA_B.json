@@ -58,6 +58,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 2055,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 9854,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       }
     },
@@ -115,6 +127,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 1304,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 3931,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       }
     },
@@ -172,6 +196,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 2291,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 8875,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       }
     },
@@ -229,6 +265,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 1943,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 12021,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       }
     },
@@ -286,6 +334,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 1190,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 6355,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       }
     },
@@ -343,6 +403,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 2355,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 3486,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       }
     },
@@ -390,6 +462,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 547,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 3437,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       }
     },
@@ -437,6 +521,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 1377,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 3131,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       }
     },
@@ -494,6 +590,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 1821,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 2929,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       }
     },
@@ -546,6 +654,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 1017,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 7372,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       }
     },
@@ -593,6 +713,18 @@
           "hasSpoken": false,
           "hasScoring": true,
           "hasInterpret": false
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 1984,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 4446,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       }
     },
@@ -640,6 +772,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": true
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 2072,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 3255,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       }
     },
@@ -687,6 +831,18 @@
           "hasSpoken": false,
           "hasScoring": false,
           "hasInterpret": true
+        },
+        "processing": {
+          "ok": true,
+          "bytes": 2004,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
+        },
+        "calculator": {
+          "ok": true,
+          "bytes": 3249,
+          "suspiciousNaN": false,
+          "suspiciousUndefined": false
         }
       }
     }
