@@ -31,24 +31,23 @@ interpret:"Итог 0–12 (только если ответили на все �
 source:"https://psy.wikireading.ru/7528",
 license:"Общая схема классической пробы подтверждена опубликованными методическими пособиями. Все 12 вопросов и ключ составлены Психотекой заново; это не стандартизированная адаптация и не авторская норма.",
 workflow:"simpleAnalogies12",calculator:true,
-guideFile:"downloads/analogies_guide.html",answerFile:"downloads/analogies_blank.html",processingFile:"downloads/analogies_scoring.html",stimulusFile:"downloads/analogies_examiners_key.html",
+guideFile:"downloads/analogies_guide.html",guideWithBlankFile:"downloads/analogies_with_blank.html",answerFile:"downloads/analogies_blank.html",processingFile:"downloads/analogies_scoring.html",stimulusFile:"downloads/analogies_examiners_key.html",
 indicators:["Аналогии на противоположность","Связи целого и части","Род деятельности и орудия","Связь источника и продукта","Обоснование и самокоррекция"]
 };
 function instruction(d){
-const key='<table class="questions-table"><thead><tr><th>№</th><th>Правильный ответ</th><th>Отношение</th></tr></thead><tbody>'+
- TASKS.map(t=>'<tr><td>'+t.id+'</td><td><b>'+CH[t.key]+') '+E(t.options[t.key])+'</b></td><td>'+E(t.relation)+'</td></tr>').join("")+'</tbody></table>';
-const tasks=TASKS.map(t=>'<div class="question"><p><strong>'+t.id+'. '+E(t.question)+'</strong></p><p>'+t.options.map((o,i)=>CH[i]+') '+E(o)).join(' · ')+'</p></div>').join("");
-return '<section class="psy-mspss-section psy-mspss-manual">'+
- '<div class="psy-mspss-manual-bar"><div><h3>Методика и руководство</h3><p>Полный набор заданий, ключ, обработка и интерпретация.</p></div><div class="psy-mspss-manual-actions"><a class="btn primary" href="'+E(d.guideFile)+'?v=20261026complete2" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать ↗</a></div></div>'+
+ const key='<table class="questions-table"><thead><tr><th>Номер задания</th><th>Правильный вариант</th><th>Тип связи</th></tr></thead><tbody>'+
+ TASKS.map(t=>'<tr><td>'+t.id+'</td><td><b>'+CH[t.key]+'</b></td><td>'+E(t.relation)+'</td></tr>').join("")+'</tbody></table>';
+ const html='<section class="psy-mspss-section psy-mspss-manual">'+
+ '<div class="psy-mspss-manual-bar"><div><h3>Методика и руководство</h3></div><div class="psy-mspss-manual-actions"><a class="btn" href="'+E(d.guideFile)+'?v=20261026separate1" target="_blank" rel="noopener noreferrer">Без бланка ↗</a><a class="btn primary" href="'+E(d.guideWithBlankFile)+'?v=20261026separate1" target="_blank" rel="noopener noreferrer">С бланком ↗</a></div></div>'+
  '<h3>Цель</h3><p>'+E(d.goal)+'</p>'+
- '<h3>Описание методики</h3><p>Классическая проба на установление словесных отношений и перенос аналогии: 12 заданий, в каждом четыре варианта. Задания Психотеки составлены самостоятельно и не имеют возрастных нормативов.</p>'+
- '<h3>Инструкция ребёнку</h3><div class="psy-mspss-script">«'+E(d.instructions)+'»</div>'+
- '<h3>Порядок проведения</h3><ol><li>Покажите тренировочную пару: «кошка : котёнок = собака : щенок»; тренировочный ответ не оценивается.</li><li>Предъявляйте 12 заданий по порядку; ребёнок выбирает один ответ А, Б, В или Г. При трудностях чтения зачитывайте без подсказок.</li><li>Запишите ответы, объяснения, ошибки и помощь. Не раскрывайте ключ во время проведения.</li><li>При неполном протоколе оставьте пропуск, не считайте его ошибкой.</li></ol>'+
- '<h3>Задания методики</h3>'+tasks+
- '<h3>Ключ</h3>'+key+
- '<h3>Подсчёт</h3><p>'+E(d.scoring)+'</p><p>Полные 12 ответов: 0–12 правильных. Если есть пропуск, итоговый балл не рассчитывается. Пример: при 12 ответах и 9 верных — 9 из 12.</p>'+
- '<h3>Интерпретация</h3><p>'+E(d.interpret)+'</p><p>Оцените типы ошибок, пояснения ребёнка и самостоятельность рассуждений. Диагноз и возрастные категории по данной редакции не устанавливаются.</p>'+
+ '<h3>Описание методики</h3><p>Словесно-логическая диагностическая проба из 12 заданий, каждое с четырьмя вариантами ответа. Участник выявляет отношение между двумя словами и переносит его на другую пару. Рабочая серия составлена для Психотеки без возрастных нормативов.</p>'+
+ '<h3>Порядок проведения</h3><ol><li>Объясните принцип аналогии на отдельном простом примере, не входящем в диагностический набор. Ответ на тренировку не учитывается.</li><li>Предложите 12 заданий по порядку. Участник выбирает один из вариантов А, Б, В или Г.</li><li>При затруднениях чтения специалист может произнести задание без подсказки правильного ответа.</li><li>Фиксируйте выбранные варианты, обоснования, помощь и самокоррекцию. Отсутствующие ответы оставляйте пропущенными.</li></ol>'+
+ '<h3>Инструкция для участника</h3><div class="psy-mspss-script">«'+E(d.instructions)+'»</div>'+
+ '<h3>Ключ</h3><p>Правильные буквы ответов приводятся без самих заданий и вариантов. Стимульный материал находится в бланке, а не в руководстве.</p>'+key+
+ '<h3>Подсчет</h3><p>Каждый правильный вариант — 1 балл; неверный ответ — 0 баллов. Полная сумма от 0 до 12 рассчитывается только при ответах на все двенадцать заданий. Пропуски не заменяются нулями.</p>'+
+ '<h3>Интерпретация</h3><p>'+E(d.interpret)+'</p><p>Отмечайте типы смысловых отношений, характер ошибок, пояснения и самостоятельность решения. Нормативные уровни опубликованных версий не используются.</p>'+
  '</section>';
+ return html.replace(/[Ёё]/g,c=>c==="Ё"?"Е":"е");
 }
 function materials(d){
 return '<section class="psy-mspss-section psy-mspss-student">'+
