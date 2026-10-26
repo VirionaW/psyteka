@@ -66,7 +66,7 @@
  for(const m of definitions){
   if(window.PSY_FULL_METHODS[m.title])throw Error("Дублирующее диагностическое название: "+m.title);
   window.PSY_FULL_METHODS[m.title]={
-   workflow:"specialSource",sourceId:m.id,author:m.author,age:m.ageLabel,kind:m.format,
+   workflow:"specialToolkit",sourceId:m.id,author:m.author,age:m.ageLabel,kind:m.format,
    goal:m.goal,indicatorsTitle:"Оцениваемые показатели",indicators:m.indicators,
    count:m.id==="special-mchat-rf-ru-v3"?"20 пунктов первой стадии + интервью":"25 пунктов на форму, 5 шкал",
    calculator:false,source:m.source,interpret:m.interpretation
