@@ -13,12 +13,12 @@ function save(filename,data,mime){
  const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
  setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
-function normWord(v){return String(v??"").trim().toLocaleLowerCase("ru").replace(/ё/g,"е").replace(/^[.,;:!?\s“”«»"'()\-—]+|[.,;:!?\s“”«»"'()\-—]+$/g,"");}
+function normWord(v){return String(v??"").trim().toLocaleLowerCase("ru").replace(/\u0451/g,"е").replace(/^[.,;:!?\s“”«»"'()\- - ]+|[.,;:!?\s“”«»"'()\- - ]+$/g,"");}
 function stats(cfg,row){
  if(cfg.type==="analogies"){const z=window.PSY_ANALOGIES.score(row?.answers||[]);return {filled:z.filled,complete:z.complete,raw:z.correct,formatted:z.complete?z.correct+"/12":"Неполный",details:["Решено: "+z.filled+"/12","Верных среди предъявленных: "+z.correct]};}
  const z=window.PSY_PAIRED_ASSOC.outcomes(row?.pairedAnswers||{});
  return {filled:z.reduce((a,b)=>a+b.correct+b.wrong,0),complete:z.every(x=>x.complete),raw:z.map(x=>x.correct),
- formatted:z.map(x=>x.complete?x.correct+"/10":"—").join(" / "),
+ formatted:z.map(x=>x.complete?x.correct+"/10":" - ").join(" / "),
  details:z.map(x=>x.title+": "+(x.complete?x.correct+"/10":x.correct+" верных, оценено "+(x.correct+x.wrong)+"/10"))};
 }
 function classTable(cfg,rows){
@@ -50,8 +50,8 @@ function improve(cfg){
  h+=origCalc(d,ctx);
  if(cfg.type==="analogies"){h+='<label style="display:block;margin:14px 0">Пояснения и ошибки<textarea data-reviewed-notes="analogies" rows="3" style="width:100%" placeholder="Сведения о ходе решения">'+esc(person.psyNotes||"")+'</textarea></label>';}
  else h+='<label style="display:block;margin:14px 0">Ход запоминания, помощь и наблюдения<textarea data-reviewed-notes="paired" rows="3" style="width:100%">'+esc(person.psyNotes||"")+'</textarea></label>';
- h+='<div class="actions"><button type="button" class="btn primary" id="reviewDownload">Скачать отчёт участника · А4</button><button type="button" class="btn" id="reviewReset">Очистить протокол участника</button></div>';
- if(ctx.calcMode==="class")h+='<section id="reviewedClass">'+classTable(cfg,rows)+'</section><div class="actions"><button type="button" class="btn" id="reviewExportCsv">Скачать таблицу класса · CSV</button><button type="button" class="btn" id="reviewExportClass">Скачать отчёт класса · А4</button></div>';
+ h+='<div class="actions"><button type="button" class="btn primary" id="reviewDownload">Скачать отч\u0451т участника · А4</button><button type="button" class="btn" id="reviewReset">Очистить протокол участника</button></div>';
+ if(ctx.calcMode==="class")h+='<section id="reviewedClass">'+classTable(cfg,rows)+'</section><div class="actions"><button type="button" class="btn" id="reviewExportCsv">Скачать таблицу класса · CSV</button><button type="button" class="btn" id="reviewExportClass">Скачать отч\u0451т класса · А4</button></div>';
  return h+'</section>';
  };
  api.bind=(d,ctx)=>{
