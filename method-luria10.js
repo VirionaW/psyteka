@@ -40,7 +40,6 @@ Object.assign(d,{
  questions:TRIALS.slice()
 });
 D[NAME]=d;
-function sourceLinksUnused(d){return '<div class="psy-luria-links"><a class="btn primary" href="'+escape(d.guideFile)+'" download>Методика и протокол · Word</a><a class="btn" href="'+escape(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк психолога · А4 ↗</a><a class="btn" href="'+escape(d.sourceAlternative)+'" target="_blank" rel="noopener noreferrer">Описание процедуры ↗</a></div>';}
 function instruction(d){
  return '<div class="psy-luria-section-head"><h3>Методика и руководство</h3><div class="psy-luria-print-links"><a class="btn" href="'+escape(d.guideFile)+'?with_protocol=0" target="_blank" rel="noopener noreferrer">Без бланка</a><a class="btn primary" href="'+escape(d.guideFile)+'?with_protocol=1" target="_blank" rel="noopener noreferrer">С бланком</a></div></div>'+
  '<h3>Цель и условия</h3><p>'+escape(d.goal)+'</p><p>Проводить в тишине. Подготовить отдельный список стимулов и протокол. Участник не видит написанные слова.</p>'+
@@ -92,12 +91,33 @@ function csv(x){let t=String(x??"");if(/^\s*[=+\-@]/.test(t))t="'"+t;return '"'+
 function download(name,value,type){const blob=new Blob([value],{type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1250);}
 function bind(d,ctx){
  const row=ctx.rows[ctx.rowIndex];row.luriaNotes||=[];
- const refresh=()=>{const target=document.getElementById("luriaResult");if(target)target.innerHTML=results(row.answers);};
+ const refresh=()=>{const target=document.getElementById("luriaResult");if(target)target.innerHTML=results(row.answers);ctx.onChange?.();};
  document.querySelectorAll("[data-luria-word]").forEach(x=>x.addEventListener("change",()=>{row.answers[Number(x.dataset.luriaWord)]=x.checked?1:0;refresh();}));
  document.querySelectorAll("[data-luria-done]").forEach(x=>x.addEventListener("change",()=>{row.answers[60+Number(x.dataset.luriaDone)]=x.checked?1:0;refresh();}));
  document.querySelectorAll("[data-luria-note]").forEach(x=>x.addEventListener("input",()=>{const i=Number(x.dataset.luriaNote);row.luriaNotes[i] ||= {};row.luriaNotes[i].extra=x.value;}));
- document.getElementById("luriaJSON")?.addEventListener("click",()=>download("luria_10words_protocol.json",JSON.stringify({method:NAME,version:"10 words appendix 3, 5 exposures + 60 min",code:row.name||"",words:WORDS,answers:row.answers||[],errors:row.luriaNotes||[],result:score(d,row.answers),source:d.source,warning:d.warning},null,2),"application/json;charset=utf-8"));
- document.getElementById("luriaCSV")?.addEventListener("click",()=>{const data=[["Код","1","2","3","4","5","Через 60 мин","Пик"],...ctx.rows.map((p,i)=>{const z=score(d,p.answers);return [p.name||"Код "+(i+1),...(z?.trials||["","","","",""]),z?.delayed??"",z?.peak??""];})];download("luria_10words_group.csv","\uFEFF"+data.map(r=>r.map(csv).join(";")).join("\r\n"),"text/csv;charset=utf-8");});
+
 }
-window.PSY_LURIA={words:WORDS.slice(),trials:TRIALS.slice(),score,completed,grid,instruction,materials,processing,calculator,bind};
+
+function report(d,records,mode,index){
+ const selected=mode==="class"?records:[records[index]];
+ if(!selected.length||selected.some(r=>!ready(r.answers)))return false;
+ const rows=selected.map((r,i)=>{
+  const z=score(d,r.answers),code=escape(r.name||"Код "+(i+1));
+  const trace=z.trials.map((v,t)=>'<tr><td>'+(t+1)+'-я проба</td><td>'+v+' / 10</td><td>'+escape((r.luriaNotes||[])[t]?.extra||"–")+'</td></tr>').join("");
+  const delay='<tr><td>Отсрочка 60 минут</td><td>'+z.delayed+' / 10</td><td>'+escape((r.luriaNotes||[])[5]?.extra||"–")+'</td></tr>';
+  return '<section class="person"><h2>Участник: '+code+'</h2><p>Первое предъявление: <b>'+z.first+'</b>. Пятое: <b>'+z.fifth+'</b>. Лучший результат: <b>'+z.peak+'</b>. Среднее пяти проб: <b>'+z.mean+'</b>. Через 60 минут: <b>'+z.delayed+'</b>.</p>'+
+   '<table><thead><tr><th>Проба</th><th>Верные слова</th><th>Повторы, посторонние слова, наблюдения</th></tr></thead><tbody>'+trace+delay+'</tbody></table></section>';
+ }).join("");
+ const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Заучивание 10 слов – отчет</title>'+
+ '<style>@page{size:A4;margin:16mm}body{font:11pt/1.4 Arial,sans-serif;color:#27372d;max-width:850px;margin:auto;padding:20px}h1{font-size:19pt;color:#21674a}h2{font-size:14pt;color:#21674a}table{border-collapse:collapse;width:100%;table-layout:fixed}th,td{border:1px solid #9bafa2;padding:7px;text-align:left;overflow-wrap:anywhere}th:first-child{width:25%}th:nth-child(2){width:20%}.person{break-inside:avoid;margin:22px 0}.notice{padding:10px;background:#f1f6f2}.printbtn{padding:10px;background:#18794e;color:white;border:0}@media print{body{padding:0;max-width:none}.printbtn{display:none}.person{break-inside:auto}.person:not(:first-of-type){break-before:page}}</style></head><body>'+
+ '<h1>Заучивание 10 слов – '+escape(d.author)+'</h1><p>Редакция: приложение 3, С. А. Налькин, 2021. Пять предъявлений и отсрочка через 60 минут.</p>'+
+ '<p class="notice">Описательные результаты, не клинический диагноз и не оценка по возрастной норме. Указанное время отсрочки является временем протокола, фактический интервал следует фиксировать отдельно.</p>'+rows+
+ '<p>Источник: '+escape(d.source)+'</p><button class="printbtn" onclick="window.print()">Распечатать / сохранить PDF</button></body></html>';
+ download(mode==="class"?"luria_10_words_group_report.html":"luria_10_words_report.html",html,"text/html;charset=utf-8");return true;
+}
+function status(records,mode,index){
+ const selected=mode==="class"?records:[records[index]];
+ return selected.length>0&&selected.every(r=>ready(r.answers));
+}
+window.PSY_LURIA={words:WORDS.slice(),trials:TRIALS.slice(),score,completed,ready,status,report,grid,instruction,materials,processing,calculator,bind};
 })();
