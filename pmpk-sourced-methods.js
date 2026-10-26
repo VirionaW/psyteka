@@ -59,13 +59,17 @@ const parts={
  '<p>Пары для предъявления и ответы записываются только специалистом. Для ребенка отдельного бланка с правильными ответами не предусмотрено.</p>')+'</div>',
  process:()=>current===PICT?pictureProcessing():comparisonProcessing()
 };
+function pictResultMarkup(d){
+ const o=outcome(d),filled=d.recall.filter(Boolean).length;
+ return o?'<section class="pmpk-sourced-result"><h3>Опосредованное запоминание: '+o.score+' / 12</h3><p>'+esc(o.category)+' для детей '+d.age+' лет. Возрастные диапазоны сопоставимы только по полному оригинальному протоколу.</p></section>':
+ '<p class="pmpk-note">Заполнено '+filled+' из 12. Пустой ответ не является нулем.</p>';
+}
 function pictureProcessing(){const d=state(),o=outcome(d),filled=d.recall.filter(Boolean).length;
  return '<div class="pmpk-method-box"><h3>Обработка результатов: 12 стимулов</h3><p class="pmpk-note">Статус станет зеленым только после внесения возраста, отсрочки от 20 минут, ответов по всем 12 словам и описания наблюдений.</p>'+
  '<div class="pmpk-method-fields"><label>Возраст *<select data-sourced-field="age">'+opt([["6","6 лет"],["7","7 лет"]],d.age)+'</select></label><label>Полная процедура приложения А соблюдена? *<select data-sourced-field="sourceComplete">'+opt([["yes","Да, строго по первоисточнику"],["no","Нет, условия изменены или не подтверждены"]],d.sourceComplete)+'</select></label><label>Фактический интервал отсрочки, минут *<input type="number" min="20" max="240" step="1" data-sourced-field="delay" value="'+esc(d.delay)+'"></label></div>'+
  '<table class="pmpk-method-table"><thead><tr><th>№ / слово</th><th>Отсроченное воспроизведение</th><th>Что нарисовано / объяснение</th></tr></thead><tbody>'+words.map((word,i)=>'<tr><td>'+(i+1)+'. '+esc(word)+'</td><td><select aria-label="Слово '+(i+1)+'" data-sourced-recall="'+i+'">'+opt([["yes","Вспомнил"],["no","Не вспомнил"]],d.recall[i])+'</select></td><td><input aria-label="Описание рисунка '+(i+1)+'" data-sourced-explain="'+i+'" value="'+esc(d.explain[i])+'" placeholder="Фактический ответ"></td></tr>').join("")+'</tbody></table>'+
  '<label class="pmpk-method-blockfield">Наблюдения специалиста *<textarea rows="3" data-sourced-field="notes" placeholder="Характер кодирования, помощь, реакции">'+esc(d.notes)+'</textarea></label>'+
- (o?'<section class="pmpk-sourced-result"><h3>Опосредованное запоминание: '+o.score+' / 12</h3><p>'+esc(o.category)+' для детей '+d.age+' лет. Сопоставление с нормами допустимо только по полному протоколу.</p></section>':
- '<p class="pmpk-note">Заполнено '+filled+' из 12. Пропущенный ответ не равен нулю.</p>')+'</div>';
+ '<div data-sourced-result>'+pictResultMarkup(d)+'</div>'+'</div>';
 }
 function comparisonProcessing(){const d=state(),complete=d.rows.filter(r=>r.status==="done"&&r.same.trim()&&r.different.trim()).length;
 return '<div class="pmpk-method-box"><h3>Обработка: 26 пар понятий</h3><p class="pmpk-note">Ответы фиксируются дословно. Если пара не предъявлялась, выберите «Не проводилась»; пустое поле не равно ошибке.</p>'+
@@ -73,7 +77,7 @@ return '<div class="pmpk-method-box"><h3>Обработка: 26 пар поня�
  return '<section class="pmpk-method-answer"><h4>'+(i+1)+'. '+esc(x)+' – '+esc(y)+'</h4><label>Предъявление<select data-sourced-row="'+i+'" data-sourced-prop="status">'+opt([["done","Проводилась"],["skip","Не проводилась"]],r.status)+'</select></label>'+
  (r.status==="done"?'<label>Сходство *<input data-sourced-row="'+i+'" data-sourced-prop="same" value="'+esc(r.same)+'"></label><label>Различие *<input data-sourced-row="'+i+'" data-sourced-prop="different" value="'+esc(r.different)+'"></label>':r.status==="skip"?'<label>Причина непредъявления *<input data-sourced-row="'+i+'" data-sourced-prop="note" value="'+esc(r.note)+'"></label>':'')+
  '</section>'}).join("")+'</div>'+
- '<p class="pmpk-note">Полные ответы зафиксированы для '+complete+' из 26 пар. Методика не имеет автоматического правильного/неправильного балла.</p>'+
+ '<p class="pmpk-note" data-sourced-counter>Полные ответы зафиксированы для '+complete+' из 26 пар. Методика не имеет автоматического правильного/неправильного балла.</p>'+
  '<label class="pmpk-method-blockfield">Качественное заключение по предъявленным парам *<textarea data-sourced-field="summary" rows="4" placeholder="Какие существенные признаки были выделены, какие способы решения и помощь наблюдались">'+esc(d.summary)+'</textarea></label></div>';
 }
 function printContent(type){
@@ -149,7 +153,7 @@ function open(name){
 }
 function close(){if(!overlay)return;overlay.remove();overlay=null;current="";document.body.classList.remove("pmpk-method-open");document.removeEventListener("keydown",keys);if(prevFocus?.isConnected)prevFocus.focus()}
 function keys(e){if(e.key==="Escape"){e.preventDefault();close()}else if(e.key==="Tab"&&overlay){const a=[...overlay.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),a[href]')].filter(x=>x.getClientRects().length);if(!a.length)return;if(e.shiftKey&&document.activeElement===a[0]){e.preventDefault();a.at(-1).focus()}else if(!e.shiftKey&&document.activeElement===a.at(-1)){e.preventDefault();a[0].focus()}}}
-function refreshStatus(){if(!overlay)return;const ok=ready();const el=overlay.querySelector("[data-sourced-status]");if(el){el.classList.toggle("is-done",ok);el.textContent=ok?"Обработка заполнена":"Обработка не заполнена"}overlay.querySelectorAll('[data-sourced-action="print-report"],[data-sourced-action="word-report"]').forEach(b=>b.disabled=!ok)}
+function refreshStatus(){if(!overlay)return;const ok=ready();const el=overlay.querySelector("[data-sourced-status]");if(el){el.classList.toggle("is-done",ok);el.textContent=ok?"Обработка заполнена":"Обработка не заполнена"}overlay.querySelectorAll('[data-sourced-action="print-report"],[data-sourced-action="word-report"]').forEach(b=>b.disabled=!ok);const out=overlay.querySelector("[data-sourced-result]");if(out)out.innerHTML=pictResultMarkup(state());const counter=overlay.querySelector("[data-sourced-counter]");if(counter)counter.textContent="Полные ответы зафиксированы для "+state().rows.filter(r=>r.status==="done"&&r.same.trim()&&r.different.trim()).length+" из 26 пар."}
 function change(e){if(!overlay||!overlay.contains(e.target))return;
  const x=e.target,d=state(),key=x.dataset.sourcedField;
  if(key){d[key]=x.value;refreshStatus();return}
