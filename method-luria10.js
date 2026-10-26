@@ -77,7 +77,7 @@ function calculator(d,ctx){
  let h='<div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>'+
  '<div class="notice">Внесите услышанные ответы после предъявления слов. Ставьте галочку «Проба завершена», даже если воспроизведено 0 слов. <strong>Шестая строка – только через 60 минут, без повторного чтения.</strong></div>';
  if(ctx.calcMode==="class")h+='<div class="group-tools"><label>Участник<select id="participantSelect">'+rs.map((u,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+(i+1)+'. '+escape(u.name||"Код "+(i+1))+'</option>').join("")+'</select></label><label>Код, не ФИО<input id="participantName" value="'+escape(r.name||"")+'" placeholder="Код"></label><button class="btn" id="addParticipant">Добавить</button></div>';
- h+='<div class="psy-luria-trials">';
+ h+='<div class="psy-luria-meta-inputs"><label>Дата обследования<input type="date" data-luria-date value="'+escape(r.luriaDate||"")+'"></label><label>Фактическое время отсрочки, минут<input type="number" min="1" max="240" step="1" data-luria-delay value="'+escape(r.luriaDelay||"")+'" placeholder="60"></label></div><div class="psy-luria-trials">';
  TRIALS.forEach((label,t)=>{
   h+='<section class="psy-luria-trial"><div class="psy-luria-trial-head"><h4>'+escape(label)+'</h4><label><input type="checkbox" data-luria-done="'+t+'" '+(completed(a,t)?'checked':'')+'> Проба завершена</label></div>'+
   '<div class="psy-luria-choices">'+WORDS.map((word,j)=>'<label><input type="checkbox" data-luria-word="'+(t*10+j)+'" '+(truth(a[t*10+j])?'checked':'')+'> '+escape(word)+'</label>').join("")+'</div>'+
@@ -94,6 +94,8 @@ function bind(d,ctx){
  const refresh=()=>{const target=document.getElementById("luriaResult");if(target)target.innerHTML=results(row.answers);const tbody=document.querySelector('#luriaGroupSummary tbody');if(tbody)tbody.innerHTML=ctx.rows.map((u,i)=>{const z=score(d,u.answers);return '<tr><td>'+escape(u.name||'Код '+(i+1))+'</td><td>'+(z?.first??'–')+'</td><td>'+(z?.fifth??'–')+'</td><td>'+(z?.peak??'–')+'</td><td>'+(z?.delayed??'–')+'</td></tr>';}).join('');ctx.onChange?.();};
  document.querySelectorAll("[data-luria-word]").forEach(x=>x.addEventListener("change",()=>{row.answers[Number(x.dataset.luriaWord)]=x.checked?1:0;refresh();}));
  document.querySelectorAll("[data-luria-done]").forEach(x=>x.addEventListener("change",()=>{row.answers[60+Number(x.dataset.luriaDone)]=x.checked?1:0;refresh();}));
+ document.querySelector('[data-luria-date]')?.addEventListener('change',e=>{row.luriaDate=e.target.value;});
+ document.querySelector('[data-luria-delay]')?.addEventListener('input',e=>{row.luriaDelay=e.target.value;});
  document.querySelectorAll("[data-luria-note]").forEach(x=>x.addEventListener("input",()=>{const i=Number(x.dataset.luriaNote);row.luriaNotes[i] ||= {};row.luriaNotes[i].extra=x.value;}));
 
 }
@@ -102,14 +104,15 @@ function report(d,records,mode,index){
  const selected=mode==="class"?records:[records[index]];
  if(!selected.length||selected.some(r=>!ready(r.answers)))return false;
  const rows=selected.map((r,i)=>{
-  const z=score(d,r.answers),code=escape(r.name||"Код "+(i+1));
-  const trace=z.trials.map((v,t)=>'<tr><td>'+(t+1)+'-я проба</td><td>'+v+' / 10</td><td>'+escape((r.luriaNotes||[])[t]?.extra||"–")+'</td></tr>').join("");
-  const delay='<tr><td>Отсрочка 60 минут</td><td>'+z.delayed+' / 10</td><td>'+escape((r.luriaNotes||[])[5]?.extra||"–")+'</td></tr>';
+  const z=score(d,r.answers),code=escape(r.name||"Код "+(i+1)),date=escape(r.luriaDate||"Не указана");
+  const minutes=/^\d{1,3}$/.test(String(r.luriaDelay||""))&&Number(r.luriaDelay)>0?escape(r.luriaDelay)+" мин":"Не указано";
+  const trace=z.trials.map((v,t)=>'<tr><td>'+(t+1)+'-я проба</td><td>'+v+' / 10</td><td>'+WORDS.filter((word,j)=>truth(r.answers[t*10+j])).map(escape).join(", ")+'</td><td>'+escape((r.luriaNotes||[])[t]?.extra||"–")+'</td></tr>').join("");
+  const delay='<tr><td>Отсрочка ('+minutes+')</td><td>'+z.delayed+' / 10</td><td>'+WORDS.filter((word,j)=>truth(r.answers[50+j])).map(escape).join(", ")+'</td><td>'+escape((r.luriaNotes||[])[5]?.extra||"–")+'</td></tr>';
   return '<section class="person"><h2>Участник: '+code+'</h2><p>Первое предъявление: <b>'+z.first+'</b>. Пятое: <b>'+z.fifth+'</b>. Лучший результат: <b>'+z.peak+'</b>. Среднее пяти проб: <b>'+z.mean+'</b>. Через 60 минут: <b>'+z.delayed+'</b>.</p>'+
-   '<table><thead><tr><th>Проба</th><th>Верные слова</th><th>Повторы, посторонние слова, наблюдения</th></tr></thead><tbody>'+trace+delay+'</tbody></table></section>';
+   '<p>Дата обследования: '+date+'. Фактический интервал отсрочки: '+minutes+'.</p><table><thead><tr><th>Проба</th><th>Верные слова</th><th>Отмеченные слова</th><th>Повторы и посторонние слова</th></tr></thead><tbody>'+trace+delay+'</tbody></table></section>';
  }).join("");
  const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Заучивание 10 слов – отчет</title>'+
- '<style>@page{size:A4;margin:16mm}body{font:11pt/1.4 Arial,sans-serif;color:#27372d;max-width:850px;margin:auto;padding:20px}h1{font-size:19pt;color:#21674a}h2{font-size:14pt;color:#21674a}table{border-collapse:collapse;width:100%;table-layout:fixed}th,td{border:1px solid #9bafa2;padding:7px;text-align:left;overflow-wrap:anywhere}th:first-child{width:25%}th:nth-child(2){width:20%}.person{break-inside:avoid;margin:22px 0}.notice{padding:10px;background:#f1f6f2}.printbtn{padding:10px;background:#18794e;color:white;border:0}@media print{body{padding:0;max-width:none}.printbtn{display:none}.person{break-inside:auto}.person:not(:first-of-type){break-before:page}}</style></head><body>'+
+ '<style>@page{size:A4;margin:16mm}body{font:11pt/1.4 Arial,sans-serif;color:#27372d;max-width:850px;margin:auto;padding:20px}h1{font-size:19pt;color:#21674a}h2{font-size:14pt;color:#21674a}table{border-collapse:collapse;width:100%;table-layout:fixed}th,td{border:1px solid #9bafa2;padding:7px;text-align:left;overflow-wrap:anywhere}th:first-child{width:20%}th:nth-child(2){width:14%}th:nth-child(3){width:34%}.person{break-inside:avoid;margin:22px 0}.notice{padding:10px;background:#f1f6f2}.printbtn{padding:10px;background:#18794e;color:white;border:0}@media print{body{padding:0;max-width:none}.printbtn{display:none}.person{break-inside:auto}.person:not(:first-of-type){break-before:page}}</style></head><body>'+
  '<h1>Заучивание 10 слов – '+escape(d.author)+'</h1><p>Редакция: приложение 3, С. А. Налькин, 2021. Пять предъявлений и отсрочка через 60 минут.</p>'+
  '<p class="notice">Описательные результаты, не клинический диагноз и не оценка по возрастной норме. Указанное время отсрочки является временем протокола, фактический интервал следует фиксировать отдельно.</p>'+rows+
  '<p>Источник: '+escape(d.source)+'</p><button class="printbtn" onclick="window.print()">Распечатать / сохранить PDF</button></body></html>';
