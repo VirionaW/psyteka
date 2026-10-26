@@ -75,3 +75,30 @@ html.dark .pmpk-number{background:#2a5251;color:#d0e9e4}
 
 .library-page[data-area=pmpk] .hero{display:none!important}
 @media(max-width:820px){.library-page .mobile-area-switch{grid-template-columns:repeat(5,minmax(0,1fr))}}
+
+/* Баннер ПМПК на основе утвержденной иллюстрации. Текст остается доступным HTML. */
+.library-page[data-area="pmpk"] .pmpk-hero{
+ position:relative;isolation:isolate;overflow:hidden;align-items:center;
+ min-height:clamp(265px,29vw,344px);padding:40px clamp(24px,4.5vw,52px);
+ background:#225c6b;border-radius:26px;
+}
+.library-page[data-area="pmpk"] .pmpk-hero::before{
+ content:"";position:absolute;inset:0 0 0 39%;z-index:-2;
+ background:url("assets/psyteka-banner-pmpk-scene.webp?v=20261026banner1") center right/cover no-repeat;
+}
+.library-page[data-area="pmpk"] .pmpk-hero::after{
+ content:"";position:absolute;inset:0;z-index:-1;
+ background:linear-gradient(90deg,#225c6b 0%,#225c6b 31%,rgba(34,92,107,.94) 43%,rgba(34,92,107,.62) 60%,rgba(34,92,107,.08) 90%,transparent 100%);
+}
+.library-page[data-area="pmpk"] .pmpk-hero>div{position:relative;z-index:1;flex:0 1 59%;max-width:59%}
+.library-page[data-area="pmpk"] .pmpk-hero h1{font-size:clamp(38px,4.5vw,56px);letter-spacing:-.03em;margin:14px 0 16px}
+.library-page[data-area="pmpk"] .pmpk-hero p{font-size:clamp(15px,1.5vw,19px);line-height:1.55;max-width:550px}
+.library-page[data-area="pmpk"] .pmpk-eyebrow{color:#ecf8fa;letter-spacing:.065em;font-size:12px}
+html.dark .library-page[data-area="pmpk"] .pmpk-hero{background:#225c6b}
+@media(max-width:760px){
+ .library-page[data-area="pmpk"] .pmpk-hero{min-height:265px;padding:28px 23px}
+ .library-page[data-area="pmpk"] .pmpk-hero::before{left:31%;opacity:.66}
+ .library-page[data-area="pmpk"] .pmpk-hero::after{background:linear-gradient(90deg,#225c6b 0%,rgba(34,92,107,.99) 41%,rgba(34,92,107,.68) 77%,rgba(34,92,107,.3) 100%)}
+ .library-page[data-area="pmpk"] .pmpk-hero>div{flex:0 1 80%;max-width:80%}
+}
+@media(max-width:470px){.library-page[data-area="pmpk"] .pmpk-hero>div{max-width:100%}.library-page[data-area="pmpk"] .pmpk-hero::before{opacity:.35}.library-page[data-area="pmpk"] .pmpk-hero::after{background:linear-gradient(90deg,#225c6b 0%,rgba(34,92,107,.96) 60%,rgba(34,92,107,.75) 100%)}}
