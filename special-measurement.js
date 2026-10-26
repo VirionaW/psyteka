@@ -4,7 +4,7 @@
  const source="https://iris.peabody.vanderbilt.edu/case-study/measuring-behavior/";
  const source2="https://iris.peabody.vanderbilt.edu/activity/behavior-assessment-frequency-and-interval-recording/";
  const source3="https://iris.peabody.vanderbilt.edu/mcontent/cs_parent/measuring-behavior/";
- const commonAge="3-17 лет и взрослые от 18 лет – рабочее наблюдение без возрастных нормативов";
+ const commonAge="Нормативные возрастные границы не установлены; метод выбирают по наблюдаемой задаче";
  const commonAges=["Дошкольники","Школьники","Взрослые"];
  const methods=[
   {id:"special-frequency-01",title:"Частотная регистрация событий (event recording)",group:"Мониторинг",topic:"Динамика поведения",
