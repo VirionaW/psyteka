@@ -53,7 +53,7 @@
  function complete(){
   const d=state();
   if(!d.help||!d.notes.trim())return false;
-  if(current.code===METHODS.thinking.code)return d.answers.every(x=>RESULTS.includes(x));
+  if(current.code===METHODS.thinking.code)return d.answers.every(x=>RESULTS.includes(x))&&!(d.answers.includes("С помощью")&&d.help==="Без помощи");
   return ROUNDS.every(([k],i)=>{
    const mode=d.rounds[k];
    if(i===0&&mode!=="done")return false;
@@ -234,13 +234,13 @@
   let result="С помощью",description="";
   if(current.code===METHODS.thinking.code){
    const yes=d.answers.filter(x=>x==="Самостоятельно").length,assisted=d.answers.filter(x=>x==="С помощью").length,errors=d.answers.filter(x=>x==="Не выполнил").length;
-   result=yes===8?"Самостоятельно":yes+assisted===0?"Не выполнил":"С помощью";
+   result=yes+assisted===0?"Не выполнил":assisted===0&&d.help==="Без помощи"?"Самостоятельно":"С помощью";
    description="Исключение лишнего и простые аналогии: самостоятельно – "+yes+", с помощью – "+assisted+", не выполнено – "+errors+". "+
     current.items.map((x,i)=>"№ "+(i+1)+": "+d.answers[i]+(d.literal[i]?" (ответ: "+d.literal[i]+")":"")).join("; ")+".";
   }else{
-   result="С помощью";
-   const used=ROUNDS.filter(([k])=>d.rounds[k]==="done"),full=used.every(([k])=>d.rows[k].every(x=>x==="yes"));
-   if(full&&d.help==="Без помощи")result="Самостоятельно";
+   const used=ROUNDS.filter(([k])=>d.rounds[k]==="done");
+   const total=used.reduce((n,[k])=>n+d.rows[k].filter(x=>x==="yes").length,0);
+   result=total===0?"Не выполнил":d.help==="Без помощи"?"Самостоятельно":"С помощью";
    description="Запоминание шести слов: "+ROUNDS.map(([k,label])=>label+" – "+(d.rounds[k]==="skip"?"не проводилось":d.rows[k].filter(x=>x==="yes").length+" из 6")).join("; ")+
     (d.rounds.delayed==="done"?" (отсрочка "+d.delay+" мин)":"")+". Привнесения / повторы: "+(d.intrusions||"не отмечены")+".";
   }
