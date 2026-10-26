@@ -31,9 +31,9 @@
   interpret:"Чем выше показатель WHO-5, тем больше положительных переживаний отмечено за последние две недели. Низкие значения могут быть поводом для бережной беседы и дополнительной оценки ситуации, но не равнозначны диагнозу. Пороги, описанные в литературе для взрослых и отдельных выборок, нельзя механически переносить на школьников; автоматический диагноз и категоризация по порогам отключены.",
   warning:NOTE,
   questions:TOPICS,
-  options:OPTIONS.map(x=>x.v+" — "+x.text),
+  options:OPTIONS.map(x=>x.v+" – "+x.text),
   source:WHO,officialBlank:RUS,officialPDF:RUS,
-  sourceScoring:REVIEW,guideFile:GUIDE,answerFile:BLANK,
+  sourceScoring:REVIEW,guideFile:"downloads/who5_guide.html",guideWithBlankFile:"downloads/who5_guide_with_blank.html",answerFile:BLANK,answerWordFile:"downloads/who5_answers.docx",
   calculator:true,workflow:"who5",
   license:"Используйте официальный PDF ВОЗ без изменений; оригинальная публикация 2024 года распространяется по CC BY-NC-SA 3.0 IGO. Локальный лист Психотеки только регистрирует ответы по номерам."
  };
@@ -54,7 +54,7 @@
   '<a class="btn" href="'+RUS+'" target="_blank" rel="noopener noreferrer">Полная русская форма ВОЗ · PDF ↗</a>'+
   '<a class="btn" href="'+WHO+'" target="_blank" rel="noopener noreferrer">Карточка ВОЗ · источник ↗</a></div>';}
  function instruction(){
-  return '<h3>Подготовка</h3><p>WHO-5 предназначен для оценки положительного субъективного благополучия. Для работы со школьниками оцените возрастную пригодность выбранной формы и необходимое согласие. Бланк самозаполнения индивидуален; в демонстрационной системе используйте коды, не ФИО.</p>'+
+  return '<div class="psy-common-guide-head"><h3>Методика и руководство</h3><div class="psy-common-guide-actions"><a class="btn" href="downloads/who5_guide.html" target="_blank" rel="noopener noreferrer">Без бланка</a><a class="btn primary" href="downloads/who5_guide_with_blank.html" target="_blank" rel="noopener noreferrer">С бланком</a></div></div>'+'<h3>Подготовка</h3><p>WHO-5 предназначен для оценки положительного субъективного благополучия. Для работы со школьниками оцените возрастную пригодность выбранной формы и необходимое согласие. Бланк самозаполнения индивидуален; в демонстрационной системе используйте коды, не ФИО.</p>'+
   '<h3>Порядок проведения</h3><ol>'+
   '<li>Откройте <a href="'+RUS+'" target="_blank" rel="noopener noreferrer">официальную русскую форму ВОЗ</a> и предложите участнику все пять утверждений в исходном порядке.</li>'+
   '<li>Попросите оценить самочувствие за <b>последние две недели</b>, выбрав один из вариантов от 5 («все время») до 0 («никогда»).</li>'+
@@ -62,12 +62,12 @@
   '<li>После завершения перенесите ответы по номерам в калькулятор. При пропуске хотя бы одного ответа результат не рассчитывается.</li>'+
   '<li>Сохраните индивидуальный протокол либо сводную таблицу класса. Обсуждайте результат конфиденциально, не превращая индекс в диагноз.</li></ol>'+
   '<h3>Инструкция ученику</h3><blockquote class="kid-instruction">Прочитай пять утверждений о своем самочувствии за последние две недели. Для каждого выбери одно число от 0 до 5, которое подходит тебе лучше всего. Здесь нет правильных или неправильных ответов.</blockquote>'+
-  '<div class="notice psy-who-note">'+esc(NOTE)+'</div>'+links();
+  '<div class="notice psy-who-note">'+esc(NOTE)+'</div>';
  }
  function materials(){
-  return '<h3>Бланк ученика и исходные утверждения</h3><p><b>Полный официальный текст пяти утверждений</b> находится в <a href="'+RUS+'" target="_blank" rel="noopener noreferrer">русском PDF ВОЗ</a>. В Психотеке представлен отдельный регистрационный лист: пять строк, шесть вариантов ответов и место для кода обследуемого.</p>'+
+  return '<div class="psy-common-guide-head"><h3>Лист ответов</h3><div class="psy-common-guide-actions"><a class="btn" href="downloads/who5_student_register.html" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать</a><a class="btn primary" href="downloads/who5_answers.docx" download>Скачать Word</a></div></div>'+'<h3>Бланк ученика и исходные утверждения</h3><p><b>Полный официальный текст пяти утверждений</b> находится в <a href="'+RUS+'" target="_blank" rel="noopener noreferrer">русском PDF ВОЗ</a>. В Психотеке представлен отдельный регистрационный лист: пять строк, шесть вариантов ответов и место для кода обследуемого.</p>'+
   '<p>Тематические ориентиры пунктов (не заменяют исходных формулировок):</p><ol>'+TOPICS.map(q=>'<li>'+esc(q)+'</li>').join("")+'</ol>'+
-  '<p>При регистрации важно сохранить исходный порядок вопросов, направление шкалы и период «последние две недели».</p>'+links();
+  '<p>При регистрации важно сохранить исходный порядок вопросов, направление шкалы и период «последние две недели».</p>';
  }
  function processing(){
   return '<h3>Ключ и подсчет WHO-5</h3><p>'+esc(d.scoring)+'</p>'+
@@ -83,7 +83,7 @@
  }
  function result(a){
   const z=score(d,a),n=filled(a);
-  let h='<section class="psy-who-result"><h3>Результат WHO-5</h3><p>Отмечено <b>'+n+' из 5</b> пунктов</p>'+
+  let h='<section class="psy-who-result"><h3>Результат WHO-5</h3><span class="psy-data-state '+(z?'is-ready':'is-waiting')+'" role="status">'+(z?'Данные заполнены':'Данные не заполнены')+'</span><p>Отмечено <b>'+n+' из 5</b> пунктов</p>'+
    '<div class="psy-who-track"><span style="width:'+(n*20)+'%"></span></div>';
   if(!z)return h+'<p class="psy-who-muted">Для получения индекса заполните все пять пунктов. Пустое поле не равно ответу 0.</p></section>';
   return h+'<div class="psy-who-score"><div><small>Сырой балл</small><strong>'+z.raw+' <span>/ 25</span></strong></div><div><small>Индекс WHO-5</small><strong>'+z.index+' <span>/ 100</span></strong></div></div>'+
@@ -92,7 +92,7 @@
  }
  function table(rows){
   return '<div class="psy-who-scroll"><table><thead><tr><th>Код ученика</th><th>Заполнено</th><th>Сырой балл</th><th>WHO-5 (0–100)</th></tr></thead><tbody>'+
-  rows.map((r,i)=>{const z=score(d,r.answers);return '<tr><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td><td>'+filled(r.answers)+'/5</td><td>'+(z?z.raw+'/25':'—')+'</td><td>'+(z?z.index:'—')+'</td></tr>'}).join("")+
+  rows.map((r,i)=>{const z=score(d,r.answers);return '<tr><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td><td>'+filled(r.answers)+'/5</td><td>'+(z?z.raw+'/25':'–')+'</td><td>'+(z?z.index:'–')+'</td></tr>'}).join("")+
   '</tbody></table></div><p class="psy-who-muted">Пустые ответы не засчитываются как 0 и не участвуют в расчетах; экспорт включает только условные коды.</p>';
  }
  function calculator(data,ctx){
@@ -101,8 +101,8 @@
   '<div class="notice psy-who-note">Вводите данные по полному официальному русскому бланку WHO-5. Используйте коды вместо ФИО. Для расчета данные остаются в браузере.</div>';
   if(ctx.calcMode==="class")h+='<div class="group-tools"><label>Ученик<select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+esc(x.name||"У-"+(i+1))+'</option>').join("")+'</select></label><label>Код<input id="participantName" maxlength="40" value="'+esc(r.name||"")+'" placeholder="У-01"></label><button class="btn" id="addParticipant">Добавить ученика</button></div>';
   else h+='<label class="psy-who-code">Условный код ученика<input id="who5SingleCode" maxlength="40" value="'+esc(r.name||"")+'" placeholder="Например, У-01"></label>';
-  h+='<div class="psy-who-grid">'+TOPICS.map((topic,i)=>'<label class="psy-who-item"><span><b>'+(i+1)+'.</b> '+esc(topic)+'</span><select data-who5-answer="'+i+'" aria-label="Пункт '+(i+1)+' WHO-5"><option value="">— ответ не отмечен —</option>'+
-  OPTIONS.map(opt=>'<option value="'+opt.v+'" '+(valid(a[i])&&Number(a[i])===opt.v?"selected":"")+'>'+opt.v+' — '+esc(opt.text)+'</option>').join("")+'</select></label>').join("")+'</div>'+
+  h+='<div class="psy-who-grid">'+TOPICS.map((topic,i)=>'<label class="psy-who-item"><span><b>'+(i+1)+'.</b> '+esc(topic)+'</span><select data-who5-answer="'+i+'" aria-label="Пункт '+(i+1)+' WHO-5"><option value="">– ответ не отмечен –</option>'+
+  OPTIONS.map(opt=>'<option value="'+opt.v+'" '+(valid(a[i])&&Number(a[i])===opt.v?"selected":"")+'>'+opt.v+' – '+esc(opt.text)+'</option>').join("")+'</select></label>').join("")+'</div>'+
   '<div id="who5Result">'+result(a)+'</div><div class="psy-who-actions"><button class="btn" id="who5Clear">Очистить пять ответов</button><button class="btn primary" id="who5Report">Скачать индивидуальный протокол</button></div>';
   if(ctx.calcMode==="class")h+='<h3>Сводка класса</h3><div id="who5Group">'+table(rows)+'</div>'+
    '<div class="psy-who-actions"><button class="btn" id="nextParticipant">Следующий ученик</button><button class="btn primary" id="who5Export">Скачать CSV для Excel</button></div>';
