@@ -58,7 +58,7 @@ function improve(cfg){
  const rows=ctx.rows||[],person=rows[ctx.rowIndex];if(!person)return;
  origBind(d,ctx);
  const updateGroup=()=>{const el=document.getElementById("reviewedClass");if(el)el.innerHTML=classTable(cfg,rows);};
- document.getElementById("participantName")?.addEventListener("input",()=>updateGroup());
+ document.getElementById("participantName")?.addEventListener("input",e=>{person.name=e.target.value;updateGroup()});
  document.querySelector("[data-reviewed-notes]")?.addEventListener("input",el=>{person.psyNotes=el.target.value;});
  if(cfg.type==="paired"){
   person.pairedAnswers??={};person.pairedNotes??={};
@@ -66,7 +66,7 @@ function improve(cfg){
     const id=g.code+"-"+i,word=document.querySelector('[data-paired-note="'+id+'"]'),mark=document.querySelector('[data-paired-mark="'+id+'"]');
     const apply=()=>{const txt=word?.value.trim()||"",grade=txt?Number(normWord(txt)===normWord(pair[1])):null;person.pairedAnswers[id]=grade;if(mark)mark.value=grade===null?"":String(grade);const target=document.getElementById("pairedSummary");if(target)target.innerHTML=(api.outcomes(person.pairedAnswers).map(z=>'<p><b>'+esc(z.title)+'</b>: '+(z.complete?z.correct+"/10":"Оценено "+(z.correct+z.wrong)+"/10")+'</p>').join(""))+'<p>Проверка дословного воспроизведения; пропуски сохраняются.</p>';updateGroup();};
     word?.addEventListener("input",apply);
-    mark?.addEventListener("change",()=>{if(word?.value.trim())apply();else updateGroup();});
+    mark?.addEventListener("change",()=>{if(word?.value.trim()){apply();return;}if(mark?.value==="1"){mark.value="";person.pairedAnswers[id]=null;const out=document.getElementById("pairedSummary");if(out)out.innerHTML=api.outcomes(person.pairedAnswers).map(z=>"<p><b>"+esc(z.title)+"</b>: "+(z.complete?z.correct+"/10":"Оценено "+(z.correct+z.wrong)+"/10")+"</p>").join("");}updateGroup();});
   });}
  }else document.querySelectorAll("[data-analogy]").forEach(x=>x.addEventListener("change",updateGroup));
  const downloadHtml=(filename,body)=>save(filename,body,"text/html;charset=utf-8");
