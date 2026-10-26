@@ -6,7 +6,14 @@
  const emailField=document.getElementById("authEmail");
  const codeField=document.getElementById("authCode");
  const status=document.getElementById("authStatus");
- const ready=Boolean(/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||"")&&/^sb_publishable_[A-Za-z0-9_-]+$/.test(config.publishableKey||"")&&config.registrationEnabled===true&&window.supabase?.createClient);
+ // A limited SMTP smoke test is permitted for previously registered accounts only.
+ // This is not a public signup bypass: shouldCreateUser=false in test mode.
+ const emailTestMode=config.registrationEnabled!==true&&
+  location.pathname.endsWith("/register.html")&&
+  new URLSearchParams(location.search).get("test")==="1";
+ const ready=Boolean(/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||"")&&
+  /^sb_publishable_[A-Za-z0-9_-]+$/.test(config.publishableKey||"")&&
+  (config.registrationEnabled===true||emailTestMode)&&window.supabase?.createClient);
  function message(text,error=false){status.textContent=text;status.classList.toggle("error",error)}
  const send=document.getElementById("authSend"),verify=document.getElementById("authVerify");
  const disabledNote=document.getElementById("authNotConfigured");
@@ -15,6 +22,13 @@
   disabledNote.hidden=false;emailField.disabled=true;send.disabled=true;
   message("Отправка писем будет доступна после настройки почтового сервиса и подтверждения ссылок для входа.");
   return;
+ }
+ if(emailTestMode){
+  disabledNote.hidden=false;
+  disabledNote.textContent="Проверка почты для уже созданного аккаунта. Новые пользователи здесь пока не регистрируются.";
+  const title=document.getElementById("authTitle");if(title)title.textContent="Проверить письмо для входа";
+  const disclaimer=document.querySelector(".auth-disclaimer");
+  if(disclaimer)disclaimer.textContent="Тестовая отправка письма не активирует подписку и не запускает пробный период.";
  }
  client=window.supabase.createClient(config.url,config.publishableKey,{
   auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
@@ -54,7 +68,7 @@
   try{
    const {error}=await client.auth.signInWithOtp({
     email:value,
-    options:{shouldCreateUser:true,emailRedirectTo:location.origin+location.pathname}
+    options:{shouldCreateUser:!emailTestMode,emailRedirectTo:location.origin+location.pathname}
    });
    if(error)throw error;
    email=value;lastSendAt=Date.now();form.hidden=true;codeForm.hidden=false;
