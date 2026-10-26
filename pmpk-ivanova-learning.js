@@ -40,7 +40,13 @@ function cardSvg(f){
  const pentagon=(()=>{const pts=Array.from({length:5},(_,i)=>{const a=-Math.PI/2+i*2*Math.PI/5;return [mid+Math.cos(a)*size/2,mid+Math.sin(a)*size/2].map(v=>v.toFixed(2)).join(",")});return '<polygon points="'+pts.join(" ")+'"/>'})();
  return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block;width:100%;height:100%"><g fill="'+f.color+'" stroke="#454545" stroke-width=".6">'+({square,circle,triangle,diamond,pentagon}[f.shape])+'</g></svg>';
 }
-function cardsHTML(transfer=false){const arr=transfer?TRANSFER:PRIMARY;return '<div class="ivanova-cards '+(transfer?"ivanova-transfer":"ivanova-primary")+'">'+arr.map((f,i)=>'<div class="ivanova-figure" title="Фигура '+(i+1)+'">'+cardSvg(f)+'</div>').join("")+'</div>'}
+function cardsHTML(transfer=false,forPrint=false){
+ const arr=transfer?TRANSFER:PRIMARY,css="ivanova-cards "+(transfer?"ivanova-transfer":"ivanova-primary"),batch=transfer?12:6;
+ const one=(pieces,offset)=>'<div class="'+css+'">'+pieces.map((f,i)=>'<div class="ivanova-figure" title="Фигура '+(offset+i+1)+'">'+cardSvg(f)+'</div>').join("")+'</div>';
+ if(!forPrint)return one(arr,0);
+ const parts=[];for(let i=0;i<arr.length;i+=batch)parts.push('<section class="ivanova-page">'+one(arr.slice(i,i+batch),i)+'</section>');
+ return parts.join("");
+}
 function profile(){return '<section class="pmpk-method-box"><h3>Общие сведения</h3><div class="pmpk-method-facts">'+[
  ["Методика",NAME],["Автор","А. Я. Иванова, 1976"],["Возраст","7-9 лет (исследовательская редакция)"],
  ["Основной набор","24 фигуры: 3 цвета, 4 формы, 2 величины"],["Перенос","24 фигуры: 4 цвета, 3 формы, 2 величины"],["Тип","Обучающий эксперимент / исследование обучаемости"]].map(([a,b])=>'<div><small>'+ESC(a)+'</small><strong>'+ESC(b)+'</strong></div>').join("")+'</div></section>'+
@@ -85,10 +91,10 @@ function print(kind){
  if(kind==="report"&&!scoring())return;
  let body=kind==="guide"?guidePrint():kind==="combined"?guidePrint()+'<div class="pagebreak"></div>'+formPrint():
  kind==="blank"?formPrint():kind==="primary"||kind==="transfer"?
- '<h1>'+ESC(NAME)+'</h1><p>'+(kind==="primary"?"Основной набор · карточки 6x8 см":"Набор для переноса · карточки 6x6 см")+'. Вырезать по границе.</p>'+cardsHTML(kind==="transfer"):
+ '<h1>'+ESC(NAME)+'</h1><p>'+(kind==="primary"?"Основной набор · карточки 6x8 см":"Набор для переноса · карточки 6x6 см")+'. Вырезать по границе.</p>'+cardsHTML(kind==="transfer",true):
  '<h1>Результат</h1><p>Возраст: '+ESC(state.age)+' лет. ПО: '+scoring().total+'</p>'+[scoring().orient,scoring().lesson,scoring().inertia,scoring().missingSpeech,scoring().transfer].map((x,i)=>'<p>'+["ОР","Уроки","Инертность","Нет формулировок","Перенос"][i]+': '+x+'</p>').join("")+'<p>'+ESC(state.notes)+'</p>';
  const css='@page{size:A4;margin:12mm}body{font:10pt/1.42 Arial,sans-serif;color:#222}h1{font-size:16pt}.pagebreak{break-before:page;page-break-before:always}table{width:100%;border-collapse:collapse}th,td{border:1px solid #777;padding:7px}tr{break-inside:avoid}'+
- '.ivanova-cards{display:grid;gap:0;break-after:page}.ivanova-primary{grid-template-columns:repeat(2,60mm)}.ivanova-transfer{grid-template-columns:repeat(3,60mm)}'+
+ '.ivanova-page:not(:last-child){break-after:page;page-break-after:always}.ivanova-cards{display:grid;gap:0}.ivanova-primary{grid-template-columns:repeat(2,60mm)}.ivanova-transfer{grid-template-columns:repeat(3,60mm)}'+
  '.ivanova-figure{border:1px dashed #999;display:flex;align-items:center;justify-content:center;break-inside:avoid;page-break-inside:avoid}.ivanova-primary .ivanova-figure{width:60mm;height:80mm}.ivanova-transfer .ivanova-figure{width:60mm;height:60mm}'+
  '.ivanova-figure svg{width:100%;height:100%}';
  const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><style>'+css+'</style></head><body>'+body+'</body></html>';
