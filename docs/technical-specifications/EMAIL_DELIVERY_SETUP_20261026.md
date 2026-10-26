@@ -30,14 +30,14 @@ https://supabase.com/dashboard/project/uwouubzabqpuujuovala/auth/smtp
 
 Встроенный SMTP Supabase отправляет только разрешенным адресам команды проекта, ограничение **2 письма/час**. Для посторонних зарегистрироваться через почту без custom SMTP нельзя.
 
-**Вариант 1 – для пробного запуска на небольшой аудитории, без новой подписки:** отдельная учетная запись Gmail, 2-Step Verification и Google App Password.
+**Вариант 1 – для пробного запуска на небольшой аудитории, без новой подписки:** создана отдельная почта `psyteka.info@gmail.com`. Нужны 2-Step Verification и Google App Password. Письмо отправляется от `Психотека <psyteka.info@gmail.com>`.
 
 - Host: `smtp.gmail.com`
 - Port: `587` (TLS / STARTTLS)
-- Username: полный адрес **отдельного** Gmail аккаунта
+- Username: `psyteka.info@gmail.com`
 - Password: Google **App Password**, не обычный пароль
 - Sender name: `Психотека`
-- Sender email: тот же адрес Gmail
+- Sender email: `psyteka.info@gmail.com`
 - 2FA включена, пароль приложения создавать только в учетной записи Google, а вводить **только в настройках SMTP Supabase**: https://myaccount.google.com/apppasswords
 - Не использовать личную/административную почту владельца как массовый адрес отправителя. Поставщик может ограничивать частоту или блокировать массовые письма. Для публичного запуска Gmail не лучший вариант.
 
