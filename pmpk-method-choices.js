@@ -128,5 +128,13 @@
   }
   return true;
  }
- window.PSY_PMPK_CHOICES={render,getMethod,eventClick,portfolioCount,source:REF,counts:catalogue.map(g=>g.map(a=>a.length))};
+ function openSelected(age,task){
+  const m=getMethod(age,task);
+  if(!m)return false;
+  const index=catalogue[age]?.[task]?.findIndex(x=>idFor(x)===idFor(m));
+  if(index<0||m.kind==="reference")return false;
+  eventClick({dataset:{pmpkOpen:age+":"+task+":"+index}},age,null);
+  return true;
+ }
+ window.PSY_PMPK_CHOICES={render,getMethod,eventClick,openSelected,portfolioCount,source:REF,counts:catalogue.map(g=>g.map(a=>a.length))};
 })();
