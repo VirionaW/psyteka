@@ -36,12 +36,12 @@
   const {data:roleData,error:roleError}=await client.from("psy_account_roles")
     .select("role").eq("user_id",user.id).maybeSingle();
   if(roleError)throw roleError;
-  const role=roleData?.role==="owner"?"owner":roleData?.role==="moderator"?"moderator":"participant";
+  const role=["owner","shadow","moderator"].includes(roleData?.role)?roleData.role:"participant";
   email.textContent=user.email||"Почта подтверждена";email.hidden=false;
-  roleBadge.textContent=role==="owner"?"👑 Владелец":role==="moderator"?"Модератор":"Участник";
+  roleBadge.textContent=role==="owner"?"👑 Владелец":role==="shadow"?"Тень":role==="moderator"?"Модератор":"Участник";
   roleBadge.className="psy-role-badge "+role;roleBadge.hidden=false;
   login.hidden=true;signOut.hidden=false;
-  if(role==="owner"){
+  if(role==="owner"||role==="shadow"){
    manage.hidden=false;security.hidden=false;ownerNote.hidden=false;
    message("Вы вошли как Владелец. Здесь можно открыть управление пользователями и назначать модераторов.");
   }else if(role==="moderator"){
