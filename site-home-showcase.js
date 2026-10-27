@@ -135,4 +135,8 @@
  seamless.rel="stylesheet";
  seamless.href="site-home-seamless.css?v=20261027seamless1";
  document.head.appendChild(seamless);
+ const editorial=document.createElement("link");
+ editorial.rel="stylesheet";
+ editorial.href="site-home-editorial-rail.css?v=20261027editorial1";
+ document.head.appendChild(editorial);
 })();
