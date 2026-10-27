@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#285747">
 <meta name="description" content="Психотека – автономная библиотека элементов рисуночных методик и протокол наблюдения.">
-<link rel="icon" type="image/svg+xml" href="brand-favicon.svg">
+<link rel="icon" type="image/svg+xml" href="brand-favicon.svg"><script>try{if(localStorage.getItem("psyteka-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
 <title>Библиотека рисунков | Психотека</title>
 <style>
 :root{color-scheme:light;--ink:#243d34;--muted:#596e65;--green:#285747;--line:#d5e2d8;--paper:#f6f8f5;--white:#fff;--warm:#fff8e8;--warm-line:#e3c68a;--lav:#ede9f5}
@@ -52,22 +52,96 @@ hr{border:0;border-top:1px solid var(--line);margin:18px 0}.sr-only{position:abs
 #printSheet{display:none}.privacy{font-size:12px;color:#667e6f;margin:8px 0 0}
 @media(max-width:950px){.layout{grid-template-columns:1fr}.results{max-height:350px}.method-line{grid-template-columns:1fr}}@media(max-width:600px){main{padding:20px 12px 40px}.panel{padding:14px;border-radius:13px}.two-col,.record .fields{grid-template-columns:1fr}.header-inner{align-items:flex-start}.intro{gap:10px}}
 @media print{header,main,footer{display:none!important}body{background:#fff;color:#000}#printSheet{display:block!important;margin:12mm;font:12pt/1.5 Arial,sans-serif}#printSheet h1{font-size:18pt}#printSheet h2{font-size:13pt;margin:15px 0 4px}#printSheet table{border-collapse:collapse;width:100%;margin:10px 0}#printSheet th,#printSheet td{border:1px solid #aaa;padding:6px;vertical-align:top;text-align:left}#printSheet .print-item{break-inside:avoid;border-bottom:1px solid #bbb;padding:7px 0}#printSheet p{white-space:pre-wrap}}
+
+
+/* Drawing library, 2026-10-27: wide two-column workspace and brand themes. */
+:root{--paper:#f5f7f4;--white:#fff;--ink:#203e34;--muted:#536d61;--line:#d7e4db}
+body{min-height:100vh}
+header{padding:12px clamp(16px,3vw,54px);background:var(--white);position:relative;z-index:1}
+.header-inner{max-width:1800px;margin:auto}
+.brand{color:var(--ink);gap:11px}
+.brand-art{width:44px;height:44px;flex:none;display:grid;place-items:center}
+.brand-art img{display:block;max-width:100%;width:43px;height:43px;object-fit:contain}
+.brand-art .logo-dark{display:none}
+.brand-crumb{color:var(--muted);font-size:16px;font-weight:500}
+.theme-toggle{gap:8px}
+main{max-width:1800px;width:100%;padding:30px clamp(16px,3vw,54px) 62px}
+.intro{align-items:center;margin-bottom:21px}
+.intro p{max-width:850px}
+.layout{grid-template-columns:minmax(0,1.67fr) minmax(355px,1fr);gap:20px;align-items:start}
+.search-column,.analysis-column{min-width:0;display:grid;gap:18px}
+.method-line{margin:0;grid-template-columns:minmax(0,1fr);padding:19px 22px}
+.active-method{display:none}
+.search-panel{min-height:600px}
+.search-panel .results{max-height:700px}
+.search-panel .search-field input{margin-top:8px}
+.analysis-panel{padding:20px 22px}
+.analysis-panel h2,.protocol-panel h2{display:flex;align-items:center;gap:9px}
+.analysis-panel h2:before{content:"✦";color:#5c9976;font-size:19px}
+.protocol-panel{padding:20px 22px}
+.protocol-panel .record-list{margin-top:12px}
+.protocol-panel .actions{gap:7px}
+.protocol-panel .actions .btn{font-size:13px;min-height:38px}
+.analysis-panel .details{margin-top:12px;padding:0;border:0;background:transparent}
+.result-summary{padding:15px;border:1px solid var(--line);border-radius:14px;background:#f4f9f5}
+.result-summary h3{font-size:21px;margin-bottom:8px}
+.meaning-block{padding:14px 2px;border-bottom:1px solid var(--line)}
+.meaning-block h4{margin:0 0 5px;font-size:14px;font-weight:800;color:var(--ink)}
+.meaning-block p{margin:0;color:var(--muted);font-size:14px;line-height:1.55}
+.meaning-block .indicator{font-weight:700;color:var(--green);letter-spacing:.01em}
+.position-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.position-card{padding:12px;background:#f3f7f3;border:1px solid var(--line);border-radius:12px}
+.position-card strong{font-size:13px}
+.position-card p{font-size:12px;color:var(--muted);line-height:1.5;margin:6px 0 0}
+.result-controls{border:1px solid var(--line);border-radius:14px;background:#f7faf7;padding:14px;margin-top:14px}
+.result-controls h4{font-size:14px;margin:0 0 9px}
+.result-controls .two-col{gap:10px}
+.result-controls .btn{width:100%}
+.result-controls .subtle{margin:8px 0}
+.details .btn{margin-top:12px}
+.analysis-note{padding:10px 12px;border-left:3px solid #c49b55;margin-top:14px;background:#fff9ec;color:#574b36;font-size:12px;line-height:1.55}
+.privacy{line-height:1.55}
+footer{max-width:1800px;padding:0 clamp(16px,3vw,54px) 28px}
+html.dark{color-scheme:dark;--ink:#edf7ee;--muted:#b7cbbf;--green:#addab9;--line:#3d5b4d;--paper:#101d19;--white:#20332b;--warm:#3a3221;--warm-line:#79633d}
+html.dark body{background:var(--paper);color:var(--ink)}
+html.dark header,html.dark .panel,html.dark .status{background:var(--white);color:var(--ink);border-color:var(--line)}
+html.dark .brand-art .logo-light{display:none}
+html.dark .brand-art .logo-dark{display:block}
+html.dark .brand,html.dark .link-btn,html.dark .btn{color:var(--ink)}
+html.dark .link-btn,html.dark .btn,html.dark input,html.dark textarea,html.dark select,html.dark .pill{background:#1b2a24;border-color:#4d6859;color:#f0f7f1}
+html.dark input::placeholder,html.dark textarea::placeholder{color:#9fbaaa}
+html.dark .btn.primary,html.dark .pill[aria-pressed=true]{background:#3a7056;border-color:#589975;color:#fff}
+html.dark .symbol-row,html.dark .record,html.dark .result-summary,html.dark .position-card,html.dark .result-controls,html.dark .empty{background:#263c31;color:var(--ink);border-color:var(--line)}
+html.dark .symbol-row[aria-pressed=true]{border-color:#92c4a4;background:#2b4b3a}
+html.dark .details,html.dark .badge,html.dark .active-method{background:#2b4b3a;color:#d7f0dd;border-color:var(--line)}
+html.dark .analysis-note,html.dark .notice,html.dark .hintbox{background:#382f21;color:#f0dfc1;border-color:#7b6645}
+html.dark .eyebrow,html.dark .symbol-row .arrow{color:#9bd0ac}
+html.dark .record .remove{color:#ffc2b6}
+html.dark .privacy{color:#aec8b8}
+@media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr)}.search-panel{min-height:0}.search-panel .results{max-height:410px}}
+@media(max-width:650px){main{padding:21px 12px 38px}.header-inner{align-items:center}.brand{font-size:17px}.brand-art{width:35px;height:35px}.brand-art img{width:35px;height:35px}.brand-crumb{font-size:14px}.header-nav{width:100%;justify-content:space-between}.header-nav .link-btn,.theme-toggle{font-size:12px;min-height:36px}.intro{margin-bottom:18px}.intro h1{font-size:30px}.panel,.analysis-panel,.protocol-panel{padding:15px}.position-compare,.two-col{grid-template-columns:1fr}.search-panel .results{max-height:420px}.search-column,.analysis-column{gap:14px}}
+
 </style>
 </head>
 <body>
-<header><div class="header-inner"><a class="brand" href="library.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="1" y="1" width="38" height="38" rx="11" fill="#285747"/><path d="M11 27V12h8c6 0 9 8 3 11-2 1-5 1-6 1" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="3"/><circle cx="27" cy="12" r="3" fill="#e3c68a"/></svg><span>Психотека <span style="font-weight:450">/ Рисунки</span></span></a><nav class="header-nav"><a class="link-btn" href="library.html">Вернуться в библиотеку</a><button class="btn" id="saveOffline" type="button">Скачать для работы без интернета</button></nav></div></header>
+<header><div class="header-inner"><a class="brand" href="library.html"><span class="brand-art"><img class="logo-light" src="brand-mark.svg" alt=""><img class="logo-dark" src="brand-mark-dark.svg" alt=""></span><span>Психотека <span class="brand-crumb">/ Рисунки</span></span></a><nav class="header-nav"><a class="link-btn" href="library.html">Вернуться в библиотеку</a><button class="btn theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему" aria-pressed="false"><span id="themeIcon" aria-hidden="true">☾</span><span id="themeText">Темная тема</span></button></nav></div></header>
 <main>
-<section class="intro"><div><p class="eyebrow">Справочник и рабочий протокол</p><h1>Библиотека рисунков</h1><p>Ищите изображенные элементы, уточняйте расположение и описание, собирайте собственный перечень наблюдений. Выбранная методика сохраняется в файле протокола.</p></div><div class="status" id="connection" role="status">Автономный справочник</div></section>
-<section class="panel method-line"><div><label for="method">Методика, по которой выполнен рисунок</label><select id="method"></select><p class="method-hint" id="methodHint"></p></div><div><span class="active-method" id="methodBadge">Выбрана методика</span></div></section>
+<section class="intro"><div><p class="eyebrow">Справочник интерпретаций и рабочий протокол</p><h1>Библиотека рисунков</h1><p>Найдите элемент рисунка, цвет или особенность композиции. Справочные значения открываются справа, выбранные наблюдения добавляются в протокол.</p></div><div class="status" id="connection" role="status">Работает без сети после первого открытия</div></section>
 <div class="layout">
-<section class="panel column" aria-label="Поиск по справочнику"><h2>Что нарисовано?</h2><label class="search-field" for="search">Поиск элемента, синонима или ассоциации<input id="search" type="search" autocomplete="off" placeholder="Например: гора, рога, облако, глаза"></label><div class="pill-group" id="categories" role="group" aria-label="Категории символов"></div><div class="search-info" id="count" aria-live="polite"></div><div id="results" class="results" aria-label="Результаты поиска"></div><div id="details" class="details" aria-live="polite"></div></section>
-<section class="panel column" aria-label="Протокол наблюдения"><h2>Мой протокол</h2><p class="subtle">Составляйте список того, что действительно изображено. Один символ можно добавить несколько раз с разными характеристиками.</p><label for="subjectCode">Код обследования без ФИО (необязательно)<input id="subjectCode" maxlength="70" placeholder="Например: А-01"></label><label for="contextNotes" style="margin-top:12px">Комментарии ребенка и контекст (без персональных данных)<textarea id="contextNotes" placeholder="Дословные пояснения, особенности ситуации обследования"></textarea></label><div class="record-list" id="recordList"><div class="empty">Пока нет записей. Выберите элемент слева и нажмите «Добавить в протокол».</div></div>
-<label for="conclusion">Сводка специалиста (не автоматический диагноз)<textarea id="conclusion" placeholder="Наблюдения, вопросы для беседы, сопоставление с другими данными"></textarea></label>
+<div class="search-column">
+<section class="panel method-line"><div><label for="method">Методика, по которой выполнен рисунок</label><select id="method"></select><p class="method-hint" id="methodHint"></p></div><span class="active-method" id="methodBadge">Выбрана методика</span></section>
+<section class="panel column search-panel" aria-label="Поиск по справочнику"><h2>Что изображено на рисунке?</h2><label class="search-field" for="search">Поиск элемента, цвета, расположения и признака<input id="search" type="search" autocomplete="off" placeholder="Например: тигр, фиолетовый, рога, гора"></label><div class="pill-group" id="categories" role="group" aria-label="Категории символов"></div><div class="search-info" id="count" aria-live="polite"></div><div id="results" class="results" aria-label="Результаты поиска"></div></section>
+</div>
+<div class="analysis-column">
+<section class="panel analysis-panel" aria-label="Результат поиска и интерпретации"><h2>Результат анализа</h2><div id="details" class="details" aria-live="polite"></div></section>
+<section class="panel column protocol-panel" aria-label="Протокол наблюдения"><h2>Мой протокол</h2><p class="subtle">Добавляйте только наблюдаемые признаки рисунка. При необходимости уточняйте характеристики каждой записи.</p><label for="subjectCode">Код обследования без ФИО (необязательно)<input id="subjectCode" maxlength="70" placeholder="Например: А-01"></label><label for="contextNotes" style="margin-top:12px">Контекст рисунка (без персональных данных)<textarea id="contextNotes" placeholder="Особенности задания и наблюдения специалиста"></textarea></label><div class="record-list" id="recordList"><div class="empty">Пока нет записей. Выберите элемент слева и добавьте его в протокол.</div></div>
+<label for="conclusion">Сводка специалиста (не автоматический диагноз)<textarea id="conclusion" placeholder="Обобщение наблюдаемых признаков и сопоставление с другими данными"></textarea></label>
 <div class="actions"><button class="btn primary" id="exportReport" type="button">Скачать отчет HTML</button><button class="btn" id="printReport" type="button">Печать / PDF</button><button class="btn" id="exportJSON" type="button">Сохранить для продолжения</button><button class="btn" id="loadBtn" type="button">Открыть файл</button><input class="sr-only" id="importJSON" type="file" accept=".json,application/json"></div>
 <div class="actions"><button class="btn danger" id="clear" type="button">Очистить протокол</button></div>
-<p class="privacy">Записи не отправляются на сервер и не сохраняются автоматически в браузере. Перед закрытием страницы скачайте файл, если хотите продолжить работу позднее. Не вносите ФИО и другие идентифицирующие данные детей.</p></section></div>
-<div class="notice"><strong>Важно.</strong> Слова «значение» и «ассоциации» в справочнике обозначают культурные и описательные варианты, а не доказанную диагностику. Положение объекта слева или справа, его размер и цвет сами по себе не позволяют сделать вывод о личности, травме, агрессии или психическом состоянии ребенка. Используйте беседу, контекст развития и проверенное руководство выбранной методики. <a href="https://pubmed.ncbi.nlm.nih.gov/9631202/" target="_blank" rel="noopener noreferrer">Обзор ограничений рисуночной интерпретации</a>.</div>
-</main><footer>Психотека – автономный инструмент для специалиста. При первом онлайн-открытии страница сохраняется в браузере для повторного посещения без сети; скачанный HTML работает как отдельный файл.</footer><div id="printSheet" aria-hidden="true"></div>
+<p class="privacy">Записи не отправляются на сервер и не сохраняются автоматически в браузере. Для продолжения работы сохраните JSON. Не вносите личные данные детей.</p></section>
+</div></div>
+<div class="notice"><strong>Об интерпретациях.</strong> Справочник показывает распространенные описательные и культурные ассоциации. Один цвет, символ или положение на листе не дает основания для психологического диагноза. Для профессионального заключения учитывайте рисунок целиком, возраст, инструкцию методики и другие материалы обследования. <a href="https://pubmed.ncbi.nlm.nih.gov/9631202/" target="_blank" rel="noopener noreferrer">Обзор научных ограничений рисуночных трактовок</a>.</div>
+</main><footer>Психотека – автономный инструмент для специалиста. При первом онлайн-открытии страница сохраняется для повторных посещений без сети (пока кеш браузера не удален).</footer><div id="printSheet" aria-hidden="true"></div>
 <script>
 (function(){
 "use strict";
@@ -1293,6 +1367,14 @@ var RAW=[
   "Кто за кем бежит и почему?",
   "fictional-animal school-animals school-likes free",
   "гонится убегает преследует"
+ ],
+ [
+  "Тигр",
+  "Персонажи",
+  "Крупное хищное животное. В культурных образах может ассоциироваться с силой, опасностью, самостоятельностью или защитой. Эти ассоциации не доказывают наличие личностных черт у автора рисунка.",
+  "",
+  "fictional-animal school-animals free",
+  "тигренок тигрица полосатый хищник"
  ]
 ];
 var POS={
@@ -1314,6 +1396,19 @@ var methodName=function(id){var m=METHODS.find(function(x){return x[0]===id});re
 var byId=function(id){return entries.find(function(x){return x.id===id})};
 var categories=["Все"].concat(Array.from(new Set(entries.map(function(x){return x.category}))));
 function init(){
+ var themeButton=$("#themeToggle");
+ function paintTheme(){
+  var dark=document.documentElement.classList.contains("dark");
+  themeButton.setAttribute("aria-pressed",String(dark));
+  $("#themeText").textContent=dark?"Светлая тема":"Темная тема";
+  $("#themeIcon").textContent=dark?"☀":"☾";
+ }
+ themeButton.addEventListener("click",function(){
+  var dark=document.documentElement.classList.toggle("dark");
+  try{localStorage.setItem("psyteka-theme",dark?"dark":"light")}catch(e){}
+  paintTheme();
+ });
+ paintTheme();
  var url=new URLSearchParams(location.search);var q=url.get("method")||document.body.getAttribute("data-offline-method");if(METHODS.some(function(m){return m[0]===q}))state.method=q;
  state.selected=(entries.find(function(e){return e.methods.includes(state.method)})||entries[0]).id;
  $("#method").innerHTML=METHODS.map(function(m){return '<option value="'+esc(m[0])+'">'+esc(m[1])+'</option>'}).join("");
@@ -1342,15 +1437,6 @@ function init(){
  $("#loadBtn").addEventListener("click",function(){$("#importJSON").click()});
  $("#importJSON").addEventListener("change",importFile);
  $("#clear").addEventListener("click",function(){if(!confirm("Очистить текущий протокол? Перед очисткой при необходимости сохраните файл."))return;state.items=[];$("#subjectCode").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords()});
- $("#saveOffline").addEventListener("click",function(){
-  var clone=document.documentElement.cloneNode(true);
-  clone.querySelector("body").setAttribute("data-offline-method",state.method);
-  clone.querySelectorAll("link[rel=icon]").forEach(function(el){el.remove()});
-  ["#recordList","#results","#details","#printSheet"].forEach(function(s){var el=clone.querySelector(s);if(el)el.innerHTML=""});
-  clone.querySelectorAll("textarea").forEach(function(el){el.textContent=""});
-  clone.querySelectorAll("input").forEach(function(el){el.removeAttribute("value")});
-  download("psyteka_drawing_library_offline.html","<!doctype html>\n"+clone.outerHTML,"text/html")
- });
  $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
  $("#methodBadge").textContent=methodName(state.method);
  renderCategories();renderResults();renderDetails();renderRecords();
@@ -1387,14 +1473,18 @@ function renderResults(){
 }
 function renderDetails(){
  var x=byId(state.selected)||entries[0];var rec=state.items.filter(function(y){return y.elementId===x.id}).length;
- $("#details").innerHTML='<h3>'+esc(x.name)+' <span class="badge">'+esc(x.category)+'</span></h3>'+
- '<p><strong>Значение и ассоциации:</strong> '+esc(x.meaning)+'</p>'+
- '<p><strong>Что спросить:</strong> '+esc(x.question)+'</p>'+
- '<div class="two-col"><label>Расположение на рисунке<select id="position">'+Object.keys(POS).map(function(k){return '<option value="'+k+'">'+esc(POS[k][0])+'</option>'}).join("")+'</select></label><label>Размер<select id="size">'+Object.keys(SZ).map(function(k){return '<option value="'+k+'">'+esc(SZ[k])+'</option>'}).join("")+'</select></label></div>'+
- '<p class="subtle" id="positionNote">'+esc(x.name+": "+POS.unknown[1])+'</p><label>Описание конкретного элемента (необязательно)<textarea id="elementNote" placeholder="Например: серая гора с тремя вершинами"></textarea></label>'+
- '<div class="hintbox">Запись положения – описание композиции, а не готовый психологический вывод. Проверьте ее по словам ребенка и правилам выбранной версии методики.</div>'+
- '<button type="button" class="btn primary" id="addEntry">Добавить в протокол'+(rec?' (уже '+rec+')':'')+'</button>';
- $("#position").addEventListener("change",function(){$("#positionNote").textContent=x.name+": "+POS[this.value][1]});
+ var context=x.category==="Цвет"?"Цвет может зависеть от материалов, сюжета, предпочтений и сочетания с другими оттенками. Сам по себе не раскрывает эмоциональное состояние.":
+ x.category==="Пространство"?"Размещение на листе описывает композицию. Его нельзя использовать как самостоятельную шкалу настроения, тревоги или отношений.":
+ x.category==="Персонажи"?"Образ персонажа может отсылать к роли в сюжете, силе, движению или знакомым историям. Это не готовое описание личности ребенка.":
+ "Рассматривайте этот элемент вместе с сюжетом, другими деталями рисунка и условиями выполнения задания.";
+ $("#details").innerHTML='<div class="result-summary"><h3>'+esc(x.name)+' <span class="badge">'+esc(x.category)+'</span></h3><div class="meaning-block"><h4>Возможные значения и ассоциации</h4><p>'+esc(x.meaning)+'</p></div><div class="meaning-block"><h4>Как рассматривать этот признак</h4><p>'+esc(context)+'</p></div></div>'+
+ '<div class="meaning-block"><h4>Расположение на листе</h4><p>Расположение описывает композицию, а не диагноз. Ниже показаны распространенные, но научно не подтвержденные как универсальный ключ трактовки.</p></div>'+
+ '<div class="position-compare"><div class="position-card"><strong>← Если слева</strong><p>'+esc(POS.left[1])+'</p></div><div class="position-card"><strong>Если справа →</strong><p>'+esc(POS.right[1])+'</p></div></div>'+
+ '<div class="result-controls"><h4>Добавить наблюдение в протокол</h4><div class="two-col"><label>Расположение<select id="position">'+Object.keys(POS).map(function(k){return '<option value="'+k+'">'+esc(POS[k][0])+'</option>'}).join("")+'</select></label><label>Размер<select id="size">'+Object.keys(SZ).map(function(k){return '<option value="'+k+'">'+esc(SZ[k])+'</option>'}).join("")+'</select></label></div>'+
+ '<p class="subtle" id="positionNote">'+esc(POS.unknown[1])+'</p><label>Что именно изображено (необязательно)<textarea id="elementNote" maxlength="4000" placeholder="Например: фиолетовый тигр в левой части листа"></textarea></label>'+
+ '<button type="button" class="btn primary" id="addEntry">Добавить в протокол'+(rec?' ('+rec+')':'')+'</button></div>'+
+ '<div class="analysis-note">Это справочное описание, а не автоматическое заключение о личности, травме или состоянии ребенка. Не используйте изолированный символ как диагностический критерий.</div>';
+ $("#position").addEventListener("change",function(){$("#positionNote").textContent=POS[this.value][1]});
 }
 function addEntry(){
  var x=byId(state.selected);if(!x)return;
@@ -1411,7 +1501,7 @@ function renderRecords(){
   return '<div class="record" data-row="'+esc(x.key)+'"><div class="record-head"><div><span class="record-num">Элемент '+(i+1)+'</span><strong style="display:block">'+esc(x.name)+'</strong></div><button type="button" class="remove" data-remove="'+esc(x.key)+'" aria-label="Удалить '+esc(x.name)+'">Удалить</button></div>'+
   '<div class="fields"><label>Положение<select data-field="position">'+Object.keys(POS).map(function(k){return '<option value="'+k+'" '+(x.position===k?'selected':'')+'>'+esc(POS[k][0])+'</option>'}).join("")+'</select></label>'+
   '<label>Размер<select data-field="size">'+Object.keys(SZ).map(function(k){return '<option value="'+k+'" '+(x.size===k?'selected':'')+'>'+esc(SZ[k])+'</option>'}).join("")+'</select></label>'+
-  '<label>Описание и слова ребенка<textarea data-field="note" maxlength="4000">'+esc(x.note)+'</textarea></label></div></div>';
+  '<label>Описание элемента<textarea data-field="note" maxlength="4000">'+esc(x.note)+'</textarea></label></div></div>';
  }).join(""):'<div class="empty">Пока нет записей. Выберите элемент слева и нажмите «Добавить в протокол».</div>';
 }
 function getDocument(){
@@ -1428,7 +1518,7 @@ function reportBody(){
  if(!d.items.length)parts.push('<p>Записи отсутствуют.</p>');
  else d.items.forEach(function(x,i){var e=byId(x.elementId);parts.push('<div class="print-item"><strong>'+(i+1)+'. '+esc(x.name)+'</strong> – '+esc((POS[x.position]||POS.unknown)[0])+', '+esc(SZ[x.size]||"Не указано")+'.<p><strong>Описание:</strong> '+esc(x.note||"Не указано")+'</p>'+(x.position!=="unknown"?'<p><strong>Описание расположения:</strong> '+esc((POS[x.position]||POS.unknown)[1])+'</p>':'')+(e?'<p><strong>Возможные ассоциации справочника:</strong> '+esc(e.meaning)+'</p>':'')+'</div>')});
  if(d.conclusion)parts.push('<h2>Сводка специалиста</h2><p>'+esc(d.conclusion)+'</p>');
- parts.push('<hr><p><small>Записи отражают рисунок и слова обследуемого. Ассоциации справочника не являются диагностическим ключом и не позволяют делать выводы о психическом состоянии по одному признаку.</small></p>');
+ parts.push('<hr><p><small>Записи отражают наблюдаемые признаки рисунка. Ассоциации справочника не являются диагностическим ключом и не позволяют делать выводы о психическом состоянии по одному признаку.</small></p>');
  return parts.join("");
 }
 function reportHTML(){
