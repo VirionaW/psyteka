@@ -1,8 +1,10 @@
 "use strict";
-(function(){
- const qs=s=>document.querySelector(s),page=document.body.dataset.account,PROFILE="psy-profile-demo",PREF="psy-settings-demo",AVATAR="psy-avatar-demo";
- function read(key){try{return JSON.parse(localStorage.getItem(key)||"{}")||{}}catch(_){return {}}}
- function save(key,data){try{localStorage.setItem(key,JSON.stringify(data));return true}catch(_){return false}}
+(async function(){
+ const qs=s=>document.querySelector(s),page=document.body.dataset.account;
+ const identity=window.PSY_IDENTITY?await window.PSY_IDENTITY.ready:null;
+ const PROFILE=identity?.profileKey?.()||null,AVATAR=identity?.avatarKey?.()||null,PREF="psy-settings-demo";
+ function read(key){if(!key)return {};try{return JSON.parse(localStorage.getItem(key)||"{}")||{}}catch(_){return {}}}
+ function save(key,data){if(!key)return false;try{localStorage.setItem(key,JSON.stringify(data));return true}catch(_){return false}}
  const profile=read(PROFILE),preferences=read(PREF);
  const theme=localStorage.getItem("psyteka-theme")||preferences.theme||"light";
  function apply(){document.documentElement.classList.toggle("dark",theme==="dark");document.documentElement.style.fontSize=(Number(preferences.font)||100)+"%";document.documentElement.classList.toggle("reduce-motion",Boolean(preferences.motion))}
@@ -14,16 +16,17 @@
   const sync=()=>{qs("#roleExtra").hidden=qs("#accRole").value!=="other";qs("#workExtra").hidden=qs("#accWorkplace").value!=="other"};
   qs("#accRole").addEventListener("change",sync);
   qs("#accWorkplace").addEventListener("change",sync);sync();
+  if(!PROFILE){qs("#profileForm").querySelectorAll("input,textarea,select,button").forEach(x=>x.disabled=true);flash("Войдите в подтвержденный аккаунт, чтобы редактировать профиль.");}
   const preview=qs("#avatarPreview"),file=qs("#avatarUpload"),remove=qs("#avatarRemove"),status=qs("#avatarStatus");
   function drawAvatar(){
-   const stored=localStorage.getItem(AVATAR)||"";
+   const stored=AVATAR?(localStorage.getItem(AVATAR)||""):"";
    const safe=/^data:image\/(?:jpeg|png|webp);base64,[a-zA-Z0-9+/=]+$/.test(stored);
    preview.textContent="";
    if(safe){const pic=document.createElement("img");pic.src=stored;pic.alt="Моя фотография";preview.appendChild(pic)}
    else preview.textContent=(qs("#accName").value.trim().charAt(0)||"С").toUpperCase();
    remove.hidden=!safe;
   }
-  qs("#accName").addEventListener("input",()=>{if(!localStorage.getItem(AVATAR))drawAvatar()});
+  qs("#accName").addEventListener("input",()=>{if(!(AVATAR&&localStorage.getItem(AVATAR)))drawAvatar()});
   drawAvatar();
   file.addEventListener("change",()=>{
    const imageFile=file.files&&file.files[0];if(!imageFile)return;
@@ -40,6 +43,7 @@
       const side=Math.min(img.naturalWidth,img.naturalHeight),x=(img.naturalWidth-side)/2,y=(img.naturalHeight-side)/2;
       ctx.fillStyle="#fff";ctx.fillRect(0,0,200,200);ctx.drawImage(img,x,y,side,side,0,0,200,200);
       const encoded=canvas.toDataURL("image/jpeg",.8);
+      if(!AVATAR)throw Error("Необходим вход в аккаунт");
       localStorage.setItem(AVATAR,encoded);
       status.textContent="Фотография сохранена в браузере.";
       drawAvatar();file.value="";window.dispatchEvent(new Event("psy-profile-change"));
@@ -49,7 +53,7 @@
    };
    reader.readAsDataURL(imageFile);
   });
-  remove.addEventListener("click",()=>{localStorage.removeItem(AVATAR);file.value="";drawAvatar();window.dispatchEvent(new Event("psy-profile-change"));status.textContent="Фотография удалена."});
+  remove.addEventListener("click",()=>{if(AVATAR)localStorage.removeItem(AVATAR);file.value="";drawAvatar();window.dispatchEvent(new Event("psy-profile-change"));status.textContent="Фотография удалена."});
   form.addEventListener("submit",e=>{
    e.preventDefault();
    const data={};
@@ -77,7 +81,7 @@
   qs("#resetAccount").onclick=()=>dialog.showModal();
   qs("#cancelReset").onclick=()=>dialog.close();
   qs("#approveReset").onclick=()=>{
-   try{localStorage.removeItem(PROFILE);localStorage.removeItem(PREF);localStorage.removeItem(AVATAR)}catch(_){}
+   try{if(PROFILE)localStorage.removeItem(PROFILE);localStorage.removeItem(PREF);if(AVATAR)localStorage.removeItem(AVATAR)}catch(_){}
    dialog.close();flash("Данные демо-профиля и фотография очищены.");
    qs("#accTheme").value=localStorage.getItem("psyteka-theme")||"light";
    qs("#accFont").value="100";qs("#accMotion").checked=false;
