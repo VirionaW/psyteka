@@ -78,3 +78,47 @@ html.dark .site-landing #siteHome .psy-kit-picture{border-color:#647d6f;backgrou
 @media(max-width:790px){.site-landing #siteHome .psy-home-hero-art{justify-self:center;width:min(100%,580px)}.site-landing #siteHome .psy-gallery-heading,.site-landing #siteHome .psy-kits-heading{align-items:flex-start;flex-direction:column;gap:15px}.site-landing #siteHome .psy-gallery-grid,.site-landing #siteHome .psy-kits-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.site-landing #siteHome .psy-gallery-grid>.psy-gallery-card:last-child,.site-landing #siteHome .psy-kits-grid>.psy-kit-card:last-child{grid-column:1/-1}.site-landing #siteHome .psy-gallery-visual{height:220px}}
 @media(max-width:580px){.site-landing #siteHome .psy-home-hero-art{min-height:280px;max-height:390px;aspect-ratio:1.12}.site-landing #siteHome .psy-hero-floating{right:10px;bottom:11px;padding:10px;gap:9px}.site-landing #siteHome .psy-hero-floating-mark{width:36px;height:36px}.site-landing #siteHome .psy-visual-check{margin-left:0;width:23px;height:23px}.site-landing #siteHome .psy-gallery-grid,.site-landing #siteHome .psy-kits-grid{grid-template-columns:1fr}.site-landing #siteHome .psy-gallery-grid>.psy-gallery-card:last-child,.site-landing #siteHome .psy-kits-grid>.psy-kit-card:last-child{grid-column:auto}.site-landing #siteHome .psy-gallery-visual{height:220px}.site-landing #siteHome .psy-gallery-meta{min-height:100px}.site-landing #siteHome .psy-gallery-meta h3{font-size:20px!important}.site-landing #siteHome .psy-kit-card{min-height:125px}.site-landing #siteHome .psy-gallery-action,.site-landing #siteHome .psy-kits-heading .site-btn{width:auto}.site-landing #siteHome .site-header button.site-theme-btn.theme-switch{padding:8px 10px!important}}
 @media(prefers-reduced-motion:reduce){.site-landing #siteHome :is(.psy-gallery-card,.psy-kit-card){transition:none!important}.site-landing #siteHome :is(.psy-gallery-card,.psy-kit-card):hover{transform:none!important}}
+
+/* Keep featured-method thumbnails identical to their catalog illustrations.
+   Source mapping: site-art.js (family=2, Schulte=7, 5x4 atlas);
+   experience.js (Animal School=0, 8x5 atlas). */
+.site-landing #siteHome .psy-kit-picture.psy-kit-approved-art{
+ display:block!important;
+ flex:none!important;
+ width:90px!important;
+ min-width:90px!important;
+ height:90px!important;
+ min-height:90px!important;
+ aspect-ratio:1!important;
+ border:1px solid #d1e4d7!important;
+ border-radius:17px!important;
+ background-color:#f9fbf8!important;
+ background-repeat:no-repeat!important;
+ image-rendering:auto!important;
+ box-sizing:border-box!important;
+}
+.site-landing #siteHome .psy-kit-picture.psy-kit-approved-art[data-psy-kit-art="schulte"]{
+ background-image:url("assets/psyteka-methods-hq.webp")!important;
+ background-size:500% 400%!important;
+ background-position:50% 33.333333%!important;
+}
+.site-landing #siteHome .psy-kit-picture.psy-kit-approved-art[data-psy-kit-art="family"]{
+ background-image:url("assets/psyteka-methods-hq.webp")!important;
+ background-size:500% 400%!important;
+ background-position:50% 0%!important;
+}
+.site-landing #siteHome .psy-kit-picture.psy-kit-approved-art[data-psy-kit-art="animals"]{
+ background-image:url("assets/psyteka-methods-61-100.webp?v=20261025art")!important;
+ background-size:800% 500%!important;
+ background-position:0% 0%!important;
+}
+html.dark .site-landing #siteHome .psy-kit-picture.psy-kit-approved-art{
+ background-color:#f9fbf8!important;
+ border-color:#98b5a4!important;
+ filter:none!important;
+}
+@media(max-width:1150px){
+ .site-landing #siteHome .psy-kit-picture.psy-kit-approved-art{
+  width:72px!important;min-width:72px!important;height:72px!important;min-height:72px!important;
+ }
+}
