@@ -1,0 +1,190 @@
+/* 27.10.2026 – корректировка по настоящим экранам MSPSS.
+   Только главная; никакие методики, бланки или обработка не меняются. */
+.site-landing #siteHome .site-hero .hero-copy h1 .psy-hero-word-end{color:#d7a77e!important}
+.site-landing #siteHome .site-hero .hero-copy h1 .psy-hero-wordmark{white-space:nowrap}
+.site-landing #siteHome .site-hero .hero-copy h1{max-width:720px!important;letter-spacing:-.04em}
+.site-landing #siteHome .psy-home-hero-art.psy-auth-hero{filter:none!important}
+.site-landing #siteHome .psy-auth-hero .psy-demo-window{
+ transform:none!important;
+ inset:4px 10px 38px 0!important;
+ border-radius:21px!important;
+ border:1px solid #dcebdc!important;
+ background:#f9fcf8!important;
+}
+.site-landing #siteHome .psy-auth-hero .psy-demo-toolbar{background:#fff;border-color:#e0ebe1}
+.site-landing #siteHome .psy-auth-hero .psy-demo-layout{grid-template-columns:157px minmax(0,1fr)}
+.site-landing #siteHome .psy-auth-hero .psy-demo-aside{background:#e7f1e9;padding:13px 10px}
+.site-landing #siteHome .psy-auth-hero .psy-demo-brand{
+ gap:7px;align-items:center;margin:1px 2px 18px;
+ font-size:14px;color:#234d3b;white-space:nowrap;
+}
+.site-landing #siteHome .psy-auth-hero .psy-auth-brandname b{color:#9e7957;font-weight:900}
+.site-landing #siteHome .psy-auth-hero .psy-demo-brandmark{width:33px;height:34px;padding:3px;box-sizing:border-box;background:#fff;border:1px solid #d5e3d7}
+.site-landing #siteHome .psy-auth-hero .psy-demo-brandmark img{display:block;width:100%;height:100%;object-fit:contain}
+.site-landing #siteHome .psy-auth-hero .psy-demo-menu{padding:7px 10px;font-size:11px;line-height:1.25;color:#315c46;border-radius:8px}
+.site-landing #siteHome .psy-auth-hero .psy-demo-menu.current{border-left:3px solid #2f9569;background:#fff;font-weight:900;padding-left:7px}
+.site-landing #siteHome .psy-auth-hero .psy-demo-content{padding:21px 15px 14px}
+.site-landing #siteHome .psy-auth-hero .psy-demo-search{height:39px;box-sizing:border-box;font-size:10px;padding:8px 11px}
+.site-landing #siteHome .psy-auth-hero .psy-demo-intro{margin:19px 0 12px}
+.site-landing #siteHome .psy-auth-hero .psy-demo-intro span:first-child{font-size:16px}
+.site-landing #siteHome .psy-auth-method-row{
+ display:flex;align-items:flex-start;gap:10px;
+ padding:11px 10px;margin:9px 0;
+ background:#fff;border:1px solid #d5e8dc;border-radius:12px;
+ box-shadow:0 3px 9px #2749340b;
+}
+.site-landing #siteHome .psy-auth-method-pic{
+ flex:none;display:block;width:46px;height:46px;
+ border-radius:10px;border:1px solid #cce5e7;
+ background-color:#f8faf5;background-repeat:no-repeat;
+ box-sizing:border-box;
+}
+.site-landing #siteHome .psy-auth-method-pic.psy-auth-mspss{
+ background-image:url("assets/psyteka-methods-61-100.webp?v=20261025art");
+ background-size:800% 500%;
+ background-position:42.857143% 0%;
+}
+.site-landing #siteHome .psy-auth-method-pic.psy-auth-gad{
+ background-image:url("assets/psyteka-methods-61-100.webp?v=20261025art");
+ background-size:800% 500%;
+ background-position:28.571429% 0%;
+}
+.site-landing #siteHome .psy-auth-method-description{display:flex;flex-direction:column;flex:1;gap:5px;min-width:0}
+.site-landing #siteHome .psy-auth-method-description strong{font-size:12px;line-height:1.26;color:#204b38;font-weight:900}
+.site-landing #siteHome .psy-auth-method-description small{font-size:9px;line-height:1.3;color:#718b7a}
+.site-landing #siteHome .psy-auth-method-badges{display:flex;flex-wrap:wrap;gap:5px}
+.site-landing #siteHome .psy-auth-method-badges i{font-size:9px;font-style:normal;font-weight:700;background:#e6f3ec;border-radius:5px;color:#378364;padding:4px 6px}
+.site-landing #siteHome .psy-auth-method-detail{font-size:9px;color:#638375;line-height:1.33}
+.site-landing #siteHome .psy-auth-hero .psy-demo-float{background:#fffefb;bottom:4px;right:-15px}
+.site-landing #siteHome .section-card:nth-child(1) .psy-section-visual,
+.site-landing #siteHome .section-card:nth-child(2) .psy-section-visual,
+.site-landing #siteHome .section-card:nth-child(3) .psy-section-visual,
+.site-landing #siteHome .section-card:nth-child(4) .psy-section-visual,
+.site-landing #siteHome .section-card:nth-child(6) .psy-section-visual{
+ width:75%!important;
+}
+.site-landing #siteHome .section-card:nth-child(1) .psy-section-visual img,
+.site-landing #siteHome .section-card:nth-child(2) .psy-section-visual img,
+.site-landing #siteHome .section-card:nth-child(3) .psy-section-visual img,
+.site-landing #siteHome .section-card:nth-child(4) .psy-section-visual img,
+.site-landing #siteHome .section-card:nth-child(6) .psy-section-visual img{
+ object-position:87% center!important;
+}
+.site-landing #siteHome .section-card:nth-child(1) .psy-section-visual:before,
+.site-landing #siteHome .section-card:nth-child(2) .psy-section-visual:before,
+.site-landing #siteHome .section-card:nth-child(3) .psy-section-visual:before,
+.site-landing #siteHome .section-card:nth-child(4) .psy-section-visual:before,
+.site-landing #siteHome .section-card:nth-child(6) .psy-section-visual:before{
+ background:linear-gradient(90deg,var(--section-art-fade,#f4f7f1) 0%,var(--section-art-fade,#f4f7f1) 14%,transparent 72%)!important;
+}
+.site-landing #siteHome .psy-gallery-grid.psy-auth-gallery{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:14px!important;width:100%;
+}
+.site-landing #siteHome .psy-auth-preview-card{
+ display:flex;flex-direction:column;min-width:0;
+ color:#25513c;text-decoration:none!important;
+ border:1px solid #cbded2;border-radius:20px;background:#fff;
+ overflow:hidden;box-shadow:0 9px 23px #26593a12;
+ transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.site-landing #siteHome .psy-auth-preview-card:hover{transform:translateY(-4px);border-color:#a0c4aa;box-shadow:0 16px 35px #1f50311f}
+.site-landing #siteHome .psy-auth-preview-visual{
+ display:block;height:260px;overflow:hidden;
+ padding:13px;box-sizing:border-box;
+}
+.site-landing #siteHome .psy-auth-preview-catalog{background:#e3f0e7}
+.site-landing #siteHome .psy-auth-preview-portfolio{background:#e5eeee}
+.site-landing #siteHome .psy-auth-preview-processing{background:#f1ece1}
+.site-landing #siteHome .psy-auth-preview-blank{background:#e9eee7}
+.site-landing #siteHome .psy-auth-mini-screen{
+ width:100%;height:100%;box-sizing:border-box;
+ padding:13px 11px;overflow:hidden;
+ background:#fff;border:1px solid #dbe9e0;
+ box-shadow:0 9px 17px #20432d15;
+ border-radius:12px;color:#254c38;
+}
+.site-landing #siteHome .psy-auth-mini-title{font-size:14px;font-weight:900;line-height:1.2;margin-bottom:10px;color:#234c38}
+.site-landing #siteHome .psy-auth-mini-search{background:#f3f7f4;border:1px solid #deebe1;border-radius:6px;color:#81988c;font-size:10px;padding:8px;margin-bottom:9px}
+.site-landing #siteHome .psy-auth-mini-catalog-item{
+ display:flex;gap:7px;align-items:flex-start;
+ padding:8px 5px;border:1px solid #e1ece4;border-radius:8px;
+ margin-bottom:7px;
+}
+.site-landing #siteHome .psy-auth-mini-catalog-item .psy-auth-method-pic{width:33px;height:33px;border-radius:7px}
+.site-landing #siteHome .psy-auth-mini-catalog-item>span:nth-child(2){min-width:0;flex:1}
+.site-landing #siteHome .psy-auth-mini-catalog-item b{display:block;font-size:9px;font-weight:900;line-height:1.28}
+.site-landing #siteHome .psy-auth-mini-catalog-item small{display:block;font-size:8px;color:#7c9385;line-height:1.35;margin-top:3px}
+.site-landing #siteHome .psy-auth-mini-catalog-item em{display:block;font-size:8px;color:#408362;font-style:normal;margin-top:4px}
+.site-landing #siteHome .psy-auth-mini-method-heading{font-size:11px;line-height:1.3;font-weight:900;color:#254c38;margin-bottom:12px}
+.site-landing #siteHome .psy-auth-mini-tabs{display:flex;justify-content:space-between;gap:5px;border-bottom:1px solid #dfebe2;margin-bottom:11px}
+.site-landing #siteHome .psy-auth-mini-tabs span{font-size:8px;line-height:1.2;color:#7d9385;padding:6px 0;font-weight:800}
+.site-landing #siteHome .psy-auth-mini-tabs span.selected{color:#267455;border-bottom:2px solid #267455}
+.site-landing #siteHome .psy-auth-mini-heading{font-size:12px;font-weight:900;color:#168259;margin:9px 0 6px}
+.site-landing #siteHome .psy-auth-mini-row{display:grid;grid-template-columns:32% 1fr;gap:5px;padding:7px 0;border-top:1px solid #e0eee6;font-size:9px;line-height:1.3}
+.site-landing #siteHome .psy-auth-mini-row b{font-weight:800;color:#285942}
+.site-landing #siteHome .psy-auth-mini-row span{color:#506e5d}
+.site-landing #siteHome .psy-auth-mini-purpose{font-size:9px;line-height:1.4;margin:0;color:#436954}
+.site-landing #siteHome .psy-auth-mini-modes{display:flex;gap:7px;margin-bottom:13px}
+.site-landing #siteHome .psy-auth-mini-modes span{padding:7px;font-size:9px;font-weight:850;border:1px solid #d7e5d9;border-radius:7px}
+.site-landing #siteHome .psy-auth-mini-modes span.selected{background:#2c7855;border-color:#2c7855;color:#fff}
+.site-landing #siteHome .psy-auth-mini-field{font-size:9px;font-weight:850;color:#295b42;margin-bottom:8px}
+.site-landing #siteHome .psy-auth-mini-field span{display:block;color:#9aac9e;background:#fff;border:1px solid #deebe1;border-radius:7px;font-weight:500;padding:8px;margin-top:4px}
+.site-landing #siteHome .psy-auth-mini-question{background:#fff1db;border:1px solid #f2d1a6;border-radius:9px;margin-bottom:7px;padding:7px;font-size:9px;line-height:1.28}
+.site-landing #siteHome .psy-auth-mini-question.answered{background:#e4f5eb;border-color:#b0d8c0}
+.site-landing #siteHome .psy-auth-mini-question span{display:block}
+.site-landing #siteHome .psy-auth-mini-question b{display:block;width:36px;padding:5px;margin-top:5px;text-align:center;background:#fff;border-radius:6px;border:1px solid #e0ba86}
+.site-landing #siteHome .psy-auth-mini-question.answered b{border-color:#3e9c68}
+.site-landing #siteHome .psy-auth-mini-instruction{font-size:9px;color:#526f5a;line-height:1.4;margin:0 0 10px}
+.site-landing #siteHome .psy-auth-mini-scale{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-bottom:10px}
+.site-landing #siteHome .psy-auth-mini-scale span{text-align:center;background:#eaf5ed;padding:7px 4px;border:1px solid #d5e7d9;border-radius:7px;font-size:7px;color:#4f725b;line-height:1.4}
+.site-landing #siteHome .psy-auth-mini-blank-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:8px;color:#3c6a4d}
+.site-landing #siteHome .psy-auth-mini-blank-table th,.site-landing #siteHome .psy-auth-mini-blank-table td{border:1px solid #dce6dd;text-align:center;padding:5px 1px}
+.site-landing #siteHome .psy-auth-mini-blank-table th{background:#eaf4eb}
+.site-landing #siteHome .psy-auth-mini-blank-table :is(th,td):nth-child(2){width:45%;text-align:left;padding-left:4px}
+.site-landing #siteHome .psy-auth-preview-card .psy-gallery-meta{padding:17px 15px 19px!important;gap:8px;min-height:111px!important}
+.site-landing #siteHome .psy-auth-preview-card .psy-gallery-meta h3{font-size:18px!important;line-height:1.25!important}
+.site-landing #siteHome .psy-auth-preview-card .psy-gallery-meta p{font-size:13px!important;line-height:1.45!important}
+.site-landing #siteHome .psy-auth-preview-card .psy-gallery-link-mark{width:34px;height:34px;font-size:18px}
+.site-landing #siteHome .psy-auth-gallery-note{font-size:13px;color:#607968;margin:-9px 0 0;line-height:1.55}
+html.dark .site-landing #siteHome .psy-auth-preview-card{background:#253f30;border-color:#5e7f68}
+html.dark .site-landing #siteHome .psy-auth-preview-card .psy-gallery-meta h3{color:#edf7ee!important}
+html.dark .site-landing #siteHome .psy-auth-preview-card .psy-gallery-meta p{color:#cbdccf!important}
+html.dark .site-landing #siteHome .psy-auth-gallery-note{color:#cad9cf}
+@media(max-width:1050px){
+ .site-landing #siteHome .psy-gallery-grid.psy-auth-gallery{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .site-landing #siteHome .psy-auth-preview-visual{height:265px}
+ .site-landing #siteHome .psy-auth-hero .psy-demo-layout{grid-template-columns:137px minmax(0,1fr)}
+ .site-landing #siteHome .psy-auth-hero .psy-demo-menu{font-size:10px}
+ .site-landing #siteHome .psy-auth-hero .psy-demo-content{padding:16px 11px}
+}
+@media(max-width:790px){
+ .site-landing #siteHome .psy-auth-hero .psy-demo-layout{grid-template-columns:155px minmax(0,1fr)}
+ .site-landing #siteHome .psy-auth-hero .psy-demo-content{padding:20px 15px}
+}
+@media(max-width:580px){
+ .site-landing #siteHome .psy-gallery-grid.psy-auth-gallery{grid-template-columns:1fr!important}
+ .site-landing #siteHome .psy-auth-preview-visual{height:248px}
+ .site-landing #siteHome .psy-auth-hero .psy-demo-layout{grid-template-columns:110px minmax(0,1fr)}
+ .site-landing #siteHome .psy-auth-hero .psy-demo-aside{padding:12px 5px}
+ .site-landing #siteHome .psy-auth-hero .psy-demo-brand{font-size:10px;gap:4px}
+ .site-landing #siteHome .psy-auth-hero .psy-demo-brandmark{width:24px;height:26px}
+ .site-landing #siteHome .psy-auth-hero .psy-demo-menu{font-size:9px;padding:6px}
+ .site-landing #siteHome .psy-auth-hero .psy-demo-content{padding:12px 8px}
+ .site-landing #siteHome .psy-auth-hero .psy-demo-intro span:first-child{font-size:12px}
+ .site-landing #siteHome .psy-auth-method-row{padding:6px 5px;gap:5px}
+ .site-landing #siteHome .psy-auth-method-pic{width:31px;height:31px}
+ .site-landing #siteHome .psy-auth-method-description strong{font-size:9px}
+ .site-landing #siteHome .psy-auth-method-description small{font-size:8px}
+ .site-landing #siteHome .psy-auth-method-detail{display:none}
+ .site-landing #siteHome .psy-auth-method-badges i{font-size:7px;padding:3px}
+ .site-landing #siteHome .section-card:nth-child(1) .psy-section-visual,
+ .site-landing #siteHome .section-card:nth-child(2) .psy-section-visual,
+ .site-landing #siteHome .section-card:nth-child(3) .psy-section-visual,
+ .site-landing #siteHome .section-card:nth-child(4) .psy-section-visual,
+ .site-landing #siteHome .section-card:nth-child(6) .psy-section-visual{width:78%!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .site-landing #siteHome .psy-auth-preview-card{transition:none!important}
+ .site-landing #siteHome .psy-auth-preview-card:hover{transform:none!important}
+}
