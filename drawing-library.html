@@ -168,8 +168,9 @@ var byId=function(id){return entries.find(function(x){return x.id===id})};
 var categories=["Все"].concat(Array.from(new Set(entries.map(function(x){return x.category}))));
 function init(){
  var url=new URLSearchParams(location.search);var q=url.get("method");if(METHODS.some(function(m){return m[0]===q}))state.method=q;
+ state.selected=(entries.find(function(e){return e.methods.includes(state.method)})||entries[0]).id;
  $("#method").innerHTML=METHODS.map(function(m){return '<option value="'+esc(m[0])+'">'+esc(m[1])+'</option>'}).join("");
- $("#method").value=state.method;$("#method").addEventListener("change",function(){state.method=this.value;$("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];$("#methodBadge").textContent=methodName(state.method);try{history.replaceState(null,"","?method="+encodeURIComponent(state.method))}catch{};renderCategories();renderResults();renderDetails()});
+ $("#method").value=state.method;$("#method").addEventListener("change",function(){state.method=this.value;$("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];$("#methodBadge").textContent=methodName(state.method);state.selected=(entries.find(function(e){return e.methods.includes(state.method)})||entries[0]).id;try{history.replaceState(null,"","?method="+encodeURIComponent(state.method))}catch{};renderCategories();renderResults();renderDetails()});
  $("#search").addEventListener("input",renderResults);
  $("#categories").addEventListener("click",function(e){var b=e.target.closest("[data-category]");if(b){state.category=b.dataset.category;renderCategories();renderResults()}});
  $("#results").addEventListener("click",function(e){var b=e.target.closest("[data-element]");if(b){state.selected=b.dataset.element;renderResults();renderDetails()}});
@@ -182,7 +183,13 @@ function init(){
  $("#loadBtn").addEventListener("click",function(){$("#importJSON").click()});
  $("#importJSON").addEventListener("change",importFile);
  $("#clear").addEventListener("click",function(){if(!confirm("Очистить текущий протокол? Перед очисткой при необходимости сохраните файл."))return;state.items=[];$("#subjectCode").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords()});
- $("#saveOffline").addEventListener("click",function(){download("psyteka_drawing_library_offline.html","<!doctype html>\n"+document.documentElement.outerHTML,"text/html")});
+ $("#saveOffline").addEventListener("click",function(){
+  var clone=document.documentElement.cloneNode(true);
+  ["#recordList","#results","#details","#printSheet"].forEach(function(s){var el=clone.querySelector(s);if(el)el.innerHTML=""});
+  clone.querySelectorAll("textarea").forEach(function(el){el.textContent=""});
+  clone.querySelectorAll("input").forEach(function(el){el.removeAttribute("value")});
+  download("psyteka_drawing_library_offline.html","<!doctype html>\n"+clone.outerHTML,"text/html")
+ });
  $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
  $("#methodBadge").textContent=methodName(state.method);
  renderCategories();renderResults();renderDetails();renderRecords();
@@ -278,6 +285,7 @@ async function importFile(e){
   $("#method").value=state.method;$("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];$("#methodBadge").textContent=methodName(state.method);
   $("#subjectCode").value=String(d.code||"").slice(0,70);$("#contextNotes").value=String(d.context||"").slice(0,20000);
   $("#conclusion").value=String(d.conclusion||"").slice(0,20000);
+  state.selected=(entries.find(function(e){return e.methods.includes(state.method)})||entries[0]).id;
   renderCategories();renderResults();renderDetails();renderRecords();
  }catch(err){alert("Не удалось открыть файл. Нужен JSON-протокол, созданный этой библиотекой.")}
 }
