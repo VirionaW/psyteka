@@ -1,8 +1,7 @@
 "use strict";
-/* Public landing -> sign in -> optional 48h trial -> library.
- * The payment plans are previews; nothing charges a user.
- * While SMTP is not set up, the explicitly labeled test library remains accessible.
- * Real protection of paid files requires private storage, not browser JavaScript.
+/* Public landing -> email OTP signup/signin -> 48h trial -> library.
+ * Registration is live. No automatic charges or test-mode bypass.
+ * Static files are not protected DRM; private storage required for paid access.
  */
 (function(){
  const root=document.getElementById("siteHome");if(!root)return;
@@ -16,29 +15,24 @@
  let destination="library.html",currentUser=null,role="participant",trial=null,requestAt=0,timer=null,lastFocus=null,opening=false;
  const html=`<dialog id="psyEntryDialog" aria-labelledby="psyEntryTitle" aria-modal="true">
  <div class="psy-entry-inner">
-  <div class="psy-entry-top"><div><p class="psy-entry-eyebrow">Психотека · личный доступ</p><h2 id="psyEntryTitle">Ваша библиотека начинается здесь</h2></div>
+  <div class="psy-entry-top"><div><p class="psy-entry-eyebrow">Психотека · личный доступ</p><h2 id="psyEntryTitle">Войти в Психотеку</h2></div>
    <button type="button" class="psy-entry-x" id="psyEntryClose" aria-label="Закрыть окно">×</button></div>
-  <p class="psy-entry-lead" id="psyEntryLead">Войдите по почте, а затем выберите доступ к методикам.</p>
+  <p class="psy-entry-lead" id="psyEntryLead">Войдите или зарегистрируйтесь по электронной почте. Пришлем одноразовый код, пароль не нужен.</p>
   <div class="psy-entry-step" id="psyEntryEmail">
    <form class="psy-entry-form" id="psyEntryEmailForm" novalidate>
     <label for="psyEntryMail">Электронная почта</label><input id="psyEntryMail" type="email" autocomplete="email" placeholder="name@example.com" maxlength="254" required>
-    <button type="submit" class="psy-entry-btn" id="psyEntrySend">Продолжить с почтой</button>
+    <button type="submit" class="psy-entry-btn" id="psyEntrySend">Получить код на почту</button>
    </form>
-   <p class="psy-entry-notice" id="psyEntrySetup" hidden>Регистрация по почте еще готовится к запуску: настраиваем доставку писем и подтверждение адреса.</p>
-   <div id="psyEntryDemo" class="psy-entry-demo" hidden>
-    <div class="psy-entry-divider">Пока идет подготовка</div>
-    <button type="button" class="psy-entry-btn secondary" id="psyEntryPreview">Посмотреть тестовую библиотеку</button>
-    <p class="psy-entry-small">Без аккаунта и подписки. Пробный период не начинается, результаты демоверсии не синхронизируются.</p>
-   </div>
-   <p class="psy-entry-foot">Пароль и номер телефона для входа не требуются. Не вводите данные детей.</p>
+   <p class="psy-entry-notice" id="psyEntrySetup" hidden>Не удалось подключить сервис входа. Обновите страницу или попробуйте позже.</p>
+   <p class="psy-entry-foot">Вход доступен новым и зарегистрированным участникам. Не вводите данные детей.</p>
   </div>
   <div class="psy-entry-step" id="psyEntryCode" hidden>
-   <p class="psy-entry-lead">Отправили письмо. Перейдите по ссылке из письма или введите код, если он указан.</p>
+   <p class="psy-entry-lead">Письмо отправлено. Введите одноразовый код из письма. Проверьте также папку «Спам».</p>
    <form class="psy-entry-form" id="psyEntryCodeForm">
-    <label for="psyEntryToken">Код подтверждения</label><input id="psyEntryToken" type="text" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" maxlength="8">
+    <label for="psyEntryToken">Код из письма</label><input id="psyEntryToken" type="text" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" maxlength="8">
     <button type="submit" class="psy-entry-btn" id="psyEntryVerify">Подтвердить код</button>
    </form>
-   <button type="button" class="psy-entry-btn light" id="psyEntryAgain">Другая почта</button>
+   <button type="button" class="psy-entry-btn light" id="psyEntryAgain">Изменить почту или запросить новый код</button>
   </div>
   <div class="psy-entry-step" id="psyEntryPlans" hidden>
    <p class="psy-entry-lead" id="psyEntryWelcome">Почта подтверждена. Выберите, как начать работу с методиками.</p>
@@ -94,11 +88,6 @@
  }
  function setDestination(href){destination=validTarget(href)||"library.html";
   try{sessionStorage.setItem("psy-intended-destination",destination)}catch(_){}}
- function goDemo(){
-  if(authEnabled){error("Демоверсия недоступна после включения регистрации.");return}
-  try{sessionStorage.setItem("psy-demo-entry","1");sessionStorage.setItem("psy-entry-completed","1");}catch(_){}
-  location.assign(destination);
- }
  function show(){
   const pill=el("psyHomeTrial");
   if(pill&&trial&&new Date(trial.expires_at)>new Date())pill.hidden=false;
@@ -112,7 +101,6 @@
  function noSignup(){
   step("psyEntryEmail");el("psyEntryMail").disabled=true;
   el("psyEntrySend").disabled=true;el("psyEntrySetup").hidden=false;
-  el("psyEntryDemo").hidden=false;
  }
  async function load(){
   if(opening)return;opening=true;show();
@@ -149,7 +137,6 @@
   const to=validTarget(a.getAttribute("href"));if(!to)return;
   e.preventDefault();setDestination(to);load();
  },true);
- el("psyEntryPreview").addEventListener("click",goDemo);
  el("psyEntryAgain").addEventListener("click",()=>{step("psyEntryEmail");error("")});
  el("psyEntryEmailForm").addEventListener("submit",async e=>{
   e.preventDefault();if(!authEnabled||!client)return;
