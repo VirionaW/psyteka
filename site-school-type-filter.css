@@ -1,0 +1,15 @@
+/* Психотека, Школа – читаемый выбор вида методики. Другие разделы не затронуты. */
+#schoolView .filters #format {
+  flex: 1 1 245px;
+  width: auto;
+  min-width: 245px;
+  max-width: 360px;
+}
+@media (max-width: 760px) {
+  #schoolView .filters #format {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+}
