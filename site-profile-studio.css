@@ -1,0 +1,209 @@
+/* Психотека: личный кабинет и папки. Изолировано от каталога и методик. */
+body[data-account] .site-header nav>a:not(.round-link):not(.site-btn){
+ background:#f0f6f1!important;color:#224939!important;border-color:#c8dfd0!important;
+ box-shadow:none!important;
+}
+html.dark body[data-account] .site-header nav>a:not(.round-link):not(.site-btn){
+ background:#29463a!important;color:#ecf6ef!important;border:1px solid #527a63!important;
+ box-shadow:none!important;
+}
+html.dark body[data-account] .site-header nav>a:not(.round-link):not(.site-btn):hover{
+ background:#355c49!important;border-color:#85ac91!important;
+}
+html.dark body[data-account] .site-header .site-logo .psy-brand-mark,
+html.dark body[data-account] .psy-account-footer-brand img{
+ content:url("brand-mark-dark.svg?v=20261026dark2")!important;
+ background:transparent!important;filter:none!important;box-shadow:none!important;
+ padding:0!important;border:0!important;border-radius:0!important;
+ object-fit:contain!important;
+}
+html.dark body[data-account] .site-header .site-logo,
+html.dark body[data-account] .site-header .site-logo .psy-wordmark,
+html.dark body[data-account] .site-header .site-logo .psy-wordmark .psy-word-start{color:#f1f7ef!important}
+html.dark body[data-account] .site-header .site-logo .psy-wordmark .psy-word-end{color:#dcc5a4!important}
+html.dark body[data-account] .psy-account-footer-brand{color:#edf7f0}
+html.dark body[data-account] .psy-account-footer{background:#162a22;color:#eaf4eb;border-color:#43614f}
+html.dark body[data-account] .psy-account-footer p{color:#c8d9cb}
+body[data-account="profile"] .site-account.psy-studio{width:min(100% - 40px,1360px)!important;max-width:1360px!important;margin:29px auto 80px!important;padding:0!important}
+.psy-studio *{box-sizing:border-box}
+.psy-studio-hero{
+ position:relative;isolation:isolate;overflow:hidden;min-height:300px;
+ display:grid;grid-template-columns:minmax(0,1.17fr) minmax(250px,.83fr);
+ border:1px solid #3a705a;border-radius:29px;
+ background:radial-gradient(circle at 79% 19%,rgba(196,221,185,.23),transparent 33%),linear-gradient(121deg,#173c31 3%,#235943 68%,#52715a 120%);
+ color:#f3f8f1;box-shadow:0 21px 56px rgba(20,57,39,.12);
+}
+.psy-studio-hero:after{content:"";position:absolute;inset:-1px 21% -1px auto;transform:skew(-27deg);width:12%;background:#ffffff0d;pointer-events:none;z-index:-1}
+.psy-studio-hero-copy{padding:clamp(28px,4.2vw,58px) clamp(25px,4.7vw,66px);position:relative;z-index:1}
+.psy-studio-eyebrow{display:flex;align-items:center;gap:10px;color:#ddceb0;font:800 11px/1.4 system-ui,sans-serif;letter-spacing:.17em}
+.psy-studio-spark{font-size:15px;color:#e4b985}
+.psy-studio-hero h1{margin:12px 0 11px!important;font-size:clamp(39px,4.5vw,64px)!important;line-height:1.06!important;font-weight:820;letter-spacing:-.052em;color:#fff!important}
+.psy-studio-title-dot{color:#cba781}
+.psy-studio-hero-copy>p{font-size:clamp(14px,1.35vw,17px);line-height:1.6;color:#d8e9dc;margin:0 0 26px;max-width:520px}
+.psy-studio-links{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.psy-studio-links a{display:inline-flex;align-items:center;gap:6px;justify-content:center;text-decoration:none;min-height:43px;padding:10px 16px;border-radius:12px;background:#ffffff14;border:1px solid #a9cdb166;color:#f4f9f2;font-size:13px;font-weight:750;transition:transform .18s,background .18s}
+.psy-studio-links a:first-child{background:#f8f6ee;color:#224737;border-color:#f8f6ee}
+.psy-studio-links a:hover{background:#ffffff2d;transform:translateY(-2px)}
+.psy-studio-links a:first-child:hover{background:#e7e9da}
+.psy-studio-hero-art{position:relative;min-height:270px;display:grid;place-items:center;overflow:hidden}
+.psy-studio-orbit{position:absolute;width:320px;height:320px;border:1px solid #def1d13b;border-radius:50%;right:9%;top:-9%;box-shadow:0 0 0 44px #a4c6a30a,0 0 0 89px #e6ead30b}
+.psy-studio-paper{position:absolute;width:190px;height:213px;top:29px;left:50%;border-radius:19px;border:1px solid #ede5cd;box-shadow:0 20px 40px #082b214d}
+.psy-studio-paper-back{background:#d8c09a;transform:translateX(-33%) rotate(14deg)}
+.psy-studio-paper-front{background:linear-gradient(140deg,#fbfcf4,#e4f0e4);transform:translateX(-58%) rotate(-8deg);padding:40px 25px}
+.psy-studio-paper-front span{display:block;background:#95b3a5;border-radius:5px;height:9px;margin-bottom:15px}
+.psy-studio-paper-front span:nth-child(2){width:73%}.psy-studio-paper-front span:nth-child(3){width:86%}
+.psy-studio-paper-front i{display:grid;place-items:center;position:absolute;bottom:25px;right:24px;background:#d6e7d6;border-radius:50%;color:#426c57;width:43px;height:43px;font-size:23px;font-style:normal}
+.psy-studio-art-caption{position:absolute;bottom:26px;right:29px;color:#e4efe3;font:700 11px/1.3 system-ui,sans-serif;letter-spacing:.07em}
+.psy-studio-grid{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);align-items:start;gap:clamp(20px,3vw,38px);margin-top:37px}
+.psy-studio-left,.psy-studio-right{min-width:0}
+.psy-studio-section-heading{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:7px 0 17px;scroll-margin-top:100px}
+.psy-studio-index{color:#9a805b;font-size:11px;font-weight:850;letter-spacing:.14em}
+.psy-studio-section-heading h2{font-size:clamp(24px,2.4vw,31px);line-height:1.2;margin:7px 0 8px;color:#204a38}
+.psy-studio-section-heading p{color:#607d6d;font-size:14px;margin:0;line-height:1.6}
+.psy-studio-small-link{color:#2a6d51;text-decoration:none;font-size:13px;font-weight:800;white-space:nowrap;padding:9px}
+.psy-studio #profileForm{margin:0!important;padding:clamp(19px,2.5vw,32px)!important}
+.psy-studio #profileForm .psy-profile-heading{display:flex;gap:18px;align-items:center}
+.psy-studio #profileForm h2{font-size:20px}
+.psy-studio #profileForm>.account-actions{margin-top:24px}
+.psy-studio-security{margin-top:35px;scroll-margin-top:92px}
+.psy-studio-security #psyAccountAccess,.psy-studio-security #privatePhoneCard{margin:0 0 16px!important}
+.psy-studio .psy-account-quicklinks{display:none!important}
+.psy-studio-right{position:sticky;top:105px}
+.psy-collections-studio{
+ margin:0!important;padding:clamp(22px,3vw,35px)!important;
+ border:1px solid #d5e4d6!important;border-radius:27px!important;
+ background:linear-gradient(142deg,#fff,#f4f8f0 92%)!important;
+ box-shadow:0 18px 48px #153f2a10!important;color:#244d38!important;
+}
+.psy-collection-topline{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:7px}
+.psy-collection-kicker{font-size:11px;color:#9b7b51;font-weight:850;letter-spacing:.14em}
+.psy-collection-count{font-size:12px;font-weight:800;background:#e6f2e8;border:1px solid #d0e4d4;color:#34614a;border-radius:999px;padding:6px 11px}
+.psy-collections-studio h2{font-size:clamp(26px,2.55vw,37px);line-height:1.13;letter-spacing:-.035em;margin:5px 0 12px;color:#1c4735}
+.psy-collection-lead{font-size:14px;line-height:1.65;color:#637d6c!important;max-width:540px;margin:0 0 20px!important}
+.psy-collection-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:21px 0 15px}
+.psy-collection-tools h3{font-size:16px;font-weight:850;margin:0;color:#295440}
+.psy-collection-arrows{display:flex;gap:7px}
+.psy-collections-studio button.psy-scroll-arrow{display:grid;place-items:center;width:38px;height:38px;padding:0;border:1px solid #cbded0;border-radius:50%;background:#f2f8f2;color:#2b6046;font-size:21px}
+.psy-scroll-arrow:disabled{opacity:.35;cursor:default}
+.psy-folder-wheel{
+ display:flex;gap:13px;overflow-x:auto;overscroll-behavior-x:contain;
+ scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:6px 3px 17px;
+ scrollbar-color:#b0c9b5 transparent;scrollbar-width:thin;
+}
+.psy-folder-tile{
+ flex:0 0 clamp(176px,42%,238px);min-width:0;min-height:190px;display:flex;flex-direction:column;
+ scroll-snap-align:start;padding:16px!important;border:1px solid #d2dfd1!important;
+ border-radius:19px!important;background:#ecf4e8!important;color:#244f3c!important;
+ box-shadow:0 8px 19px #193b2710;transition:transform .24s ease,box-shadow .24s ease,border-color .2s;
+ text-align:left;position:relative;overflow:hidden;
+}
+.psy-folder-tile:nth-child(3n+2){background:#f3ede1!important;border-color:#e3d7c5!important}
+.psy-folder-tile:nth-child(3n+3){background:#e7f0ee!important;border-color:#d0dfda!important}
+.psy-folder-tile:hover,.psy-folder-tile:focus-visible{transform:translateY(-4px);box-shadow:0 15px 27px #1c4a301d;border-color:#94bea0!important}
+.psy-folder-icon{display:block;width:75px;height:63px;position:relative;margin:3px 0 auto}
+.psy-folder-icon:before{content:"";position:absolute;left:5px;top:8px;width:35px;height:14px;background:#bfccab;border-radius:7px 9px 0 0}
+.psy-folder-icon:after{content:"";position:absolute;left:0;bottom:2px;width:72px;height:47px;background:linear-gradient(155deg,#afc99e,#7fa78e);border:1px solid #739a83;border-radius:8px 11px 10px 10px;box-shadow:inset 0 2px #ffffff48}
+.psy-folder-tile:nth-child(3n+2) .psy-folder-icon:before{background:#dfc49e}
+.psy-folder-tile:nth-child(3n+2) .psy-folder-icon:after{background:linear-gradient(150deg,#dec6a2,#c1a078);border-color:#b39775}
+.psy-folder-tile:nth-child(3n+3) .psy-folder-icon:after{background:linear-gradient(150deg,#9dbeb4,#6d9d91)}
+.psy-folder-title{display:block;font-size:16px;font-weight:850;line-height:1.25;margin:12px 0 5px;overflow-wrap:anywhere}
+.psy-folder-meta{display:block;color:#59735e;font-size:12px}
+.psy-folder-chevron{position:absolute;right:17px;top:17px;font-size:20px;color:#668f74}
+.psy-folder-empty{flex:1 0 100%;min-height:143px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;border:1px dashed #aecbb5;border-radius:17px;background:#f7fbf6;color:#486d55;text-align:center;padding:19px;font-size:13px}
+.psy-folder-empty strong{font-size:15px}
+.psy-collections-studio .psy-folder-form{display:flex;gap:8px;margin:14px 0}
+.psy-collections-studio .psy-folder-form input{min-width:0;max-width:none;flex:1 1 170px;min-height:45px;background:#fff;color:#214b38;border:1px solid #bfdbc7;border-radius:12px}
+.psy-collections-studio .psy-folder-form button{min-height:45px;background:#276c50!important;color:#fff!important;border-color:#276c50!important;border-radius:12px}
+.psy-collections-studio button{font:750 13px/1.3 system-ui,sans-serif;cursor:pointer}
+.psy-collection-notice{min-height:18px;font-size:12px!important;color:#587e63!important;margin:7px 0 0!important}
+.psy-favorites-wrap{margin-top:25px;border-top:1px solid #dfeade;padding-top:22px}
+.psy-favorites-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.psy-favorites-head h3{font-size:17px;margin:0;color:#28513d}
+.psy-favorites-head span{font-size:12px;color:#77917b}
+.psy-favorites-list,.psy-folder-detail-list{list-style:none;margin:13px 0 0;padding:0;display:grid;gap:8px}
+.psy-favorites-list li,.psy-folder-detail-list li{display:flex;align-items:center;gap:9px;padding:11px 13px;background:#f6faf6;border:1px solid #dce9de;border-radius:12px;min-width:0}
+.psy-favorites-list a,.psy-folder-detail-list a{flex:1 1 auto;min-width:0;color:#295e45;overflow-wrap:anywhere;text-decoration:none;font-weight:750;font-size:13px}
+.psy-favorites-list a:hover,.psy-folder-detail-list a:hover{text-decoration:underline}
+.psy-collections-studio .psy-mini-remove{flex:none;border:1px solid #dce8dd;background:#fff;color:#5c6d5e;border-radius:9px;padding:6px 9px;font-size:12px}
+.psy-collection-empty-note{color:#65816b!important;font-size:13px!important;margin:12px 0 0!important}
+.psy-folder-detail[hidden],.psy-collection-overview[hidden]{display:none!important}
+.psy-folder-detail{animation:psy-folder-enter .24s ease both}
+@keyframes psy-folder-enter{from{opacity:0;transform:translateX(9px)}to{opacity:1;transform:translateX(0)}}
+.psy-folder-back{background:transparent!important;border:0!important;padding:0!important;color:#2a7552!important;text-decoration:underline;text-underline-offset:4px;margin-bottom:17px}
+.psy-folder-detail-icon{font-size:35px;margin:13px 0}
+.psy-folder-detail h3{margin:0 0 7px;font-size:25px;color:#234d38}
+.psy-folder-detail>p{color:#617969;font-size:13px;line-height:1.6}
+.psy-folder-detail-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.psy-folder-detail-actions button{min-height:40px;border:1px solid #bcd4c1;background:#ecf5ed;color:#285b40;border-radius:11px;padding:8px 12px}
+.psy-folder-detail .psy-add-favorite{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:17px 0}
+.psy-folder-detail .psy-add-favorite select{flex:1;min-width:150px;max-width:100%;height:44px;border:1px solid #c0d7c5;border-radius:10px;background:#fff;color:#244b38;padding:7px 10px}
+.psy-folder-detail .psy-add-favorite button{background:#276e52;color:#fff;border:0;padding:11px 14px;border-radius:10px}
+.psy-studio-library-link{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#eee6d7;border:1px solid #e4d3bc;padding:19px 24px;margin-top:16px;border-radius:17px;color:#5e4a33;text-decoration:none}
+.psy-studio-library-link span{font-size:13px}.psy-studio-library-link strong{font-size:14px;color:#4c6847}
+.psy-collections-studio :is(a,button,input,select):focus-visible,.psy-studio-links a:focus-visible{outline:3px solid #c6ab79;outline-offset:3px}
+html.dark body[data-account="profile"] .psy-studio-hero{background:radial-gradient(circle at 79% 19%,#a3c1ac22,transparent 39%),linear-gradient(122deg,#132e27,#204633 75%,#4c6546);border-color:#507260}
+html.dark body[data-account="profile"] .psy-studio-section-heading h2{color:#ebf6e9}
+html.dark body[data-account="profile"] .psy-studio-section-heading p{color:#bcd4c3}
+html.dark body[data-account="profile"] .psy-studio-index{color:#cdb287}
+html.dark body[data-account="profile"] .psy-studio-small-link{color:#c6e4bf}
+html.dark body[data-account="profile"] .psy-collections-studio{background:linear-gradient(146deg,#203b30,#172e27)!important;border-color:#4b6c58!important;color:#eaf6eb!important}
+html.dark .psy-collections-studio h2,html.dark .psy-collection-tools h3,html.dark .psy-favorites-head h3,html.dark .psy-folder-detail h3{color:#edf8ed}
+html.dark .psy-collections-studio .psy-collection-lead,html.dark .psy-folder-detail>p{color:#bbd7c3!important}
+html.dark .psy-collection-count{background:#2d5340;color:#dcebd9;border-color:#567962}
+html.dark .psy-collections-studio .psy-scroll-arrow{background:#355641;color:#ecf6e7;border-color:#6a8873}
+html.dark .psy-folder-tile{background:#2b4b39!important;border-color:#5b765b!important;color:#f0f7e8!important}
+html.dark .psy-folder-tile:nth-child(3n+2){background:#4a4033!important;border-color:#806e53!important}
+html.dark .psy-folder-tile:nth-child(3n+3){background:#2a4b47!important;border-color:#537e74!important}
+html.dark .psy-folder-title{color:#f1f6ee}
+html.dark .psy-folder-meta{color:#d0dfd0}
+html.dark .psy-folder-chevron{color:#c6d8c8}
+html.dark .psy-folder-empty{background:#233d31;border-color:#65816a;color:#d8e9d7}
+html.dark .psy-folder-form input,html.dark .psy-folder-detail .psy-add-favorite select{background:#152b22!important;color:#edf7ef!important;border-color:#52715c!important}
+html.dark .psy-favorites-wrap{border-color:#476854}
+html.dark .psy-favorites-list li,html.dark .psy-folder-detail-list li{background:#294536;border-color:#496a56;color:#e6f4e6}
+html.dark .psy-favorites-list a,html.dark .psy-folder-detail-list a{color:#e8f6e8}
+html.dark .psy-favorites-head span,html.dark .psy-collection-empty-note,html.dark .psy-collection-notice{color:#bed8c4!important}
+html.dark .psy-collections-studio .psy-mini-remove{background:#365342;color:#e2f0e5;border-color:#607b63}
+html.dark .psy-collections-studio .psy-folder-back{color:#c5e6c8!important}
+html.dark .psy-folder-detail-actions button{background:#35523f;color:#e3f1e4;border-color:#628068}
+html.dark .psy-studio-library-link{background:#383a2b;border-color:#78684b;color:#e7dec7}
+html.dark .psy-studio-library-link strong{color:#e0edd7}
+@media(max-width:1050px){
+ .psy-studio-hero{grid-template-columns:1fr 260px}
+ .psy-studio-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .psy-studio-right{top:90px}
+}
+@media(max-width:800px){
+ body[data-account="profile"] .site-account.psy-studio{width:calc(100% - 24px)!important;margin-top:15px!important}
+ .psy-studio-grid{grid-template-columns:1fr;margin-top:23px}
+ .psy-studio-right{position:static;grid-row:1}
+ .psy-studio-hero{grid-template-columns:1fr minmax(90px,155px);min-height:240px}
+ .psy-studio-hero-copy{padding:26px 20px}
+ .psy-studio-hero-art{min-height:240px;opacity:.62}
+ .psy-studio-paper{width:135px;height:165px;left:20%;top:31px}
+ .psy-studio-orbit{right:-130px}
+ .psy-studio-art-caption{display:none}
+ .psy-studio-links a{padding:9px 11px;min-height:38px;font-size:12px}
+ .psy-studio-hero h1{font-size:clamp(32px,5.5vw,46px)!important}
+}
+@media(max-width:500px){
+ .psy-studio-hero{display:block;min-height:0;border-radius:22px}
+ .psy-studio-hero-art{position:absolute;inset:0 0 0 auto;width:40%;opacity:.18;pointer-events:none}
+ .psy-studio-hero-copy{position:relative;z-index:2}
+ .psy-studio-links{max-width:290px;gap:7px}
+ .psy-studio-links a{padding:8px 10px}
+ .psy-collections-studio{padding:20px!important;border-radius:20px!important}
+ .psy-folder-tile{flex-basis:72%;min-height:174px}
+ .psy-studio-library-link{flex-direction:column;align-items:flex-start}
+ .psy-studio-section-heading{align-items:start}
+ .psy-studio #profileForm .psy-profile-heading{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+ .psy-studio-links a,.psy-folder-tile{transition:none!important}
+ .psy-folder-tile:hover{transform:none}
+ .psy-folder-wheel{scroll-behavior:auto}
+ .psy-folder-detail{animation:none}
+}
+html.reduce-motion .psy-studio-links a,html.reduce-motion .psy-folder-tile{transition:none!important}
+html.reduce-motion .psy-folder-wheel{scroll-behavior:auto}
+html.reduce-motion .psy-folder-detail{animation:none}
