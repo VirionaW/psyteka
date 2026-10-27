@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#214c3c">
+<meta name="description" content="Подписки Психотеки: два дня бесплатного знакомства и планируемые варианты доступа для специалистов и организаций.">
+<title>Подписка – Психотека</title>
+<link rel="icon" type="image/svg+xml" href="brand-favicon.svg?v=20261025e">
+<link rel="stylesheet" href="site-v2.css">
+<link rel="stylesheet" href="site-mobile.css">
+<link rel="stylesheet" href="site-unified.css?v=20261025c">
+<link rel="stylesheet" href="site-avatar-menu.css?v=20261027account2">
+<link rel="stylesheet" href="site-subscriptions.css?v=20261027plans1">
+</head>
+<body class="site-landing psy-subscription-page">
+<header class="site-header">
+ <a href="index.html?home=1" class="site-logo"><img class="psy-brand-mark" src="brand-mark.svg?v=20261025c" alt="" width="44" height="44"><span class="psy-wordmark"><span class="psy-word-start">Психо</span><span class="psy-word-end">тека</span></span></a>
+ <nav aria-label="Главное меню">
+  <a href="index.html?home=1">Главная</a>
+  <a href="library.html">Библиотека</a>
+  <a href="subscriptions.html" aria-current="page">Подписка</a>
+  <a class="round-link" href="profile.html" aria-label="Меню аккаунта" title="Меню аккаунта">С</a>
+  <button class="site-theme-btn" type="button" aria-label="Переключить тему" aria-pressed="false"><span class="site-theme-icon" aria-hidden="true">☾</span><span class="site-theme-label">Темная тема</span></button>
+ </nav>
+</header>
+<main class="psy-subs-main">
+ <section class="psy-subs-intro" aria-labelledby="psySubsTitle">
+  <div class="psy-subs-kicker">ПСИХОТЕКА · ДОСТУП К БИБЛИОТЕКЕ</div>
+  <h1 id="psySubsTitle">Подписка под вашу работу</h1>
+  <p>Знакомьтесь с методиками бесплатно, а затем выбирайте удобный вариант доступа. Сейчас работает пробный период. Платные подписки представлены для ознакомления – покупка и списания пока не подключены.</p>
+  <div class="psy-subs-status" id="psySubsStatus" role="status" aria-live="polite">Проверяем ваш доступ...</div>
+ </section>
+ <section aria-label="Варианты подписки" class="psy-subs-plans">
+  <article class="psy-subs-card psy-subs-trial" id="psyTrialPlan" hidden>
+   <div class="psy-subs-card-top"><span class="psy-subs-label">ПРОБНЫЙ</span><span class="psy-subs-tag">Один раз</span></div>
+   <h2>Знакомство</h2><p class="psy-subs-term">2 дня</p>
+   <div class="psy-subs-price">0 ₽</div>
+   <p class="psy-subs-description">48 часов знакомства с библиотекой с момента активации, без банковской карты.</p>
+   <ul>
+    <li>Доступ к доступным методикам библиотеки</li>
+    <li>Инструкции, бланки и материалы для печати</li>
+    <li>Обработка результатов там, где она реализована</li>
+    <li>Автоматических списаний нет</li>
+   </ul>
+   <button type="button" class="psy-subs-action psy-subs-action-main" id="psyTrialActivate" disabled>Проверяем возможность</button>
+   <p class="psy-subs-detail">После активации пробный вариант исчезнет из предложений этого аккаунта. Повторно получить его нельзя.</p>
+  </article>
+  <article class="psy-subs-card">
+   <div class="psy-subs-card-top"><span class="psy-subs-label">ЛИЧНЫЙ</span><span class="psy-subs-tag">В разработке</span></div>
+   <h2>Специалист</h2><p class="psy-subs-term">1 месяц</p>
+   <div class="psy-subs-price psy-subs-soon">Цена появится позже</div>
+   <p class="psy-subs-description">Для психолога или педагога, который регулярно пользуется диагностическими материалами.</p>
+   <ul><li>Личный доступ к библиотеке методик</li><li>Руководства и печатные бланки</li><li>Доступная обработка данных</li><li>Собственные избранные методики и папки, по мере реализации</li></ul>
+   <div class="psy-subs-action psy-subs-unavailable" aria-label="Покупка не подключена">Покупка пока недоступна</div>
+   <p class="psy-subs-detail">Планируемый тариф. Состав и стоимость уточним до запуска оплаты.</p>
+  </article>
+  <article class="psy-subs-card psy-subs-featured">
+   <div class="psy-subs-card-top"><span class="psy-subs-label">НА ГОД</span><span class="psy-subs-tag">В разработке</span></div>
+   <h2>Специалист+</h2><p class="psy-subs-term">12 месяцев</p>
+   <div class="psy-subs-price psy-subs-soon">Цена появится позже</div>
+   <p class="psy-subs-description">Для постоянной индивидуальной работы в течение учебного года и не только.</p>
+   <ul><li>Те же методические комплекты, что в месячном плане</li><li>Длительный срок доступа без ежемесячного выбора тарифа</li><li>Руководства, бланки и доступные расчеты</li><li>Личная организация рабочих материалов</li></ul>
+   <div class="psy-subs-action psy-subs-unavailable" aria-label="Покупка не подключена">Покупка пока недоступна</div>
+   <p class="psy-subs-detail">Планируемый годовой тариф. Возможная экономия и цена пока не утверждены.</p>
+  </article>
+  <article class="psy-subs-card">
+   <div class="psy-subs-card-top"><span class="psy-subs-label">ДЛЯ КОМАНДЫ</span><span class="psy-subs-tag">В разработке</span></div>
+   <h2>Организация</h2><p class="psy-subs-term">Для учреждения</p>
+   <div class="psy-subs-price psy-subs-soon">По условиям запуска</div>
+   <p class="psy-subs-description">Планируемый доступ для образовательных организаций и психологических служб.</p>
+   <ul><li>Индивидуальные учетные записи сотрудников</li><li>Библиотека методик и единые рабочие материалы</li><li>Управление местами в команде после реализации</li><li>Условия для нескольких специалистов согласуются отдельно</li></ul>
+   <div class="psy-subs-action psy-subs-unavailable" aria-label="Покупка не подключена">Покупка пока недоступна</div>
+   <p class="psy-subs-detail">Командные функции пока не запущены. Оплата, число участников и цена будут объявлены отдельно.</p>
+  </article>
+ </section>
+ <section class="psy-subs-foot" aria-labelledby="psySubsHelp">
+  <h2 id="psySubsHelp">Важное о доступе</h2>
+  <p>Пробный период начинается в момент активации и длится ровно 48 часов. Он предоставляется один раз на учетную запись. Если он уже использован или закончился, карточка бесплатного варианта больше не показывается. Привилегированным аккаунтам команды пробный тариф не нужен.</p>
+  <p>Платные варианты пока являются описанием планируемых тарифов. Оплата, автоматическое продление и платный доступ сейчас не работают. Перед запуском будут опубликованы окончательные цены, условия и правила обработки платежей.</p>
+  <a class="psy-subs-back" href="library.html">Перейти в библиотеку</a>
+ </section>
+</main>
+<footer class="psy-subs-footer">Психотека · Методическая библиотека. Не вводите персональные данные детей в демонстрационные формы.</footer>
+<script src="auth-config.js?v=20261027public1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+<script src="site-account-identity.js?v=20261027account1"></script>
+<script src="site-chrome.js?v=20261027theme1"></script>
+<script src="site-avatar-menu.js?v=20261027account2"></script>
+<script src="site-subscriptions.js?v=20261027plans1"></script>
+</body>
+</html>
