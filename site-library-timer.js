@@ -48,10 +48,19 @@
   try{
    const {data,error}=await client.auth.getUser();
    if(error||!data?.user||data.user.is_anonymous||stop)return;
+   // Accounts with privileged roles are not trial accounts. A historical
+   // trial row may exist, but its expiry must never display a countdown.
+   const {data:role,error:roleError}=await client.from("psy_account_roles")
+     .select("role").eq("user_id",data.user.id).maybeSingle();
+   if(roleError||stop){clear();strip.hidden=true;return;}
+   if(["owner","shadow","moderator"].includes(role?.role)){
+    clear();strip.hidden=true;return;
+   }
    const {data:trial,error:readError}=await client.from("psy_trial_access")
      .select("expires_at").eq("user_id",data.user.id).maybeSingle();
-   if(readError||stop)return;
+   if(readError||stop){clear();strip.hidden=true;return;}
    if(trial?.expires_at)display(trial.expires_at);
+   else {clear();strip.hidden=true;}
   }catch(_){strip.hidden=true}
  }
  client.auth.onAuthStateChange((event)=>{
