@@ -115,12 +115,12 @@
    ]);
    if(r.error||t.error)throw new Error("Не удалось проверить права доступа.");
    role=r.data?.role||"participant";trial=t.data||null;
-   if(role==="owner"||role==="moderator"){
-    step("psyEntryAccess");el("psyEntryAccessName").textContent=role==="owner"?"Доступ владельца":"Доступ модератора";
+   if(["owner","shadow","moderator"].includes(role)){
+    step("psyEntryAccess");el("psyEntryAccessName").textContent=role==="owner"?"Доступ владельца":role==="shadow"?"Резервный доступ «Тень»":"Доступ модератора";
     el("psyEntryTimeCaption").textContent="Для команды проекта пробный период не требуется.";
     el("psyEntryClock").textContent="Без ограничения";el("psyEntryGo").disabled=false;
     ownerNeedsMfa=false;
-    if(role==="owner"){
+    if(role==="owner"||role==="shadow"){
      const {data:aal,error:aalError}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
      if(aalError||aal?.currentLevel!=="aal2"){
       ownerNeedsMfa=true;
@@ -192,11 +192,11 @@
   finally{b.disabled=false}
  });
  el("psyEntryGo").addEventListener("click",()=>{
-  if(role==="owner"&&ownerNeedsMfa){
+  if((role==="owner"||role==="shadow")&&ownerNeedsMfa){
    try{sessionStorage.setItem("psy-intended-destination",destination)}catch(_){}
    location.assign("owner-mfa.html");return;
   }
-  if(role!=="owner"&&role!=="moderator"&&(!trial||new Date(trial.expires_at).getTime()<=Date.now())){
+  if(!["owner","shadow","moderator"].includes(role)&&(!trial||new Date(trial.expires_at).getTime()<=Date.now())){
    error("Пробный доступ завершен.");return;
   }
   location.assign(destination);
