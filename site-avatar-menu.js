@@ -18,7 +18,7 @@
  current.setAttribute("aria-expanded","false");
  const add=(label,url,action)=>{
   const item=document.createElement(action?"button":"a");
-  item.className="psy-avatar-menu-item";
+  item.className="psy-avatar-menu-item"+(label==="Выйти из аккаунта"?" psy-avatar-menu-exit":"");
   item.textContent=label;
   item.setAttribute("role","menuitem");
   if(action){item.type="button";item.addEventListener("click",action);}
