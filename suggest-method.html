@@ -3,36 +3,43 @@
 <title>Предложить методику или сообщить об ошибке | Психотека</title>
 <meta name="description" content="Предложение новых методик, сообщения об ошибках и сведения об авторских правах Психотеки.">
 <link rel="icon" href="brand-favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="site-v2.css"><link rel="stylesheet" href="site-mobile.css"><link rel="stylesheet" href="site-unified.css">
+
 <style>
-:root{--ink:#173e35;--muted:#6d8279;--line:#c8dfd0;--paper:#f8fbf8}
-*{box-sizing:border-box}body{margin:0;background:#eef6ef;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.5}
-.suggest-wrap{max-width:1220px;padding:24px 20px 80px;margin:auto}
-.suggest-top{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:24px}
-.suggest-brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:23px;text-decoration:none;color:var(--ink)}
-.suggest-brand img{width:38px;height:38px}
-.suggest-back{border:1px solid var(--line);background:white;border-radius:999px;padding:9px 17px;text-decoration:none;color:var(--ink);font-weight:650}
-.suggest-hero{padding:32px;border:1px solid var(--line);background:linear-gradient(125deg,#fff 10%,#e1f2e7 100%);border-radius:24px;margin-bottom:24px}
-.suggest-hero h1{font-size:clamp(25px,3vw,38px);margin:0 0 12px}.suggest-hero p{max-width:850px;margin:0;color:#526c60}
-.suggest-panel{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:24px;margin-bottom:22px}
-.suggest-panel h2{margin:0 0 12px;font-size:23px}.suggest-panel p{margin:0 0 16px}
-.suggest-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.suggest-field{display:flex;flex-direction:column;gap:6px;font-weight:650;font-size:14px}
+:root{color-scheme:light;--ink:#25334a;--muted:#65748a;--edge:#dce2ed;--accent:#6657b8;--paper:#fff;--canvas:#f5f5fa}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--canvas);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:15px;line-height:1.6}
+.suggest-wrap{max-width:1130px;padding:28px 24px 88px;margin:0 auto}
+.suggest-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:27px}
+.suggest-brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:24px;text-decoration:none;color:var(--ink)}
+.suggest-brand img{width:40px;height:40px}
+.suggest-back{display:inline-flex;align-items:center;border:1px solid var(--edge);background:white;border-radius:12px;padding:10px 16px;text-decoration:none;color:var(--ink);font-size:14px;font-weight:650}
+.suggest-hero{padding:38px 42px;background:linear-gradient(125deg,#302952,#51498a 70%,#7669b3);color:#fff;border-radius:24px;margin-bottom:24px;box-shadow:0 12px 32px #30295216}
+.suggest-hero h1{font-size:clamp(27px,3.5vw,39px);line-height:1.2;margin:0 0 14px;letter-spacing:-.025em}
+.suggest-hero p{max-width:760px;margin:0;color:#eae8fa;font-size:16px}
+.suggest-panel{background:var(--paper);border:1px solid var(--edge);border-radius:22px;padding:32px 35px;margin-bottom:24px;box-shadow:0 7px 26px #19274307}
+.suggest-panel h2{font-size:23px;letter-spacing:-.02em;line-height:1.3;margin:0 0 12px}
+.suggest-panel p{margin:0 0 23px;color:#647185;line-height:1.7}
+.suggest-form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:20px;row-gap:23px;align-items:start}
+.suggest-field{position:relative;display:flex;flex-direction:column;gap:9px;min-width:0;margin:0;padding:0;font-weight:650;font-size:14px;line-height:1.45;cursor:default}
 .suggest-field.full{grid-column:1/-1}
-.suggest-field input,.suggest-field textarea,.suggest-field select,.suggest-search{width:100%;padding:12px 14px;border:1px solid #b9d1c3;border-radius:12px;background:white;color:#163d34;font:inherit}
-.suggest-field textarea{min-height:125px;resize:vertical}
-.suggest-actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.suggest-action{background:#285a49;color:white;border:0;border-radius:12px;padding:12px 17px;text-decoration:none;font:inherit;cursor:pointer;font-weight:700}
-.suggest-action.secondary{background:white;color:#285a49;border:1px solid #b9d1c3}
-.suggest-hint{color:var(--muted);font-size:13px}
-.suggest-catalogbar{display:flex;align-items:center;gap:16px;justify-content:space-between;flex-wrap:wrap;margin:18px 0}
-.suggest-catalogbar .suggest-search{max-width:480px;flex:1 1 260px}
-.suggest-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
-.suggest-card{border:1.5px solid var(--line);border-radius:20px;background:#f7faf7;padding:23px;min-height:105px}
-.suggest-card h3{font-size:19px;line-height:1.3;margin:0 0 8px;color:#1d4035}
-.suggest-card p{margin:0;color:#73877c;font-size:13px;font-weight:650}
+.suggest-field input,.suggest-field textarea,.suggest-field select,.suggest-search{display:block;position:relative;z-index:0;width:100%;min-width:0;min-height:48px;margin:0;padding:12px 14px;border:1px solid #cfd6e5;outline:none;border-radius:12px;background:#fafbfe;color:var(--ink);font:inherit;font-weight:400;line-height:1.4;box-shadow:none;transform:none}
+.suggest-field textarea{min-height:142px;resize:vertical}
+.suggest-field input:focus,.suggest-field textarea:focus,.suggest-field select:focus,.suggest-search:focus{border-color:#8574dc;box-shadow:0 0 0 3px #8574dc24}
+.suggest-actions{grid-column:1/-1;display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:0}
+.suggest-action{display:inline-flex;align-items:center;justify-content:center;background:#6657b8;color:white;border:1px solid #6657b8;border-radius:12px;padding:12px 17px;font:inherit;line-height:1.35;cursor:pointer;font-weight:700}
+.suggest-action.secondary{background:white;color:#5546a0;border-color:#d7d2ec}
+.suggest-action:hover{filter:brightness(.95)}
+.suggest-hint{color:#7b8495;font-size:13px}
+.suggest-actions .suggest-hint{flex-basis:100%;line-height:1.5}
+.suggest-catalogbar{display:flex;align-items:center;gap:16px;justify-content:space-between;flex-wrap:wrap;margin:19px 0}
+.suggest-catalogbar .suggest-search{max-width:550px;flex:1 1 260px}
+.suggest-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.suggest-card{border:1px solid var(--edge);border-radius:17px;background:#fbfbfe;padding:21px 23px;min-height:105px;transition:border-color .2s}
+.suggest-card h3{font-size:17px;line-height:1.4;margin:0 0 8px;color:#2b3450}
+.suggest-card p{margin:0;color:#7b8495;font-size:13px;font-weight:500;line-height:1.5}
 .suggest-empty{color:var(--muted);padding:20px}
-@media(max-width:660px){.suggest-wrap{padding:16px 12px 55px}.suggest-hero,.suggest-panel{padding:20px}.suggest-form,.suggest-cards{grid-template-columns:1fr}.suggest-card{padding:18px;min-height:auto}}
+@media(max-width:690px){.suggest-wrap{padding:16px 12px 65px}.suggest-hero,.suggest-panel{padding:23px}.suggest-form,.suggest-cards{grid-template-columns:1fr}.suggest-hero h1{font-size:29px}.suggest-panel h2{font-size:21px}}
 </style></head>
 <body><main class="suggest-wrap">
 <div class="suggest-top"><a class="suggest-brand" href="index.html?home=1"><img src="brand-mark.svg" alt="">Психотека</a><a class="suggest-back" href="library.html?area=school">Вернуться в библиотеку</a></div>
@@ -49,16 +56,16 @@
 </form>
 <p id="suggestStatus" role="status" class="suggest-hint" style="margin-top:12px"></p>
 </section>
-<section class="suggest-panel" aria-labelledby="rights-heading"><h2 id="rights-heading">Список методик и авторов</h2>
-<p>Поиск по методикам, представленным в основном каталоге Психотеки. Названия и авторы приведены для идентификации материалов. <strong>Наличие методики в списке не означает, что ее материалы свободны от авторских прав.</strong> Если вы заметили возможное нарушение, воспользуйтесь формой выше.</p>
+<section class="suggest-panel" aria-labelledby="rights-heading"><h2 id="rights-heading">Методики, временно исключенные из каталога</h2>
+<p>В этом списке только методики, временно убранные из рабочего каталога до проверки прав или получения разрешения правообладателя. Здесь приведены лишь названия и авторы, без бланков, стимулов и портфолио. Если вы правообладатель или заметили неточность, напишите через форму выше.</p>
 <div class="suggest-catalogbar"><input class="suggest-search" id="suggestSearch" type="search" placeholder="Поиск по названию или автору" aria-label="Поиск методик"><span id="suggestCount" class="suggest-hint"></span></div>
 <div class="suggest-cards" id="suggestCards"></div><p class="suggest-empty" id="suggestEmpty" hidden>Методики не найдены.</p>
 </section></main>
-<script src="catalog.js"></script><script src="site-contact-config.js"></script>
+<script src="catalog.js"></script><script src="site-rights-catalog-filter.js?v=20261027rights2"></script><script src="site-contact-config.js"></script>
 <script>
 (function(){
 "use strict";
-const all=(window.PSY_CATALOG||[]).filter(x=>x&&x.name&&x.theme!=="Программы");
+const all=(window.PSY_RIGHTS_EXCLUDED||[]).filter(x=>x&&x.name);
 const normalized=s=>String(s||"").toLocaleLowerCase("ru").replace(/ё/g,"е").trim();
 const unique=[...new Map(all.map(m=>[normalized(m.name),m])).values()].sort((a,b)=>a.name.localeCompare(b.name,"ru"));
 const search=document.getElementById("suggestSearch"),container=document.getElementById("suggestCards");
