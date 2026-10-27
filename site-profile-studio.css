@@ -309,12 +309,12 @@ html.dark body[data-account="profile"] .psy-studio-side-link:hover{background:#8
  background:var(--folder-swatch,#98b69e);
  border:1px solid #00000013;pointer-events:none;
 }
-.psy-folder-color-swatch[data-color="sage"]{--folder-swatch:#8faf95}
-.psy-folder-color-swatch[data-color="clay"]{--folder-swatch:#cc947b}
-.psy-folder-color-swatch[data-color="sky"]{--folder-swatch:#89b3cc}
-.psy-folder-color-swatch[data-color="lilac"]{--folder-swatch:#ad9cc8}
-.psy-folder-color-swatch[data-color="amber"]{--folder-swatch:#d8bb7d}
-.psy-folder-color-swatch[data-color="mint"]{--folder-swatch:#83bcb2}
+.psy-folder-color-swatch[data-color="sage"]{--folder-swatch:#4b997b}
+.psy-folder-color-swatch[data-color="clay"]{--folder-swatch:#b78262}
+.psy-folder-color-swatch[data-color="sky"]{--folder-swatch:#7299c7}
+.psy-folder-color-swatch[data-color="lilac"]{--folder-swatch:#8c76cf}
+.psy-folder-color-swatch[data-color="amber"]{--folder-swatch:#d5a151}
+.psy-folder-color-swatch[data-color="rose"]{--folder-swatch:#d77b8c}
 .psy-collections-studio .psy-folder-color-choice:has(input:checked){
  border-color:#335e46!important;background:#fff;box-shadow:0 0 0 1px #ffffffbd;
 }
@@ -346,7 +346,7 @@ html.dark body[data-account="profile"] .psy-studio-side-link:hover{background:#8
 .psy-collections-studio .psy-folder-tile[data-folder-color="sky"]{--folder-front:#81aebf;--folder-back:#b8d2dc;--folder-edge:#6a98ae;--folder-surface:#edf5f9}
 .psy-collections-studio .psy-folder-tile[data-folder-color="lilac"]{--folder-front:#a395c0;--folder-back:#d0c3e0;--folder-edge:#907fac;--folder-surface:#f3eef8}
 .psy-collections-studio .psy-folder-tile[data-folder-color="amber"]{--folder-front:#d1ae71;--folder-back:#e6cda3;--folder-edge:#b99a64;--folder-surface:#faf4e6}
-.psy-collections-studio .psy-folder-tile[data-folder-color="mint"]{--folder-front:#7eafa4;--folder-back:#b5d8cf;--folder-edge:#6b9d92;--folder-surface:#eaf6f1}
+.psy-collections-studio .psy-folder-tile[data-folder-color="rose"]{--folder-front:#d77b8c;--folder-back:#e8b3bc;--folder-edge:#b9677a;--folder-surface:#f9edf0}
 .psy-collections-studio .psy-folder-tile .psy-folder-icon:before{background:var(--folder-back)!important}
 .psy-collections-studio .psy-folder-tile .psy-folder-icon:after{
  background:linear-gradient(145deg,var(--folder-back),var(--folder-front))!important;
@@ -362,7 +362,7 @@ html.dark body[data-account="profile"] .psy-studio-side-link:hover{background:#8
 .psy-collections-studio .psy-folder-detail[data-folder-color="sky"] .psy-folder-detail-icon .psy-folder-icon{--folder-front:#81aebf;--folder-back:#b8d2dc;--folder-edge:#6a98ae}
 .psy-collections-studio .psy-folder-detail[data-folder-color="lilac"] .psy-folder-detail-icon .psy-folder-icon{--folder-front:#a395c0;--folder-back:#d0c3e0;--folder-edge:#907fac}
 .psy-collections-studio .psy-folder-detail[data-folder-color="amber"] .psy-folder-detail-icon .psy-folder-icon{--folder-front:#d1ae71;--folder-back:#e6cda3;--folder-edge:#b99a64}
-.psy-collections-studio .psy-folder-detail[data-folder-color="mint"] .psy-folder-detail-icon .psy-folder-icon{--folder-front:#7eafa4;--folder-back:#b5d8cf;--folder-edge:#6b9d92}
+.psy-collections-studio .psy-folder-detail[data-folder-color="rose"] .psy-folder-detail-icon .psy-folder-icon{--folder-front:#d77b8c;--folder-back:#e8b3bc;--folder-edge:#b9677a}
 .psy-collections-studio .psy-folder-detail-icon .psy-folder-icon:before{background:var(--folder-back)!important}
 .psy-collections-studio .psy-folder-detail-icon .psy-folder-icon:after{
  background:linear-gradient(145deg,var(--folder-back),var(--folder-front))!important;
