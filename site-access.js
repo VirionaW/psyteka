@@ -57,13 +57,8 @@
    ]);
    if(r.error||t.error){goHome();return}
    if(["owner","shadow","moderator"].includes(r.data?.role)){
-    if(r.data.role==="owner"||r.data.role==="shadow"){
-     const {data:level,error:aalError}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
-     if(aalError||level?.currentLevel!=="aal2"){
-      try{sessionStorage.setItem("psy-intended-destination",location.pathname.split("/").pop()+location.search+location.hash)}catch(_){}
-      location.replace("owner-mfa.html");return;
-     }
-    }
+    // Reading the library is not an administrative action.
+    // The management page and server-side role changes still require AAL2.
     root.classList.add("psy-access-ok");
     pill(r.data.role==="owner"?"Владелец":r.data.role==="shadow"?"Тень":"Модератор",null,r.data.role);return;
    }
