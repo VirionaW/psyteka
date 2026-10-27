@@ -34,7 +34,7 @@
   const {data:roleData,error:roleError}=await client.from("psy_account_roles")
    .select("role").eq("user_id",ownerId).maybeSingle();
   if(roleError){say("Не удалось подтвердить полномочия.",true);return;}
-  if(roleData?.role!=="owner"){say("Доступ только для владельца Психотеки.",true);return;}
+  if(roleData?.role!=="owner"&&roleData?.role!=="shadow"){say("Доступ только для владельца Психотеки.",true);return;}
   // The Edge Function independently verifies the JWT assurance level.
   // Do not expose a list of email addresses to an aal1 owner session.
   const {data:aal,error:aalError}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
