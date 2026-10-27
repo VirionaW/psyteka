@@ -86,6 +86,12 @@
    /\/(?:library|cognitive-kit|family-kit|selfesteem-kit|adaptation-drawing)\.html$/.test(u.pathname)
    ?u.pathname.slice(u.pathname.lastIndexOf("/")+1)+u.search+u.hash:null;}catch(_){return null}
  }
+ function hasActiveAccess(){
+  if(!currentUser)return false;
+  if(["owner","shadow","moderator"].includes(role))return true;
+  if(paid?.expires_at&&new Date(paid.expires_at).getTime()>Date.now())return true;
+  return !!(trial?.expires_at&&new Date(trial.expires_at).getTime()>Date.now());
+ }
  function setDestination(href){destination=validTarget(href)||"library.html";
   try{sessionStorage.setItem("psy-intended-destination",destination)}catch(_){}}
  function show(){
@@ -102,12 +108,13 @@
   step("psyEntryEmail");el("psyEntryMail").disabled=true;
   el("psyEntrySend").disabled=true;el("psyEntrySetup").hidden=false;
  }
- async function load(){
-  if(opening)return;opening=true;show();
-  if(!authEnabled||!client){noSignup();opening=false;return}
+ async function load({direct=false}={}){
+  if(opening)return;opening=true;
+  // Check the verified session and entitlement first; never flash a login dialog.
+  if(!authEnabled||!client){noSignup();show();opening=false;return}
   try{
    const {data,error:authError}=await client.auth.getUser();
-   if(authError||!data?.user||data.user.is_anonymous){currentUser=null;step("psyEntryEmail");opening=false;return;}
+   if(authError||!data?.user||data.user.is_anonymous){currentUser=null;step("psyEntryEmail");show();return;}
    currentUser=data.user;
    const [r,t,p]=await Promise.all([
     client.from("psy_account_roles").select("role").eq("user_id",currentUser.id).maybeSingle(),
@@ -149,7 +156,13 @@
      el("psyEntryGo").disabled=false;clock();
     }else step("psyEntryExpired");
    }else step("psyEntryPlans");
-  }catch(ex){step("psyEntryEmail");error(ex?.message||"Не удалось проверить вход. Попробуйте еще раз.")}
+   if(direct&&hasActiveAccess()){
+    close();
+    location.assign(destination);
+    return;
+   }
+   show();
+  }catch(ex){step("psyEntryEmail");show();error(ex?.message||"Не удалось проверить вход. Попробуйте еще раз.")}
   finally{opening=false}
  }
  const badge=document.createElement("span");badge.id="psyHomeTrial";badge.className="psy-entry-pill";badge.hidden=true;
@@ -158,7 +171,7 @@
   if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
   const a=e.target.closest?.("a[href]");if(!a||a.target==="_blank"||a.hasAttribute("download"))return;
   const to=validTarget(a.getAttribute("href"));if(!to)return;
-  e.preventDefault();setDestination(to);load();
+  e.preventDefault();setDestination(to);load({direct:true});
  },true);
  el("psyEntryAgain").addEventListener("click",()=>{step("psyEntryEmail");error("")});
  el("psyEntryEmailForm").addEventListener("submit",async e=>{
@@ -237,7 +250,7 @@
   if(params.has("entry")||params.get("access")==="1"){
    const from=sessionStorage.getItem("psy-intended-destination");
    setDestination(from||"library.html");
-   load();
+   load({direct:true});
   }
  }catch(_){}
 })();
