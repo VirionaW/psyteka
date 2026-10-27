@@ -6,6 +6,9 @@
 .search-panel .pill{flex:0 0 auto;white-space:nowrap;scroll-snap-align:start}
 .search-panel .pill:focus-visible{outline-offset:-2px}
 @media(max-width:700px){.search-panel .pill-group{max-width:100%;}}
+
+.load-more-drawings{display:flex;width:100%;margin:16px 0 4px;min-height:48px;justify-content:center;border-style:dashed;color:var(--ink);background:var(--white)}
+.load-more-drawings:hover{border-color:var(--green)}
 </style><link rel="stylesheet" href="psy-preview-gate.css?v=20261027"><script defer src="psy-preview-gate.js?v=20261027"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -2154,7 +2157,7 @@ function countFields(entry){
 function draftEmpty(){return {position:"unknown",size:"",color:"",colors:[],features:[],counts:{},note:"",excluded:[]};}
 
 var entries=RAW.map(function(a,i){return {id:"element-"+(i+1),name:a[0],category:a[1],meaning:a[2],question:a[3],methods:a[4].split(" "),aliases:a[5]};});
-var state={method:"fictional-animal",selected:entries[0].id,category:"Все",items:[],sheetOpen:false,tab:"position",editKey:null,draft:draftEmpty()};
+var state={method:"fictional-animal",selected:entries[0].id,category:"Все",items:[],sheetOpen:false,tab:"position",editKey:null,visibleLimit:100,draft:draftEmpty()};
 var $=function(s){return document.querySelector(s)};
 var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
 var normalize=function(s){return String(s||"").toLocaleLowerCase("ru").replace(/ё/g,"е").trim()};
@@ -2176,19 +2179,20 @@ function init(){
    if(!confirm("При смене методики текущий протокол очищается. Продолжить?")){this.value=state.method;return}
    state.items=[];$("#subjectCode").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords();
   }
-  state.method=next;state.category="Все";state.sheetOpen=false;state.draft=draftEmpty();state.editKey=null;
+  state.method=next;state.category="Все";state.sheetOpen=false;state.draft=draftEmpty();state.editKey=null;state.visibleLimit=100;
   $("#search").value="";
   $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
   $("#methodBadge").textContent=methodName(state.method);renderMethodFocus();
   try{history.replaceState(null,"","?method="+encodeURIComponent(state.method))}catch(e){}
   renderCategories();renderResults();renderDetails();
  });
- $("#search").addEventListener("input",renderResults);
+ $("#search").addEventListener("input",function(){state.visibleLimit=100;renderResults()});
  $("#categories").addEventListener("click",function(e){
   var b=e.target.closest("[data-category]");if(!b)return;
-  state.category=b.dataset.category;renderCategories();renderResults();
+  state.category=b.dataset.category;state.visibleLimit=100;renderCategories();renderResults();
  });
  $("#results").addEventListener("click",function(e){
+  if(e.target.closest("[data-load-more]")){state.visibleLimit+=100;renderResults();return}
   if(e.target.closest("#closeSheet")){state.sheetOpen=false;state.editKey=null;renderResults();renderDetails();return}
   var tab=e.target.closest("[data-sheet-tab]");
   if(tab){state.tab=tab.dataset.sheetTab;renderSheet();return}
@@ -2305,12 +2309,13 @@ function renderResults(){
   state.sheetOpen=false;state.editKey=null;state.draft=draftEmpty();renderDetails();
  }
  $("#count").textContent="Найдено: "+found.length+" из "+entries.length;
+ var visible=found.slice(0,state.visibleLimit);
  var previousScroll=$("#results").scrollTop||0;
- $("#results").innerHTML=found.length?found.map(function(x){
+ $("#results").innerHTML=found.length?visible.map(function(x){
   var open=state.sheetOpen&&state.selected===x.id;
   return '<button type="button" class="symbol-row" data-element="'+x.id+'" aria-expanded="'+open+'" aria-controls="'+(open?'sheet':'')+'"><span><strong>'+esc(x.name)+'</strong><small>'+esc(x.category)+'</small></span><span class="arrow" aria-hidden="true">›</span></button>'+
   (open?'<div id="sheet" class="inline-sheet" aria-label="Характеристики элемента '+esc(x.name)+'"></div>':'');
- }).join(""):'<div class="empty">Ничего не найдено. Попробуйте другое название или категорию.</div>';
+ }).join("")+(found.length>visible.length?'<button type="button" class="btn load-more-drawings" data-load-more>Показать еще · '+(found.length-visible.length)+' остаются в поиске</button>':""):'<div class="empty">Ничего не найдено. Попробуйте другое название или категорию.</div>';
  $("#results").scrollTop=previousScroll;
  renderSheet();
  if(state.sheetOpen){var row=$("#results").querySelector&&$("#results").querySelector(".symbol-row[aria-expanded=true]");if(row&&typeof row.scrollIntoView==="function")row.scrollIntoView({block:"nearest"});}
