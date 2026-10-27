@@ -251,6 +251,21 @@ html.dark .choice[aria-pressed=true] small{color:#d8ecdd}
 html.dark .inline-sheet{background:#1f3329;border-color:#91c3a2}
 @media(max-width:800px){.search-panel .results{max-height:none;overflow:visible}.inline-sheet{padding:14px}.inline-sheet .color-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:450px){.inline-sheet .feature-grid{grid-template-columns:1fr}.inline-sheet .color-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.inline-sheet .color-choice{font-size:13px;padding:8px}.inline-sheet .color-choice .color-swatch{width:17px;height:17px;flex-basis:17px}}
+
+.record-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.record-tools .btn{font-size:13px;min-height:35px}
+.record-feature-summary{font-size:14px;line-height:1.5;margin:8px 0;color:var(--muted)}
+.record-colors{min-width:0}
+.record-colors details{border:1px solid var(--line);padding:9px 12px;border-radius:10px}
+.record-colors summary{cursor:pointer;overflow-wrap:anywhere}
+.record-color-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.record-color-toggle{font-size:12px;padding:6px 9px;background:var(--white);color:var(--ink);border:1px solid var(--line);border-radius:999px}
+.record-color-toggle[aria-pressed=true]{background:#e2f0e6;border-color:var(--green);color:#20563b}
+html.dark .record-color-toggle{background:#1b2a24;color:var(--ink)}
+html.dark .record-color-toggle[aria-pressed=true]{background:#3a7056;color:#fff}
+.record .fields{grid-template-columns:repeat(3,minmax(0,1fr))}
+.record .fields label:last-child{grid-column:1/-1}
+@media(max-width:700px){.record .fields{grid-template-columns:1fr}.record-tools{width:100%;justify-content:flex-start}}
 </style>
 </head>
 <body>
@@ -1851,21 +1866,11 @@ var byId=function(id){return entries.find(function(x){return x.id===id})};
 var categories=["Все"].concat(Array.from(new Set(entries.map(function(x){return x.category}))));
 function init(){
  var themeButton=$("#themeToggle");
- function paintTheme(){
-  var dark=document.documentElement.classList.contains("dark");
-  themeButton.setAttribute("aria-pressed",String(dark));
-  $("#themeText").textContent=dark?"Светлая тема":"Темная тема";
-  $("#themeIcon").textContent=dark?"☀":"☾";
- }
- themeButton.addEventListener("click",function(){
-  var dark=document.documentElement.classList.toggle("dark");
-  try{localStorage.setItem("psyteka-theme",dark?"dark":"light")}catch(e){}
-  paintTheme();
- });
+ function paintTheme(){var dark=document.documentElement.classList.contains("dark");themeButton.setAttribute("aria-pressed",String(dark));$("#themeText").textContent=dark?"Светлая тема":"Темная тема";$("#themeIcon").textContent=dark?"☀":"☾"}
+ themeButton.addEventListener("click",function(){var dark=document.documentElement.classList.toggle("dark");try{localStorage.setItem("psyteka-theme",dark?"dark":"light")}catch(e){}paintTheme()});
  paintTheme();
- var url=new URLSearchParams(location.search);
- var q=url.get("method")||document.body.getAttribute("data-offline-method");
- if(METHODS.some(function(m){return m[0]===q}))state.method=q;
+ var params=new URLSearchParams(location.search),method=params.get("method")||document.body.getAttribute("data-offline-method");
+ if(METHODS.some(function(m){return m[0]===method}))state.method=method;
  $("#method").innerHTML=METHODS.map(function(m){return '<option value="'+esc(m[0])+'">'+esc(m[1])+'</option>'}).join("");
  $("#method").value=state.method;
  $("#method").addEventListener("change",function(){
@@ -1874,12 +1879,12 @@ function init(){
    if(!confirm("При смене методики текущий протокол очищается. Продолжить?")){this.value=state.method;return}
    state.items=[];$("#subjectCode").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords();
   }
-  state.method=next;state.category="Все";state.sheetOpen=false;state.draft=draftEmpty();
+  state.method=next;state.category="Все";state.sheetOpen=false;state.draft=draftEmpty();state.editKey=null;
   $("#search").value="";
   $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
   $("#methodBadge").textContent=methodName(state.method);
   try{history.replaceState(null,"","?method="+encodeURIComponent(state.method))}catch(e){}
-  renderCategories();renderResults();renderSheet();renderDetails();
+  renderCategories();renderResults();renderDetails();
  });
  $("#search").addEventListener("input",renderResults);
  $("#categories").addEventListener("click",function(e){
@@ -1887,202 +1892,223 @@ function init(){
   state.category=b.dataset.category;renderCategories();renderResults();
  });
  $("#results").addEventListener("click",function(e){
-  var b=e.target.closest("[data-element]");if(!b)return;
-  var entry=byId(b.dataset.element);if(!entry)return;
-  if(state.selected!==entry.id||!state.sheetOpen){
-   state.selected=entry.id;state.draft=draftEmpty();state.tab="position";
-  }
-  state.sheetOpen=true;
-  $("#actionStatus").textContent="";
-  renderResults();renderSheet();renderDetails();
-  $("#sheet").scrollIntoView({behavior:"smooth",block:"nearest"});
- });
- $("#sheet").addEventListener("click",function(e){
-  if(e.target.closest("#closeSheet")){
-   state.sheetOpen=false;renderSheet();renderDetails();return;
-  }
+  if(e.target.closest("#closeSheet")){state.sheetOpen=false;state.editKey=null;renderResults();renderDetails();return}
   var tab=e.target.closest("[data-sheet-tab]");
-  if(tab){
-   state.tab=tab.dataset.sheetTab;renderSheet();return;
-  }
+  if(tab){state.tab=tab.dataset.sheetTab;renderSheet();return}
   var choice=e.target.closest("[data-choice]");
   if(choice){
-   var field=choice.dataset.choice,value=choice.dataset.value;
-   if(!["position","size","color"].includes(field))return;
-   if(field==="position"&&!Object.prototype.hasOwnProperty.call(POS,value))return;
-   if(field==="size"&&!Object.prototype.hasOwnProperty.call(SZ,value))return;
-   if(field==="color"&&!COLORS.some(function(c){return c[0]===value}))return;
-   state.draft[field]=value;
-   state.draft.excluded=state.draft.excluded.filter(function(x){return x!==field});
-   renderSheet();renderDetails();
+   var field=choice.dataset.choice,val=choice.dataset.value,entry=byId(state.selected);
+   if(field==="position"&&Object.prototype.hasOwnProperty.call(POS,val))state.draft.position=val;
+   if(field==="size"&&Object.prototype.hasOwnProperty.call(SZ,val))state.draft.size=val;
+   if(field==="color"&&COLORS.some(function(c){return c[0]===val})){
+    if(!val)state.draft.colors=[];
+    else if(state.draft.colors.includes(val))state.draft.colors=state.draft.colors.filter(function(c){return c!==val});
+    else state.draft.colors.push(val);
+    state.draft.color=state.draft.colors[0]||"";
+   }
+   if(field==="feature"&&featureById(entry,val)){
+    if(state.draft.features.includes(val))state.draft.features=state.draft.features.filter(function(f){return f!==val});
+    else state.draft.features.push(val);
+   }
+   state.draft.excluded=state.draft.excluded.filter(function(k){return k!==field&&k!==field+":"+val});
+   renderSheet();renderDetails();return;
   }
+  var b=e.target.closest("[data-element]");if(!b)return;
+  var entry=byId(b.dataset.element);if(!entry)return;
+  if(state.sheetOpen&&state.selected===entry.id){
+   state.sheetOpen=false;state.editKey=null;
+  }else{
+   state.selected=entry.id;state.draft=draftEmpty();state.tab="position";state.sheetOpen=true;state.editKey=null;
+  }
+  $("#actionStatus").textContent="";
+  renderResults();renderDetails();
  });
- $("#sheet").addEventListener("input",function(e){
-  if(e.target.id!=="draftNote")return;
-  state.draft.note=e.target.value.slice(0,4000);
-  state.draft.excluded=state.draft.excluded.filter(function(x){return x!=="note"});
-  renderDetails();
+ $("#results").addEventListener("input",function(e){
+  if(e.target.id==="draftNote"){state.draft.note=e.target.value.slice(0,4000);state.draft.excluded=state.draft.excluded.filter(function(x){return x!=="note"});renderDetails();return}
+  if(e.target.matches("[data-draft-count]")){
+   var key=e.target.dataset.draftCount,valid=countFields(byId(state.selected)).some(function(x){return x[0]===key});
+   if(!valid)return;
+   var v=e.target.value;
+   if(v==="")delete state.draft.counts[key];
+   else if(Number.isInteger(Number(v))&&Number(v)>=0&&Number(v)<=99)state.draft.counts[key]=Number(v);
+   state.draft.excluded=state.draft.excluded.filter(function(x){return x!=="count:"+key});
+   renderDetails();
+  }
  });
  $("#details").addEventListener("click",function(e){
   if(e.target.closest("#addEntry")){addEntry();return}
-  var remove=e.target.closest("[data-exclude]");
-  if(remove){
-   var key=remove.dataset.exclude;
-   if(!["element","position","color","size","note"].includes(key))return;
-   if(!state.draft.excluded.includes(key))state.draft.excluded.push(key);
-   renderDetails();return;
-  }
-  var restore=e.target.closest("[data-restore]");
-  if(restore){
-   state.draft.excluded=state.draft.excluded.filter(function(x){return x!==restore.dataset.restore});
-   renderDetails();return;
-  }
+  var b=e.target.closest("[data-exclude]");
+  if(b){var key=b.dataset.exclude;if(!state.draft.excluded.includes(key))state.draft.excluded.push(key);renderDetails();return}
+  b=e.target.closest("[data-restore]");
+  if(b){state.draft.excluded=state.draft.excluded.filter(function(k){return k!==b.dataset.restore});renderDetails()}
  });
  $("#recordList").addEventListener("click",function(e){
-  var b=e.target.closest("[data-remove]");
-  if(b){state.items=state.items.filter(function(x){return x.key!==b.dataset.remove});renderRecords()}
+  var remove=e.target.closest("[data-remove]");
+  if(remove){state.items=state.items.filter(function(x){return x.key!==remove.dataset.remove});renderRecords();return}
+  var color=e.target.closest("[data-record-color]");
+  if(color){
+   var row=color.closest("[data-row]"),item=state.items.find(function(x){return x.key===row.dataset.row});
+   if(!item)return;
+   var v=color.dataset.recordColor;if(!COLORS.some(function(c){return c[0]===v&&v}))return;
+   item.colors=normalizeColors(item.colors,item.color);
+   item.colors=item.colors.includes(v)?item.colors.filter(function(k){return k!==v}):item.colors.concat(v);
+   item.color=item.colors[0]||"";
+   renderRecords();return;
+  }
+  var edit=e.target.closest("[data-edit]");
+  if(edit){
+   var existing=state.items.find(function(x){return x.key===edit.dataset.edit});if(!existing)return;
+   state.selected=existing.elementId;state.sheetOpen=true;state.editKey=existing.key;state.tab="build";
+   state.draft={position:existing.position||"unknown",size:existing.size||"",color:existing.color||"",colors:normalizeColors(existing.colors,existing.color),features:Array.isArray(existing.features)?existing.features.slice():[],counts:Object.assign({},existing.counts||{}),note:existing.note||"",excluded:Array.isArray(existing.excluded)?existing.excluded.slice():[]};
+   state.category="Все";$("#search").value=existing.name;
+   renderCategories();renderResults();renderDetails();
+   $("#results").scrollIntoView({behavior:"smooth",block:"start"});return;
+  }
  });
  $("#recordList").addEventListener("input",recordChange);
  $("#recordList").addEventListener("change",recordChange);
- $("#exportJSON").addEventListener("click",function(){
-  if(!state.items.length&&!$("#contextNotes").value&&!$("#conclusion").value&&!$("#subjectCode").value){alert("В протоколе пока нет записей.");return}
-  download("psyteka_drawing_protocol.json",JSON.stringify(getDocument(),null,2),"application/json")
- });
+ $("#exportJSON").addEventListener("click",function(){if(!state.items.length&&!$("#contextNotes").value&&!$("#conclusion").value&&!$("#subjectCode").value){alert("В протоколе пока нет записей.");return}download("psyteka_drawing_protocol.json",JSON.stringify(getDocument(),null,2),"application/json")});
  $("#exportReport").addEventListener("click",function(){download("psyteka_drawing_report.html",reportHTML(),"text/html")});
  $("#printReport").addEventListener("click",function(){$("#printSheet").innerHTML=reportBody();window.print()});
  $("#loadBtn").addEventListener("click",function(){$("#importJSON").click()});
  $("#importJSON").addEventListener("change",importFile);
- $("#clear").addEventListener("click",function(){
-  if(!confirm("Очистить протокол?"))return;
-  state.items=[];$("#subjectCode").value="";$("#contextNotes").value="";$("#conclusion").value="";
-  renderRecords();$("#actionStatus").textContent="";
- });
+ $("#clear").addEventListener("click",function(){if(!confirm("Очистить протокол?"))return;state.items=[];$("#subjectCode").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords();$("#actionStatus").textContent=""});
  $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
  $("#methodBadge").textContent=methodName(state.method);
- renderCategories();renderResults();renderSheet();renderDetails();renderRecords();
- if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){
-  navigator.serviceWorker.register("./drawing-library-sw.js").catch(function(){});
- }
+ renderCategories();renderResults();renderDetails();renderRecords();
+ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register("./drawing-library-sw.js").catch(function(){});
+}
+function normalizeColors(colors,legacy){
+ var arr=Array.isArray(colors)?colors.slice():(legacy?[legacy]:[]);
+ return Array.from(new Set(arr.filter(function(k){return Boolean(k)&&COLORS.some(function(c){return c[0]===k})}))).slice(0,13);
 }
 function renderCategories(){
- $("#categories").innerHTML=categories.map(function(c){
-  return '<button type="button" class="pill" data-category="'+esc(c)+'" aria-pressed="'+(state.category===c)+'">'+esc(c)+'</button>';
- }).join("");
+ $("#categories").innerHTML=categories.map(function(c){return '<button type="button" class="pill" data-category="'+esc(c)+'" aria-pressed="'+(state.category===c)+'">'+esc(c)+'</button>'}).join("");
 }
 function matched(){
  var q=normalize($("#search").value);
  return entries.filter(function(x){
-  var inCategory=state.category==="Все"||x.category===state.category;
-  var hay=normalize([x.name,x.aliases,x.category,x.meaning].join(" "));
-  var matchedMethod=state.method==="free"||x.methods.includes(state.method)||q!=="";
-  return inCategory&&matchedMethod&&(!q||hay.includes(q));
+  var cat=state.category==="Все"||x.category===state.category;
+  var hay=normalize([x.name,x.aliases,x.category].join(" "));
+  var validMethod=state.method==="free"||x.methods.includes(state.method)||Boolean(q);
+  return cat&&validMethod&&(!q||hay.includes(q));
  }).sort(function(a,b){
-  if(!q)return 0;
-  var rank=function(x){
-   var n=normalize(x.name),alias=normalize(x.aliases);
-   return n===q?0:n.startsWith(q)?1:alias.split(" ").some(function(w){return w===q})?2:alias.includes(q)?3:4;
-  };
+  if(!q)return a.name.localeCompare(b.name,"ru");
+  var rank=function(x){var n=normalize(x.name),alias=normalize(x.aliases);return n===q?0:n.startsWith(q)?1:alias.split(" ").some(function(w){return w===q})?2:alias.includes(q)?3:4};
   return rank(a)-rank(b)||a.name.localeCompare(b.name,"ru");
  });
 }
 function renderResults(){
  var found=matched();
  if(state.sheetOpen&&!found.some(function(x){return x.id===state.selected})){
-  state.sheetOpen=false;state.draft=draftEmpty();renderSheet();renderDetails();
+  state.sheetOpen=false;state.editKey=null;state.draft=draftEmpty();renderDetails();
  }
  $("#count").textContent="Найдено: "+found.length+" из "+entries.length;
  $("#results").innerHTML=found.length?found.map(function(x){
-  return '<button type="button" class="symbol-row" data-element="'+x.id+'" aria-pressed="'+(state.sheetOpen&&state.selected===x.id)+'"><span><strong>'+esc(x.name)+'</strong><small>'+esc(x.category)+'</small></span><span class="arrow" aria-hidden="true">›</span></button>';
- }).join(""):'<div class="empty">Ничего не найдено. Попробуйте другой запрос.</div>';
+  var open=state.sheetOpen&&state.selected===x.id;
+  return '<button type="button" class="symbol-row" data-element="'+x.id+'" aria-expanded="'+open+'" aria-controls="'+(open?'sheet':'')+'"><span><strong>'+esc(x.name)+'</strong><small>'+esc(x.category)+'</small></span><span class="arrow" aria-hidden="true">›</span></button>'+
+  (open?'<div id="sheet" class="inline-sheet" aria-label="Характеристики элемента '+esc(x.name)+'"></div>':'');
+ }).join(""):'<div class="empty">Ничего не найдено. Попробуйте другое название или категорию.</div>';
+ renderSheet();
 }
 function renderSheet(){
  var root=$("#sheet");
- root.hidden=!state.sheetOpen;
- if(!state.sheetOpen){root.innerHTML="";return}
+ if(!state.sheetOpen||!root)return;
  var entry=byId(state.selected);if(!entry)return;
- var tabs=[["position","Расположение"],["color","Цвет"],["size","Размер"],["note","Детали"]];
- var start='<div class="sheet-heading"><div><div class="sheet-kicker">Лист элемента · '+esc(entry.category)+'</div><h2>'+esc(entry.name)+'</h2></div><button class="btn sheet-close" type="button" id="closeSheet">Свернуть лист ↑</button></div>'+
- '<div class="sheet-tabs" role="tablist" aria-label="Признаки элемента">'+tabs.map(function(t){
-  return '<button class="sheet-tab" type="button" role="tab" id="tab-'+t[0]+'" data-sheet-tab="'+t[0]+'" aria-controls="sheetContent" aria-selected="'+(state.tab===t[0])+'">'+t[1]+'</button>';
- }).join("")+'</div>';
+ var tabs=[["position","Расположение"],["color","Цвета"],["size","Размер"],["build","Строение"],["condition","Состояние"],["environment","Окружение"],["graphics","Линии"],["count","Количество"],["note","Детали"]];
+ var head='<div class="sheet-heading"><div><div class="sheet-kicker">'+esc(entry.category)+' · '+(state.editKey?"Редактирование записи":"Описание рисунка")+'</div><h2>'+esc(entry.name)+'</h2></div><button class="btn sheet-close" type="button" id="closeSheet">Свернуть ↑</button></div>'+
+ '<div class="sheet-tabs" role="tablist" aria-label="Свойства элемента">'+tabs.map(function(t){return '<button type="button" class="sheet-tab" role="tab" id="tab-'+t[0]+'" data-sheet-tab="'+t[0]+'" aria-selected="'+(state.tab===t[0])+'" aria-controls="sheetContent">'+t[1]+'</button>'}).join("")+'</div>';
  var content="";
  if(state.tab==="position"){
   var icons={unknown:"·",left:"←",right:"→",center:"⊙",top:"↑",bottom:"↓",whole:"▣"};
-  content='<div class="sheet-label">Где расположен элемент?</div><div class="choices">'+Object.keys(POS).map(function(k){
-   return '<button type="button" class="choice" data-choice="position" data-value="'+k+'" aria-pressed="'+(state.draft.position===k)+'">'+esc(icons[k])+' '+esc(POS[k][0])+'</button>';
-  }).join("")+'</div>';
+  content='<div class="sheet-label">Положение на листе</div><div class="choices">'+Object.keys(POS).map(function(k){return '<button class="choice" type="button" data-choice="position" data-value="'+k+'" aria-pressed="'+(state.draft.position===k)+'">'+esc(icons[k])+' '+esc(POS[k][0])+'</button>'}).join("")+'</div>';
  }else if(state.tab==="color"){
-  content='<div class="sheet-label">Какой цвет использован?</div><div class="choices">'+COLORS.map(function(c){
-   return '<button type="button" class="choice color-choice" data-choice="color" data-value="'+esc(c[0])+'" aria-pressed="'+(state.draft.color===c[0])+'">'+(c[0]?'<span class="color-swatch" style="background:'+c[2]+'"></span>':'<span class="color-swatch"></span>')+esc(c[1])+'</button>';
-  }).join("")+'</div>';
+  content='<div class="sheet-label">Выбери один или несколько цветов</div><div class="color-grid">'+COLORS.map(function(c){
+   var checked=c[0]?state.draft.colors.includes(c[0]):!state.draft.colors.length;
+   return '<button class="choice color-choice" type="button" data-choice="color" data-value="'+esc(c[0])+'" aria-pressed="'+checked+'">'+
+   '<span class="color-swatch"'+(c[2]?' style="background:'+c[2]+'"':'')+'></span><span class="color-label">'+esc(c[1])+'</span></button>';
+  }).join("")+'</div><p class="sheet-help">Можно выбрать несколько оттенков: например, желтый и фиолетовый.</p>';
  }else if(state.tab==="size"){
-  content='<div class="sheet-label">Какой размер у элемента?</div><div class="choices">'+Object.keys(SZ).map(function(k){
-   return '<button type="button" class="choice" data-choice="size" data-value="'+esc(k)+'" aria-pressed="'+(state.draft.size===k)+'">'+esc(SZ[k])+'</button>';
-  }).join("")+'</div>';
+  content='<div class="sheet-label">Размер элемента</div><div class="choices">'+Object.keys(SZ).map(function(k){return '<button type="button" class="choice" data-choice="size" data-value="'+esc(k)+'" aria-pressed="'+(state.draft.size===k)+'">'+esc(SZ[k])+'</button>'}).join("")+'</div>';
+ }else if(["build","condition","environment","graphics"].includes(state.tab)){
+  var features=featuresFor(entry,state.tab);
+  content='<div class="sheet-label">'+({build:"Строение и части",condition:"Состояние и действие",environment:"Окружение и связи",graphics:"Линии и оформление"})[state.tab]+'</div>'+
+  '<div class="feature-grid">'+features.map(function(t){
+   return '<button type="button" class="choice feature-option" data-choice="feature" data-value="'+esc(t[0])+'" aria-pressed="'+state.draft.features.includes(t[0])+'">'+esc(t[1])+'<small>'+esc(t[2])+'</small></button>';
+  }).join("")+'</div><p class="sheet-help">Выбирай только реально видимые особенности. Можно отметить несколько.</p>';
+ }else if(state.tab==="count"){
+  content='<div class="sheet-label">Количество элементов и частей</div><div class="quantity-grid">'+countFields(entry).map(function(t){
+   var val=Object.prototype.hasOwnProperty.call(state.draft.counts,t[0])?String(state.draft.counts[t[0]]):"";
+   return '<label>'+esc(t[1])+'<input type="number" min="0" max="99" step="1" inputmode="numeric" data-draft-count="'+t[0]+'" value="'+esc(val)+'" placeholder="Не указано"></label>';
+  }).join("")+'</div><p class="sheet-help">Пустое поле – не учитывается. Ноль – элемент отсутствует.</p>';
  }else{
-  content='<label class="sheet-note" for="draftNote">Другие заметные детали<textarea id="draftNote" maxlength="4000" placeholder="Например: волнистые линии, сильная штриховка, несколько оттенков">'+esc(state.draft.note)+'</textarea></label>';
+  content='<label class="sheet-note" for="draftNote">Дополнительное описание<textarea id="draftNote" maxlength="4000" placeholder="Например: короткий хвост, заметные полосы, необычная форма">'+esc(state.draft.note)+'</textarea></label>';
  }
- root.innerHTML=start+'<div id="sheetContent" role="tabpanel" aria-labelledby="tab-'+esc(state.tab)+'">'+content+'</div>'+
- '<div class="sheet-quick"><span class="subtle">Интерпретация обновляется справа</span></div>';
+ root.innerHTML=head+'<div id="sheetContent" role="tabpanel" aria-labelledby="tab-'+state.tab+'">'+content+'</div>';
 }
 function interpretationParts(entry,draft){
  var parts=[{key:"element",title:"Образ: "+entry.name,text:meaningFor(entry)}];
- if(draft.position!=="unknown")parts.push({key:"position",title:"Расположение: "+POS[draft.position][0],text:POS[draft.position][1]});
- if(draft.color){
-  var color=colorByKey(draft.color);
-  parts.push({key:"color",title:"Цвет: "+color[1],text:color[3]});
- }
- if(draft.size)parts.push({key:"size",title:"Размер: "+SZ[draft.size],text:SIZE_NOTE[draft.size]});
- if(draft.note.trim())parts.push({key:"note",title:"Особенности элемента",text:draft.note.trim()});
+ if(draft.position&&draft.position!=="unknown"&&POS[draft.position])parts.push({key:"position",title:"Расположение: "+POS[draft.position][0],text:POS[draft.position][1]});
+ normalizeColors(draft.colors,draft.color).forEach(function(k){
+  var color=colorByKey(k);parts.push({key:"color:"+k,title:"Цвет: "+color[1],text:color[3]});
+ });
+ if(draft.size&&SZ[draft.size])parts.push({key:"size",title:"Размер: "+SZ[draft.size],text:SIZE_NOTE[draft.size]});
+ (Array.isArray(draft.features)?draft.features:[]).forEach(function(k){
+  var f=featureById(entry,k);if(f)parts.push({key:"feature:"+k,title:f[1],text:f[2]});
+ });
+ var counts=draft.counts||{};
+ countFields(entry).forEach(function(c){
+  if(Object.prototype.hasOwnProperty.call(counts,c[0])&&Number.isInteger(Number(counts[c[0]]))&&Number(counts[c[0]])>=0){
+   parts.push({key:"count:"+c[0],title:"Количество: "+c[1],text:String(counts[c[0]])});
+  }
+ });
+ if(draft.note&&draft.note.trim())parts.push({key:"note",title:"Особенности рисунка",text:draft.note.trim()});
  return parts;
 }
 function renderDetails(){
- if(!state.sheetOpen){
-  $("#details").innerHTML='<div class="empty">Нажмите на элемент в результатах поиска. Его лист откроется слева, а здесь появятся варианты интерпретации.</div>';
-  return;
- }
+ if(!state.sheetOpen){$("#details").innerHTML='<div class="empty">Нажмите на строку с элементом – она раскроется сразу под названием. Выбранные признаки и их описание появятся здесь.</div>';return}
  var x=byId(state.selected);if(!x)return;
  var all=interpretationParts(x,state.draft),removed=state.draft.excluded;
- var visible=all.filter(function(p){return !removed.includes(p.key)});
- var excluded=all.filter(function(p){return removed.includes(p.key)});
+ var show=all.filter(function(p){return !removed.includes(p.key)});
+ var hidden=all.filter(function(p){return removed.includes(p.key)});
  var count=state.items.filter(function(y){return y.elementId===x.id}).length;
  $("#details").innerHTML='<div class="result-summary"><div class="result-heading"><h3>'+esc(x.name)+'</h3><span class="badge">'+esc(x.category)+'</span></div><p class="subtle">Методика: '+esc(methodName(state.method))+'</p></div>'+
- '<div class="result-segments">'+(visible.length?visible.map(function(p){
-  return '<div class="result-entry"><div class="result-copy"><h4>'+esc(p.title)+'</h4><p>'+esc(p.text)+'</p></div><button type="button" class="remove-interpretation" data-exclude="'+p.key+'" aria-label="Убрать: '+esc(p.title)+'" title="Убрать из результата">×</button></div>';
- }).join(""):'<div class="empty">Все фрагменты убраны из результата. Верните нужные ниже.</div>')+'</div>'+
- (excluded.length?'<div class="recover-list"><span class="subtle">Вернуть:</span>'+excluded.map(function(p){return '<button type="button" class="recover-part" data-restore="'+p.key+'">'+esc(p.title)+' +</button>'}).join("")+'</div>':'')+
- '<button type="button" id="addEntry" class="btn primary result-add">Добавить в протокол'+(count?' · уже '+count:'')+'</button>';
+ '<div class="result-segments">'+(show.length?show.map(function(p){return '<div class="result-entry"><div class="result-copy"><h4>'+esc(p.title)+'</h4><p>'+esc(p.text)+'</p></div><button class="remove-interpretation" type="button" data-exclude="'+esc(p.key)+'" aria-label="Убрать: '+esc(p.title)+'" title="Убрать из результата">×</button></div>'}).join(""):'<div class="empty">Пока нет выбранных фрагментов. Верните нужные ниже.</div>')+'</div>'+
+ (hidden.length?'<div class="recover-list"><span class="subtle">Вернуть:</span>'+hidden.map(function(p){return '<button type="button" class="recover-part" data-restore="'+esc(p.key)+'">'+esc(p.title)+' +</button>'}).join("")+'</div>':'')+
+ '<button type="button" id="addEntry" class="btn primary result-add">'+(state.editKey?'Сохранить изменения':'Добавить в протокол'+(count?' · уже '+count:''))+'</button>';
 }
 function addEntry(){
  var x=byId(state.selected);if(!x||!state.sheetOpen)return;
- state.items.push({
-  key:"r"+Date.now().toString(36)+Math.random().toString(36).slice(2,8),
-  elementId:x.id,name:x.name,position:state.draft.position,size:state.draft.size,color:state.draft.color,
-  note:state.draft.note.slice(0,4000),excluded:state.draft.excluded.slice()
- });
- renderRecords();renderDetails();
- $("#actionStatus").textContent="«"+x.name+"» добавлен в протокол.";
+ var row={key:state.editKey||"r"+Date.now().toString(36)+Math.random().toString(36).slice(2,8),elementId:x.id,name:x.name,
+  position:state.draft.position,size:state.draft.size,color:state.draft.colors[0]||"",colors:state.draft.colors.slice(),
+  features:state.draft.features.slice(),counts:Object.assign({},state.draft.counts),
+  note:state.draft.note.slice(0,4000),excluded:state.draft.excluded.slice()};
+ if(state.editKey){var n=state.items.findIndex(function(t){return t.key===state.editKey});if(n>=0)state.items[n]=row;else state.items.push(row);state.editKey=null}
+ else state.items.push(row);
+ renderRecords();renderDetails();$("#actionStatus").textContent="«"+x.name+"» сохранен в протоколе.";
 }
 function recordChange(e){
- var record=e.target.closest("[data-row]");if(!record)return;
- var item=state.items.find(function(x){return x.key===record.dataset.row});if(!item)return;
- if(!e.target.matches("[data-field]"))return;
- var key=e.target.dataset.field,value=e.target.value;
- if(key==="position"&&!Object.prototype.hasOwnProperty.call(POS,value))return;
- if(key==="size"&&!Object.prototype.hasOwnProperty.call(SZ,value))return;
- if(key==="color"&&!COLORS.some(function(c){return c[0]===value}))return;
- if(key==="note")value=value.slice(0,4000);
- item[key]=value;
+ var row=e.target.closest("[data-row]");if(!row)return;
+ var item=state.items.find(function(x){return x.key===row.dataset.row});if(!item||!e.target.matches("[data-field]"))return;
+ var key=e.target.dataset.field,val=e.target.value;
+ if(key==="position"&&!Object.prototype.hasOwnProperty.call(POS,val))return;
+ if(key==="size"&&!Object.prototype.hasOwnProperty.call(SZ,val))return;
+ if(key==="note")val=val.slice(0,4000);
+ item[key]=val;
 }
 function renderRecords(){
  $("#recordCount").textContent=state.items.length+" "+(state.items.length===1?"запись":state.items.length>=2&&state.items.length<=4?"записи":"записей");
  $("#recordList").innerHTML=state.items.length?state.items.map(function(x,i){
-  return '<div class="record" data-row="'+esc(x.key)+'"><div class="record-head"><div><span class="record-num">Элемент '+(i+1)+'</span><strong style="display:block">'+esc(x.name)+'</strong></div><button type="button" class="remove" data-remove="'+esc(x.key)+'" aria-label="Удалить '+esc(x.name)+'">Удалить</button></div>'+
+  var colors=normalizeColors(x.colors,x.color),featureNames=(x.features||[]).map(function(k){var f=featureById(byId(x.elementId),k);return f?f[1]:null}).filter(Boolean);
+  var hasCount=Object.keys(x.counts||{}).length;
+  return '<div class="record" data-row="'+esc(x.key)+'"><div class="record-head"><div><span class="record-num">Элемент '+(i+1)+'</span><strong style="display:block">'+esc(x.name)+'</strong></div><div class="record-tools"><button type="button" class="btn" data-edit="'+esc(x.key)+'">Изменить признаки</button><button type="button" class="remove" data-remove="'+esc(x.key)+'" aria-label="Удалить '+esc(x.name)+'">Удалить</button></div></div>'+
+  (featureNames.length?'<p class="record-feature-summary">'+featureNames.map(esc).join(" · ")+'</p>':'')+
+  (hasCount?'<p class="record-feature-summary">Количественные признаки: '+Object.keys(x.counts).map(function(k){var c=countFields(byId(x.elementId)).find(function(f){return f[0]===k});return c?esc(c[1])+': '+esc(x.counts[k]):""}).filter(Boolean).join(" · ")+'</p>':'')+
   '<div class="fields"><label>Положение<select data-field="position">'+Object.keys(POS).map(function(k){return '<option value="'+k+'" '+(x.position===k?'selected':'')+'>'+esc(POS[k][0])+'</option>'}).join("")+'</select></label>'+
-  '<label>Цвет<select data-field="color">'+COLORS.map(function(c){return '<option value="'+esc(c[0])+'" '+(x.color===c[0]?'selected':'')+'>'+esc(c[1])+'</option>'}).join("")+'</select></label>'+
   '<label>Размер<select data-field="size">'+Object.keys(SZ).map(function(k){return '<option value="'+k+'" '+(x.size===k?'selected':'')+'>'+esc(SZ[k])+'</option>'}).join("")+'</select></label>'+
+  '<div class="record-colors"><details><summary>Цвета: '+(colors.length?colors.map(function(k){return colorByKey(k)[1]}).join(", "):"не указаны")+'</summary><div class="record-color-grid">'+COLORS.filter(function(c){return c[0]}).map(function(c){return '<button type="button" class="record-color-toggle" data-record-color="'+c[0]+'" aria-pressed="'+colors.includes(c[0])+'">'+esc(c[1])+'</button>'}).join("")+'</div></details></div>'+
   '<label>Описание<textarea data-field="note" maxlength="4000">'+esc(x.note||"")+'</textarea></label></div></div>';
- }).join(""):'<div class="empty">Пока нет записей. Откройте лист элемента и добавьте выбранные признаки.</div>';
+ }).join(""):'<div class="empty">Пока нет записей. Выберите элемент в поиске, раскройте признаки и добавьте его.</div>';
 }
 function getDocument(){
  return {
