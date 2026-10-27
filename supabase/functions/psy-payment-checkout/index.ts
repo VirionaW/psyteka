@@ -23,6 +23,7 @@ const approved = () =>
   env("PSY_FISCALIZATION_READY") === "true" &&
   env("PSY_PRIVATE_CONTENT_READY") === "true" &&
   env("PSY_YOOKASSA_LIVE_CONFIRMED") === "true" &&
+  env("PSY_REFUND_PROCESS_READY") === "true" &&
   Boolean(env("YOOKASSA_SHOP_ID") && env("YOOKASSA_SECRET_KEY"));
 const livePlans: Record<string, number> = { specialist: 39000 };
 // Organization checkout deliberately blocked until team seats actually work.
@@ -85,7 +86,7 @@ Deno.serve(async (request: Request) => {
   if (!url || !key) return json(503, { error: "Настройка заказов не завершена." });
   const admin = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 
-  if (action === "webhook") {
+  if (action === "webhook" || (body.type === "notification" && typeof body.object?.id === "string")) {
     // No trust in unverified notification body. Always fetch payment from
     // ЮKassa by its ID and verify merchant response, currency and amount.
     if (!approved()) return json(503, { error: "Payments not configured" });
