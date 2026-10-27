@@ -63,3 +63,45 @@ body[data-account] .site-theme-icon svg{display:block;width:19px;height:19px;str
 .psy-folder-cancel{background:#f5f8f6;border:1px solid #ccded2;color:#2a5540}
 .psy-folder-submit{background:#2d7455;color:#fff;border:1px solid #2d7455}
 .psy-folder-error{color:#ac3f38;margin:0;font-size:13px}
+
+/* Палитра создания папки из библиотеки: 14 ровных кружков с клавиатурным фокусом. */
+.psy-folder-dialog .psy-folder-swatches{
+ display:grid!important;
+ grid-template-columns:repeat(7,35px)!important;
+ justify-content:start!important;
+ align-items:center!important;
+ gap:13px!important;
+ padding:7px 4px!important;
+}
+.psy-folder-dialog .psy-folder-swatch{
+ box-sizing:border-box!important;
+ width:35px!important;height:35px!important;
+ min-width:35px!important;min-height:35px!important;
+ border:3px solid #fff!important;
+ border-radius:50%!important;
+ padding:0!important;margin:0!important;
+ box-shadow:0 0 0 1px #bfcfc4!important;
+ outline:none!important;
+ transition:box-shadow .16s ease;
+}
+.psy-folder-dialog .psy-folder-swatch[aria-pressed="true"]{
+ box-shadow:0 0 0 2px #245c43,0 0 0 5px #e5f2e8!important;
+}
+.psy-folder-dialog .psy-folder-swatch:focus-visible{
+ outline:3px solid #d6a26c!important;outline-offset:5px!important;
+}
+html.dark .psy-folder-dialog .psy-folder-swatch{
+ border-color:#243b2d!important;box-shadow:0 0 0 1px #718779!important;
+}
+html.dark .psy-folder-dialog .psy-folder-swatch[aria-pressed="true"]{
+ box-shadow:0 0 0 2px #c6dfcc,0 0 0 5px #294535!important;
+}
+@media(max-width:520px){
+ .psy-folder-dialog .psy-folder-swatches{grid-template-columns:repeat(6,35px)!important;gap:10px!important}
+}
+@media(max-width:345px){
+ .psy-folder-dialog .psy-folder-swatches{grid-template-columns:repeat(5,35px)!important;gap:10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .psy-folder-dialog .psy-folder-swatch{transition:none!important}
+}
