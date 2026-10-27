@@ -1,0 +1,268 @@
+/* Психотека – окончательная отделка главной по согласованным замечаниям.
+   Герой: зеленый фон с глубиной и иллюстративным UI, без повторяющихся фотографий.
+   Разделы: большие утвержденные баннеры без маленьких несоответствующих пиктограмм.
+   Подписка: краткое сравнение с переходом к подробностям.
+*/
+.site-landing #siteHome .site-hero{
+ position:relative;
+ background:
+  radial-gradient(ellipse at 83% 36%,#69997c72 0%,transparent 45%),
+  radial-gradient(ellipse at 6% 80%,#0d392a9e 0%,transparent 56%),
+  radial-gradient(ellipse at 47% -13%,#4c8b69a1 0%,transparent 43%),
+  linear-gradient(116deg,#173e31 0%,#23533e 48%,#326b50 100%)!important;
+ color:#fff!important;
+ border-bottom:1px solid #4d8566!important;
+ isolation:isolate;
+}
+.site-landing #siteHome .site-hero:before{
+ display:block!important;
+ content:""!important;
+ position:absolute;
+ pointer-events:none;
+ right:-160px;top:-230px;
+ width:min(66vw,900px);height:min(66vw,900px);
+ border-radius:50%;
+ border:1px solid #e4e6cd29;
+ box-shadow:0 0 0 96px #d9dbb006,0 0 0 192px #b9d4c007,0 0 0 288px #a5c7b007;
+ transform:rotate(-14deg);
+ opacity:.95;
+}
+.site-landing #siteHome .site-hero:after{
+ display:block!important;
+ content:""!important;
+ position:absolute;
+ pointer-events:none;
+ inset:0;
+ background-image:radial-gradient(#f1ecdf22 .65px,transparent .7px);
+ background-size:21px 21px;
+ mask-image:linear-gradient(90deg,transparent 0%,#000 62%,#000 100%);
+ opacity:.25;
+}
+.site-landing #siteHome .site-hero .hero-copy{z-index:2!important}
+.site-landing #siteHome .site-hero .hero-copy h1{color:#fffef7!important;font-size:clamp(42px,4.7vw,67px)!important;max-width:720px!important}
+.site-landing #siteHome .site-hero .site-eyebrow{color:#d6e8d8!important}
+.site-landing #siteHome .site-hero .hero-copy>p{color:#e2eee5!important;font-size:clamp(17px,1.3vw,19px)!important}
+.site-landing #siteHome .site-hero .site-btn.light{background:#f9f6ec!important;color:#214a37!important;border-color:#f9f6ec!important;box-shadow:0 9px 22px #153c2e25}
+.site-landing #siteHome .site-hero .site-btn.light:hover{background:#fff!important}
+.site-landing #siteHome .site-hero .site-btn.ghost{background:#ffffff10!important;border:1px solid #a8ceb5!important;color:#f9fcf4!important}
+.site-landing #siteHome .site-hero .site-btn.ghost:hover{background:#ffffff20!important}
+.site-landing #siteHome .psy-hero-tags span{background:#ffffff13!important;color:#edf5e9!important;border:1px solid #c7dace43!important;font-size:13px!important}
+.site-landing #siteHome .psy-home-hero-art.psy-home-ui{
+ position:relative!important;z-index:2!important;
+ display:block!important;
+ width:min(100%,570px)!important;
+ height:460px!important;
+ min-height:430px!important;max-height:none!important;
+ aspect-ratio:auto!important;
+ overflow:visible!important;
+ filter:none!important;
+}
+.site-landing #siteHome .psy-demo-window{
+ position:absolute;inset:8px 8px 37px 0;
+ overflow:hidden;
+ border-radius:22px;
+ border:1px solid #d8e9d7;
+ background:#fbfdf9;
+ box-shadow:0 24px 62px #092b2170,0 2px 12px #133b2732;
+ color:#254b37;
+ transform:rotate(1deg);
+}
+.site-landing #siteHome .psy-demo-toolbar{
+ height:46px;
+ padding:0 17px;
+ display:flex;align-items:center;gap:12px;
+ background:#fffefb;border-bottom:1px solid #dfece0;
+}
+.site-landing #siteHome .psy-demo-traffic{display:flex;gap:5px;flex:none}
+.site-landing #siteHome .psy-demo-traffic i{width:7px;height:7px;border-radius:50%;background:#cbddd0;display:block}
+.site-landing #siteHome .psy-demo-traffic i:first-child{background:#d7a594}
+.site-landing #siteHome .psy-demo-traffic i:nth-child(2){background:#e7d2ad}
+.site-landing #siteHome .psy-demo-browser-caption{flex:1;font-size:12px;font-weight:750;color:#627f6a}
+.site-landing #siteHome .psy-demo-app-status{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:850;color:#527a5d}
+.site-landing #siteHome .psy-demo-app-status i{display:block;width:7px;height:7px;background:#86bf8d;border-radius:50%;box-shadow:0 0 0 3px #e7f3e7}
+.site-landing #siteHome .psy-demo-layout{display:grid;grid-template-columns:165px minmax(0,1fr);height:calc(100% - 46px)}
+.site-landing #siteHome .psy-demo-aside{background:#eaf3ea;border-right:1px solid #d6e5d5;padding:19px 12px}
+.site-landing #siteHome .psy-demo-brand{display:flex;align-items:center;gap:8px;color:#275b42;font-size:15px;font-weight:850;letter-spacing:-.035em;margin:0 4px 22px}
+.site-landing #siteHome .psy-demo-brand small{display:block;font-size:9px;font-weight:600;letter-spacing:0;color:#7a8f79;margin-top:1px}
+.site-landing #siteHome .psy-demo-brandmark{display:grid;place-items:center;width:32px;height:32px;border:1px solid #c0d5c5;border-radius:10px;background:#fff;color:#2b7455;font-size:22px}
+.site-landing #siteHome .psy-demo-aside-title{font-size:9px;letter-spacing:.115em;font-weight:900;color:#93a996;margin:17px 6px 9px}
+.site-landing #siteHome .psy-demo-menu{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:650;color:#607f6b;padding:10px 9px;border-radius:9px}
+.site-landing #siteHome .psy-demo-menu.current{background:#fff;color:#2b6d50;box-shadow:0 3px 12px #28634114;font-weight:850}
+.site-landing #siteHome .psy-demo-menu-symbol{display:grid;place-items:center;width:19px;font-size:17px;color:#65967d}
+.site-landing #siteHome .psy-demo-aside-line{border-top:1px solid #d7e5d9;margin:17px 4px}
+.site-landing #siteHome .psy-demo-content{padding:22px 19px;background:#fafdF8}
+.site-landing #siteHome .psy-demo-search{display:flex;align-items:center;gap:8px;padding:11px 12px;border:1px solid #d7e5d9;border-radius:9px;background:#fff;color:#7b9984;font-size:11px;white-space:nowrap;overflow:hidden}
+.site-landing #siteHome .psy-demo-search svg{width:16px;height:16px;flex:none;color:#579775}
+.site-landing #siteHome .psy-demo-search>span:nth-child(2){overflow:hidden;text-overflow:ellipsis}
+.site-landing #siteHome .psy-demo-search-key{margin-left:auto;color:#a6b7aa}
+.site-landing #siteHome .psy-demo-intro{display:flex;justify-content:space-between;align-items:center;gap:7px;margin:23px 0 13px}
+.site-landing #siteHome .psy-demo-intro span:first-child{font-size:18px;font-weight:850;letter-spacing:-.03em;color:#235741}
+.site-landing #siteHome .psy-demo-intro span:last-child{font-size:10px;color:#819385}
+.site-landing #siteHome .psy-demo-pills{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.site-landing #siteHome .psy-demo-pills span{font-size:10px;font-weight:750;color:#447c5c;background:#eaf4ea;border-radius:6px;padding:5px 7px}
+.site-landing #siteHome .psy-demo-method-row{display:flex;align-items:center;gap:9px;padding:12px 10px;margin:8px 0;background:#fff;border:1px solid #dbe8dc;border-radius:12px;box-shadow:0 3px 7px #2c523c0b}
+.site-landing #siteHome .psy-demo-method-glyph{display:grid;place-items:center;flex:none;width:47px;height:47px;border:1px solid #d9e8d9;border-radius:11px;background:#f2f8f2;color:#5b9b80}
+.site-landing #siteHome .psy-demo-method-glyph.family{background:#f8f1e9;color:#aa9475}
+.site-landing #siteHome .psy-demo-method-glyph svg{width:37px;height:37px}
+.site-landing #siteHome .psy-demo-method-copy{display:block;min-width:0;flex:1}
+.site-landing #siteHome .psy-demo-method-copy strong{display:block;font-size:12px;font-weight:850;line-height:1.25;color:#2b5842}
+.site-landing #siteHome .psy-demo-method-copy small{display:block;font-size:10px;margin:3px 0;color:#718979}
+.site-landing #siteHome .psy-demo-method-copy>span{display:block;font-size:9px;color:#4f8669}
+.site-landing #siteHome .psy-demo-method-arrow{font-size:19px;color:#579578}
+.site-landing #siteHome .psy-demo-foot{display:flex;align-items:center;gap:8px;color:#637f6d;font-size:10px;margin-top:16px}
+.site-landing #siteHome .psy-demo-mini-dot{display:block;width:7px;height:7px;border-radius:50%;background:#5ca877}
+.site-landing #siteHome .psy-demo-float{position:absolute;right:-21px;bottom:12px;display:flex;align-items:center;gap:10px;background:#fffefb;box-shadow:0 12px 35px #082f2270;border-radius:15px;border:1px solid #edf2e5;padding:12px 17px;color:#274e3b;z-index:3}
+.site-landing #siteHome .psy-demo-float-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#e4f3e8;color:#317e54;font-size:22px;font-weight:800}
+.site-landing #siteHome .psy-demo-float strong{display:block;font-size:12px;font-weight:800}
+.site-landing #siteHome .psy-demo-float small{display:block;font-size:10px;color:#7a907f;margin-top:4px}
+.site-landing #siteHome .section-card .section-icon{display:none!important}
+.site-landing #siteHome .section-card{min-height:250px!important;padding-top:27px!important}
+.site-landing #siteHome .section-card h3{font-size:23px!important;max-width:73%!important;margin-bottom:14px!important;line-height:1.24!important}
+.site-landing #siteHome .section-card p{font-size:15px!important;line-height:1.63!important;max-width:69%!important}
+.site-landing #siteHome .section-card>span{font-size:14px!important;padding:10px 16px}
+.site-landing #siteHome .section-card:nth-child(7){min-height:185px!important}
+.site-landing #siteHome .section-head>p{font-size:16px!important}
+.site-landing #siteHome .psy-journey-header>p{font-size:16px!important}
+.site-landing #siteHome .psy-process-tape p{font-size:14px!important}
+.site-landing #siteHome .psy-process-bottom{font-size:14px!important}
+.site-landing #siteHome .psy-gallery-heading p{font-size:17px!important}
+.site-landing #siteHome .psy-gallery-grid.psy-interface-gallery{gap:18px}
+.site-landing #siteHome .psy-demo-gallery-card{display:block;min-width:0;overflow:hidden;border-radius:20px;background:#fff;border:1px solid #cfe2d2;text-decoration:none!important;color:#264c39;box-shadow:0 10px 25px #1e4a3010;transition:transform .2s ease,box-shadow .2s ease}
+.site-landing #siteHome .psy-demo-gallery-card:hover{transform:translateY(-4px);box-shadow:0 20px 36px #1a49301e}
+.site-landing #siteHome .psy-demo-gallery-card .psy-gallery-meta{padding:21px 22px;min-height:127px}
+.site-landing #siteHome .psy-demo-gallery-card .psy-gallery-meta h3{font-size:20px!important}
+.site-landing #siteHome .psy-demo-gallery-card .psy-gallery-meta p{font-size:14px!important}
+.site-landing #siteHome .psy-demo-gallery-visual{position:relative;height:258px;overflow:hidden;padding:16px;display:flex;align-items:center;justify-content:center}
+.site-landing #siteHome .psy-demo-gallery-search{background:radial-gradient(circle at 80% 14%,#c0dbc3,#e0eee2 55%,#f1f6ec)}
+.site-landing #siteHome .psy-demo-gallery-portfolio{background:radial-gradient(circle at 15% 75%,#d8dfe3,#eaf0f0 56%,#f2f6f5)}
+.site-landing #siteHome .psy-demo-gallery-preschool{background:radial-gradient(circle at 85% 35%,#e3d7f0,#f2eaf9 58%,#f6f2f9)}
+.site-landing #siteHome .psy-demo-gallery-window,.site-landing #siteHome .psy-demo-gallery-sheet,.site-landing #siteHome .psy-demo-gallery-activity{width:100%;height:100%;max-width:370px;border-radius:13px;border:1px solid #d4e4d4;background:#fff;box-shadow:0 14px 32px #22492f18;overflow:hidden;transform:rotate(-1deg)}
+.site-landing #siteHome .psy-demo-gallery-bar{display:flex;align-items:center;gap:4px;height:29px;padding:0 11px;border-bottom:1px solid #e4ede5;background:#fbfdfb}
+.site-landing #siteHome .psy-demo-gallery-bar i{width:6px;height:6px;border-radius:50%;background:#c2dacb}
+.site-landing #siteHome .psy-demo-gallery-bar i:first-child{background:#d7a88e}
+.site-landing #siteHome .psy-demo-gallery-bar span{margin-left:10px;font-size:10px;font-weight:800;color:#547966}
+.site-landing #siteHome .psy-demo-gallery-input{margin:13px 13px 10px;padding:10px;display:flex;gap:7px;background:#f5f9f6;border:1px solid #ddeadd;border-radius:7px;color:#72907b;font-size:11px}
+.site-landing #siteHome .psy-demo-gallery-input span:first-child{font-size:17px;line-height:12px}
+.site-landing #siteHome .psy-demo-gallery-tags{display:flex;gap:5px;margin:0 13px 9px}
+.site-landing #siteHome .psy-demo-gallery-tags i{font-size:9px;font-style:normal;font-weight:700;background:#e7f3e9;color:#57866b;border-radius:5px;padding:5px 7px}
+.site-landing #siteHome .psy-demo-gallery-result{display:flex;align-items:center;gap:9px;margin:7px 13px;padding:8px 10px;background:#fff;border:1px solid #e3eee5;border-radius:9px;box-shadow:0 2px 9px #5473590a}
+.site-landing #siteHome .psy-demo-gallery-mini-icon{display:grid;place-items:center;font-size:17px;width:30px;height:30px;flex:none;border-radius:7px;background:#eaf2ea;color:#5d987b}
+.site-landing #siteHome .psy-demo-gallery-result>span{min-width:0;flex:1}
+.site-landing #siteHome .psy-demo-gallery-result strong{display:block;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#24543d}
+.site-landing #siteHome .psy-demo-gallery-result small{display:block;font-size:9px;margin-top:3px;color:#84988a}
+.site-landing #siteHome .psy-demo-gallery-result em{font-style:normal;color:#3a8b67}
+.site-landing #siteHome .psy-demo-gallery-sheet{background:#fff;transform:rotate(1.5deg);padding:15px 15px 0;box-sizing:border-box;border-color:#dce6e3}
+.site-landing #siteHome .psy-demo-gallery-sheet-top{display:flex;justify-content:space-between;font-size:9px;color:#76958a;font-weight:900;letter-spacing:.075em;margin-bottom:12px}
+.site-landing #siteHome .psy-demo-gallery-sheet-top span:last-child{font-size:17px;color:#629b85;line-height:10px}
+.site-landing #siteHome .psy-demo-gallery-sheet>strong{display:block;font-size:17px;color:#24523f;margin-bottom:14px}
+.site-landing #siteHome .psy-demo-gallery-sheet-tab{display:flex;gap:8px;border-bottom:1px solid #e3eae4;padding-bottom:10px;margin-bottom:5px}
+.site-landing #siteHome .psy-demo-gallery-sheet-tab i{font-size:9px;font-style:normal;font-weight:800;color:#849989}
+.site-landing #siteHome .psy-demo-gallery-sheet-tab i:first-child{color:#3b936e;border-bottom:2px solid #60ae85;padding-bottom:7px;margin-bottom:-12px}
+.site-landing #siteHome .psy-demo-gallery-sheet-line{display:grid;grid-template-columns:87px 1fr;gap:8px;padding:10px 0;border-bottom:1px solid #eff2ed;font-size:10px}
+.site-landing #siteHome .psy-demo-gallery-sheet-line span{color:#809588;font-weight:700}
+.site-landing #siteHome .psy-demo-gallery-sheet-line b{color:#446957;font-weight:750}
+.site-landing #siteHome .psy-demo-gallery-sheet-footer{display:flex;justify-content:space-between;margin-top:13px;padding:8px 12px;background:#e9f5ee;border-radius:7px;color:#3b7a5b;font-size:10px;font-weight:800}
+.site-landing #siteHome .psy-demo-gallery-sheet-footer em{font-style:normal}
+.site-landing #siteHome .psy-demo-gallery-activity{padding:17px;box-sizing:border-box;border-color:#e2d6e9;transform:rotate(-1deg);background:#fffdfd}
+.site-landing #siteHome .psy-demo-gallery-activity-top{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:900;letter-spacing:.1em;color:#8f71aa}
+.site-landing #siteHome .psy-demo-gallery-bubble{display:grid;place-items:center;width:28px;height:28px;background:#f0e7f8;color:#8a71b4;border-radius:9px;font-size:19px}
+.site-landing #siteHome .psy-demo-gallery-activity-title{font-size:16px;font-weight:850;color:#655279;margin:12px 0}
+.site-landing #siteHome .psy-demo-gallery-activity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.site-landing #siteHome .psy-demo-gallery-activity-grid>div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-width:0;padding:10px 5px;border:1px solid #e5ddec;border-radius:11px;background:#faf7fc}
+.site-landing #siteHome .psy-demo-activity-icon{display:grid;place-items:center;width:36px;height:36px;background:#eee6f7;border-radius:12px;font-size:22px;color:#9a7bb2}
+.site-landing #siteHome .psy-demo-gallery-activity-grid strong{font-size:10px;font-weight:800;color:#735c89}
+.site-landing #siteHome .psy-demo-gallery-activity-grid small{font-size:9px;color:#a290af}
+.site-landing #siteHome .psy-demo-gallery-activity-foot{display:flex;align-items:center;justify-content:space-between;margin-top:13px;background:#f1e9f7;color:#8e70a7;border-radius:7px;padding:10px;font-size:10px;font-weight:800}
+.site-landing #siteHome .psy-mission-copy .large-text{font-size:17px!important}
+.site-landing #siteHome .psy-home-pricing{padding-block:78px 86px!important;background:linear-gradient(120deg,#f8fbf6,#ecf3ed)!important}
+.site-landing #siteHome .psy-home-pricing-heading{display:flex;justify-content:space-between;align-items:end;gap:32px;max-width:1300px;margin-inline:auto;margin-bottom:29px}
+.site-landing #siteHome .psy-home-pricing-heading>div{min-width:0}
+.site-landing #siteHome .psy-home-pricing-heading h2{font-size:clamp(32px,3.3vw,46px)!important;margin:11px 0 13px;color:#234d37;line-height:1.16}
+.site-landing #siteHome .psy-home-pricing-heading p{font-size:16px!important;color:#607b6b;line-height:1.62;max-width:735px;margin:0}
+.site-landing #siteHome .psy-home-pricing-heading>a{flex:none;white-space:nowrap;background:#21674c!important;color:white!important;border-color:#21674c!important;border-radius:12px!important}
+.site-landing #siteHome .psy-home-plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:1300px;margin:auto}
+.site-landing #siteHome .psy-home-plan{position:relative;min-width:0;display:flex;flex-direction:column;border:1px solid #d5e4d6;border-radius:20px;background:#fff;padding:25px 27px 23px;box-shadow:0 10px 28px #2e593d09}
+.site-landing #siteHome .psy-home-plan-pro{background:#f4f9f4;border-color:#9cc6a8;box-shadow:0 15px 35px #24593a13}
+.site-landing #siteHome .psy-home-plan-team{background:#f9f7f2;border-color:#e3dbcb}
+.site-landing #siteHome .psy-home-plan-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:19px;color:#9e7d55;font-size:11px;font-weight:900;letter-spacing:.07em}
+.site-landing #siteHome .psy-home-plan-tag{color:#567e65;background:#eaf3eb;border-radius:999px;padding:7px 9px;font-size:10px;letter-spacing:0;font-weight:800}
+.site-landing #siteHome .psy-home-plan h3{font-size:21px;color:#254a36;margin:0 0 11px;letter-spacing:-.02em}
+.site-landing #siteHome .psy-home-plan .psy-home-plan-price{font-size:27px!important;color:#1d6042!important;font-weight:850!important;margin:0 0 14px!important;line-height:1.25!important}
+.site-landing #siteHome .psy-home-plan .psy-home-plan-price small{font-size:13px;font-weight:650;color:#7a917f}
+.site-landing #siteHome .psy-home-plan>p:not(.psy-home-plan-price){color:#5e7766;font-size:15px!important;line-height:1.63;margin:0 0 20px}
+.site-landing #siteHome .psy-home-plan-detail{display:block;color:#597766;font-size:12px;font-weight:750;padding-top:13px;border-top:1px solid #e0e9e0;margin-top:auto}
+.site-landing #siteHome .psy-home-price-disclaimer{max-width:1300px!important;font-size:13px!important;color:#667f6d!important;line-height:1.6;margin:18px auto 0!important}
+.site-landing #siteHome .psy-kits-heading>div>p{font-size:16px!important}
+.site-landing #siteHome .psy-kit-copy>span{font-size:14px!important}
+.site-landing #siteHome .psy-kit-copy strong{font-size:18px!important}
+.site-landing #siteHome .psy-preview-section{background:#ebf2ea!important}
+html.dark .site-landing #siteHome .site-hero{background:radial-gradient(ellipse at 83% 36%,#426f564d,transparent 52%),linear-gradient(119deg,#0e2b20,#19412e 55%,#28563d)!important}
+html.dark .site-landing #siteHome .psy-demo-window{background:#fafdF8}
+html.dark .site-landing #siteHome .psy-demo-float{background:#fffdf8;color:#254b36}
+html.dark .site-landing #siteHome .psy-demo-gallery-card{background:#213b2e!important;border-color:#557461!important}
+html.dark .site-landing #siteHome .psy-demo-gallery-card .psy-gallery-meta h3{color:#f0f7ef!important}
+html.dark .site-landing #siteHome .psy-demo-gallery-card .psy-gallery-meta p{color:#cadccb!important}
+html.dark .site-landing #siteHome .psy-home-pricing{background:#172f24!important}
+html.dark .site-landing #siteHome .psy-home-pricing-heading h2{color:#edf7ef!important}
+html.dark .site-landing #siteHome .psy-home-pricing-heading p{color:#c5dbca!important}
+html.dark .site-landing #siteHome .psy-home-plan,html.dark .site-landing #siteHome .psy-home-plan-pro,html.dark .site-landing #siteHome .psy-home-plan-team{background:#233e30!important;border-color:#54705b!important}
+html.dark .site-landing #siteHome .psy-home-plan h3{color:#eef7e9!important}
+html.dark .site-landing #siteHome .psy-home-plan .psy-home-plan-price{color:#b9ecc5!important}
+html.dark .site-landing #siteHome .psy-home-plan>p:not(.psy-home-plan-price),html.dark .site-landing #siteHome .psy-home-plan-detail{color:#cbdccf!important}
+html.dark .site-landing #siteHome .psy-home-price-disclaimer{color:#c7d9cb!important}
+@media(max-width:1150px){
+ .site-landing #siteHome .psy-home-hero-art.psy-home-ui{height:430px!important;min-height:400px!important}
+ .site-landing #siteHome .psy-demo-layout{grid-template-columns:138px minmax(0,1fr)}
+ .site-landing #siteHome .psy-demo-aside{padding-inline:8px}
+ .site-landing #siteHome .psy-demo-content{padding:16px 13px}
+ .site-landing #siteHome .psy-demo-intro span:first-child{font-size:15px}
+ .site-landing #siteHome .section-card p{font-size:14px!important}
+}
+@media(max-width:960px){
+ .site-landing #siteHome .psy-demo-gallery-visual{height:235px}
+ .site-landing #siteHome .psy-home-pricing-heading{flex-direction:column;align-items:flex-start}
+ .site-landing #siteHome .psy-home-plan{padding:21px 18px}
+ .site-landing #siteHome .psy-home-plan-top{flex-wrap:wrap}
+}
+@media(max-width:790px){
+ .site-landing #siteHome .psy-home-hero-art.psy-home-ui{width:min(100%,570px)!important;height:440px!important;min-height:440px!important;margin:auto}
+ .site-landing #siteHome .psy-demo-layout{grid-template-columns:165px minmax(0,1fr)}
+ .site-landing #siteHome .psy-demo-aside{padding:19px 12px}
+ .site-landing #siteHome .psy-demo-content{padding:20px 17px}
+ .site-landing #siteHome .psy-home-plans{grid-template-columns:1fr}
+ .site-landing #siteHome .psy-home-plan{padding:24px}
+}
+@media(max-width:590px){
+ .site-landing #siteHome .psy-home-hero-art.psy-home-ui{min-height:360px!important;height:370px!important}
+ .site-landing #siteHome .psy-demo-window{inset:6px 3px 36px 0}
+ .site-landing #siteHome .psy-demo-layout{grid-template-columns:110px minmax(0,1fr)}
+ .site-landing #siteHome .psy-demo-aside{padding:14px 6px}
+ .site-landing #siteHome .psy-demo-brand{font-size:11px;gap:4px;margin-left:0}
+ .site-landing #siteHome .psy-demo-brandmark{width:24px;height:24px;font-size:17px;flex:none}
+ .site-landing #siteHome .psy-demo-brand small{font-size:7px}
+ .site-landing #siteHome .psy-demo-menu{font-size:9px;gap:4px;padding:8px 4px}
+ .site-landing #siteHome .psy-demo-menu-symbol{width:13px;font-size:12px}
+ .site-landing #siteHome .psy-demo-aside-title{font-size:8px;margin:12px 4px 6px}
+ .site-landing #siteHome .psy-demo-content{padding:12px 9px}
+ .site-landing #siteHome .psy-demo-intro{margin:15px 0 9px}
+ .site-landing #siteHome .psy-demo-intro span:first-child{font-size:12px}
+ .site-landing #siteHome .psy-demo-intro span:last-child{display:none}
+ .site-landing #siteHome .psy-demo-pills span{font-size:8px}
+ .site-landing #siteHome .psy-demo-pills{margin-bottom:8px}
+ .site-landing #siteHome .psy-demo-method-row{padding:8px 6px}
+ .site-landing #siteHome .psy-demo-method-glyph{width:32px;height:35px}
+ .site-landing #siteHome .psy-demo-method-glyph svg{width:29px;height:29px}
+ .site-landing #siteHome .psy-demo-method-copy strong{font-size:10px}
+ .site-landing #siteHome .psy-demo-method-copy small{font-size:8px}
+ .site-landing #siteHome .psy-demo-method-copy>span{display:none}
+ .site-landing #siteHome .psy-demo-method-arrow{font-size:13px}
+ .site-landing #siteHome .psy-demo-foot{font-size:8px}
+ .site-landing #siteHome .psy-demo-float{right:0;bottom:12px;padding:9px 12px}
+ .site-landing #siteHome .psy-demo-float-icon{width:30px;height:30px;font-size:18px}
+ .site-landing #siteHome .psy-demo-float strong{font-size:10px}
+ .site-landing #siteHome .psy-demo-float small{font-size:9px}
+ .site-landing #siteHome .section-card p{font-size:14px!important}
+ .site-landing #siteHome .psy-demo-gallery-visual{height:235px}
+ .site-landing #siteHome .psy-home-pricing{padding-block:55px 60px!important}
+ .site-landing #siteHome .psy-home-pricing-heading h2{font-size:32px!important}
+}
