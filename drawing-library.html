@@ -1759,20 +1759,36 @@ function renderRecords(){
  }).join(""):'<div class="empty">Пока нет записей. Откройте лист элемента и добавьте выбранные признаки.</div>';
 }
 function getDocument(){
- return {schema:"psyteka-drawing-protocol",version:1,method:state.method,methodName:methodName(state.method),
- code:$("#subjectCode").value.slice(0,70),context:$("#contextNotes").value.slice(0,20000),
- items:state.items.map(function(x){return {elementId:x.elementId,name:x.name,position:x.position,size:x.size,note:x.note}}),
- conclusion:$("#conclusion").value.slice(0,20000),notice:"Качественный протокол наблюдений, не автоматический диагноз."};
+ return {
+  schema:"psyteka-drawing-protocol",version:1,method:state.method,methodName:methodName(state.method),
+  code:$("#subjectCode").value.slice(0,70),context:$("#contextNotes").value.slice(0,20000),
+  items:state.items.map(function(x){return {
+   elementId:x.elementId,name:x.name,position:x.position,size:x.size,
+   color:x.color||"",note:x.note||"",excluded:Array.isArray(x.excluded)?x.excluded.slice():[]
+  }}),
+  conclusion:$("#conclusion").value.slice(0,20000),
+  notice:"Профессиональный рабочий протокол. Справочные трактовки признаков сами по себе не являются диагнозом."
+ };
 }
 function reportBody(){
  var d=getDocument();
- var parts=['<h1>Протокол наблюдений по рисунку</h1><p><strong>Методика:</strong> '+esc(d.methodName)+'</p><p><strong>Код:</strong> '+esc(d.code||"Не указан")+'</p>'];
- if(d.context)parts.push('<h2>Контекст и пояснения</h2><p>'+esc(d.context)+'</p>');
+ var parts=['<h1>Протокол рисунка</h1><p><strong>Методика:</strong> '+esc(d.methodName)+'</p><p><strong>Код:</strong> '+esc(d.code||"Не указан")+'</p>'];
+ if(d.context)parts.push('<h2>Контекст обследования</h2><p>'+esc(d.context)+'</p>');
  parts.push('<h2>Элементы рисунка</h2>');
- if(!d.items.length)parts.push('<p>Записи отсутствуют.</p>');
- else d.items.forEach(function(x,i){var e=byId(x.elementId);parts.push('<div class="print-item"><strong>'+(i+1)+'. '+esc(x.name)+'</strong> – '+esc((POS[x.position]||POS.unknown)[0])+', '+esc(SZ[x.size]||"Не указано")+'.<p><strong>Описание:</strong> '+esc(x.note||"Не указано")+'</p>'+(x.position!=="unknown"?'<p><strong>Описание расположения:</strong> '+esc((POS[x.position]||POS.unknown)[1])+'</p>':'')+(e?'<p><strong>Возможные ассоциации справочника:</strong> '+esc(e.meaning)+'</p>':'')+'</div>')});
+ if(!d.items.length)parts.push('<p>Записей пока нет.</p>');
+ else d.items.forEach(function(x,i){
+  var entry=byId(x.elementId);
+  if(!entry)return;
+  var excludes=Array.isArray(x.excluded)?x.excluded:[];
+  var analysis=interpretationParts(entry,x).filter(function(p){return !excludes.includes(p.key)});
+  var info=['Расположение: '+(POS[x.position]||POS.unknown)[0]];
+  if(x.color)info.push('Цвет: '+colorByKey(x.color)[1]);
+  if(x.size)info.push('Размер: '+(SZ[x.size]||"Не указан"));
+  parts.push('<div class="print-item"><strong>'+(i+1)+'. '+esc(entry.name)+'</strong><p>'+esc(info.join(" · "))+'</p>'+
+   (analysis.length?'<div>'+analysis.map(function(p){return '<p><strong>'+esc(p.title)+':</strong> '+esc(p.text)+'</p>'}).join("")+'</div>':'')+'</div>');
+ });
  if(d.conclusion)parts.push('<h2>Сводка специалиста</h2><p>'+esc(d.conclusion)+'</p>');
- parts.push('<hr><p><small>Записи отражают наблюдаемые признаки рисунка. Ассоциации справочника не являются диагностическим ключом и не позволяют делать выводы о психическом состоянии по одному признаку.</small></p>');
+ parts.push('<hr><p><small>Справочные ассоциации используются как гипотезы при анализе рисунка.</small></p>');
  return parts.join("");
 }
 function reportHTML(){
@@ -1787,22 +1803,31 @@ async function importFile(e){
  if(file.size>2000000){alert("Файл слишком большой.");return}
  try{
   var d=JSON.parse(await file.text());
-  if(d.schema!=="psyteka-drawing-protocol"||d.version!==1||!Array.isArray(d.items)||d.items.length>400){throw Error("Недопустимый формат протокола")}
+  if(d.schema!=="psyteka-drawing-protocol"||d.version!==1||!Array.isArray(d.items)||d.items.length>400)throw Error("Недопустимый формат");
   var clean=d.items.map(function(x,i){
    if(!x||typeof x!=="object"||typeof x.elementId!=="string")return null;
    var element=byId(x.elementId);if(!element)return null;
-   return {key:"i"+Date.now().toString(36)+i,elementId:element.id,name:element.name,
-    position:Object.prototype.hasOwnProperty.call(POS,x.position)?x.position:"unknown",size:Object.prototype.hasOwnProperty.call(SZ,x.size)?x.size:"",
-    note:String(x.note||"").slice(0,4000)};
+   return {
+    key:"i"+Date.now().toString(36)+i,elementId:element.id,name:element.name,
+    position:Object.prototype.hasOwnProperty.call(POS,x.position)?x.position:"unknown",
+    size:Object.prototype.hasOwnProperty.call(SZ,x.size)?x.size:"",
+    color:COLORS.some(function(c){return c[0]===x.color})?x.color:"",
+    note:String(x.note||"").slice(0,4000),
+    excluded:Array.isArray(x.excluded)?x.excluded.filter(function(v){return ["element","position","color","size","note"].includes(v)}):[]
+   };
   }).filter(Boolean);
-  if(!confirm("Заменить текущий протокол содержимым файла? Несохраненные записи будут потеряны."))return;
+  if(!confirm("Заменить текущий протокол содержимым файла?"))return;
   state.items=clean;state.method=METHODS.some(function(x){return x[0]===d.method})?d.method:"free";
-  $("#method").value=state.method;$("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];$("#methodBadge").textContent=methodName(state.method);
-  $("#subjectCode").value=String(d.code||"").slice(0,70);$("#contextNotes").value=String(d.context||"").slice(0,20000);
+  $("#method").value=state.method;
+  $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
+  $("#methodBadge").textContent=methodName(state.method);
+  $("#subjectCode").value=String(d.code||"").slice(0,70);
+  $("#contextNotes").value=String(d.context||"").slice(0,20000);
   $("#conclusion").value=String(d.conclusion||"").slice(0,20000);
-  state.selected=(entries.find(function(e){return e.methods.includes(state.method)})||entries[0]).id;
-  renderCategories();renderResults();renderDetails();renderRecords();
- }catch(err){alert("Не удалось открыть файл. Нужен JSON-протокол, созданный этой библиотекой.")}
+  state.sheetOpen=false;state.draft=draftEmpty();state.tab="position";state.category="Все";$("#search").value="";
+  renderCategories();renderResults();renderSheet();renderDetails();renderRecords();
+  $("#actionStatus").textContent="Протокол загружен: "+clean.length+" записей.";
+ }catch(err){alert("Не удалось открыть файл. Нужен JSON-протокол, сохраненный в Психотеке.")}
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
