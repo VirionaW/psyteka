@@ -41,15 +41,16 @@ function render(){
  $("#resultCount").textContent="Найдено: "+filtered.length;
  $("#listHeading").textContent=state.topic||"Школьные материалы";
  $("#catalog").innerHTML=filtered.map(m=>{
- const d=DETAILS[m.name],age=window.PSY_GUIDE_STANDARD?.cardAge(m.name,d,m)||d?.age||m.age;
- const description=profileGoal(m,d,window.PSY_PORTFOLIO_EDITS?.[m.name]||{})||m.summary||m.goal||'';
+ const d=DETAILS[m.name],card=window.PSY_SCHOOL_CARDS?.compose(m,d,window.PSY_PORTFOLIO_EDITS?.[m.name]||{},window.PSY_GUIDE_STANDARD);
+ const age=card?.age||window.PSY_GUIDE_STANDARD?.cardAge(m.name,d,m)||d?.age||m.age;
+ const description=card?.summary||profileGoal(m,d,window.PSY_PORTFOLIO_EDITS?.[m.name]||{})||m.summary||m.goal||'';
  const kind=d?.workflow==='diagnostic03'?'scale':d?.special==='memory10'?'memory':d?.special==='odd4'?'cognitive':(d?.graphic==='drawing'||d?.graphic==='sociogram')?'drawing':(d?.graphic==='dictation'||d?.graphic==='schulte'||d?.graphic==='dembo'||d?.graphic==='ladder')?'graphic':(d?.calculator?'scale':'other');
- const author=(d?.author||m.author||'');
+ const author=(card?.author||d?.author||m.author||'');
  const matchMSPSS=['simpleAnalogies12','pairedAssoc20','schulte5'].includes(d?.workflow);
  const credited=author&&!/сведения об авторе уточняются/i.test(author)?'<p class="method-card-author">'+escapeHTML(author)+'</p>':'<p class="method-card-author">Автор не установлен</p>';
- const count=d?.count||m.count;
+ const count=card?.quantity||d?.count||m.count;
  const countTag=count?'<span class="tag">'+escapeHTML(count)+'</span>':'';
- return '<article class="method'+(matchMSPSS?' psy-mspss-card':'')+'" data-kind="'+kind+'"><div class="head"><div class="glyph">'+artForMethod(m)+'</div><div><h3>'+escapeHTML(m.name)+'</h3>'+credited+'</div></div><div class="tags"><span class="tag">'+escapeHTML(m.format)+'</span><span class="tag">'+escapeHTML(age)+'</span>'+countTag+'</div><p class="method-card-summary">'+escapeHTML(description)+'</p><div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">Открыть методику</button>'+'</div></article>';
+ return '<article class="method'+(matchMSPSS?' psy-mspss-card':'')+'" data-kind="'+kind+'"><div class="head"><div class="glyph">'+artForMethod(m)+'</div><div><h3>'+escapeHTML(m.name)+'</h3>'+credited+'</div></div><div class="tags"><span class="tag">'+escapeHTML(card?.type||m.format)+'</span><span class="tag">'+escapeHTML(age)+'</span>'+countTag+'</div><p class="method-card-summary">'+escapeHTML(description)+'</p><div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">Открыть методику</button>'+'</div></article>';
  }).join("") || '<p>Не найдено материалов по выбранным параметрам.</p>';
  document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openMethod(C.find(m=>m.id===b.dataset.open)));
 
