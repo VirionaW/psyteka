@@ -37,15 +37,15 @@
 <body><main class="suggest-wrap">
 <div class="suggest-top"><a class="suggest-brand" href="index.html?home=1"><img src="brand-mark.svg" alt="">Психотека</a><a class="suggest-back" href="library.html?area=school">Вернуться в библиотеку</a></div>
 <section class="suggest-hero"><h1>Предложить методику или сообщить об ошибке</h1>
-<p>Помогите сделать Психотеку точнее и полезнее. Здесь можно предложить настоящую опубликованную методику, сообщить о неточности, неработающей функции или проблеме с авторскими правами.</p></section>
+<p>Помогите сделать Психотеку точнее и полезнее. Здесь можно предложить опубликованную методику или новую идею для сайта, сообщить о неточности, неработающей функции, проблеме с авторскими правами или написать по другому вопросу.</p></section>
 <section class="suggest-panel" aria-labelledby="feedback-heading"><h2 id="feedback-heading">Сообщить нам</h2>
 <p>Если вы автор или правообладатель материала и считаете, что он опубликован без необходимого разрешения, пожалуйста, укажите название методики, источник и основания обращения. Мы рассмотрим сообщение и при необходимости ограничим доступ к спорным материалам.</p>
 <form class="suggest-form" id="suggestForm">
-<label class="suggest-field">Тема обращения<select name="type"><option>Предложить методику</option><option>Сообщить об ошибке</option><option>Вопрос об авторских правах</option></select></label>
-<label class="suggest-field">Название методики<input name="method" placeholder="Например, Школа зверей" required></label>
+<label class="suggest-field">Тема обращения<select name="type"><option>Предложить методику</option><option>Сообщить об ошибке</option><option>Вопрос об авторских правах</option><option>Предложить идею</option><option>Другое обращение</option></select></label>
+<label class="suggest-field">Название методики или тема идеи<input name="method" placeholder="Например, Школа зверей или новая функция"></label>
 <label class="suggest-field full">Ссылка на источник (если есть)<input name="source" type="url" placeholder="https://..."></label>
 <label class="suggest-field full">Описание<textarea name="details" required placeholder="Опишите предложение, ошибку или вопрос о правах"></textarea></label>
-<div class="suggest-actions"><button class="suggest-action" type="submit">Подготовить обращение</button><button class="suggest-action secondary" type="button" id="copyRequest">Скопировать текст</button><span class="suggest-hint">Обращение не отправляется автоматически. Для отправки потребуется GitHub.</span></div>
+<div class="suggest-actions"><button class="suggest-action" type="submit">Написать на почту Психотеки</button><button class="suggest-action secondary" type="button" id="copyRequest">Скопировать текст</button><span class="suggest-hint">Письмо откроется в вашей почтовой программе. Оно будет отправлено после вашего подтверждения.</span></div>
 </form>
 <p id="suggestStatus" role="status" class="suggest-hint" style="margin-top:12px"></p>
 </section>
@@ -54,7 +54,7 @@
 <div class="suggest-catalogbar"><input class="suggest-search" id="suggestSearch" type="search" placeholder="Поиск по названию или автору" aria-label="Поиск методик"><span id="suggestCount" class="suggest-hint"></span></div>
 <div class="suggest-cards" id="suggestCards"></div><p class="suggest-empty" id="suggestEmpty" hidden>Методики не найдены.</p>
 </section></main>
-<script src="catalog.js"></script>
+<script src="catalog.js"></script><script src="site-contact-config.js"></script>
 <script>
 (function(){
 "use strict";
@@ -72,8 +72,11 @@ container.append(fragment);count.textContent="Найдено: "+items.length;emp
 }
 search.addEventListener("input",render);render();
 const form=document.getElementById("suggestForm"),status=document.getElementById("suggestStatus");
-function message(){const f=new FormData(form);return "Тема: "+f.get("type")+"\nМетодика: "+f.get("method")+"\nИсточник: "+(f.get("source")||"не указан")+"\n\n"+f.get("details");}
+// Единый контакт сайта. Заполнить реальным адресом в site-contact-config.js.
+const siteEmail=(window.PSY_SITE_CONTACT_EMAIL||"").trim();
+if(siteEmail){const note=document.createElement("p");note.className="suggest-hint";note.textContent="Почта Психотеки: "+siteEmail;form.before(note);}
+function message(){const f=new FormData(form);return "Тема: "+f.get("type")+"\nМетодика или тема: "+(f.get("method")||"не указана")+"\nИсточник: "+(f.get("source")||"не указан")+"\n\n"+f.get("details");}
 document.getElementById("copyRequest").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(message());status.textContent="Текст обращения скопирован.";}catch(e){status.textContent="Не удалось скопировать. Выделите текст полей вручную.";}}); 
-form.addEventListener("submit",e=>{e.preventDefault();if(!form.reportValidity())return;const fd=new FormData(form),params=new URLSearchParams({title:String(fd.get("type"))+": "+fd.get("method"),body:message()});window.open("https://github.com/VirionaW/psyteka/issues/new?"+params.toString(),"_blank","noopener,noreferrer");status.textContent="Открыта страница создания обращения на GitHub. Для отправки нужно войти в аккаунт и нажать Submit new issue.";});
+form.addEventListener("submit",e=>{e.preventDefault();if(!form.reportValidity())return;if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(siteEmail)){status.textContent="Почта Психотеки пока не подключена. Пожалуйста, скопируйте текст обращения. Для отправки владельцу сайта нужно указать официальный email.";return;}const f=new FormData(form);const subject=String(f.get("type"))+(f.get("method")?" – "+f.get("method"):"");const url="mailto:"+encodeURIComponent(siteEmail)+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(message());window.location.href=url;status.textContent="Откройте почтовую программу и подтвердите отправку письма.";});
 })();
 </script></body></html>
