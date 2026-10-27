@@ -22,8 +22,8 @@
  const key=()=>userID?"psy-collections-v1:"+userID:null;
  const blank=()=>({favorites:[],folders:[]});
  // Единая палитра с библиотекой: здесь названия, в хранилище шестнадцатеричный цвет.
- const colorNames={sage:"Шалфей",lilac:"Лаванда",amber:"Песок",rose:"Роза",sky:"Небо",clay:"Терракота"};
- const colorHex={sage:"#4b997b",lilac:"#8c76cf",amber:"#d5a151",rose:"#d77b8c",sky:"#7299c7",clay:"#b78262"};
+ const colorNames={sage:"Шалфей",lilac:"Лаванда",amber:"Песок",rose:"Роза",sky:"Небо",clay:"Терракота",turquoise:"Бирюза",coral:"Коралл",plum:"Слива",indigo:"Индиго",olive:"Олива",apricot:"Абрикос",slate:"Графит",cocoa:"Какао"};
+ const colorHex={sage:"#4b997b",lilac:"#8c76cf",amber:"#d5a151",rose:"#d77b8c",sky:"#7299c7",clay:"#b78262",turquoise:"#4ca6a4",coral:"#e38f7f",plum:"#995f97",indigo:"#6875b8",olive:"#8fa35d",apricot:"#ebb176",slate:"#718896",cocoa:"#917766"};
  const validColor=value=>{
   if(Object.prototype.hasOwnProperty.call(colorHex,value))return value;
   return Object.keys(colorHex).find(name=>colorHex[name]===String(value).toLowerCase())||"sage";
