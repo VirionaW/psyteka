@@ -1,0 +1,30 @@
+/* One accessible account menu; only this trigger shows the profile actions. */
+.site-header nav,.library-page .topbar,.topbar{position:relative}
+.psy-avatar-dropdown[hidden]{display:none!important}
+.psy-avatar-dropdown{
+ position:absolute;z-index:15000;right:0;top:calc(100% + 9px);
+ display:flex;flex-direction:column;gap:4px;min-width:230px;
+ max-width:min(92vw,300px);padding:9px;background:#fff;
+ color:#224438;border:1px solid #cbded1;border-radius:16px;
+ box-shadow:0 14px 35px rgba(14,50,32,.2);
+}
+.psy-avatar-menu-item{
+ display:flex!important;align-items:center;justify-content:flex-start;
+ width:100%;min-height:42px;padding:10px 13px;text-align:left;
+ color:inherit!important;background:transparent!important;border:0!important;
+ border-radius:9px;text-decoration:none!important;
+ font:650 14px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer;
+ box-sizing:border-box;white-space:normal;
+}
+.psy-avatar-menu-item:hover,.psy-avatar-menu-item:focus-visible{
+ background:#e9f3ee!important;outline:2px solid transparent;
+}
+.psy-avatar-menu-item:last-child{color:#925442!important}
+.psy-avatar-dropdown .psy-avatar-menu-item:nth-child(3){min-width:0}
+html.dark .psy-avatar-dropdown{background:#20362f;color:#edf6ee;border-color:#4e705d}
+html.dark .psy-avatar-menu-item:hover,html.dark .psy-avatar-menu-item:focus-visible{background:#355345!important}
+.psy-header-logout,#psyOwnerNav,.header-settings{display:none!important}
+@media(max-width:760px){.psy-avatar-dropdown{right:3px;top:calc(100% + 6px);min-width:210px}}
+.psy-private-value{display:flex;flex-wrap:wrap;align-items:center;gap:9px}
+.psy-privacy-reveal{border:1px solid #bcd6c7;background:#edf5ef;color:#245a43;border-radius:9px;padding:7px 12px;cursor:pointer;font-weight:650}
+.psy-privacy-reveal:focus-visible{outline:2px solid #267751;outline-offset:2px}
