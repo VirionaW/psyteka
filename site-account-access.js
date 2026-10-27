@@ -8,6 +8,7 @@
  const email=document.getElementById("psyAccountEmail");
  const roleBadge=document.getElementById("psyRoleBadge");
  const manage=document.getElementById("psyOwnerManage");
+ const security=document.getElementById("psyOwnerSecurity");
  const ownerNote=document.getElementById("psyAccountOwnerHint");
  const login=document.getElementById("psyAccountLogin");
  const signOut=document.getElementById("psyAccountSignOut");
@@ -16,7 +17,7 @@
  login.textContent=config.registrationEnabled===true?"Войти или зарегистрироваться":"Проверить вход по почте";
  function message(t){hint.textContent=t;}
  function hidePrivate(){
-  manage.hidden=true;ownerNote.hidden=true;email.hidden=true;roleBadge.hidden=true;signOut.hidden=true;login.hidden=false;
+  manage.hidden=true;security.hidden=true;ownerNote.hidden=true;email.hidden=true;roleBadge.hidden=true;signOut.hidden=true;login.hidden=false;
  }
  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||"")||
     !/^sb_publishable_[A-Za-z0-9_-]+$/.test(config.publishableKey||"")||
@@ -41,7 +42,7 @@
   roleBadge.className="psy-role-badge "+role;roleBadge.hidden=false;
   login.hidden=true;signOut.hidden=false;
   if(role==="owner"){
-   manage.hidden=false;ownerNote.hidden=false;
+   manage.hidden=false;security.hidden=false;ownerNote.hidden=false;
    message("Вы вошли как Владелец. Здесь можно открыть управление пользователями и назначать модераторов.");
   }else if(role==="moderator"){
    message("Вы вошли как Модератор. Назначение других модераторов доступно только Владельцу.");
