@@ -1,0 +1,204 @@
+/* Psyteka home – quiet decorative finish. 27.10.2026
+   Keeps established layouts, all approved illustrations and real-method previews. */
+
+/* Exact existing Psyteka logo: remove accidental pseudo-glyphs and preserve colors. */
+.site-landing #siteHome .psy-auth-hero .psy-demo-brandmark{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 43px!important;
+  width:43px!important;
+  min-width:43px!important;
+  height:43px!important;
+  margin:0!important;
+  padding:5px!important;
+  box-sizing:border-box!important;
+  border-radius:12px!important;
+  border:1px solid #d5e6db!important;
+  background:#fffdf8!important;
+  overflow:visible!important;
+  box-shadow:0 3px 10px rgba(29,76,52,.07)!important;
+  font-size:0!important;
+}
+.site-landing #siteHome .psy-auth-hero .psy-demo-brandmark::before,
+.site-landing #siteHome .psy-auth-hero .psy-demo-brandmark::after{
+  content:none!important;display:none!important;
+}
+.site-landing #siteHome .psy-auth-hero .psy-demo-brandmark svg.psy-demo-brand-real{
+  display:block!important;
+  flex:none!important;
+  position:static!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  overflow:visible!important;
+  opacity:1!important;
+  transform:none!important;
+  filter:none!important;
+}
+.site-landing #siteHome .psy-auth-hero .psy-demo-brand{
+  align-items:center!important;
+  gap:10px!important;
+  white-space:normal!important;
+}
+.site-landing #siteHome .psy-auth-hero .psy-auth-brandname{display:block;color:#275547;font-weight:900;letter-spacing:-.02em;line-height:1.2}
+.site-landing #siteHome .psy-auth-hero .psy-auth-brandname b{color:#a48568!important}
+
+/* Subtle interplay of pale sage and warm linen between bright site sections. */
+.site-landing #siteHome #sections.site-sections{
+  background:
+    radial-gradient(ellipse 480px 290px at 96% 7%,rgba(225,235,219,.72),transparent 82%),
+    radial-gradient(ellipse 540px 270px at -6% 88%,rgba(225,214,196,.34),transparent 79%),
+    linear-gradient(150deg,#fafbf8 0%,#f5f8f3 58%,#fbfaf6 100%)!important;
+}
+.site-landing #siteHome #workflow.psy-journey-ribbon{
+  background:
+    radial-gradient(ellipse 510px 330px at 7% 10%,rgba(213,230,216,.67),transparent 80%),
+    radial-gradient(ellipse 440px 300px at 98% 91%,rgba(230,221,206,.48),transparent 83%),
+    linear-gradient(155deg,#f5f9f4 0%,#fcfcf7 58%,#f0f6f0 100%)!important;
+}
+.site-landing #siteHome #inside.psy-preview-section{
+  position:relative;
+  isolation:isolate;
+  background:
+    radial-gradient(ellipse 490px 320px at -4% 21%,rgba(216,230,218,.80),transparent 79%),
+    radial-gradient(ellipse 490px 320px at 100% 93%,rgba(236,222,204,.44),transparent 84%),
+    linear-gradient(142deg,#eaf3e9 0%,#f2f7ef 53%,#ecf3e9 100%)!important;
+}
+.site-landing #siteHome #pricing.psy-home-pricing{
+  background:
+    radial-gradient(ellipse 580px 290px at 92% 10%,rgba(216,230,214,.8),transparent 78%),
+    radial-gradient(ellipse 390px 240px at 4% 100%,rgba(233,215,189,.34),transparent 80%),
+    linear-gradient(145deg,#f7faf5,#eef5ec 56%,#fafaf6)!important;
+}
+.site-landing #siteHome #ready-kits.psy-featured-methods{
+  background:
+    radial-gradient(ellipse 400px 210px at 98% 0%,rgba(224,237,222,.53),transparent 80%),
+    radial-gradient(ellipse 350px 210px at 3% 92%,rgba(240,227,211,.39),transparent 85%),
+    #fffefa!important;
+}
+.site-landing #siteHome #about.psy-mission{
+  background:
+    radial-gradient(ellipse 440px 280px at 5% 5%,rgba(229,238,226,.56),transparent 82%),
+    linear-gradient(120deg,#fffefa,#f7f7ef 65%,#eff4e9)!important;
+}
+
+/* Thin accents in place of extra photos and invented illustrations. */
+.site-landing #siteHome #sections .section-head .kicker,
+.site-landing #siteHome #workflow .psy-journey-header .kicker,
+.site-landing #siteHome #inside .psy-gallery-heading .kicker,
+.site-landing #siteHome #pricing .psy-home-pricing-heading .kicker,
+.site-landing #siteHome #about .kicker,
+.site-landing #siteHome #ready-kits .kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  letter-spacing:.12em;
+}
+.site-landing #siteHome #sections .section-head .kicker::before,
+.site-landing #siteHome #workflow .psy-journey-header .kicker::before,
+.site-landing #siteHome #inside .psy-gallery-heading .kicker::before,
+.site-landing #siteHome #pricing .psy-home-pricing-heading .kicker::before,
+.site-landing #siteHome #about .kicker::before,
+.site-landing #siteHome #ready-kits .kicker::before{
+  content:"";
+  display:inline-block;
+  width:17px;height:4px;
+  flex:none;
+  border-radius:9px;
+  background:linear-gradient(90deg,#357e62 0 60%,#c2a37e 60% 100%);
+}
+.site-landing #siteHome #inside .psy-preview-wrap.psy-home-gallery{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border:1px solid #d8e5d9;
+  border-radius:28px;
+  background:
+    radial-gradient(ellipse 320px 200px at 99% 3%,rgba(221,234,220,.50),transparent 88%),
+    linear-gradient(155deg,#fffefa 0%,#ffffff 52%,#f9fbf8 100%)!important;
+  box-shadow:0 22px 42px rgba(38,77,48,.08);
+}
+.site-landing #siteHome #inside .psy-preview-wrap.psy-home-gallery::before{
+  content:"";
+  position:absolute;
+  top:-120px;right:-100px;
+  width:310px;height:310px;
+  border:1px solid rgba(114,155,119,.16);
+  border-radius:50%;
+  box-shadow:0 0 0 28px rgba(141,173,144,.034),0 0 0 57px rgba(141,173,144,.035);
+  pointer-events:none;
+  z-index:0;
+}
+.site-landing #siteHome #inside .psy-home-gallery > *{position:relative;z-index:1;}
+.site-landing #siteHome .psy-auth-preview-card{
+  border-color:#cedfd0!important;
+  box-shadow:0 11px 25px rgba(39,76,48,.07),0 1px 0 rgba(255,255,255,.9) inset!important;
+}
+.site-landing #siteHome .psy-auth-preview-card:hover{
+  border-color:#9bbfac!important;
+  box-shadow:0 18px 34px rgba(34,73,44,.13)!important;
+}
+.site-landing #siteHome .psy-auth-preview-card .psy-gallery-meta{
+  background:linear-gradient(155deg,#fff 35%,#f9fbf8 100%);
+}
+.site-landing #siteHome .psy-home-plan{
+  box-shadow:0 16px 30px rgba(38,79,51,.07)!important;
+}
+.site-landing #siteHome #ready-kits .psy-kit-card{
+  box-shadow:0 9px 25px rgba(43,80,50,.045)!important;
+}
+.site-landing #siteHome #workflow .psy-process-tape{
+  box-shadow:0 18px 38px rgba(33,79,45,.10)!important;
+}
+
+/* Improve readability of section copy without bloating tiny example UI. */
+.site-landing #siteHome #sections .section-card p{font-size:15px!important;line-height:1.68!important}
+.site-landing #siteHome #inside .psy-gallery-heading-copy p{font-size:17px!important;line-height:1.67!important}
+.site-landing #siteHome #inside .psy-auth-preview-card .psy-gallery-meta p{font-size:14px!important}
+.site-landing #siteHome #pricing .psy-home-pricing-heading p{font-size:17px!important;line-height:1.66!important}
+.site-landing #siteHome #about .psy-mission-copy .large-text{font-size:17px!important;line-height:1.8!important}
+
+/* Equal thought for the dark palette. */
+html.dark .site-landing #siteHome #sections.site-sections{
+  background:radial-gradient(ellipse at 95% 10%,#305244 0%,transparent 55%),#182f27!important;
+}
+html.dark .site-landing #siteHome #workflow.psy-journey-ribbon{
+  background:linear-gradient(145deg,#1b3329,#213e30 65%,#1d352a)!important;
+}
+html.dark .site-landing #siteHome #inside.psy-preview-section{
+  background:linear-gradient(135deg,#1b352a,#203e2e)!important;
+}
+html.dark .site-landing #siteHome #inside .psy-preview-wrap.psy-home-gallery{
+  background:linear-gradient(155deg,#234032,#1e362b)!important;
+  border-color:#55715d!important;
+}
+html.dark .site-landing #siteHome #inside .psy-preview-wrap.psy-home-gallery::before{
+  border-color:rgba(203,223,202,.13);
+}
+html.dark .site-landing #siteHome #inside .psy-auth-preview-card .psy-gallery-meta{
+  background:linear-gradient(155deg,#264333,#213b2e);
+}
+html.dark .site-landing #siteHome #pricing.psy-home-pricing{
+  background:linear-gradient(145deg,#1e372b,#223d30,#1b3329)!important;
+}
+html.dark .site-landing #siteHome #ready-kits.psy-featured-methods{
+  background:linear-gradient(145deg,#192e26,#1e392d)!important;
+}
+html.dark .site-landing #siteHome #about.psy-mission{
+  background:linear-gradient(130deg,#1b352b,#213e30)!important;
+}
+@media(max-width:790px){
+  .site-landing #siteHome #inside .psy-preview-wrap.psy-home-gallery::before{width:205px;height:205px;right:-102px;top:-86px}
+}
+@media(max-width:580px){
+  .site-landing #siteHome .psy-auth-hero .psy-demo-brandmark{
+    flex-basis:30px!important;min-width:30px!important;width:30px!important;height:30px!important;padding:3px!important
+  }
+  .site-landing #siteHome .psy-auth-hero .psy-demo-brand{gap:5px!important}
+  .site-landing #siteHome #inside .psy-preview-wrap.psy-home-gallery{border-radius:21px}
+}
+@media(prefers-reduced-motion:reduce){
+  .site-landing #siteHome .psy-auth-preview-card{transition:none!important}
+}
