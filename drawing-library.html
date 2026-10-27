@@ -222,6 +222,35 @@ html.dark .choice[aria-pressed=true] small{color:#d8ecdd}
 .record .fields label{font-size:15px}
 .sheet-hint,.sheet-label{font-size:16px}
 @media(max-width:580px){.analysis-panel .result-entry p{font-size:16px}}
+
+/* Раскрытие внутри результатов поиска и адаптивная палитра */
+.search-panel .results{display:block;max-height:min(75vh,820px);overflow:auto;overscroll-behavior:contain;padding-right:8px}
+.search-panel .symbol-row{width:100%;margin-top:9px}
+.search-panel .symbol-row:first-child{margin-top:0}
+.search-panel .symbol-row[aria-expanded=true]{border-color:var(--green);border-radius:13px 13px 0 0;background:#eaf3ed}
+.search-panel .symbol-row[aria-expanded=true] .arrow{transform:rotate(90deg)}
+.search-panel .symbol-row .arrow{transition:transform .18s ease}
+.inline-sheet{border:1px solid var(--green);border-top:none;border-radius:0 0 15px 15px;padding:18px;margin-bottom:12px;background:#fcfefc;min-width:0}
+.inline-sheet .sheet-tabs{gap:8px}
+.inline-sheet .choices,.inline-sheet .color-grid{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))}
+.inline-sheet .color-grid{display:grid;gap:9px}
+.inline-sheet .color-choice{width:100%;max-width:100%;min-width:0;overflow:hidden;display:flex;align-items:center;justify-content:flex-start;gap:9px;white-space:normal;overflow-wrap:anywhere}
+.inline-sheet .color-choice .color-swatch{flex:0 0 22px}
+.inline-sheet .color-choice .color-label{min-width:0;overflow-wrap:anywhere;line-height:1.25}
+.inline-sheet .choice{box-sizing:border-box;min-width:0;overflow-wrap:anywhere}
+.inline-sheet .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}
+.inline-sheet .feature-option{display:flex;flex-direction:column;gap:3px;min-height:64px;text-align:left}
+.inline-sheet .feature-option small{font-size:12px}
+.inline-sheet .quantity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.inline-sheet .quantity-grid input{width:100%;max-width:140px}
+.inline-sheet .sheet-note textarea{max-width:100%}
+.inline-sheet .sheet-help{font-size:14px;color:var(--muted);margin:10px 0}
+.inline-sheet .sheet-tabs{margin-top:15px}
+.inline-sheet .sheet-heading h2{font-size:20px}
+.inline-sheet .sheet-close{min-height:38px}
+html.dark .inline-sheet{background:#1f3329;border-color:#91c3a2}
+@media(max-width:800px){.search-panel .results{max-height:none;overflow:visible}.inline-sheet{padding:14px}.inline-sheet .color-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:450px){.inline-sheet .feature-grid{grid-template-columns:1fr}.inline-sheet .color-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.inline-sheet .color-choice{font-size:13px;padding:8px}.inline-sheet .color-choice .color-swatch{width:17px;height:17px;flex-basis:17px}}
 </style>
 </head>
 <body>
@@ -232,7 +261,7 @@ html.dark .choice[aria-pressed=true] small{color:#d8ecdd}
 <div class="search-column">
 <section class="panel method-line"><div><label for="method">Методика рисунка</label><select id="method"></select><p class="method-hint" id="methodHint"></p></div><span class="active-method" id="methodBadge">Выбрана методика</span></section>
 <section class="panel column search-panel" aria-label="Поиск по справочнику"><h2>Найти элемент рисунка</h2><label class="search-field" for="search">Поиск по названию и синонимам<input id="search" type="search" autocomplete="off" placeholder="Например: вода, тигр, дом, фиолетовый"></label><div class="pill-group" id="categories" role="group" aria-label="Категории элементов"></div><div class="search-info" id="count" aria-live="polite"></div><div id="results" class="results" aria-label="Результаты поиска"></div></section>
-<section class="panel element-sheet" id="sheet" hidden aria-label="Лист выбранного элемента"></section>
+
 </div>
 <div class="analysis-column"><section class="panel analysis-panel" aria-label="Результат анализа"><div class="analysis-heading"><h2>Результат анализа</h2><span class="analysis-live">Обновляется при выборе признаков</span></div><div id="details" class="details" aria-live="polite"><div class="empty">Найдите элемент слева и откройте его лист.</div></div><div id="actionStatus" class="action-status" role="status" aria-live="polite"></div></section></div>
 </div>
@@ -1486,6 +1515,125 @@ var RAW=[
   "тигренок тигрица полосатый хищник"
  ]
 ];
+
+/* Тематические словари наблюдаемых объектов. Первые 152 ID не меняются. */
+var EXPANSION={
+ "Растения":[
+ "Трава|травинка травинки газон", "Луг|луговой поляна", "Поляна|полянка", "Мох|мхи", "Лишайник",
+ "Папоротник","Куст|кустарник","Колючий куст|шипы","Кустарник","Тростник|камыш", "Камыш|камыши",
+ "Кувшинка|водяная лилия","Лотос","Водоросли|водоросль","Плющ|лиана","Лиана|вьющееся растение",
+ "Бамбук","Пальма","Сосна|хвойное дерево","Ель|елка ёлка","Пихта","Кедр","Лиственница",
+ "Береза|березка", "Дуб|дубок","Клен","Липа","Ива|плакучая ива","Тополь","Осина","Рябина",
+ "Яблоня","Груша|грушевое дерево","Вишня","Слива","Персик|персиковое дерево","Сакура",
+ "Баобаб","Кипарис","Кактус","Суккулент","Алоэ","Подсолнух|подсолнечник","Ромашка|ромашки",
+ "Роза|розочка","Тюльпан|тюльпаны","Лилия","Орхидея","Василек","Одуванчик","Мак|маки",
+ "Ландыш","Незабудка","Ирис","Пион","Гвоздика|цветок гвоздика","Хризантема","Астра",
+ "Сирень","Жасмин","Лаванда","Мимоза","Гортензия","Гиацинт","Нарцисс","Колокольчик|цветок",
+ "Фиалка","Бархатцы","Гладиолус","Гербера","Клевер","Крапива","Репейник|лопух",
+ "Подорожник","Пшеница","Рожь","Кукуруза","Подорожник","Тыква","Огурец","Морковь",
+ "Гриб|грибы грибочек","Мухомор","Подберезовик","Поганка","Корзина цветов|букет",
+ "Букет цветов|букет","Клумба|цветник","Рассада","Росток|проросток","Семена|семечко","Побег растения",
+ "Цветочный бутон|бутон","Плод дерева|фрукт","Ягоды|ягода","Шишка|шишки","Желуди|желудь",
+ "Шипы растения|колючки","Листопад|опавшие листья","Сухое дерево|без листьев","Пень|пенек"
+ ],
+ "Животные":[
+ "Лев|львица львенок","Леопард","Гепард","Ягуар","Пантера","Рысь","Снежный барс",
+ "Волк|волчица волчонок","Лиса|лисица лисенок","Медведь|медвежонок","Белый медведь",
+ "Олень","Лось","Косуля","Кабан","Заяц|зайчик кролик","Белка","Еж|ежик","Барсук","Енот",
+ "Бобр","Выдра","Хомяк","Мышь","Крыса","Крот","Енот","Опоссум","Скунс",
+ "Лошадь|конь жеребенок","Пони","Корова","Бык","Коза","Овца|баран","Свинья|поросенок",
+ "Собака|щенок пес","Кошка|котенок кот","Обезьяна","Горилла","Шимпанзе","Лемур",
+ "Слон|слоненок","Жираф","Зебра","Носорог","Бегемот","Верблюд","Лама","Альпака",
+ "Кенгуру","Коала","Панда","Ленивец","Муравьед","Броненосец","Бизон","Буйвол",
+ "Крокодил","Аллигатор","Ящерица","Геккон","Хамелеон","Змея","Кобра","Питон",
+ "Черепаха","Лягушка","Жаба","Саламандра","Тритон",
+ "Акула","Скат","Дельфин","Кит","Косатка","Тюлень","Морж","Морской конек",
+ "Осьминог","Кальмар","Медуза","Краб","Рак","Лобстер","Морская звезда",
+ "Щука","Карась","Окунь","Сом","Карп","Рыба-клоун","Пиранья",
+ "Орел","Сокол","Ястреб","Сова","Ворон","Ворона","Голубь","Воробей","Ласточка",
+ "Лебедь","Утка","Гусь","Петух","Курица","Павлин","Фламинго","Страус","Пингвин",
+ "Попугай","Тукан","Дятел","Колибри","Аист","Журавль","Чайка",
+ "Бабочка|мотылек","Моль","Пчела","Шмель","Оса","Муравей","Жук","Божья коровка",
+ "Стрекоза","Комар","Муха","Кузнечик","Сверчок","Богомол","Паук","Скорпион",
+ "Улитка","Червь","Гусеница","Многоножка","Сороконожка","Летучая мышь"
+ ],
+ "Мифические существа":[
+ "Единорог|единороги","Грифон|грифоны","Вендиго|wendigo","Дракон|драконы","Пегас",
+ "Феникс","Химера","Кентавр","Минотавр","Гидра","Василиск|базилиск","Левиафан",
+ "Кракен","Русалка","Сирена|мифическое существо","Оборотень|вервольф","Кикимора",
+ "Леший","Водяной|дух воды","Домовой","Жар-птица","Змей Горыныч","Кощей",
+ "Баба-яга","Йети|снежный человек","Тролль","Гоблин","Орк","Эльф","Фея",
+ "Гном","Великан","Циклоп","Джинн","Призрак","Баньши","Сфинкс","Мантикора",
+ "Цербер","Гарпия","Кирин|килин","Кицунэ|девятихвостая лиса","Селки","Келпи",
+ "Гиппогриф","Ламия","Голем","Горгулья","Древень|энт живое дерево",
+ "Зомби","Вампир","Инопланетянин","Робот-животное|киборг","Неизвестный монстр|чудовище",
+ "Многоголовое существо|несколько голов","Существо с щупальцами|щупальца","Существо с крыльями|крылатое"
+ ],
+ "Природа":[
+ "Речка|ручей река","Водопад","Озеро","Болото","Пруд","Море","Океан","Волны",
+ "Берег|побережье","Пляж","Пустыня","Оазис","Лес","Джунгли","Чаща","Степь",
+ "Склон горы","Холм","Скала","Пещера","Камень|валун","Галька","Песок",
+ "Земля|грунт","Почва","Лед","Снег","Снежинка","Сугроб","Ледник",
+ "Радуга","Облако грозовое","Туман","Метель","Ураган","Торнадо","Молния","Гроза","Буря",
+ "Затмение","Планета","Комета","Метеорит","Созвездие","Звездопад","Полярное сияние",
+ "Вулкан","Лава","Рассвет","Закат","Ночь","День","Тень","Отражение"
+ ],
+ "Предметы":[
+ "Забор|ограда","Ворота","Калитка","Дорога","Тропа","Мост","Лестница",
+ "Скамейка","Качели","Горка детская|игровая","Песочница","Игрушка","Кукла","Мяч",
+ "Книга","Зеркало","Картина","Телевизор","Компьютер","Телефон","Рюкзак","Часы",
+ "Фонарик","Лампа","Свеча","Факел","Костер","Сундук","Ключ","Замок","Дверь","Окно",
+ "Стена","Пол","Потолок","Стол","Стул","Кровать","Одеяло","Подушка","Шкаф","Коробка",
+ "Чашка","Тарелка","Ложка","Вилка","Нож","Бутылка","Банка","Подарок","Лента",
+ "Корабль","Лодка","Самолет","Поезд","Автобус","Автомобиль","Велосипед","Мотоцикл",
+ "Ракета","Воздушный шар","Зонт","Флаг","Корона","Меч","Щит","Лук","Стрела",
+ "Клетка","Аквариум","Будка","Гнездо","Нора","Берлога","Улей","Паутина",
+ "Домик на дереве","Башня","Замок-крепость","Маяк","Хижина","Палатка","Шалаш","Сарай",
+ "Гараж","Здание школы","Детский сад здание","Больница","Магазин","Церковь","Стадион"
+ ],
+ "Тело":[
+ "Клыки саблевидные|саблезубые клыки","Усы животного|вибриссы","Грива",
+ "Полосы на шерсти","Пятна на шкуре","Чешуя","Перья","Панцирь","Жабры",
+ "Плавник","Копыта","Ласты","Длинный хвост","Короткий хвост","Несколько хвостов",
+ "Щупальца","Шипы на спине","Иглы животного","Когти","Лапы","Дополнительные лапы",
+ "Крылья перепончатые|крылья летучей мыши","Крылья пернатые","Удлиненная шея",
+ "Несколько голов","Третий глаз","Раны на теле","Шрамы","Повязка","Сломанная лапа",
+ "Слезы","Капли крови","Зубчатая пасть","Язык","Ноздри","Брови","Ресницы",
+ "Мускулы","Суставы","Ладони","Пальцы рук","Пальцы ног","Обувь","Одежда"
+ ],
+ "Графика":[
+ "Многократная штриховка","Сильный нажим карандаша","Слабый нажим карандаша",
+ "Прерывистый контур","Сплошной контур","Обведение линии","Зачеркивание",
+ "Повторное исправление","Стирание ластиком","Несколько слоев краски","Смешение красок",
+ "Симметрия","Асимметрия","Непропорциональные части","Пустое пространство",
+ "Большое количество деталей","Мало деталей","Наклон фигуры","Перекрытие объектов"
+ ]
+};
+var EXTRA_METHODS={
+ "Растения":"free tree house-tree-person fictional-animal school-animals school-likes",
+ "Животные":"free fictional-animal school-animals school-likes family kfd",
+ "Мифические существа":"free fictional-animal school-animals school-likes",
+ "Природа":"free tree house-tree-person fictional-animal school-animals school-likes",
+ "Предметы":"free family kfd corman fictional-animal school-animals school-likes house-tree-person person",
+ "Тело":"free fictional-animal school-animals person house-tree-person family kfd",
+ "Графика":"free fictional-animal school-animals person tree house-tree-person family kfd"
+};
+var existingNames=new Set(RAW.map(function(x){return x[0].toLocaleLowerCase("ru")}));
+Object.keys(EXPANSION).forEach(function(category){
+ EXPANSION[category].forEach(function(spec){
+  var parts=spec.split("|"),name=parts[0].trim();
+  if(existingNames.has(name.toLocaleLowerCase("ru")))return;
+  existingNames.add(name.toLocaleLowerCase("ru"));
+  var meaning=(category==="Мифические существа"?"Фантастический образ. Отмечайте строение, необычные части тела, действие и роль в сюжете. ":
+   category==="Животные"?"Изображение животного. Важны поза, части тела, пропорции и окружение. ":
+   category==="Растения"?"Растительный образ. Важны форма, число, состояние и окружение. ":
+   category==="Графика"?"Графическая особенность рисунка. ":
+   category==="Тело"?"Видимая часть или особенность тела персонажа. ":
+   category==="Предметы"?"Предмет или постройка в композиции. ":
+   "Природный элемент рисунка. ")+name+".";
+  RAW.push([name,category,meaning,"",EXTRA_METHODS[category],parts[1]||""]);
+ });
+});
 var POS={
  "unknown":["Не указано",""],
  "left":["Слева","В символических схемах левую часть связывают с прошлым опытом, воспоминаниями и внутренним миром."],
