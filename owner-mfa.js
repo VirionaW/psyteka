@@ -39,7 +39,7 @@
  }
  async function requireOwner(){
   const {data,error}=await client.auth.getUser();
-  if(error||!data?.user||data.user.is_anonymous||!data.user.email_confirmed_at)return false;
+  if(error||!data?.user||data.user.is_anonymous)return false;
   const {data:role,error:roleError}=await client.from("psy_account_roles")
     .select("role").eq("user_id",data.user.id).maybeSingle();
   if(roleError)throw roleError;
@@ -58,7 +58,7 @@
    node("psyMfaFactorCount").textContent=verifiedCount===1?
     "Подключен один аутентификатор. Добавьте резервный на другом устройстве.":
     "Подключено аутентификаторов: "+verifiedCount+".";
-   note("Дополнительный код подтвержден. Управление модераторами доступно.");
+   note("Дополнительный код подтвержден. Административные действия доступны.");
   }else if(primaryFactor){
    display(challenge);
    note("Защита уже включена. Для текущего входа нужен код из приложения.");
@@ -69,7 +69,7 @@
  }
  try{
   const isOwner=await requireOwner();
-  if(!isOwner){display(guest);note("Настроить «Вендиго» может только подтвержденный Владелец.",true);return;}
+  if(!isOwner){display(guest);note("Настроить «Вендиго» может Владелец или Тень после входа в подтвержденный аккаунт.",true);return;}
   await refresh();
  }catch(_){display(guest);note("Не удалось проверить аккаунт. Попробуйте обновить страницу.",true);return;}
 
