@@ -35,8 +35,16 @@
    .select("role").eq("user_id",ownerId).maybeSingle();
   if(roleError){say("Не удалось подтвердить полномочия.",true);return;}
   if(roleData?.role!=="owner"){say("Доступ только для владельца Психотеки.",true);return;}
+  // The Edge Function independently verifies the JWT assurance level.
+  // Do not expose a list of email addresses to an aal1 owner session.
+  const {data:aal,error:aalError}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
+  if(aalError || aal?.currentLevel!=="aal2"){
+   document.getElementById("usersMfaRequired").hidden=false;
+   say("Для управления участниками необходимо подтвердить защиту «Вендиго».");
+   return;
+  }
   panel.hidden=false;
-  say("Вы вошли как Владелец.");
+  say("Вы вошли как Владелец. Двухфакторная защита подтверждена.");
  }catch(_){say("Не удалось проверить аккаунт.",true);return;}
 
  async function call(body){
