@@ -1,0 +1,22 @@
+/* Profile and settings navigation, professional layout */
+body[data-account] .site-header nav{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+body[data-account] .site-header nav>a:not(.round-link){display:inline-flex;align-items:center;justify-content:center;padding:10px 17px;border:1px solid #c5d8d0;border-radius:12px;background:#f6faf7;color:#234b3e;font-weight:700;text-decoration:none;min-height:42px}
+body[data-account] .site-header nav>a:not(.round-link):hover{background:#e5f2ea;border-color:#88b49d}
+body[data-account] .site-header nav>a[aria-current="page"]{background:#245b46;color:white}
+body[data-account] .site-account{max-width:1120px;width:min(100% - 32px,1120px);margin:35px auto 72px}
+body[data-account] .site-account>h1{font-size:clamp(28px,3.4vw,41px);margin-bottom:8px;letter-spacing:-.025em}
+body[data-account] .site-account>.large-text{max-width:840px}
+body[data-account] .account-card{border:1px solid #d7e4dd;border-radius:20px;box-shadow:0 8px 28px rgba(17,54,43,.04)}
+body[data-account] .site-theme-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px}
+body[data-account] .site-theme-icon svg{display:block;width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.psy-account-quicklinks{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}
+.psy-account-quicklinks a{display:inline-flex;align-items:center;min-height:43px;padding:10px 17px;background:#eaf3ec;border:1px solid #bbd4c4;color:#214c3b;border-radius:12px;text-decoration:none;font-weight:700}
+.psy-collections-card{margin:18px 0;padding:24px;background:var(--surface,#fff);border:1px solid #d7e4dd;border-radius:20px}
+.psy-collections-card h2{margin:0 0 7px}.psy-collections-card p{color:#647a6d;margin:0 0 16px}
+.psy-folder-form{display:flex;flex-wrap:wrap;gap:10px}.psy-folder-form input{max-width:310px;min-width:180px;flex:1;padding:10px;border:1px solid #bfd5c7;border-radius:10px}.psy-folder-form button,.psy-collections-card button{cursor:pointer;padding:9px 13px;border:1px solid #bfd5c7;border-radius:10px;background:#eaf3ec;color:#214c3b;font-weight:650}
+.psy-collection-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:12px;padding:0;margin:14px 0 0;list-style:none}.psy-collection-list li{padding:14px;background:#f7faf8;border:1px solid #dde9e0;border-radius:12px}.psy-collection-list a{color:#235c46}.psy-collection-list .psy-remove{margin-left:8px;font-size:12px}
+.psy-save-method{margin-left:8px!important;cursor:pointer}
+.psy-account-footer{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:27px max(24px,calc((100vw - 1120px)/2));border-top:1px solid #d8e5dc;background:#f2f7f3;color:#244b3b}
+.psy-account-footer-brand{display:flex;align-items:center;gap:12px;font-size:20px;font-weight:750}.psy-account-footer-brand img{width:43px;height:43px}
+.psy-account-footer p{margin:6px 0;font-size:14px}.psy-account-footer a{color:inherit;font-weight:700}
+@media(max-width:720px){body[data-account] .site-header nav>a:not(.round-link){padding:8px 10px}body[data-account] .site-account{width:calc(100% - 24px)}.psy-account-footer{padding:24px 16px}}
