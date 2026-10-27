@@ -1979,7 +1979,10 @@ function init(){
    item.colors=normalizeColors(item.colors,item.color);
    item.colors=item.colors.includes(v)?item.colors.filter(function(k){return k!==v}):item.colors.concat(v);
    item.color=item.colors[0]||"";
-   renderRecords();return;
+   color.setAttribute("aria-pressed",String(item.colors.includes(v)));
+   var summary=row.querySelector("summary");
+   if(summary)summary.textContent="Цвета: "+(item.colors.length?item.colors.map(function(k){return colorByKey(k)[1]}).join(", "):"не указаны");
+   return;
   }
   var edit=e.target.closest("[data-edit]");
   if(edit){
