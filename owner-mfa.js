@@ -7,6 +7,15 @@
  const start=node("psyMfaStart"),scan=node("psyMfaScan"),challenge=node("psyMfaChallenge"),
    ready=node("psyMfaReady"),guest=node("psyMfaGuest");
  const config=window.PSY_AUTH_CONFIG||{};
+ // Restore an intended on-site library page after security verification.
+ try{
+  const wanted=sessionStorage.getItem("psy-intended-destination");
+  const url=new URL(wanted||"library.html",location.href);
+  if(url.origin===location.origin&&
+    /\/(?:library|cognitive-kit|family-kit|selfesteem-kit|adaptation-drawing)\.html$/.test(url.pathname)){
+   node("psyMfaLibrary").href=url.pathname+url.search+url.hash;
+  }
+ }catch(_){}
  function note(text,error=false){status.textContent=text;status.classList.toggle("psy-error",error)}
  function display(which){for(const n of [start,scan,challenge,ready,guest])n.hidden=n!==which;}
  function cleanSecret(){
