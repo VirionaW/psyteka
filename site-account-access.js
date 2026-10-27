@@ -55,6 +55,8 @@
     const {error:logoutError}=await client.auth.signOut();
     if(logoutError)throw logoutError;
     hidePrivate();message("Вы вышли из аккаунта.");
+    try{sessionStorage.removeItem("psy-intended-destination");sessionStorage.removeItem("psy-demo-entry");}catch(_){}
+    location.replace("index.html?home=1&entry=1");
     // Сбрасываем номер телефона в интерфейсе без изменения данных в Supabase.
     const phone=document.getElementById("profilePhone"),save=document.getElementById("savePhoneBtn");
     if(phone){phone.value="";phone.disabled=true;}
