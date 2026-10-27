@@ -41,7 +41,7 @@
   // Contact values are private by default; the reveal button controls
   // display of this signed-in user's own email, never the directory.
   const realEmail=user.email||"";
-  const maskedEmail=realEmail.replace(/^(.)([^@]*)(@.*)$/,(_,a,b,domain)=>a+"•".repeat(Math.min(8,Math.max(3,b.length)))+domain);
+  const maskedEmail="Электронная почта скрыта";
   email.textContent=maskedEmail||"Почта подтверждена";email.hidden=false;
   const reveal=document.getElementById("psyEmailReveal");
   if(reveal){let visible=false;
