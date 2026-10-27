@@ -1,54 +1,97 @@
-/* Subscription page: consistent Psychoteka greenery and warm neutrals. */
-.psy-subscription-page{background:#f6faf6;color:#1d3c30;min-height:100vh}
-.psy-subscription-page .site-header{z-index:25}
-.psy-subs-main{max-width:1390px;padding:42px 24px 78px;margin:0 auto}
-.psy-subs-intro{max-width:1020px;margin:0 auto 32px;text-align:center}
-.psy-subs-kicker{color:#9b7b4e;font-size:12px;font-weight:900;letter-spacing:.14em}
-.psy-subs-intro h1{font-size:clamp(32px,4vw,58px);line-height:1.1;margin:15px 0 16px;letter-spacing:-.035em}
-.psy-subs-intro>p{font-size:16px;line-height:1.75;color:#5d7869;max-width:760px;margin:0 auto}
-.psy-subs-status{max-width:800px;margin:24px auto 0;border:1px solid #c8ddcf;background:#edf6ef;border-radius:15px;padding:15px 20px;font-size:14px;line-height:1.55;color:#286248}
-.psy-subs-status[data-status="error"]{color:#9a5847;background:#fff5ef;border-color:#f0d4c5}
-.psy-subs-plans{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px;align-items:stretch}
-.psy-subs-card{display:flex;flex-direction:column;min-width:0;background:#fff;border:1px solid #d6e6db;border-radius:22px;padding:26px 23px;box-shadow:0 12px 36px rgba(20,66,46,.045)}
+/* Subscriptions · unified warm editorial design, 2026-10-27 */
+.psy-subscription-page{background:#f5f9f5;color:#204536;min-height:100vh}
+.psy-subscription-page .site-header{position:relative;z-index:30}
+.psy-subs-main{max-width:1270px;margin:auto;padding:52px 24px 82px}
+.psy-subs-intro{text-align:center;position:relative;max-width:920px;margin:0 auto 46px}
+.psy-subs-kicker,.psy-subs-overline{font-size:11px;letter-spacing:.14em;font-weight:900;color:#947044}
+.psy-subs-kicker{display:inline-block;background:#fff4dc;border:1px solid #ebdac0;padding:9px 14px;border-radius:999px}
+.psy-subs-intro h1{font-size:clamp(35px,4.6vw,62px);font-weight:850;line-height:1.1;letter-spacing:-.042em;margin:19px auto 17px;max-width:830px;color:#1c3d2f}
+.psy-subs-intro>p{font-size:17px;line-height:1.7;max-width:705px;margin:0 auto;color:#5f7869}
+.psy-subs-highlights{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:25px 0}
+.psy-subs-highlights span{font-size:12px;font-weight:750;color:#3b7253;padding:8px 13px;background:#e8f3eb;border:1px solid #d0e4d6;border-radius:100px}
+.psy-subs-status{max-width:740px;margin:22px auto 0;padding:14px 20px;background:#fff;border:1px solid #c9decf;border-radius:15px;font-size:14px;line-height:1.6;color:#356c4d;box-shadow:0 7px 20px rgba(35,75,48,.035)}
+.psy-subs-status[data-status="error"]{background:#fff5f1;color:#935a4b;border-color:#e8cdc1}
+.psy-subs-section-heading{display:flex;align-items:end;justify-content:space-between;gap:18px;margin:0 0 24px}
+.psy-subs-section-heading h2{font-size:clamp(26px,3vw,38px);line-height:1.14;letter-spacing:-.035em;margin:7px 0 0;color:#1e4434}
+.psy-subs-section-heading>p{font-size:13px;color:#6b8575;margin:0 0 2px;max-width:340px;text-align:right}
+.psy-subs-plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:18px}
+.psy-subs-plans:has(.psy-subs-trial[hidden]){grid-template-columns:repeat(2,minmax(0,420px));justify-content:center}
+.psy-subs-card{position:relative;display:flex;flex-direction:column;min-width:0;padding:29px 28px 22px;background:#fff;border:1px solid #d3e5d7;border-radius:24px;box-shadow:0 16px 34px rgba(31,73,45,.05);overflow:hidden}
 .psy-subs-card[hidden]{display:none!important}
-.psy-subs-featured{border-color:#9ecdb5;background:#f9fcf9;box-shadow:0 14px 40px rgba(33,107,75,.1)}
-.psy-subs-trial{border-color:#e2cfab;background:#fffaf1}
-.psy-subs-card-top{display:flex;gap:9px;justify-content:space-between;align-items:center;flex-wrap:wrap;min-height:32px}
-.psy-subs-label{font-size:10px;font-weight:900;letter-spacing:.12em;color:#54876c}
-.psy-subs-trial .psy-subs-label{color:#a47b41}
-.psy-subs-tag{font-size:11px;font-weight:750;color:#547963;background:#eaf4ed;padding:6px 9px;border-radius:999px}
-.psy-subs-trial .psy-subs-tag{background:#f7ebd4;color:#8b6936}
-.psy-subs-card h2{font-size:27px;font-weight:850;letter-spacing:-.025em;margin:19px 0 3px}
-.psy-subs-term{font-size:13px;color:#6d8878;margin:0 0 18px}
-.psy-subs-price{font-size:32px;font-weight:900;color:#235f45;line-height:1.2;margin:0 0 19px}
-.psy-subs-soon{font-size:18px;min-height:39px;display:flex;align-items:center}
-.psy-subs-description{font-size:14px;color:#526d5d;line-height:1.65;min-height:92px;margin:0 0 13px}
-.psy-subs-card ul{padding:0;margin:0 0 25px;list-style:none;display:grid;gap:13px}
-.psy-subs-card li{font-size:13px;line-height:1.5;color:#365748;padding-left:23px;position:relative}
-.psy-subs-card li:before{content:"✓";font-weight:900;color:#3d8b63;position:absolute;left:0}
-.psy-subs-action{display:flex;align-items:center;justify-content:center;min-height:47px;text-align:center;padding:9px 13px;border-radius:12px;font-size:13px;font-weight:800;box-sizing:border-box;margin-top:auto}
-button.psy-subs-action{width:100%;border:0;cursor:pointer}
-.psy-subs-action-main{background:#267352;color:#fff}
-.psy-subs-action-main:disabled{background:#9ab3a3;cursor:wait}
-.psy-subs-action-main:not(:disabled):hover{background:#19583d}
-.psy-subs-action-main:focus-visible{outline:3px solid #b99a5c;outline-offset:2px}
-.psy-subs-unavailable{border:1px solid #d8e4dc;background:#edf3ef;color:#647e70}
-.psy-subs-detail{color:#819488;font-size:11px;line-height:1.55;margin:15px 0 0;min-height:42px}
-.psy-subs-foot{margin:43px auto 0;max-width:1050px;background:#fff;border:1px solid #dceade;border-radius:22px;padding:26px 30px}
-.psy-subs-foot h2{font-size:22px;margin:0 0 12px}
-.psy-subs-foot p{line-height:1.75;color:#5f786a;font-size:14px}
-.psy-subs-back{display:inline-flex;padding:12px 18px;border-radius:12px;background:#286e50;color:#fff!important;font-weight:750;text-decoration:none;margin-top:10px}
-.psy-subs-footer{padding:23px;text-align:center;color:#d3e8d9;background:#204d3c;font-size:12px}
-@media(max-width:1160px){.psy-subs-plans{grid-template-columns:repeat(2,minmax(0,1fr))}.psy-subs-description{min-height:0}}
-@media(max-width:640px){.psy-subs-main{padding:27px 14px 55px}.psy-subs-plans{grid-template-columns:1fr}.psy-subs-card{padding:23px}.psy-subs-foot{padding:23px 19px}.psy-subs-intro h1{font-size:33px}.psy-subs-card ul{margin-bottom:21px}}
-html.dark .psy-subscription-page{background:#152b27;color:#ebf5ec}
-html.dark .psy-subs-card,html.dark .psy-subs-foot{background:#203b33;color:#ecf5ec;border-color:#507161}
-html.dark .psy-subs-trial{background:#34372b}
-html.dark .psy-subs-featured{background:#223c34}
-html.dark .psy-subs-intro>p,html.dark .psy-subs-description,html.dark .psy-subs-foot p,html.dark .psy-subs-card li{color:#c5daca}
-html.dark .psy-subs-status{background:#254a38;border-color:#577b64;color:#e2f3e6}
-html.dark .psy-subs-price{color:#b8e1c3}
-html.dark .psy-subs-label{color:#b7d9bd}
-html.dark .psy-subs-tag{background:#355b45;color:#e8f5eb}
-html.dark .psy-subs-unavailable{background:#344e40;color:#bdcfbf;border-color:#63806a}
-html.dark .psy-subs-detail{color:#abc5b5}
+.psy-subs-card::before{content:"";position:absolute;height:7px;left:0;right:0;top:0;background:#a7cdb4}
+.psy-subs-trial{background:#fffbf5;border-color:#e9dac1}
+.psy-subs-trial::before{background:#deb77d}
+.psy-subs-featured{background:#fcfffc;border:2px solid #3c9167;box-shadow:0 19px 44px rgba(34,105,68,.13);transform:translateY(-3px)}
+.psy-subs-featured::before{background:#34885e}
+.psy-subs-team{background:#f5faf7}
+.psy-subs-team::before{background:#81a99a}
+.psy-subs-card-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;min-height:24px}
+.psy-subs-label{font-size:10px;letter-spacing:.12em;font-weight:900;color:#668472}
+.psy-subs-tag{border-radius:999px;background:#e7f4eb;color:#397553;padding:7px 10px;font-size:11px;font-weight:760}
+.psy-subs-trial .psy-subs-tag{background:#f7ead6;color:#986e3e}
+.psy-subs-decor{display:grid;place-items:center;margin:23px 0 12px;width:52px;height:52px;background:#e7f3eb;color:#378157;border:1px solid #cfe5d5;border-radius:17px;font-size:25px;font-weight:700}
+.psy-subs-trial .psy-subs-decor{background:#f8ecd9;color:#9e7a49;border-color:#efddc3}
+.psy-subs-team .psy-subs-decor{background:#e0eee9;color:#437c68}
+.psy-subs-card h3{font-size:29px;font-weight:850;letter-spacing:-.04em;line-height:1.12;margin:0 0 6px;color:#1e4634}
+.psy-subs-term{font-size:13px;color:#6c8375;margin:0 0 19px;min-height:19px}
+.psy-subs-price{font-size:clamp(30px,3.2vw,42px);line-height:1.1;letter-spacing:-.045em;color:#1d6044;font-weight:900;white-space:nowrap;margin:0 0 5px}
+.psy-subs-price small{font-size:14px;font-weight:700;letter-spacing:0;color:#768d7d}
+.psy-subs-price-note{font-size:12px;color:#9a7950;margin:2px 0 14px;font-weight:700}
+.psy-subs-description{font-size:14px;line-height:1.65;color:#64796b;margin:13px 0 24px;min-height:70px}
+.psy-subs-list-label{font-size:12px;text-transform:uppercase;letter-spacing:.09em;font-weight:850;color:#5a7f64;margin:0 0 14px}
+.psy-subs-card ul{list-style:none;padding:0;margin:0 0 28px;display:grid;gap:12px}
+.psy-subs-card li{font-size:13px;line-height:1.5;padding-left:26px;position:relative;color:#3d5e4c}
+.psy-subs-card li::before{content:"✓";position:absolute;left:0;top:-1px;width:17px;height:17px;display:grid;place-items:center;border-radius:50%;background:#e0f1e5;color:#2f8c58;font-size:12px;font-weight:900}
+.psy-subs-action{display:flex;align-items:center;justify-content:center;min-height:48px;width:100%;border-radius:12px;padding:10px 15px;box-sizing:border-box;font-size:13px;font-weight:850;text-align:center;margin-top:auto}
+button.psy-subs-action{border:0;cursor:pointer}
+.psy-subs-action-main{background:#257553;color:#fff;box-shadow:0 6px 12px rgba(31,112,76,.12)}
+.psy-subs-action-main:not(:disabled):hover{background:#185b40}
+.psy-subs-action-main:disabled{opacity:.7;cursor:wait}
+.psy-subs-action-main:focus-visible{outline:3px solid #d2b578;outline-offset:2px}
+.psy-subs-unavailable{background:#eaf1ec;border:1px solid #d6e4d9;color:#6b8878;cursor:default}
+.psy-subs-detail{font-size:11px;line-height:1.6;color:#82968a;margin:14px 0 0}
+.psy-subs-compare{margin:76px 0 0}
+.psy-subs-table-scroll{background:#fff;border:1px solid #d1e3d6;border-radius:22px;overflow-x:auto;box-shadow:0 14px 35px rgba(39,91,57,.055)}
+.psy-subs-table-scroll:focus-visible{outline:3px solid #649d7a;outline-offset:3px}
+.psy-subs-table{border-collapse:separate;border-spacing:0;width:100%;min-width:690px;color:#304f3d;table-layout:fixed}
+.psy-subs-table caption{text-align:left;caption-side:bottom;padding:12px 19px;font-size:12px;color:#738b7a;border-top:1px solid #ebf2ec}
+.psy-subs-table th,.psy-subs-table td{padding:15px 20px;border-bottom:1px solid #e6efe8}
+.psy-subs-table thead th{background:#e8f2ec;color:#23563b;font-size:14px;font-weight:850;text-align:center;line-height:1.3}
+.psy-subs-table thead th:first-child{width:43%;text-align:left}
+.psy-subs-table thead th:not(:first-child){width:19%}
+.psy-subs-table thead th small{display:block;font-size:11px;font-weight:650;margin-top:6px;color:#6d8a79}
+.psy-subs-table .psy-subs-col-featured{background:#d6eadd;color:#1d5b3e}
+.psy-subs-table tbody th{text-align:left;font-size:13px;font-weight:650;line-height:1.35}
+.psy-subs-table tbody td{text-align:center}
+.psy-subs-table tbody tr:last-child td,.psy-subs-table tbody tr:last-child th{border-bottom:0}
+.psy-subs-table tbody tr:not(.psy-subs-group):nth-child(odd){background:#fbfdfb}
+.psy-subs-table .psy-subs-group th{background:#f2f7f3;color:#4d7b5d;text-transform:uppercase;font-size:11px;letter-spacing:.08em;text-align:left;padding:13px 20px;font-weight:900}
+.psy-subs-yes,.psy-subs-no{display:inline-grid;width:28px;height:28px;place-items:center;border-radius:50%;font-weight:900;font-size:18px}
+.psy-subs-yes{background:#e0f3e5;color:#218249}
+.psy-subs-no{background:#f5eceb;color:#b27a75}
+.psy-subs-table-note{font-size:13px;line-height:1.6;color:#6c8072;margin:15px 9px 0}
+.psy-subs-foot{margin:56px auto 0;max-width:980px;border-radius:22px;background:#fff;border:1px solid #dce8dc;padding:30px 34px}
+.psy-subs-foot h2{margin:0 0 13px;font-size:22px}
+.psy-subs-foot p{color:#5c7665;font-size:14px;line-height:1.75}
+.psy-subs-back{display:inline-flex;margin-top:10px;padding:12px 19px;background:#276d4f;color:#fff!important;font-weight:750;border-radius:11px;text-decoration:none}
+.psy-subs-footer{padding:26px 20px;text-align:center;background:#214b39;color:#d6e8db;font-size:12px}
+@media(max-width:900px){.psy-subs-plans{grid-template-columns:repeat(2,minmax(0,1fr))}.psy-subs-plans:has(.psy-subs-trial[hidden]){grid-template-columns:repeat(2,minmax(0,1fr))}.psy-subs-intro>p{font-size:15px}}
+@media(max-width:640px){.psy-subs-main{padding:28px 14px 56px}.psy-subs-intro{margin-bottom:37px}.psy-subs-plans,.psy-subs-plans:has(.psy-subs-trial[hidden]){grid-template-columns:1fr}.psy-subs-featured{transform:none}.psy-subs-card{padding:25px 22px 21px}.psy-subs-section-heading{align-items:start;flex-direction:column;gap:6px}.psy-subs-section-heading>p{text-align:left}.psy-subs-compare{margin-top:53px}.psy-subs-foot{padding:23px 21px}.psy-subs-table th,.psy-subs-table td{padding:12px 13px}.psy-subs-highlights{gap:6px}.psy-subs-highlights span{font-size:11px;padding:7px 9px}}
+html.dark .psy-subscription-page{background:#152a24;color:#e3f1e6}
+html.dark .psy-subs-intro h1,html.dark .psy-subs-section-heading h2{color:#e7f3e8}
+html.dark .psy-subs-intro>p,html.dark .psy-subs-section-heading>p,html.dark .psy-subs-description,html.dark .psy-subs-card li,html.dark .psy-subs-foot p,html.dark .psy-subs-table-note{color:#bad0c1}
+html.dark .psy-subs-card,html.dark .psy-subs-foot,html.dark .psy-subs-table-scroll{background:#243d32;border-color:#4c6856;color:#e2efe3}
+html.dark .psy-subs-trial{background:#36382b}
+html.dark .psy-subs-featured{background:#254338;border-color:#72ad89}
+html.dark .psy-subs-team{background:#253d37}
+html.dark .psy-subs-card h3,html.dark .psy-subs-price{color:#d4edda}
+html.dark .psy-subs-term,html.dark .psy-subs-price small,html.dark .psy-subs-detail{color:#a8bfad}
+html.dark .psy-subs-status{background:#213d2f;color:#d4efdc;border-color:#52745c}
+html.dark .psy-subs-highlights span,html.dark .psy-subs-tag{background:#315243;color:#dbefe0;border-color:#50725c}
+html.dark .psy-subs-unavailable{background:#345244;color:#c8dccb;border-color:#5b7f68}
+html.dark .psy-subs-table{color:#d5eadb}
+html.dark .psy-subs-table thead th,html.dark .psy-subs-table .psy-subs-group th{background:#30513e;color:#e3f4e6}
+html.dark .psy-subs-table .psy-subs-col-featured{background:#39714d}
+html.dark .psy-subs-table thead th small{color:#c1dcc6}
+html.dark .psy-subs-table th,html.dark .psy-subs-table td,html.dark .psy-subs-table caption{border-color:#456450}
+html.dark .psy-subs-table tbody tr:not(.psy-subs-group):nth-child(odd){background:#284438}
