@@ -5,29 +5,29 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://uwouubzabqpuujuovala.supabase.co wss://uwouubzabqpuujuovala.supabase.co; frame-src 'none'; form-action 'self'; upgrade-insecure-requests">
-<title>Вендиго – защита Владельца | Психотека</title>
+<title>Вендиго – защита управления | Психотека</title>
 <link rel="icon" type="image/svg+xml" href="brand-favicon.svg?v=20261025e">
 <link rel="stylesheet" href="registration.css?v=20261026a1">
 <link rel="stylesheet" href="owner-mfa.css?v=20261027mfa1">
 <script defer src="auth-config.js?v=20261027public1"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
-<script defer src="owner-mfa.js?v=20261027shadowtrial1"></script>
+<script defer src="owner-mfa.js?v=20261027mfaunlock3"></script>
 </head>
 <body>
 <header class="auth-header">
  <a href="index.html?home=1" class="auth-brand"><img src="brand-mark.svg?v=20261025c" width="45" height="45" alt=""><span><strong>Психотека</strong><small>Методическая библиотека</small></span></a>
- <a class="auth-back" href="profile.html">К профилю</a>
+ <a class="auth-back" href="library.html">К библиотеке</a> <a class="auth-back" href="profile.html">К профилю</a>
 </header>
 <main class="psy-mfa-wrap">
  <div class="psy-mfa-intro">
   <p class="auth-eyebrow">Защита личного кабинета</p>
   <h1>Вендиго</h1>
-  <p>Дополнительный код для Владельца Психотеки. Он создается на вашем телефоне в приложении-аутентификаторе и меняется каждые 30 секунд.</p>
+  <p>Дополнительный код для административных действий Владельца и Тени. Он создается в приложении-аутентификаторе и меняется каждые 30 секунд. Для обычного просмотра библиотеки не требуется.</p>
  </div>
  <section class="psy-mfa-card" aria-labelledby="psyMfaTitle">
   <h2 id="psyMfaTitle">Двухфакторная защита</h2>
   <p id="psyMfaStatus" class="psy-mfa-status" role="status" aria-live="polite">Проверяем вход и права...</p>
-  <div id="psyMfaGuest" hidden><p>Для настройки сначала войдите в подтвержденный аккаунт Владельца.</p><a class="psy-mfa-action" href="index.html?home=1&entry=1">Войти в Психотеку</a></div>
+  <div id="psyMfaGuest" hidden><p>Для настройки войдите в подтвержденный аккаунт Владельца или Тени. Библиотеку можно открыть отдельно, если ваш доступ активен.</p><a class="psy-mfa-action" href="index.html?home=1&entry=1">Войти в Психотеку</a> <a class="psy-mfa-action" href="library.html">Открыть библиотеку</a></div>
   <div id="psyMfaStart" hidden>
    <p>Установите Google Authenticator, Microsoft Authenticator или другой TOTP-аутентификатор. Не отправляйте QR-код и секретный ключ в чат.</p>
    <button class="psy-mfa-action" type="button" id="psyMfaStartBtn">Подключить защиту</button>
