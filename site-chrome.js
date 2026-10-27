@@ -1,6 +1,6 @@
 "use strict";
 (function(){
- const doc=document,root=doc.documentElement,themeKey="psyteka-theme",avatarKey="psy-avatar-demo";
+ const doc=document,root=doc.documentElement,themeKey="psyteka-theme";
  function getTheme(){try{return localStorage.getItem(themeKey)==="dark"?"dark":"light"}catch(_){return "light"}}
  function buttonState(){
   const dark=root.classList.contains("dark");
@@ -36,19 +36,30 @@
   prefs.theme=mode;localStorage.setItem("psy-settings-demo",JSON.stringify(prefs));
  }catch(_){}},false);
  function avatar(){
-  let raw="";
-  try{raw=localStorage.getItem(avatarKey)||""}catch(_){}
-  const valid=/^data:image\/(?:jpeg|png|webp);base64,[a-zA-Z0-9+/=]+$/.test(raw);
-  let name="С";
-  try{const p=JSON.parse(localStorage.getItem("psy-profile-demo")||"{}");name=(p.name||"Специалист").trim().charAt(0).toUpperCase()||"С"}catch(_){}
-  doc.querySelectorAll('a.round-link[href="profile.html"],a.header-avatar[href="profile.html"]').forEach(link=>{
-   link.textContent="";
-   link.classList.toggle("has-photo",valid);
-   if(valid){const img=doc.createElement("img");img.src=raw;img.alt="";img.className="psy-user-image";link.appendChild(img)}
-   else link.textContent=name;
-  });
+  const identity=window.PSY_IDENTITY;
+  const update=state=>{
+   const key=state?.avatarKey?.(),pkey=state?.profileKey?.();
+   let raw="",name="С";
+   try{
+    if(key)raw=localStorage.getItem(key)||"";
+    if(pkey){const p=JSON.parse(localStorage.getItem(pkey)||"{}");
+      name=(p.name||"Специалист").trim().charAt(0).toUpperCase()||"С";}
+   }catch(_){}
+   const valid=/^data:image\/(?:jpeg|png|webp);base64,[a-zA-Z0-9+/=]+$/.test(raw);
+   doc.querySelectorAll('a.round-link[href="profile.html"],a.header-avatar[href="profile.html"]').forEach(link=>{
+    link.replaceChildren();link.classList.toggle("has-photo",Boolean(key&&valid));
+    if(key&&valid){const img=doc.createElement("img");img.src=raw;img.alt="";img.className="psy-user-image";link.appendChild(img);}
+    else link.textContent=name;
+   });
+  };
+  if(identity)identity.ready.then(update).catch(()=>update(null));
+  else update(null);
  }
  avatar();
  window.addEventListener("psy-profile-change",avatar);
- window.addEventListener("storage",e=>{if(e.key===themeKey)applyTheme(getTheme(),false);if(e.key===avatarKey||e.key==="psy-profile-demo")avatar()});
+ window.addEventListener("storage",e=>{
+  if(e.key===themeKey)applyTheme(getTheme(),false);
+  const id=window.PSY_IDENTITY;
+  if(id&&(e.key===id.avatarKey()||e.key===id.profileKey()))avatar();
+ });
 })();
