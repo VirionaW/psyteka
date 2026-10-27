@@ -8,6 +8,14 @@
  const form=document.getElementById("phoneForm");
  const status=document.getElementById("phoneStatus");
  if(!input||!button||!form||!status)return;
+ const reveal=document.getElementById("psyPhoneReveal");
+ if(reveal){
+  reveal.addEventListener("click",()=>{
+   const visible=input.type!=="tel";input.type=visible?"tel":"password";
+   reveal.textContent=visible?"Скрыть телефон":"Показать телефон";
+   reveal.setAttribute("aria-pressed",String(visible));
+  });
+ }
  function note(message,error=false){
   status.textContent=message;
   status.style.color=error?"#b45542":"";
