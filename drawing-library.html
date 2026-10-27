@@ -266,6 +266,9 @@ html.dark .record-color-toggle[aria-pressed=true]{background:#3a7056;color:#fff}
 .record .fields{grid-template-columns:repeat(3,minmax(0,1fr))}
 .record .fields label:last-child{grid-column:1/-1}
 @media(max-width:700px){.record .fields{grid-template-columns:1fr}.record-tools{width:100%;justify-content:flex-start}}
+
+.method-focus{font-size:14px;line-height:1.5;color:var(--ink);margin:9px 0 0;padding:9px 12px;border-radius:9px;background:#eef6ef;border:1px solid var(--line)}
+html.dark .method-focus{background:#2b493b;color:#deefdf}
 </style>
 </head>
 <body>
@@ -274,7 +277,7 @@ html.dark .record-color-toggle[aria-pressed=true]{background:#3a7056;color:#fff}
 <section class="intro"><div><p class="eyebrow">Рисуночные методики · справочник элементов</p><h1>Библиотека рисунков</h1><p>Выберите изображенный элемент, уточните цвет, расположение и детали. Интерпретации появятся справа, а нужные записи можно включить в протокол.</p></div><div class="status" id="connection" role="status">Автономный справочник</div></section>
 <div class="layout">
 <div class="search-column">
-<section class="panel method-line"><div><label for="method">Методика рисунка</label><select id="method"></select><p class="method-hint" id="methodHint"></p></div><span class="active-method" id="methodBadge">Выбрана методика</span></section>
+<section class="panel method-line"><div><label for="method">Методика рисунка</label><select id="method"></select><p class="method-hint" id="methodHint"></p><p class="method-focus" id="methodFocus"></p></div><span class="active-method" id="methodBadge">Выбрана методика</span></section>
 <section class="panel column search-panel" aria-label="Поиск по справочнику"><h2>Найти элемент рисунка</h2><label class="search-field" for="search">Поиск по названию и синонимам<input id="search" type="search" autocomplete="off" placeholder="Например: вода, тигр, дом, фиолетовый"></label><div class="pill-group" id="categories" role="group" aria-label="Категории элементов"></div><div class="search-info" id="count" aria-live="polite"></div><div id="results" class="results" aria-label="Результаты поиска"></div></section>
 
 </div>
@@ -1688,6 +1691,22 @@ function meaningFor(x){
 }
 
 /* Наблюдаемые признаки, а не самодельные диагностические шкалы. */
+
+var METHOD_FOCUS={
+ "fictional-animal":"Фокус описания: голова, пасть, зубы, рога, хвост, опора, защитные детали, число частей, положение, линия и окружение.",
+ "family":"Фокус описания: участники, расстояние между ними, размер фигур, роли, контакт и окружение.",
+ "kfd":"Фокус описания: действия членов семьи, взаимодействия, дистанция, композиция и графическая организация рисунка.",
+ "corman":"Фокус описания: состав изображенной семьи, взаимное расположение, пропорции, роли и детали сюжета.",
+ "school-animals":"Фокус описания: школьные персонажи-животные, действия, роли, отношения, школьное пространство.",
+ "school-likes":"Фокус описания: выбранный школьный сюжет, действующие лица, занятия и окружение.",
+ "tree":"Фокус описания: ствол, крона, ветви, корни, листья, опора, пропорции и графика.",
+ "house-tree-person":"Фокус описания: у дома – дверь, окна, крыша, опора; у дерева – корни, ствол и крона; у человека – части фигуры, пропорции и положение.",
+ "person":"Фокус описания: наличие и пропорции головы, туловища, рук, ног, частей лица, кистей, одежды.",
+ "free":"Фокус описания: сюжет, расположение, цвета, число объектов, действие, графика и связи между элементами."
+};
+function renderMethodFocus(){
+ var e=$("#methodFocus");if(e)e.textContent=METHOD_FOCUS[state.method]||"";
+}
 var FEATURE_TABLE={
  animal:[
  ["fangs","Есть клыки","В изображении выделены клыки."],
@@ -1707,6 +1726,13 @@ var FEATURE_TABLE={
  ["mane","Грива","Грива выделена как самостоятельная часть."],
  ["scales","Чешуя или панцирь","Прорисован плотный покров, чешуя или панцирь."],
  ["many-heads","Несколько голов","Персонаж изображен с несколькими головами."],
+ ["head-left","Голова повернута влево","Направление головы на рисунке – влево."],
+ ["head-right","Голова повернута вправо","Направление головы на рисунке – вправо."],
+ ["head-front","Голова анфас","Голова обращена к зрителю."],
+ ["tail-up","Хвост направлен вверх","Хвост изображен поднятым."],
+ ["tail-down","Хвост направлен вниз","Хвост изображен опущенным."],
+ ["tail-left","Хвост направлен влево","Хвост направлен в левую сторону."],
+ ["tail-right","Хвост направлен вправо","Хвост направлен в правую сторону."],
  ["large-eyes","Очень большие глаза","Глаза сильно выделены относительно головы."],
  ["open-mouth","Открытая пасть","Пасть раскрыта."],
  ["closed-mouth","Закрытая пасть","Пасть закрыта."],
@@ -1882,7 +1908,7 @@ function init(){
   state.method=next;state.category="Все";state.sheetOpen=false;state.draft=draftEmpty();state.editKey=null;
   $("#search").value="";
   $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
-  $("#methodBadge").textContent=methodName(state.method);
+  $("#methodBadge").textContent=methodName(state.method);renderMethodFocus();
   try{history.replaceState(null,"","?method="+encodeURIComponent(state.method))}catch(e){}
   renderCategories();renderResults();renderDetails();
  });
@@ -1974,7 +2000,7 @@ function init(){
  $("#importJSON").addEventListener("change",importFile);
  $("#clear").addEventListener("click",function(){if(!confirm("Очистить протокол?"))return;state.items=[];$("#subjectCode").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords();$("#actionStatus").textContent=""});
  $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
- $("#methodBadge").textContent=methodName(state.method);
+ $("#methodBadge").textContent=methodName(state.method);renderMethodFocus();
  renderCategories();renderResults();renderDetails();renderRecords();
  if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register("./drawing-library-sw.js").catch(function(){});
 }
@@ -2189,7 +2215,7 @@ async function importFile(e){
   state.items=clean;state.method=METHODS.some(function(x){return x[0]===d.method})?d.method:"free";
   $("#method").value=state.method;
   $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
-  $("#methodBadge").textContent=methodName(state.method);
+  $("#methodBadge").textContent=methodName(state.method);renderMethodFocus();
   $("#subjectCode").value=String(d.code||"").slice(0,70);
   $("#contextNotes").value=String(d.context||"").slice(0,20000);
   $("#conclusion").value=String(d.conclusion||"").slice(0,20000);
