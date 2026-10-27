@@ -43,7 +43,7 @@
   const {data:role,error:roleError}=await client.from("psy_account_roles")
     .select("role").eq("user_id",data.user.id).maybeSingle();
   if(roleError)throw roleError;
-  return role?.role==="owner";
+  return role?.role==="owner"||role?.role==="shadow";
  }
  async function refresh(){
   const {data:factors,error:fError}=await client.auth.mfa.listFactors();
