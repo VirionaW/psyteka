@@ -1,0 +1,19 @@
+/* Полоса пробного доступа сразу под верхними кнопками библиотеки. */
+#psyTrialStrip[hidden]{display:none!important}
+#psyTrialStrip{
+ display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+ gap:8px 18px;margin:0 0 14px;padding:10px 16px;border-radius:12px;
+ background:#ecf6ef;border:1px solid #c7dfce;color:#1b5a3c;
+ font:600 13px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+#psyTrialStrip .psy-trial-label{display:inline-flex;align-items:center;gap:7px}
+#psyTrialStrip .psy-trial-label svg{height:17px;width:17px;stroke:currentColor;fill:none;stroke-width:1.8}
+#psyTrialRemaining{font-variant-numeric:tabular-nums;font-weight:850;font-size:17px;letter-spacing:.015em}
+#psyTrialDeadline{font-weight:550;opacity:.85}
+#psyTrialStrip.is-expired{background:#f9edea;color:#854f43;border-color:#e5c8bf}
+html.dark #psyTrialStrip{background:#243d34;border-color:#446956;color:#d6f0db}
+html.dark #psyTrialStrip.is-expired{background:#48332f;color:#f3d3c8;border-color:#80574a}
+@media(max-width:580px){#psyTrialStrip{padding:9px 12px;gap:4px 10px}
+ #psyTrialStrip .psy-trial-deadline{flex-basis:100%;font-size:12px}
+ #psyTrialRemaining{font-size:16px}
+}
