@@ -121,26 +121,126 @@ html.dark .privacy{color:#aec8b8}
 @media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr)}.search-panel{min-height:0}.search-panel .results{max-height:410px}}
 @media(max-width:650px){main{padding:21px 12px 38px}.header-inner{align-items:center}.brand{font-size:17px}.brand-art{width:35px;height:35px}.brand-art img{width:35px;height:35px}.brand-crumb{font-size:14px}.header-nav{width:100%;justify-content:space-between}.header-nav .link-btn,.theme-toggle{font-size:12px;min-height:36px}.intro{margin-bottom:18px}.intro h1{font-size:30px}.panel,.analysis-panel,.protocol-panel{padding:15px}.position-compare,.two-col{grid-template-columns:1fr}.search-panel .results{max-height:420px}.search-column,.analysis-column{gap:14px}}
 
+
+/* Библиотека рисунков: рабочий лист, динамические трактовки и широкии протокол. */
+html{scroll-padding-top:20px}
+body{font-size:17px;line-height:1.55}
+header{padding-block:11px}
+main{max-width:1880px;padding-top:24px}
+.intro{margin-bottom:18px}
+.intro p{font-size:16px}
+.eyebrow{font-size:13px}
+h2{font-size:22px;line-height:1.25}
+h3{font-size:18px}
+label{font-size:15px}
+input,textarea,select{font-size:16px;line-height:1.5}
+.btn,.link-btn{font-size:15px;min-height:44px}
+.pill{font-size:14px;padding:8px 13px}
+.search-info,.subtle,.method-hint,.privacy{font-size:14px}
+.layout{grid-template-columns:minmax(0,1.55fr) minmax(390px,1fr);align-items:start;gap:20px}
+.search-panel{min-height:0}
+.search-panel .results{max-height:380px}
+.symbol-row{padding:14px 16px}
+.symbol-row strong{font-size:17px}
+.symbol-row small{font-size:14px}
+.analysis-panel{position:sticky;top:14px;padding:22px}
+.analysis-heading{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:5px}
+.analysis-live{font-size:12px;color:var(--muted)}
+.analysis-panel .details{margin-top:12px}
+.result-summary{padding:18px}
+.result-summary h3{font-size:23px}
+.meaning-block h4{font-size:15px}
+.meaning-block p{font-size:15px}
+.result-entry{position:relative;display:flex;gap:12px;align-items:flex-start;padding:15px 0;border-bottom:1px solid var(--line)}
+.result-entry .result-copy{flex:1;min-width:0}
+.result-entry h4{font-size:16px;margin:0 0 5px}
+.result-entry p{margin:0;font-size:15px;color:var(--muted);line-height:1.5}
+.remove-interpretation{border:1px solid var(--line);background:var(--white);color:var(--muted);border-radius:9px;font-size:16px;min-width:33px;min-height:33px;line-height:1}
+.recover-part{font-size:13px;border:1px solid var(--line);background:var(--white);color:var(--ink);border-radius:999px;padding:6px 11px}
+.recover-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.result-add{width:100%;margin-top:16px}
+.result-heading{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.result-heading .badge{font-size:13px}
+.analysis-panel .details .empty{padding:18px}
+.action-status:not(:empty){padding:10px 0 0;font-size:14px;color:var(--green);font-weight:700}
+.element-sheet[hidden]{display:none!important}
+.element-sheet{padding:21px 23px}
+.sheet-heading{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.sheet-heading h2{margin:3px 0 0}
+.sheet-kicker{font-size:13px;color:var(--muted);font-weight:700}
+.sheet-close{font-size:14px}
+.sheet-tabs{display:flex;flex-wrap:wrap;gap:7px;padding-bottom:12px;margin:18px 0 18px;border-bottom:1px solid var(--line)}
+.sheet-tab{border:1px solid var(--line);padding:9px 14px;background:var(--white);color:var(--ink);border-radius:10px;font-weight:650;font-size:15px}
+.sheet-tab[aria-selected=true]{background:var(--green);color:#fff;border-color:var(--green)}
+.sheet-label{display:block;font-size:15px;font-weight:750;margin-bottom:12px}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}
+.choice{border:1px solid var(--line);background:var(--white);color:var(--ink);border-radius:12px;padding:12px;min-height:70px;text-align:left;font-weight:700;font-size:15px}
+.choice small{display:block;margin-top:3px;font-size:12px;font-weight:500;color:var(--muted)}
+.choice[aria-pressed=true]{border:2px solid var(--green);background:#e9f4ed;padding:11px}
+.color-choice{display:flex;align-items:center;gap:10px;min-height:52px}
+.color-swatch{width:22px;height:22px;border-radius:7px;border:1px solid #8a968d;flex:none}
+.sheet-hint{font-size:14px;color:var(--muted);margin:14px 0 0}
+.sheet-note textarea{min-height:118px;font-size:16px}
+.sheet-quick{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:17px}
+.sheet-quick .btn{min-height:40px}
+.workspace-divider{display:flex;align-items:center;gap:18px;margin:36px 0 20px;color:var(--muted);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.workspace-divider:before,.workspace-divider:after{content:"";height:2px;flex:1;background:var(--line)}
+.protocol-panel{width:100%;padding:27px}
+.protocol-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
+.protocol-heading h2{font-size:25px;margin-bottom:4px}
+.protocol-heading p{margin:0}
+.protocol-counter{padding:7px 14px;border:1px solid var(--line);border-radius:999px;color:var(--green);font-size:14px;font-weight:700;white-space:nowrap}
+.protocol-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(340px,1fr);gap:24px}
+.protocol-top-fields{display:grid;grid-template-columns:minmax(0,0.65fr) minmax(0,1.35fr);gap:15px}
+.protocol-top-fields textarea{min-height:49px;max-height:170px}
+.protocol-observations h3{margin:20px 0 8px}
+.protocol-output{border-left:1px solid var(--line);padding-left:25px}
+.protocol-output #conclusion{min-height:178px}
+.record-list{margin-top:10px}
+.record{padding:17px}
+.record-head strong{font-size:18px!important}
+.record-num{font-size:13px}
+.record .fields{grid-template-columns:repeat(3,minmax(0,1fr))}
+.record .fields label:last-child{grid-column:1/-1}
+.record .fields select,.record .fields textarea{font-size:15px}
+.actions .btn{min-height:43px}
+.privacy{margin-top:15px}
+.library-caution{margin:20px 0 0;font-size:13px;color:var(--muted)}
+html.dark .choice,html.dark .sheet-tab,html.dark .remove-interpretation,html.dark .recover-part{background:#1b2a24;color:var(--ink);border-color:var(--line)}
+html.dark .choice[aria-pressed=true],html.dark .sheet-tab[aria-selected=true]{background:#3a7056;color:#fff;border-color:#92c4a4}
+html.dark .choice[aria-pressed=true] small{color:#d8ecdd}
+@media(max-width:1100px){.layout{grid-template-columns:minmax(0,1.15fr) minmax(330px,1fr)}.protocol-grid{grid-template-columns:1fr}.protocol-output{border-left:0;border-top:1px solid var(--line);padding:20px 0 0}}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.analysis-panel{position:static}.search-panel .results{max-height:340px}.protocol-top-fields{grid-template-columns:1fr}}
+@media(max-width:580px){body{font-size:16px}.intro p{font-size:15px}.analysis-panel,.element-sheet,.protocol-panel{padding:16px}.sheet-tabs{gap:5px}.sheet-tab{font-size:14px;padding:9px 11px}.choices{grid-template-columns:repeat(2,minmax(0,1fr))}.protocol-heading h2{font-size:23px}.record .fields{grid-template-columns:1fr}.workspace-divider{margin:25px 0 16px}}
+@media print{.workspace-divider,.library-caution{display:none!important}#printSheet{display:block!important}}
 </style>
 </head>
 <body>
 <header><div class="header-inner"><a class="brand" href="library.html"><span class="brand-art"><img class="logo-light" src="brand-mark.svg" alt=""><img class="logo-dark" src="brand-mark-dark.svg" alt=""></span><span>Психотека <span class="brand-crumb">/ Рисунки</span></span></a><nav class="header-nav"><a class="link-btn" href="library.html">Вернуться в библиотеку</a><button class="btn theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему" aria-pressed="false"><span id="themeIcon" aria-hidden="true">☾</span><span id="themeText">Темная тема</span></button></nav></div></header>
 <main>
-<section class="intro"><div><p class="eyebrow">Справочник интерпретаций и рабочий протокол</p><h1>Библиотека рисунков</h1><p>Найдите элемент рисунка, цвет или особенность композиции. Справочные значения открываются справа, выбранные наблюдения добавляются в протокол.</p></div><div class="status" id="connection" role="status">Работает без сети после первого открытия</div></section>
+<section class="intro"><div><p class="eyebrow">Рисуночные методики · справочник элементов</p><h1>Библиотека рисунков</h1><p>Выберите изображенный элемент, уточните цвет, расположение и детали. Интерпретации появятся справа, а нужные записи можно включить в протокол.</p></div><div class="status" id="connection" role="status">Автономный справочник</div></section>
 <div class="layout">
 <div class="search-column">
-<section class="panel method-line"><div><label for="method">Методика, по которой выполнен рисунок</label><select id="method"></select><p class="method-hint" id="methodHint"></p></div><span class="active-method" id="methodBadge">Выбрана методика</span></section>
-<section class="panel column search-panel" aria-label="Поиск по справочнику"><h2>Что изображено на рисунке?</h2><label class="search-field" for="search">Поиск элемента, цвета, расположения и признака<input id="search" type="search" autocomplete="off" placeholder="Например: тигр, фиолетовый, рога, гора"></label><div class="pill-group" id="categories" role="group" aria-label="Категории символов"></div><div class="search-info" id="count" aria-live="polite"></div><div id="results" class="results" aria-label="Результаты поиска"></div></section>
+<section class="panel method-line"><div><label for="method">Методика рисунка</label><select id="method"></select><p class="method-hint" id="methodHint"></p></div><span class="active-method" id="methodBadge">Выбрана методика</span></section>
+<section class="panel column search-panel" aria-label="Поиск по справочнику"><h2>Найти элемент рисунка</h2><label class="search-field" for="search">Поиск по названию и синонимам<input id="search" type="search" autocomplete="off" placeholder="Например: вода, тигр, дом, фиолетовый"></label><div class="pill-group" id="categories" role="group" aria-label="Категории элементов"></div><div class="search-info" id="count" aria-live="polite"></div><div id="results" class="results" aria-label="Результаты поиска"></div></section>
+<section class="panel element-sheet" id="sheet" hidden aria-label="Лист выбранного элемента"></section>
 </div>
-<div class="analysis-column">
-<section class="panel analysis-panel" aria-label="Результат поиска и интерпретации"><h2>Результат анализа</h2><div id="details" class="details" aria-live="polite"></div></section>
-<section class="panel column protocol-panel" aria-label="Протокол наблюдения"><h2>Мой протокол</h2><p class="subtle">Добавляйте только наблюдаемые признаки рисунка. При необходимости уточняйте характеристики каждой записи.</p><label for="subjectCode">Код обследования без ФИО (необязательно)<input id="subjectCode" maxlength="70" placeholder="Например: А-01"></label><label for="contextNotes" style="margin-top:12px">Контекст рисунка (без персональных данных)<textarea id="contextNotes" placeholder="Особенности задания и наблюдения специалиста"></textarea></label><div class="record-list" id="recordList"><div class="empty">Пока нет записей. Выберите элемент слева и добавьте его в протокол.</div></div>
-<label for="conclusion">Сводка специалиста (не автоматический диагноз)<textarea id="conclusion" placeholder="Обобщение наблюдаемых признаков и сопоставление с другими данными"></textarea></label>
+<div class="analysis-column"><section class="panel analysis-panel" aria-label="Результат анализа"><div class="analysis-heading"><h2>Результат анализа</h2><span class="analysis-live">Обновляется при выборе признаков</span></div><div id="details" class="details" aria-live="polite"><div class="empty">Найдите элемент слева и откройте его лист.</div></div><div id="actionStatus" class="action-status" role="status" aria-live="polite"></div></section></div>
+</div>
+<div class="workspace-divider" role="separator" aria-label="Протокол наблюдения"><span>Протокол наблюдения</span></div>
+<section class="panel protocol-panel" aria-label="Протокол наблюдения">
+<div class="protocol-heading"><div><h2>Мой протокол</h2><p class="subtle">Выбранные элементы и характеристики рисунка</p></div><span class="protocol-counter" id="recordCount">0 записей</span></div>
+<div class="protocol-grid">
+<div class="protocol-observations">
+<div class="protocol-top-fields"><label for="subjectCode">Код обследования (необязательно)<input id="subjectCode" maxlength="70" placeholder="Например: А-01"></label><label for="contextNotes">Контекст рисунка<textarea id="contextNotes" placeholder="Особенности задания или наблюдения"></textarea></label></div>
+<h3>Добавленные элементы</h3><div class="record-list" id="recordList"><div class="empty">Пока записей нет. Выберите элемент, настройте его признаки и нажмите «Добавить в протокол».</div></div>
+</div>
+<div class="protocol-output"><label for="conclusion">Сводка специалиста<textarea id="conclusion" rows="5" placeholder="Итоги наблюдения и профессиональные выводы"></textarea></label>
 <div class="actions"><button class="btn primary" id="exportReport" type="button">Скачать отчет HTML</button><button class="btn" id="printReport" type="button">Печать / PDF</button><button class="btn" id="exportJSON" type="button">Сохранить для продолжения</button><button class="btn" id="loadBtn" type="button">Открыть файл</button><input class="sr-only" id="importJSON" type="file" accept=".json,application/json"></div>
 <div class="actions"><button class="btn danger" id="clear" type="button">Очистить протокол</button></div>
-<p class="privacy">Записи не отправляются на сервер и не сохраняются автоматически в браузере. Для продолжения работы сохраните JSON. Не вносите личные данные детей.</p></section>
-</div></div>
-<div class="notice"><strong>Об интерпретациях.</strong> Справочник показывает распространенные описательные и культурные ассоциации. Один цвет, символ или положение на листе не дает основания для психологического диагноза. Для профессионального заключения учитывайте рисунок целиком, возраст, инструкцию методики и другие материалы обследования. <a href="https://pubmed.ncbi.nlm.nih.gov/9631202/" target="_blank" rel="noopener noreferrer">Обзор научных ограничений рисуночных трактовок</a>.</div>
+<p class="privacy">Данные не отправляются на сервер. Сохраните протокол в файл, чтобы продолжить позже. Не указывайте ФИО ребенка.</p></div>
+</div></section>
+<p class="library-caution">Интерпретации символов и расположения – справочные гипотезы, а не самостоятельный диагностический ключ. <a href="https://pubmed.ncbi.nlm.nih.gov/9631202/" target="_blank" rel="noopener noreferrer">Научный обзор</a>.</p>
 </main><footer>Психотека – автономный инструмент для специалиста. При первом онлайн-открытии страница сохраняется для повторных посещений без сети (пока кеш браузера не удален).</footer><div id="printSheet" aria-hidden="true"></div>
 <script>
 (function(){
@@ -1378,17 +1478,45 @@ var RAW=[
  ]
 ];
 var POS={
- "unknown":["Не указано","Местоположение можно уточнить при просмотре оригинала рисунка."],
- "left":["Слева","Объект в левой части листа. Иногда левую сторону связывают с прошлым, но это не универсальный подтвержденный ключ. Уточняйте последовательность рисования и замысел."],
- "center":["В центре","Объект занимает центральную часть композиции. Это описывает расположение, но само по себе не подтверждает его психологическую значимость."],
- "right":["Справа","Объект в правой части листа. Иногда правую сторону связывают с будущим, но такая трактовка не может применяться как достоверная оценка."],
- "top":["Сверху","Объект расположен ближе к верхнему краю. Это не является доказательством высоких притязаний или иной личностной черты."],
- "bottom":["Снизу","Объект расположен ближе к нижнему краю. Это не является самостоятельным показателем неуверенности, страха или неблагополучия."],
- "whole":["По всему листу","Объект занимает значительную часть листа или проходит через несколько его областей."]
+ "unknown":["Не указано",""],
+ "left":["Слева","В символических схемах левую часть связывают с прошлым опытом, воспоминаниями и внутренним миром."],
+ "center":["В центре","Центральное положение подчеркивает композиционную значимость образа."],
+ "right":["Справа","Правую часть связывают с активностью, планами на будущее и внешним взаимодействием."],
+ "top":["Сверху","Верхнюю часть ассоциируют с идеалами, целями, мечтами и воображением."],
+ "bottom":["Снизу","Нижнюю часть связывают с опорой, потребностями, устойчивостью и повседневными делами."],
+ "whole":["По всему листу","Элемент занимает большую часть пространства, задавая основную тему композиции."]
 };
 var SZ={"":"Не указано","small":"Маленький","medium":"Средний","large":"Крупный"};
+var SIZE_NOTE={"small":"Небольшая деталь, занимающая мало места в композиции.","medium":"Размер сопоставим с другими элементами рисунка.","large":"Крупный объект привлекает внимание и может занимать ведущее место в сюжете."};
+var COLORS=[
+ ["","Не указан","",""],
+ ["red","Красный","#db5850","Энергия, активность, сильный акцент, тепло или сигнал опасности в сюжете."],
+ ["orange","Оранжевый","#ee9344","Тепло, движение, контакт, яркость и выразительность."],
+ ["yellow","Желтый","#edcf53","Свет, заметность, радость, солнечное настроение."],
+ ["green","Зеленый","#579c6a","Природа, рост, обновление, спокойствие и устойчивость."],
+ ["cyan","Голубой","#8acddd","Воздух, вода, легкость, простор и прохлада."],
+ ["blue","Синий","#4e80c0","Глубина, вода, спокойствие, расстояние и задумчивость."],
+ ["purple","Фиолетовый","#9b77ba","Фантазия, необычность, эмоциональная насыщенность и выразительность."],
+ ["pink","Розовый","#e9aac0","Мягкость, нежность, декоративность, теплые отношения в сюжете."],
+ ["brown","Коричневый","#947050","Земля, природные материалы, основательность и привычная среда."],
+ ["black","Черный","#33383b","Контраст, границы, сила силуэта, драматический акцент."],
+ ["gray","Серый","#9b9d9d","Нейтральность, сдержанный фон, тень или материал предмета."],
+ ["white","Белый","#fffdf6","Свет, пустое пространство, контраст, незакрашенный участок."]
+];
+var colorByKey=function(k){return COLORS.find(function(c){return c[0]===k})||COLORS[0]};
+var DISPLAY_MEANING={
+ "Вода":"Вода ассоциируется с движением, эмоциями, изменчивостью, очищением и жизненным потоком. Спокойная вода, бурная река и непреодолимая преграда создают разные сюжеты.",
+ "Фиолетовый цвет":"Фиолетовый цвет в символических трактовках связывают с фантазией, необычностью, чувствительностью и выразительностью.",
+ "Тигр":"Тигр в символических сюжетах ассоциируется с силой, самостоятельностью, защитой, опасностью или соперничеством.",
+ "Черный цвет":"Черный цвет может выступать как выразительный контур, контраст, тень или драматическая деталь."
+};
+function meaningFor(x){
+ if(DISPLAY_MEANING[x.name])return DISPLAY_MEANING[x.name];
+ return x.meaning.replace(/(?:\s|^)(?:Это|Такие|Такая|Эти|Этот|Сам по себе|Самостоятельно)[^.]*?(?:не является|не позволяют|не позволяет|не доказывает|не подтверждают|не подтверждает)[^.]*\./gi,"").replace(/\s+/g," ").trim();
+}
+function draftEmpty(){return {position:"unknown",size:"",color:"",note:"",excluded:[]};}
 var entries=RAW.map(function(a,i){return {id:"element-"+(i+1),name:a[0],category:a[1],meaning:a[2],question:a[3],methods:a[4].split(" "),aliases:a[5]};});
-var state={method:"fictional-animal",selected:entries[0].id,category:"Все",items:[]};
+var state={method:"fictional-animal",selected:entries[0].id,category:"Все",items:[],sheetOpen:false,tab:"position",draft:draftEmpty()};
 var $=function(s){return document.querySelector(s)};
 var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
 var normalize=function(s){return String(s||"").toLocaleLowerCase("ru").replace(/ё/g,"е").trim()};
