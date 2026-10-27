@@ -1,0 +1,33 @@
+/* Role colors – one semantic palette across School and profile.
+   Visibility and permissions are server-verified, never based on these styles. */
+.psy-entry-pill[data-role="owner"]{
+ background:#fff0c6;color:#744c0c;border-color:#e7bd5d;
+ box-shadow:inset 0 0 0 1px rgba(166,106,16,.08);
+}
+.psy-entry-pill[data-role="moderator"]{
+ background:#eaf2ff;color:#285c9b;border-color:#a8c7f2;
+}
+.psy-entry-pill[data-role="shadow"]{
+ background:#efeafd;color:#62409a;border-color:#c6b5e8;
+}
+#psyAccountAccess .psy-role-badge.owner{
+ background:#fff0c6;color:#744c0c;border-color:#e7bd5d;
+}
+#psyAccountAccess .psy-role-badge.moderator{
+ background:#eaf2ff;color:#285c9b;border-color:#a8c7f2;
+}
+#psyAccountAccess .psy-role-badge.shadow{
+ background:#efeafd;color:#62409a;border-color:#c6b5e8;
+}
+html.dark .psy-entry-pill[data-role="owner"],
+html.dark #psyAccountAccess .psy-role-badge.owner{
+ background:#493718;color:#ffe4a4;border-color:#ad853d;
+}
+html.dark .psy-entry-pill[data-role="moderator"],
+html.dark #psyAccountAccess .psy-role-badge.moderator{
+ background:#253c57;color:#c3ddff;border-color:#6084b1;
+}
+html.dark .psy-entry-pill[data-role="shadow"],
+html.dark #psyAccountAccess .psy-role-badge.shadow{
+ background:#35294b;color:#decfff;border-color:#775aab;
+}
