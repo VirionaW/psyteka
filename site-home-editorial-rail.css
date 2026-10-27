@@ -213,3 +213,71 @@ body.site-landing #siteHome #inside .psy-auth-gallery-note{font-size:14px!import
 @media(prefers-reduced-motion:reduce){
  body.site-landing #siteHome .psy-anchor-rail *{transition:none!important}
 }
+
+
+/* 27.10: ПМПК и Документация – мягкий край картинки вместо вертикального стыка.
+   Остальные иллюстрации и их одобренное кадрирование не меняются. */
+body.site-landing #siteHome #sections .section-card:nth-child(5) .psy-section-visual,
+body.site-landing #siteHome #sections .section-card:nth-child(7) .psy-section-visual {
+  width:75%!important;
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.10) 18%,rgba(0,0,0,.60) 46%,#000 73%);
+  mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.10) 18%,rgba(0,0,0,.60) 46%,#000 73%);
+}
+body.site-landing #siteHome #sections .section-card:nth-child(5) .psy-section-visual img {
+  object-position:78% center!important;
+}
+body.site-landing #siteHome #sections .section-card:nth-child(7) .psy-section-visual img {
+  object-position:83% center!important;
+}
+/* Keep the heading and document excerpt clear above the image. */
+body.site-landing #siteHome #sections .section-card:nth-child(7) :is(h3,p,span) {
+  z-index:2;
+}
+
+/* Крестик без сдвига относительно круглой кнопки. */
+#psyEntryDialog .psy-entry-x {
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 35px;
+  width:35px!important;
+  height:35px!important;
+  padding:0!important;
+  border-radius:50%!important;
+  font:400 0/1 system-ui,-apple-system,"Segoe UI",sans-serif!important;
+  text-align:center!important;
+}
+#psyEntryDialog .psy-entry-x::before{
+  content:"×";
+  display:block;
+  font:400 21px/1 system-ui,-apple-system,"Segoe UI",sans-serif;
+  transform:translateY(-1px);
+}
+
+/* Та же теплая коричневая палитра, что у боковой полоски. */
+body.site-landing #siteHome .back-top,
+body.site-landing #siteHome .back-top.visible{
+  display:grid;
+  place-items:center;
+  background:#76533d!important;
+  color:#fff8e8!important;
+  border:3px solid #d7b88c!important;
+  box-shadow:0 8px 22px rgba(62,43,31,.24)!important;
+  line-height:1!important;
+  z-index:91;
+}
+body.site-landing #siteHome .back-top:hover{background:#5d4333!important}
+body.site-landing #siteHome .back-top:focus-visible{
+  outline:3px solid #e5c79e!important;
+  outline-offset:3px!important;
+}
+html.dark body.site-landing #siteHome .back-top{
+  background:#624633!important;
+  border-color:#b78c63!important;
+}
+@media(max-width:920px){
+  body.site-landing #siteHome .back-top{
+    bottom:calc(17px + env(safe-area-inset-bottom,0px));
+    right:16px;
+  }
+}
