@@ -18,6 +18,7 @@
  function message(t){hint.textContent=t;}
  function hidePrivate(){
   manage.hidden=true;security.hidden=true;ownerNote.hidden=true;email.hidden=true;roleBadge.hidden=true;signOut.hidden=true;login.hidden=false;
+  const reveal=document.getElementById("psyEmailReveal");if(reveal)reveal.hidden=true;
  }
  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||"")||
     !/^sb_publishable_[A-Za-z0-9_-]+$/.test(config.publishableKey||"")||
@@ -37,13 +38,26 @@
     .select("role").eq("user_id",user.id).maybeSingle();
   if(roleError)throw roleError;
   const role=["owner","shadow","moderator"].includes(roleData?.role)?roleData.role:"participant";
-  email.textContent=user.email||"Почта подтверждена";email.hidden=false;
+  // Contact values are private by default; the reveal button controls
+  // display of this signed-in user's own email, never the directory.
+  const realEmail=user.email||"";
+  const maskedEmail=realEmail.replace(/^(.)([^@]*)(@.*)$/,(_,a,b,domain)=>a+"•".repeat(Math.min(8,Math.max(3,b.length)))+domain);
+  email.textContent=maskedEmail||"Почта подтверждена";email.hidden=false;
+  const reveal=document.getElementById("psyEmailReveal");
+  if(reveal){let visible=false;
+   reveal.hidden=!realEmail;
+   reveal.addEventListener("click",()=>{
+    visible=!visible;email.textContent=visible?realEmail:maskedEmail;
+    reveal.textContent=visible?"Скрыть почту":"Показать почту";
+    reveal.setAttribute("aria-pressed",String(visible));
+   });
+  }
   roleBadge.textContent=role==="owner"?"👑 Владелец":role==="shadow"?"Тень":role==="moderator"?"Модератор":"Участник";
   roleBadge.className="psy-role-badge "+role;roleBadge.hidden=false;
   login.hidden=true;signOut.hidden=false;
   if(role==="owner"||role==="shadow"){
    manage.hidden=false;security.hidden=false;ownerNote.hidden=false;
-   message("Вы вошли как Владелец. Здесь можно открыть управление пользователями и назначать модераторов.");
+   message(role==="shadow"?"Вы вошли как Тень. Управление пользователями защищено кодом «Вендиго».":"Вы вошли как Владелец. Управление пользователями защищено кодом «Вендиго».");
   }else if(role==="moderator"){
    message("Вы вошли как Модератор. Назначение других модераторов доступно только Владельцу.");
   }else{
