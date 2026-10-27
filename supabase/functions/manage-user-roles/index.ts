@@ -44,7 +44,7 @@ Deno.serve(async (request: Request) => {
       .from("psy_account_roles").select("role")
       .eq("user_id", verified.user.id).maybeSingle();
     if (permError) return output(503, { error: "Не удалось проверить права." });
-    if (permission?.role !== "owner")
+    if (permission?.role !== "owner" && permission?.role !== "shadow")
       return output(403, { error: "Управление ролями доступно только владельцу." });
 
     // Verified AAL2 is mandatory for both reading private account emails
@@ -79,7 +79,7 @@ Deno.serve(async (request: Request) => {
       }
       const roleMap = new Map(roles.map(r => [r.user_id, r.role]));
       return output(200, {
-        users: members.map(user => ({
+        users: members.filter(user => roleMap.get(user.id) !== "shadow").map(user => ({
           id: user.id,
           email: user.email ?? "",
           confirmed: !!user.email_confirmed_at,
@@ -88,6 +88,49 @@ Deno.serve(async (request: Request) => {
         page,
         totalPages: Math.ceil((data?.total ?? 0) / 50)
       });
+    }
+
+    // Only the verified shadow account with MFA can activate the site's
+    // designated owner mailbox. Never grant by a self-declared client email.
+    if (body.action === "activate_site_owner") {
+      if (permission?.role !== "shadow")
+        return output(403, { error: "Назначение главного аккаунта недоступно." });
+      const targetEmail = "psyteka.info@gmail.com";
+      let targetUser: { id: string; email?: string; email_confirmed_at?: string | null } | null = null;
+      for (let n = 1; n <= 100 && !targetUser; n++) {
+        const { data, error } = await admin.auth.admin.listUsers({ page: n, perPage: 100 });
+        if (error) return output(503, { error: "Не удалось проверить аккаунт почты сайта." });
+        targetUser = (data?.users ?? []).find(user =>
+          user.email?.trim().toLowerCase() === targetEmail) ?? null;
+        if ((data?.users ?? []).length < 100) break;
+      }
+      if (!targetUser || !targetUser.email_confirmed_at)
+        return output(409, { code: "owner_email_not_verified",
+          error: "Сначала зарегистрируйте почту сайта и подтвердите вход по письму." });
+      if (targetUser.id === verified.user.id)
+        return output(409, { error: "Резервный аккаунт нельзя сделать владельцем сайта." });
+      const { data: existingOwners, error: ownerLookupError } = await admin
+        .from("psy_account_roles").select("user_id").eq("role", "owner").limit(1);
+      if (ownerLookupError) return output(503, { error: "Не удалось проверить роль владельца." });
+      if (existingOwners?.length && existingOwners[0].user_id !== targetUser.id)
+        return output(409, { error: "Для сайта уже назначен другой владелец." });
+      const { data: currentRole, error: currentError } = await admin
+        .from("psy_account_roles").select("role").eq("user_id", targetUser.id).maybeSingle();
+      if (currentError) return output(503, { error: "Не удалось проверить будущего владельца." });
+      if (currentRole?.role === "shadow")
+        return output(403, { error: "Резервную роль нельзя изменить." });
+      const { error: writeError } = await admin.from("psy_account_roles").upsert({
+        user_id: targetUser.id, role: "owner", granted_by: verified.user.id,
+        granted_at: new Date().toISOString()
+      }, { onConflict: "user_id" });
+      if (writeError) return output(503, { error: "Назначить владельца не удалось." });
+      if (currentRole?.role !== "owner") {
+        const { error: auditError } = await admin.from("psy_role_security_events").insert({
+          actor_id: verified.user.id, target_id: targetUser.id, event_type: "owner_assigned"
+        });
+        if (auditError) console.error("Owner role audit insert failed");
+      }
+      return output(200, { ok: true, role: "owner" });
     }
 
     if (body.action === "set") {
@@ -106,8 +149,8 @@ Deno.serve(async (request: Request) => {
       const { data: existingRole, error: lookupError } = await admin
         .from("psy_account_roles").select("role").eq("user_id", id).maybeSingle();
       if (lookupError) return output(503, { error: "Не удалось проверить текущую роль." });
-      if (existingRole?.role === "owner")
-        return output(403, { error: "Изменение роли владельца запрещено." });
+      if (existingRole?.role === "owner" || existingRole?.role === "shadow")
+        return output(403, { error: "Изменение защищенной роли запрещено." });
 
       if (role === "moderator") {
         const { error } = await admin.from("psy_account_roles").upsert({
@@ -122,6 +165,12 @@ Deno.serve(async (request: Request) => {
           .delete().eq("user_id", id).eq("role", "moderator");
         if (error) return output(503, { error: "Не удалось снять права модератора." });
       }
+      const { error: auditError } = await admin.from("psy_role_security_events").insert({
+        actor_id: verified.user.id,
+        target_id: id,
+        event_type: role === "moderator" ? "moderator_assigned" : "moderator_removed"
+      });
+      if (auditError) console.error("Moderator role audit insert failed");
       return output(200, { ok: true, role });
     }
     return output(400, { error: "Неизвестное действие." });
