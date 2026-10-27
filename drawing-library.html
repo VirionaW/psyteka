@@ -2004,12 +2004,15 @@ function renderResults(){
   state.sheetOpen=false;state.editKey=null;state.draft=draftEmpty();renderDetails();
  }
  $("#count").textContent="Найдено: "+found.length+" из "+entries.length;
+ var previousScroll=$("#results").scrollTop||0;
  $("#results").innerHTML=found.length?found.map(function(x){
   var open=state.sheetOpen&&state.selected===x.id;
   return '<button type="button" class="symbol-row" data-element="'+x.id+'" aria-expanded="'+open+'" aria-controls="'+(open?'sheet':'')+'"><span><strong>'+esc(x.name)+'</strong><small>'+esc(x.category)+'</small></span><span class="arrow" aria-hidden="true">›</span></button>'+
   (open?'<div id="sheet" class="inline-sheet" aria-label="Характеристики элемента '+esc(x.name)+'"></div>':'');
  }).join(""):'<div class="empty">Ничего не найдено. Попробуйте другое название или категорию.</div>';
+ $("#results").scrollTop=previousScroll;
  renderSheet();
+ if(state.sheetOpen){var row=$("#results").querySelector&&$("#results").querySelector(".symbol-row[aria-expanded=true]");if(row&&typeof row.scrollIntoView==="function")row.scrollIntoView({block:"nearest"});}
 }
 function renderSheet(){
  var root=$("#sheet");
