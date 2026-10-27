@@ -93,11 +93,8 @@
    // Методику открываем внутри библиотеки, не создавая переход к отдельной странице.
    const issue=alerts.find(([re])=>re.test(label));
    const incomplete=!kit&&!selfesteem&&!cognitive&&!family&&!adaptation&&!window.PSY_FULL_METHODS?.[label]&&!issue;
-   if(issue||incomplete){
-    const btn=document.createElement('button');btn.className='method-warning';btn.type='button';btn.textContent='!';btn.setAttribute('aria-label','Замечание к комплекту методики');btn.title='Посмотреть замечание';
-    btn.addEventListener('click',()=>showWarning(label,issue?issue[1]:'В открытом каталоге есть описание методики, но нет проверенного полного комплекта с оригинальным бланком, ключом и условиями использования. Для проведения обратитесь к первоисточнику.'));
-    card.appendChild(btn)
-   }
+   // Карточка имеет ровно одно действие: «Открыть методику».
+   // Методические оговорки представлены в руководстве выбранной версии.
   });
  }
  function showWarning(name,reason){const overlay=document.createElement('div');overlay.className='warning-overlay';overlay.innerHTML='<section class="warning-dialog" role="dialog" aria-modal="true"><h2>⚠ Замечание к методике</h2><strong></strong><p></p><button type="button">Понятно</button></section>';overlay.querySelector('strong').textContent=name;overlay.querySelector('p').textContent=reason;const close=()=>{overlay.remove();document.removeEventListener('keydown',key)};const key=e=>{if(e.key==='Escape')close()};document.addEventListener('keydown',key);overlay.querySelector('button').onclick=close;overlay.addEventListener('click',e=>{if(e.target===overlay)close()});document.body.appendChild(overlay);overlay.querySelector('button').focus()}
