@@ -21,6 +21,8 @@
  let userID=null,selectedId=null;
  const key=()=>userID?"psy-collections-v1:"+userID:null;
  const blank=()=>({favorites:[],folders:[]});
+ const colorNames={sage:"Шалфей",clay:"Терракота",sky:"Небо",lilac:"Лаванда",amber:"Песок",mint:"Мята"};
+ const validColor=color=>Object.prototype.hasOwnProperty.call(colorNames,color)?color:"sage";
  function read(){
   if(!key())return blank();
   try{
@@ -28,7 +30,7 @@
    return {
     favorites:Array.isArray(raw.favorites)?raw.favorites.filter(x=>typeof x==="string"):[],
     folders:Array.isArray(raw.folders)?raw.folders.filter(f=>f&&typeof f.id==="string"&&typeof f.name==="string").map(f=>({
-     id:f.id,name:f.name,methods:Array.isArray(f.methods)?f.methods.filter(x=>typeof x==="string"):[]
+     id:f.id,name:f.name,color:validColor(f.color),methods:Array.isArray(f.methods)?f.methods.filter(x=>typeof x==="string"):[]
     })):[]
    };
   }catch(_){return blank()}
@@ -44,7 +46,13 @@
    <form class="psy-folder-form" id="psyFolderForm">
     <input id="psyFolderName" name="folder" placeholder="Название папки" maxlength="60" aria-label="Название новой папки" required>
     <button type="submit">+ Создать</button>
+    <fieldset class="psy-folder-palette" id="psyFolderPalette"><legend>Цвет новой папки</legend><div class="psy-folder-palette-options"></div></fieldset>
    </form>
+   <div class="psy-folder-search-box">
+    <label for="psyFolderSearch">Поиск по папкам и их содержимому</label>
+    <input type="search" id="psyFolderSearch" placeholder="Название папки или методики" autocomplete="off">
+    <span id="psyFolderSearchCount" role="status" aria-live="polite"></span>
+   </div>
    <div class="psy-collection-tools"><h3>Папки</h3><div class="psy-collection-arrows">
     <button type="button" class="psy-scroll-arrow" id="psyFolderPrev" aria-label="Предыдущие папки">‹</button>
     <button type="button" class="psy-scroll-arrow" id="psyFolderNext" aria-label="Следующие папки">›</button>
@@ -61,6 +69,11 @@
    <div class="psy-folder-detail-icon" aria-hidden="true"><span class="psy-folder-icon"></span></div>
    <h3 id="psyFolderDetailName" tabindex="-1"></h3>
    <p id="psyFolderDetailCount"></p>
+   <fieldset class="psy-folder-palette psy-folder-palette-edit" id="psyFolderPaletteEdit"><legend>Цвет этой папки</legend><div class="psy-folder-palette-options"></div></fieldset>
+   <div class="psy-folder-search-box psy-folder-search-inside">
+    <label for="psyFolderMethodSearch">Поиск методики в папке</label>
+    <input id="psyFolderMethodSearch" type="search" placeholder="Найти в этой папке" autocomplete="off">
+   </div>
    <ul id="psyFolderMethods" class="psy-folder-detail-list"></ul>
    <form class="psy-add-favorite" id="psyFolderAddForm">
     <label for="psyFolderFavoriteSelect">Добавить из избранного:</label>
@@ -68,7 +81,7 @@
     <button type="submit">Добавить</button>
    </form>
    <div class="psy-folder-detail-actions">
-    <button type="button" id="psyFolderDelete">Удалить папку</button>
+    <button type="button" id="psyFolderDelete" class="psy-folder-delete">Удалить папку</button>
     <a class="psy-studio-small-link" href="library.html">Найти методики ↗</a>
    </div>
   </div>
@@ -77,6 +90,21 @@
  const overview=q("#psyCollectionOverview"),detail=q("#psyFolderDetail"),wheel=q("#psyFolders"),fav=q("#psyFavorites"),notice=q("#psyCollectionNotice");
  const prev=q("#psyFolderPrev"),next=q("#psyFolderNext");
  const say=message=>{notice.textContent=message||"";};
+ function setupPalette(container,name){
+  for(const [color,label] of Object.entries(colorNames)){
+   const wrapper=document.createElement("label");wrapper.className="psy-folder-color-choice";wrapper.title=label;
+   const input=document.createElement("input");input.type="radio";input.name=name;input.value=color;
+   input.setAttribute("aria-label",label);
+   if(color==="sage")input.checked=true;
+   const dot=document.createElement("span");dot.className="psy-folder-color-swatch";dot.dataset.color=color;
+   dot.setAttribute("aria-hidden","true");
+   wrapper.append(input,dot);container.append(wrapper);
+  }
+ }
+ setupPalette(q("#psyFolderPalette .psy-folder-palette-options"),"psyFolderColorNew");
+ setupPalette(q("#psyFolderPaletteEdit .psy-folder-palette-options"),"psyFolderColorEdit");
+ const selectedColor=name=>q('input[name="'+name+'"]:checked')?.value||"sage";
+ const foldedText=t=>t.toLocaleLowerCase("ru").trim();
  const methodNoun=n=>n%10===1&&n%100!==11?"методика":n%10>=2&&n%10<=4&&!(n%100>=12&&n%100<=14)?"методики":"методик";
  const openLink=name=>{
   const a=document.createElement("a");
@@ -94,22 +122,30 @@
   next.disabled=wheel.scrollLeft>max-3||max<3;
  }
  function paintFolders(data){
+  const priorScroll=wheel.scrollLeft;
+  const search=foldedText(q("#psyFolderSearch").value);
+  const matching=data.folders.filter(f=>!search||foldedText(f.name).includes(search)||f.methods.some(m=>foldedText(m).includes(search)));
   wheel.replaceChildren();
+  q("#psyFolderSearchCount").textContent=search?"Найдено папок: "+matching.length:"";
   q("#psyFolderCount").textContent=data.folders.length+" "+(data.folders.length%10===1&&data.folders.length%100!==11?"папка":data.folders.length%10>=2&&data.folders.length%10<=4&&!(data.folders.length%100>=12&&data.folders.length%100<=14)?"папки":"папок");
-  if(!data.folders.length){
-   const empty=document.createElement("div");empty.className="psy-folder-empty";empty.innerHTML="<strong>Здесь появятся ваши папки</strong><span>Создайте первую подборку для методик</span>";wheel.appendChild(empty);
+  if(!matching.length){
+   const empty=document.createElement("div");empty.className="psy-folder-empty";
+   empty.innerHTML=data.folders.length?"<strong>Совпадений нет</strong><span>Попробуйте другой запрос</span>":"<strong>Здесь появятся ваши папки</strong><span>Создайте первую подборку для методик</span>";
+   wheel.appendChild(empty);
   }
-  for(const folder of data.folders){
-   const b=document.createElement("button");b.type="button";b.className="psy-folder-tile";b.dataset.folderId=folder.id;
+  for(const folder of matching){
+   const b=document.createElement("button");b.type="button";b.className="psy-folder-tile";b.dataset.folderId=folder.id;b.dataset.folderColor=validColor(folder.color);
    b.setAttribute("aria-label","Открыть папку "+folder.name);
    const icon=document.createElement("span");icon.className="psy-folder-icon";icon.setAttribute("aria-hidden","true");
    const arrow=document.createElement("span");arrow.className="psy-folder-chevron";arrow.textContent="↗";arrow.setAttribute("aria-hidden","true");
    const name=document.createElement("span");name.className="psy-folder-title";name.textContent=folder.name;
    const count=document.createElement("span");count.className="psy-folder-meta";count.textContent=folder.methods.length+" "+methodNoun(folder.methods.length);
    b.append(icon,arrow,name,count);
-   b.addEventListener("click",()=>{selectedId=folder.id;render();q("#psyFolderDetailName").focus();});
+   b.addEventListener("click",()=>{selectedId=folder.id;q("#psyFolderMethodSearch").value="";render();q("#psyFolderDetailName").focus();});
    wheel.appendChild(b);
   }
+  if(search)wheel.scrollLeft=0;
+  else wheel.scrollLeft=priorScroll;
   window.requestAnimationFrame(updateArrows);
  }
  function paintFavorites(data){
@@ -130,9 +166,18 @@
   if(!folder){selectedId=null;overview.hidden=false;detail.hidden=true;return;}
   overview.hidden=true;detail.hidden=false;
   q("#psyFolderDetailName").textContent=folder.name;
+  detail.dataset.folderColor=validColor(folder.color);
+  q('input[name="psyFolderColorEdit"][value="'+validColor(folder.color)+'"]').checked=true;
   q("#psyFolderDetailCount").textContent=folder.methods.length?"Методик в подборке: "+folder.methods.length:"Папка пока пустая. Добавьте методики из избранного.";
   const list=q("#psyFolderMethods");list.replaceChildren();
-  for(const name of folder.methods){
+  const methodSearch=foldedText(q("#psyFolderMethodSearch").value);
+  const visibleMethods=folder.methods.filter(name=>!methodSearch||foldedText(name).includes(methodSearch));
+  if(!visibleMethods.length){
+   const empty=document.createElement("li");empty.className="psy-collection-empty-note";
+   empty.textContent=methodSearch?"По запросу ничего не найдено.":"В папке пока нет методик.";
+   list.append(empty);
+  }
+  for(const name of visibleMethods){
    const li=document.createElement("li");
    li.append(openLink(name),removeButton("Убрать",()=>{
     const d=read(),f=d.folders.find(x=>x.id===selectedId);if(!f)return;
@@ -167,10 +212,19 @@
   const input=q("#psyFolderName"),name=input.value.trim();if(!name)return;
   const d=read();
   if(d.folders.some(x=>x.name.toLocaleLowerCase("ru")===name.toLocaleLowerCase("ru"))){say("Папка с таким названием уже есть.");return;}
-  d.folders.push({id:String(Date.now())+"-"+Math.random().toString(36).slice(2,9),name,methods:[]});
+  d.folders.push({id:String(Date.now())+"-"+Math.random().toString(36).slice(2,9),name,color:validColor(selectedColor("psyFolderColorNew")),methods:[]});
   if(!store(d)){say("Не удалось сохранить папку в браузере.");return;}
-  input.value="";say("Папка создана.");render();
+  input.value="";q("#psyFolderSearch").value="";say("Папка создана.");render();
   wheel.scrollTo({left:wheel.scrollWidth,behavior:document.documentElement.classList.contains("reduce-motion")?"auto":"smooth"});
+ });
+ q("#psyFolderSearch").addEventListener("input",()=>{if(!userID)return;paintFolders(read());});
+ q("#psyFolderMethodSearch").addEventListener("input",()=>{if(selectedId&&userID)paintDetail(read(),read().folders.find(f=>f.id===selectedId));});
+ q("#psyFolderPaletteEdit").addEventListener("change",event=>{
+  if(!event.target.matches('input[name="psyFolderColorEdit"]')||!selectedId||!userID)return;
+  const d=read(),folder=d.folders.find(f=>f.id===selectedId);
+  if(!folder)return;
+  folder.color=validColor(event.target.value);
+  if(store(d)){say("Цвет папки сохранен.");render();}else say("Не удалось сохранить цвет.");
  });
  q("#psyFolderBack").addEventListener("click",()=>{const old=selectedId;selectedId=null;render();wheel.querySelectorAll("[data-folder-id]").forEach(el=>{if(el.dataset.folderId===old)el.focus();});});
  q("#psyFolderDelete").addEventListener("click",()=>{
