@@ -46,7 +46,7 @@
  }
  section.innerHTML=`
   <div class="psy-collection-overview" id="psyCollectionOverview">
-   <div class="psy-collection-topline"><span class="psy-collection-kicker">03 / МОЯ БИБЛИОТЕКА</span><span id="psyFolderCount" class="psy-collection-count">0 папок</span></div>
+   <div class="psy-collection-topline"><span id="psyFolderCount" class="psy-collection-count">0 папок</span></div>
    <h2>Ваши подборки</h2>
    <p class="psy-collection-lead">Свои папки для важных методик. Перелистывайте колесом мыши, стрелками или касанием, открывайте любую папку.</p>
    <form class="psy-folder-form" id="psyFolderForm">
@@ -92,7 +92,19 @@
     <a class="psy-studio-small-link" href="library.html">Найти методики ↗</a>
    </div>
   </div>
-  <p class="psy-collection-notice" id="psyCollectionNotice" role="status" aria-live="polite"></p>`;
+  <p class="psy-collection-notice" id="psyCollectionNotice" role="status" aria-live="polite"></p>
+  <dialog id="psyDeleteFolderDialog" class="psy-folder-delete-dialog" aria-labelledby="psyDeleteFolderTitle" aria-describedby="psyDeleteFolderHelp">
+   <div class="psy-folder-delete-inner">
+    <div class="psy-folder-delete-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3.5 6h17M9 6V4.5h6V6m-9.5 0 1 13.5c.1 1 1 1.5 2 1.5h7c1 0 1.9-.5 2-1.5L18.5 6M10 10v7m4-7v7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <h2 id="psyDeleteFolderTitle">Удалить папку?</h2>
+    <p class="psy-folder-delete-description">Папка <strong id="psyDeleteFolderName"></strong> и ссылки на методики внутри нее будут удалены.</p>
+    <p class="psy-folder-delete-help" id="psyDeleteFolderHelp">Методики в библиотеке и ваше избранное сохранятся.</p>
+    <div class="psy-folder-delete-actions">
+     <button type="button" id="psyDeleteFolderCancel" class="psy-folder-delete-cancel">Отмена</button>
+     <button type="button" id="psyDeleteFolderConfirm" class="psy-folder-delete-confirm">Удалить папку</button>
+    </div>
+   </div>
+  </dialog>`;
  const q=s=>section.querySelector(s);
  const overview=q("#psyCollectionOverview"),detail=q("#psyFolderDetail"),wheel=q("#psyFolders"),fav=q("#psyFavorites"),notice=q("#psyCollectionNotice");
  const prev=q("#psyFolderPrev"),next=q("#psyFolderNext");
@@ -238,11 +250,34 @@
   if(store(d)){say("Цвет папки сохранен.");render();}else say("Не удалось сохранить цвет.");
  });
  q("#psyFolderBack").addEventListener("click",()=>{const old=selectedId;selectedId=null;render();wheel.querySelectorAll("[data-folder-id]").forEach(el=>{if(el.dataset.folderId===old)el.focus();});});
- q("#psyFolderDelete").addEventListener("click",()=>{
-  const d=read(),f=d.folders.find(x=>x.id===selectedId);if(!f)return;
-  if(!confirm("Удалить папку «"+f.name+"» и ее ссылки на методики? Избранное сохранится."))return;
-  d.folders=d.folders.filter(x=>x.id!==f.id);
-  if(store(d)){selectedId=null;say("Папка удалена.");render();}else say("Не удалось удалить папку.");
+ const deleteDialog=q("#psyDeleteFolderDialog");
+ const deleteTrigger=q("#psyFolderDelete");
+ let folderPendingDeletion=null;
+ deleteTrigger.addEventListener("click",()=>{
+  const target=read().folders.find(f=>f.id===selectedId);
+  if(!target)return;
+  folderPendingDeletion=target.id;
+  q("#psyDeleteFolderName").textContent="«"+target.name+"»";
+  deleteDialog.showModal();
+  q("#psyDeleteFolderCancel").focus();
+ });
+ q("#psyDeleteFolderCancel").addEventListener("click",()=>deleteDialog.close("cancel"));
+ q("#psyDeleteFolderConfirm").addEventListener("click",()=>{
+  if(!folderPendingDeletion)return;
+  const data=read(),target=data.folders.find(f=>f.id===folderPendingDeletion);
+  if(!target){deleteDialog.close("cancel");say("Папка уже недоступна.");return;}
+  data.folders=data.folders.filter(f=>f.id!==folderPendingDeletion);
+  if(!store(data)){say("Не удалось удалить папку.");return;}
+  deleteDialog.close("deleted");
+  selectedId=null;
+  q("#psyFolderMethodSearch").value="";
+  say("Папка удалена. Избранное сохранено.");
+  render();
+  q("#psyFolderName").focus({preventScroll:true});
+ });
+ deleteDialog.addEventListener("close",()=>{folderPendingDeletion=null;});
+ deleteDialog.addEventListener("click",event=>{
+  if(event.target===deleteDialog)deleteDialog.close("cancel");
  });
  q("#psyFolderAddForm").addEventListener("submit",event=>{
   event.preventDefault();const name=q("#psyFolderFavoriteSelect").value;if(!name)return;
