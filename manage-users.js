@@ -34,7 +34,7 @@
   const {data:roleData,error:roleError}=await client.from("psy_account_roles")
    .select("role").eq("user_id",ownerId).maybeSingle();
   if(roleError){say("Не удалось подтвердить полномочия.",true);return;}
-  if(roleData?.role!=="owner"&&roleData?.role!=="shadow"){say("Доступ только для владельца Психотеки.",true);return;}
+  if(roleData?.role!=="owner"&&roleData?.role!=="shadow"){say("Управление доступно Владельцу и Тени.",true);return;}
   // The Edge Function independently verifies the JWT assurance level.
   // Do not expose a list of email addresses to an aal1 owner session.
   const {data:aal,error:aalError}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
@@ -44,7 +44,7 @@
    return;
   }
   panel.hidden=false;
-  say("Вы вошли как Владелец. Двухфакторная защита подтверждена.");
+  say(roleData.role==="shadow"?"Вы вошли как Тень. Защита подтверждена.":"Вы вошли как Владелец. Защита подтверждена.");
  }catch(_){say("Не удалось проверить аккаунт.",true);return;}
 
  async function call(body){
@@ -106,7 +106,7 @@
    users=Array.isArray(data?.users)?data.users:[];
    page=targetPage;
    lastPage=Math.max(1,Number(data?.totalPages)||1);
-   say("Права участников можно изменять только с подтвержденного аккаунта Владельца.");
+   say("Права участников доступны только Владельцу и Тени после подтверждения защиты.");
   }catch(e){say(e.message||"Не удалось загрузить список участников.",true)}
   finally{busy=false;draw();}
  }
