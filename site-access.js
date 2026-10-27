@@ -51,16 +51,22 @@
    const {data,error}=await client.auth.getUser();
    if(error||!data?.user||data.user.is_anonymous){goHome();return}
    const uid=data.user.id;
-   const [r,t]=await Promise.all([
+   const [r,t,p]=await Promise.all([
     client.from("psy_account_roles").select("role").eq("user_id",uid).maybeSingle(),
-    client.from("psy_trial_access").select("expires_at").eq("user_id",uid).maybeSingle()
+    client.from("psy_trial_access").select("expires_at").eq("user_id",uid).maybeSingle(),
+    client.from("psy_paid_access").select("plan,expires_at").eq("user_id",uid).maybeSingle()
    ]);
-   if(r.error||t.error){goHome();return}
+   if(r.error||t.error||p.error){goHome();return}
    if(["owner","shadow","moderator"].includes(r.data?.role)){
     // Reading the library is not an administrative action.
     // The management page and server-side role changes still require AAL2.
     root.classList.add("psy-access-ok");
     pill(r.data.role==="owner"?"Владелец":r.data.role==="shadow"?"Тень":"Модератор",null,r.data.role);return;
+   }
+   // Only server-confirmed and unexpired paid grants count as access.
+   if(p.data?.expires_at&&new Date(p.data.expires_at).getTime()>Date.now()){
+    root.classList.add("psy-access-ok");
+    pill("Оплаченная подписка",null,"paid");return;
    }
    if(!t.data?.expires_at||new Date(t.data.expires_at).getTime()<=Date.now()){goHome();return}
    root.classList.add("psy-access-ok");pill("Пробный доступ",t.data.expires_at);
