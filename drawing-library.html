@@ -205,6 +205,10 @@ function matched(){
   var hay=normalize([x.name,x.aliases,x.category,x.meaning,x.question].join(" "));
   var matchedMethod=state.method==="free"||x.methods.includes(state.method)||q!=="";
   return inCategory&&matchedMethod&&(!q||hay.includes(q));
+ }).sort(function(a,b){
+  if(!q)return 0;
+  var rank=function(x){var n=normalize(x.name),alias=normalize(x.aliases);return n===q?0:n.startsWith(q)?1:alias.split(" ").some(function(w){return w===q})?2:alias.includes(q)?3:4};
+  return rank(a)-rank(b)||a.name.localeCompare(b.name,"ru");
  });
 }
 function renderResults(){
