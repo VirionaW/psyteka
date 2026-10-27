@@ -9,15 +9,15 @@
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--canvas);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:15px;line-height:1.6}
-.suggest-wrap{max-width:1130px;padding:28px 24px 88px;margin:0 auto}
+.suggest-wrap{max-width:1760px;width:calc(100% - 44px);padding:24px 12px 80px;margin:0 auto}
 .suggest-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:27px}
 .suggest-brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:24px;text-decoration:none;color:var(--ink)}
 .suggest-brand img{width:40px;height:40px}
 .suggest-back{display:inline-flex;align-items:center;border:1px solid var(--edge);background:white;border-radius:12px;padding:10px 16px;text-decoration:none;color:var(--ink);font-size:14px;font-weight:650}
-.suggest-hero{padding:38px 42px;background:linear-gradient(125deg,#302952,#51498a 70%,#7669b3);color:#fff;border-radius:24px;margin-bottom:24px;box-shadow:0 12px 32px #30295216}
+.suggest-hero{padding:36px 44px;background:linear-gradient(125deg,#302952,#51498a 70%,#7669b3);color:#fff;border-radius:24px;margin-bottom:24px;box-shadow:0 12px 32px #30295216}
 .suggest-hero h1{font-size:clamp(27px,3.5vw,39px);line-height:1.2;margin:0 0 14px;letter-spacing:-.025em}
-.suggest-hero p{max-width:760px;margin:0;color:#eae8fa;font-size:16px}
-.suggest-panel{background:var(--paper);border:1px solid var(--edge);border-radius:22px;padding:32px 35px;margin-bottom:24px;box-shadow:0 7px 26px #19274307}
+.suggest-hero p{max-width:1050px;margin:0;color:#eae8fa;font-size:16px}
+.suggest-panel{background:var(--paper);border:1px solid var(--edge);border-radius:22px;padding:30px 36px;margin-bottom:24px;box-shadow:0 7px 26px #19274307}
 .suggest-panel h2{font-size:23px;letter-spacing:-.02em;line-height:1.3;margin:0 0 12px}
 .suggest-panel p{margin:0 0 23px;color:#647185;line-height:1.7}
 .suggest-form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:20px;row-gap:23px;align-items:start}
@@ -34,13 +34,13 @@ body{margin:0;background:var(--canvas);color:var(--ink);font-family:system-ui,-a
 .suggest-actions .suggest-hint{flex-basis:100%;line-height:1.5}
 .suggest-catalogbar{display:flex;align-items:center;gap:16px;justify-content:space-between;flex-wrap:wrap;margin:19px 0}
 .suggest-catalogbar .suggest-search{max-width:550px;flex:1 1 260px}
-.suggest-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.suggest-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .suggest-card{border:1px solid var(--edge);border-radius:17px;background:#fbfbfe;padding:21px 23px;min-height:105px;transition:border-color .2s}
 .suggest-card h3{font-size:17px;line-height:1.4;margin:0 0 8px;color:#2b3450}
 .suggest-card p{margin:0;color:#7b8495;font-size:13px;font-weight:500;line-height:1.5}
 .suggest-empty{color:var(--muted);padding:20px}
-@media(max-width:690px){.suggest-wrap{padding:16px 12px 65px}.suggest-hero,.suggest-panel{padding:23px}.suggest-form,.suggest-cards{grid-template-columns:1fr}.suggest-hero h1{font-size:29px}.suggest-panel h2{font-size:21px}}
-</style></head>
+@media(max-width:1100px){.suggest-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}\n@media(max-width:690px){.suggest-wrap{width:100%;padding:16px 12px 65px}.suggest-hero,.suggest-panel{padding:23px}.suggest-form,.suggest-cards{grid-template-columns:1fr}.suggest-hero h1{font-size:29px}.suggest-panel h2{font-size:21px}}
+.suggest-status{background:#f0edff;border-left:4px solid #7867c9;border-radius:10px;padding:16px 20px;color:#352b68!important;font-size:15px}.suggest-status strong{font-weight:800;color:#3b2b83}.suggest-card{min-width:0}\n</style></head>
 <body><main class="suggest-wrap">
 <div class="suggest-top"><a class="suggest-brand" href="index.html?home=1"><img src="brand-mark.svg" alt="">Психотека</a><a class="suggest-back" href="library.html?area=school">Вернуться в библиотеку</a></div>
 <section class="suggest-hero"><h1>Предложить методику или сообщить об ошибке</h1>
@@ -56,8 +56,8 @@ body{margin:0;background:var(--canvas);color:var(--ink);font-family:system-ui,-a
 </form>
 <p id="suggestStatus" role="status" class="suggest-hint" style="margin-top:12px"></p>
 </section>
-<section class="suggest-panel" aria-labelledby="rights-heading"><h2 id="rights-heading">Методики, временно исключенные из каталога</h2>
-<p>В этом списке только методики, временно убранные из рабочего каталога до проверки прав или получения разрешения правообладателя. Здесь приведены лишь названия и авторы, без бланков, стимулов и портфолио. Если вы правообладатель или заметили неточность, напишите через форму выше.</p>
+<section class="suggest-panel" aria-labelledby="rights-heading"><h2 id="rights-heading">Методики на проверке прав</h2>
+<p class="suggest-status"><strong>Временно убраны из рабочего каталога до проверки прав или получения разрешения правообладателя.</strong> Это не список запрещенных методик: для большинства из них законность публикации конкретных материалов еще не установлена. Часть тестов требует лицензии, а часть может вернуться после проверки источников.</p><p>Здесь указаны только название и автор, без бланков, стимулов и портфолио. Если вы автор, правообладатель или нашли неточность, сообщите нам через форму выше.</p>
 <div class="suggest-catalogbar"><input class="suggest-search" id="suggestSearch" type="search" placeholder="Поиск по названию или автору" aria-label="Поиск методик"><span id="suggestCount" class="suggest-hint"></span></div>
 <div class="suggest-cards" id="suggestCards"></div><p class="suggest-empty" id="suggestEmpty" hidden>Методики не найдены.</p>
 </section></main>
