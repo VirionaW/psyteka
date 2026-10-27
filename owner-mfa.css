@@ -1,0 +1,24 @@
+.psy-mfa-wrap{max-width:1010px;margin:0 auto;padding:65px 22px 90px;display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,490px);gap:55px;align-items:start}
+.psy-mfa-intro h1{font-size:clamp(40px,5vw,62px);letter-spacing:-.055em;line-height:1.13;margin:15px 0 22px}
+.psy-mfa-intro>p:not(.auth-eyebrow){font-size:17px;line-height:1.7;color:#647d6c}
+.psy-mfa-card{background:#fff;border:1px solid #d7e4d8;border-radius:20px;box-shadow:0 20px 60px #123a2510;padding:28px}
+.psy-mfa-card h2{font-size:25px;letter-spacing:-.025em;margin:0 0 12px}
+.psy-mfa-card h3{font-size:17px;margin:17px 0 7px}
+.psy-mfa-card p{font-size:14px;color:#65796a;line-height:1.65}
+.psy-mfa-card [hidden]{display:none!important}
+.psy-mfa-status{border-radius:11px;background:#eff6f0;padding:12px 14px;color:#24543f!important}
+.psy-mfa-status.psy-error{background:#fff1e9;color:#9b4232!important}
+.psy-mfa-action{display:inline-flex;justify-content:center;align-items:center;background:#246c50;color:#fff!important;border:0;border-radius:10px;padding:12px 18px;min-height:45px;cursor:pointer;font:750 14px system-ui,sans-serif;text-decoration:none;text-align:center}
+.psy-mfa-action:hover{background:#18543c}
+.psy-mfa-action:disabled{opacity:.55;cursor:not-allowed}
+.psy-mfa-minor{display:inline-flex;align-items:center;justify-content:center;border:1px solid #c7d8c8;border-radius:10px;background:#fff;color:#2d6049;cursor:pointer;font:700 13px system-ui,sans-serif;padding:10px 15px;margin:10px 0 0}
+.psy-mfa-form{display:grid;gap:9px;margin-top:15px}
+.psy-mfa-form label{font-size:13px;font-weight:750}
+.psy-mfa-form input{font:20px system-ui,sans-serif;letter-spacing:.15em;border:1px solid #bcd1c1;border-radius:10px;padding:12px;max-width:250px;background:#fff;color:#1e4734}
+.psy-mfa-card #psyMfaQr{display:block;margin:15px auto;max-width:85%;width:210px;height:210px;border:10px solid white;border-radius:12px;object-fit:contain}
+.psy-mfa-card details{font-size:13px;line-height:1.6;margin-bottom:18px}
+.psy-mfa-card summary{cursor:pointer;font-weight:700}
+.psy-mfa-secret{display:block;font:14px/1.5 ui-monospace,monospace;overflow-wrap:anywhere;background:#eef3ed;padding:12px;border-radius:8px;user-select:all}
+.psy-mfa-success{color:#236144;font-weight:800;margin:10px 0}
+.psy-mfa-advice{border-top:1px solid #e0eae2;padding-top:15px;margin:20px 0 0}
+@media(max-width:790px){.psy-mfa-wrap{grid-template-columns:1fr;gap:20px;padding:38px 18px 60px}.psy-mfa-card{padding:22px;max-width:560px}}
