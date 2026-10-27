@@ -9,3 +9,75 @@
 @media(max-width:800px){.psy-direction-welcome{min-height:420px;padding:26px 16px}.psy-welcome-arrow{transform:rotate(-28deg);width:125px;height:100px;margin-bottom:14px}}
 html.dark .psy-direction-welcome{background:radial-gradient(circle at 60% 30%,#203c33,#162b25);border-color:#365447}
 html.dark .psy-direction-welcome h2{color:#ebf4ee}html.dark .psy-direction-welcome p{color:#b1cabe}
+
+/* Начальная библиотека без направления – НИКАКОГО баннера школы.
+   Не полагаемся только на [hidden], который перебивают стили hero. */
+html.psy-library-choose-only body.library-page .main > .hero,
+html.psy-library-choose-only body.library-page .main > .hero[hidden],
+html.psy-library-choose-only body.library-page .main :is(#schoolView,#preschoolView,#specialView,#pmpkView,#resourceView){
+ display:none!important;
+ visibility:hidden!important;
+}
+html.psy-library-choose-only body.library-page .main .psy-direction-welcome{
+ display:flex!important;
+ box-sizing:border-box;
+ margin:0!important;
+ min-height:clamp(420px,calc(100dvh - 130px),790px);
+ padding:clamp(28px,4vw,56px);
+ position:relative;
+ align-items:center;
+ justify-content:center;
+ overflow:visible!important;
+ background:linear-gradient(145deg,#f9fcf8,#edf5ef)!important;
+ border:1px solid #d7e7dd;
+ border-radius:24px;
+}
+html.psy-library-choose-only body.library-page .main .psy-welcome-content{
+ display:flex;flex-direction:column;align-items:center;
+ gap:0;position:relative;max-width:min(100%,700px);
+}
+html.psy-library-choose-only body.library-page .main .psy-welcome-arrow{
+ display:block!important;
+ position:relative!important;
+ width:clamp(160px,21vw,240px)!important;
+ height:clamp(105px,13vw,150px)!important;
+ margin:0 0 18px!important;
+ transform:translateX(-18%)!important;
+ color:#3b8b60!important;
+ opacity:1!important;
+ visibility:visible!important;
+ filter:drop-shadow(0 5px 5px rgba(39,91,61,.12));
+}
+html.psy-library-choose-only body.library-page .main .psy-welcome-arrow path{
+ stroke-width:7.5!important;
+}
+html.psy-library-choose-only body.library-page .main .psy-direction-welcome h2{
+ margin:0 0 13px!important;
+}
+html.psy-library-choose-only body.library-page .main .psy-direction-welcome p{
+ max-width:530px!important;
+ line-height:1.6!important;
+}
+html.dark.psy-library-choose-only body.library-page .main .psy-direction-welcome{
+ background:linear-gradient(155deg,#213b30,#172d25)!important;
+ border-color:#405b4b!important;
+}
+html.dark.psy-library-choose-only body.library-page .main .psy-welcome-arrow{
+ color:#9ecab0!important;
+}
+@media(max-width:820px){
+ html.psy-library-choose-only body.library-page .main .psy-direction-welcome{
+  min-height:calc(100dvh - 185px);
+  padding:26px 14px;
+  border-radius:20px;
+ }
+ html.psy-library-choose-only body.library-page .main .psy-welcome-arrow{
+  width:135px!important;height:95px!important;
+  margin:0 0 14px!important;transform:translateX(-7%)!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html.psy-library-choose-only body.library-page .main .psy-welcome-arrow{
+  transition:none!important;animation:none!important;
+ }
+}
