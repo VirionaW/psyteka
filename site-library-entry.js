@@ -12,7 +12,7 @@
  const client=valid?window.supabase.createClient(conf.url,conf.publishableKey,{
   auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
  }):null;
- let destination="library.html",currentUser=null,role="participant",trial=null,requestAt=0,timer=null,lastFocus=null,opening=false;
+ let destination="library.html",currentUser=null,role="participant",trial=null,requestAt=0,timer=null,lastFocus=null,opening=false,ownerNeedsMfa=false;
  const html=`<dialog id="psyEntryDialog" aria-labelledby="psyEntryTitle" aria-modal="true">
  <div class="psy-entry-inner">
   <div class="psy-entry-top"><div><p class="psy-entry-eyebrow">Психотека · личный доступ</p><h2 id="psyEntryTitle">Войти в Психотеку</h2></div>
@@ -119,6 +119,17 @@
     step("psyEntryAccess");el("psyEntryAccessName").textContent=role==="owner"?"Доступ владельца":"Доступ модератора";
     el("psyEntryTimeCaption").textContent="Для команды проекта пробный период не требуется.";
     el("psyEntryClock").textContent="Без ограничения";el("psyEntryGo").disabled=false;
+    ownerNeedsMfa=false;
+    if(role==="owner"){
+     const {data:aal,error:aalError}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
+     if(aalError||aal?.currentLevel!=="aal2"){
+      ownerNeedsMfa=true;
+      el("psyEntryAccessName").textContent="Защита Владельца – Вендиго";
+      el("psyEntryTimeCaption").textContent="Для доступа к библиотеке подтвердите код в приложении-аутентификаторе.";
+      el("psyEntryClock").textContent="Второй фактор";
+      el("psyEntryGo").textContent="Подключить или подтвердить защиту";
+     }else el("psyEntryGo").textContent="Открыть библиотеку";
+    }else el("psyEntryGo").textContent="Открыть библиотеку";
    }else if(trial){
     if(new Date(trial.expires_at).getTime()>Date.now()){
      step("psyEntryAccess");el("psyEntryAccessName").textContent="Бесплатный пробный доступ";
@@ -181,6 +192,10 @@
   finally{b.disabled=false}
  });
  el("psyEntryGo").addEventListener("click",()=>{
+  if(role==="owner"&&ownerNeedsMfa){
+   try{sessionStorage.setItem("psy-intended-destination",destination)}catch(_){}
+   location.assign("owner-mfa.html");return;
+  }
   if(role!=="owner"&&role!=="moderator"&&(!trial||new Date(trial.expires_at).getTime()<=Date.now())){
    error("Пробный доступ завершен.");return;
   }
@@ -190,7 +205,7 @@
   if(!client)return;
   const {error:signError}=await client.auth.signOut();
   if(signError){error("Не удалось выйти. Повторите попытку.");return}
-  currentUser=null;trial=null;role="participant";if(timer)clearInterval(timer);
+  currentUser=null;trial=null;role="participant";ownerNeedsMfa=false;if(timer)clearInterval(timer);
   el("psyHomeTrial").hidden=true;step("psyEntryEmail");
  });
  if(authEnabled&&client){
