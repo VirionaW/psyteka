@@ -3,7 +3,7 @@
 
 /* Earlier CSS gave #pricing a max-width, rounded corners and a separate opaque
    dark fill. Treat the six full-width sections as one continuous canvas instead. */
-body.site-landing #siteHome main{
+body.site-landing.site-landing #siteHome main{
   position:relative;
   isolation:isolate;
   background:linear-gradient(162deg,
@@ -13,7 +13,7 @@ body.site-landing #siteHome main{
     #f0f7f0 66%,
     #fbfaf5 100%)!important;
 }
-body.site-landing #siteHome main > section:is(#sections,#workflow,#inside,#about,#pricing,#ready-kits){
+body.site-landing.site-landing #siteHome main > section:is(#sections,#workflow,#inside,#about,#pricing,#ready-kits){
   position:relative!important;
   isolation:isolate;
   max-width:none!important;
@@ -26,7 +26,7 @@ body.site-landing #siteHome main > section:is(#sections,#workflow,#inside,#about
 }
 /* Glows fade completely before every section edge; there is no rectangular
    section-shaped painted layer to create visible seams. */
-body.site-landing #siteHome main > section:is(#sections,#workflow,#inside,#about,#pricing,#ready-kits)::before{
+body.site-landing.site-landing #siteHome main > section:is(#sections,#workflow,#inside,#about,#pricing,#ready-kits)::before{
   content:"";
   display:block;
   position:absolute;
@@ -40,49 +40,49 @@ body.site-landing #siteHome main > section:is(#sections,#workflow,#inside,#about
   -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 18%,#000 82%,transparent 100%);
   mask-image:linear-gradient(to bottom,transparent 0%,#000 18%,#000 82%,transparent 100%);
 }
-body.site-landing #siteHome main > section#sections::before{
+body.site-landing.site-landing #siteHome main > section#sections::before{
   background:radial-gradient(ellipse 60% 65% at 95% 43%,rgba(168,205,173,.22),transparent 85%);
 }
-body.site-landing #siteHome main > section#inside::before{
+body.site-landing.site-landing #siteHome main > section#inside::before{
   background:
     radial-gradient(ellipse 55% 75% at 5% 47%,rgba(170,205,184,.28),transparent 86%),
     radial-gradient(ellipse 42% 80% at 92% 52%,rgba(228,206,180,.20),transparent 85%);
 }
-body.site-landing #siteHome main > section#about::before{
+body.site-landing.site-landing #siteHome main > section#about::before{
   background:
     radial-gradient(ellipse 64% 80% at 86% 44%,rgba(168,203,170,.25),transparent 88%),
     radial-gradient(ellipse 46% 62% at 2% 58%,rgba(222,197,159,.14),transparent 85%);
 }
-body.site-landing #siteHome main > section#pricing::before{
+body.site-landing.site-landing #siteHome main > section#pricing::before{
   background:
     radial-gradient(ellipse 62% 72% at 91% 38%,rgba(167,200,170,.27),transparent 87%),
     radial-gradient(ellipse 53% 62% at 8% 64%,rgba(229,207,171,.19),transparent 87%);
 }
-body.site-landing #siteHome main > section#ready-kits::before{
+body.site-landing.site-landing #siteHome main > section#ready-kits::before{
   background:radial-gradient(ellipse 66% 83% at 12% 47%,rgba(166,208,180,.22),transparent 87%);
 }
-body.site-landing #siteHome main > section:is(#sections,#workflow,#inside,#about,#pricing,#ready-kits) > :not(.psy-home-flourish){
+body.site-landing.site-landing #siteHome main > section:is(#sections,#workflow,#inside,#about,#pricing,#ready-kits) > :not(.psy-home-flourish){
   position:relative;
   z-index:1;
 }
 
 /* Keep true cards rounded; only remove rounding from the large section panels. */
-body.site-landing #siteHome #inside .psy-preview-wrap.psy-home-gallery{
+body.site-landing.site-landing #siteHome #inside .psy-preview-wrap.psy-home-gallery{
   background:linear-gradient(158deg,rgba(255,255,255,.97),rgba(248,252,246,.96))!important;
   border-color:#d4e4d7!important;
   border-radius:28px!important;
   box-shadow:0 21px 48px rgba(29,70,42,.09)!important;
 }
-body.site-landing #siteHome #pricing .psy-home-plan{
+body.site-landing.site-landing #siteHome #pricing .psy-home-plan{
   border-radius:20px!important;
 }
-body.site-landing #siteHome #about .psy-mission-art{
+body.site-landing.site-landing #siteHome #about .psy-mission-art{
   border-radius:27px!important;
 }
 
 /* Deliberately small illustration accents: real vector linework, never mock
    screenshots, stock photography or extra replacement pictures. */
-body.site-landing #siteHome .psy-home-flourish{
+body.site-landing.site-landing #siteHome .psy-home-flourish{
   position:absolute!important;
   z-index:0!important;
   pointer-events:none!important;
@@ -91,30 +91,30 @@ body.site-landing #siteHome .psy-home-flourish{
   opacity:.28;
   filter:drop-shadow(0 12px 17px rgba(34,85,56,.07));
 }
-body.site-landing #siteHome .psy-home-flourish svg{
+body.site-landing.site-landing #siteHome .psy-home-flourish svg{
   display:block;
   width:100%;height:auto;
   max-width:100%;
 }
-body.site-landing #siteHome #about .psy-home-flourish--paper{
+body.site-landing.site-landing #siteHome #about .psy-home-flourish--paper{
   width:clamp(95px,11vw,190px);
   bottom:5%;
   left:1.5%;
   transform:rotate(-8deg);
 }
-body.site-landing #siteHome #pricing .psy-home-flourish--people{
+body.site-landing.site-landing #siteHome #pricing .psy-home-flourish--people{
   width:clamp(115px,13vw,215px);
   right:1.8%;
   top:7%;
   transform:rotate(5deg);
 }
-body.site-landing #siteHome .psy-home-flourish .psy-f-warm{stroke:#ba9874}
-body.site-landing #siteHome .psy-home-flourish .psy-f-fill{fill:#dceadf}
-body.site-landing #siteHome .psy-home-flourish .psy-f-warm-fill{fill:#f3e7d4}
+body.site-landing.site-landing #siteHome .psy-home-flourish .psy-f-warm{stroke:#ba9874}
+body.site-landing.site-landing #siteHome .psy-home-flourish .psy-f-fill{fill:#dceadf}
+body.site-landing.site-landing #siteHome .psy-home-flourish .psy-f-warm-fill{fill:#f3e7d4}
 
 /* Dark theme: one cohesive dark canvas behind all sections.
    The old section-specific backgrounds are deliberately overridden. */
-html.dark body.site-landing #siteHome main{
+html.dark body.site-landing.site-landing #siteHome main{
   background:linear-gradient(164deg,
     #122a22 0%,
     #183328 20%,
@@ -122,7 +122,7 @@ html.dark body.site-landing #siteHome main{
     #193328 72%,
     #132c23 100%)!important;
 }
-html.dark body.site-landing #siteHome main > section:is(#sections,#workflow,#inside,#about,#pricing,#ready-kits){
+html.dark body.site-landing.site-landing #siteHome main > section:is(#sections,#workflow,#inside,#about,#pricing,#ready-kits){
   background:transparent!important;
   border:0!important;
   border-radius:0!important;
@@ -130,75 +130,75 @@ html.dark body.site-landing #siteHome main > section:is(#sections,#workflow,#ins
   overflow:hidden!important;
   margin:0!important;
 }
-html.dark body.site-landing #siteHome main > section:is(#sections,#workflow,#inside,#about,#pricing,#ready-kits)::before{
+html.dark body.site-landing.site-landing #siteHome main > section:is(#sections,#workflow,#inside,#about,#pricing,#ready-kits)::before{
   background:
     radial-gradient(ellipse 67% 73% at 14% 45%,rgba(79,141,107,.21),transparent 84%),
     radial-gradient(ellipse 61% 75% at 89% 52%,rgba(186,155,104,.095),transparent 88%);
 }
-html.dark body.site-landing #siteHome main > section#sections::before{
+html.dark body.site-landing.site-landing #siteHome main > section#sections::before{
   background:radial-gradient(ellipse 65% 85% at 91% 44%,rgba(65,124,92,.19),transparent 90%);
 }
-html.dark body.site-landing #siteHome main > section#inside::before{
+html.dark body.site-landing.site-landing #siteHome main > section#inside::before{
   background:
     radial-gradient(ellipse 62% 77% at 6% 42%,rgba(75,128,97,.20),transparent 88%),
     radial-gradient(ellipse 54% 85% at 97% 52%,rgba(165,143,97,.085),transparent 88%);
 }
-html.dark body.site-landing #siteHome main > section#about::before{
+html.dark body.site-landing.site-landing #siteHome main > section#about::before{
   background:
     radial-gradient(ellipse 72% 82% at 87% 48%,rgba(70,134,100,.19),transparent 89%),
     radial-gradient(ellipse 51% 70% at 3% 64%,rgba(176,149,104,.075),transparent 89%);
 }
-html.dark body.site-landing #siteHome main > section#pricing::before{
+html.dark body.site-landing.site-landing #siteHome main > section#pricing::before{
   background:
     radial-gradient(ellipse 70% 81% at 89% 43%,rgba(83,142,108,.20),transparent 88%),
     radial-gradient(ellipse 59% 75% at 9% 66%,rgba(173,142,97,.09),transparent 89%);
 }
-html.dark body.site-landing #siteHome main > section#ready-kits::before{
+html.dark body.site-landing.site-landing #siteHome main > section#ready-kits::before{
   background:radial-gradient(ellipse 65% 84% at 13% 47%,rgba(75,133,102,.18),transparent 89%);
 }
-html.dark body.site-landing #siteHome #inside .psy-preview-wrap.psy-home-gallery{
+html.dark body.site-landing.site-landing #siteHome #inside .psy-preview-wrap.psy-home-gallery{
   background:linear-gradient(145deg,#203f30,#1c392c 68%,#254232)!important;
   border-color:#577962!important;
   box-shadow:0 20px 45px rgba(4,23,15,.26)!important;
 }
-html.dark body.site-landing #siteHome #pricing .psy-home-plan{
+html.dark body.site-landing.site-landing #siteHome #pricing .psy-home-plan{
   background:linear-gradient(151deg,#264335,#203d31)!important;
   border-color:#557865!important;
   box-shadow:0 12px 29px rgba(4,22,16,.14)!important;
 }
-html.dark body.site-landing #siteHome #pricing .psy-home-plan-pro{
+html.dark body.site-landing.site-landing #siteHome #pricing .psy-home-plan-pro{
   border-color:#8aae8f!important;
 }
-html.dark body.site-landing #siteHome #about .psy-mission-copy h2,
-html.dark body.site-landing #siteHome #pricing .psy-home-pricing-heading h2{
+html.dark body.site-landing.site-landing #siteHome #about .psy-mission-copy h2,
+html.dark body.site-landing.site-landing #siteHome #pricing .psy-home-pricing-heading h2{
   color:#f0f7ee!important;
 }
-html.dark body.site-landing #siteHome #about .psy-mission-copy .large-text,
-html.dark body.site-landing #siteHome #pricing .psy-home-pricing-heading p{
+html.dark body.site-landing.site-landing #siteHome #about .psy-mission-copy .large-text,
+html.dark body.site-landing.site-landing #siteHome #pricing .psy-home-pricing-heading p{
   color:#d2e4d6!important;
 }
-html.dark body.site-landing #siteHome .psy-home-flourish{
+html.dark body.site-landing.site-landing #siteHome .psy-home-flourish{
   color:#9ec1a6;
   opacity:.25;
   filter:drop-shadow(0 11px 16px rgba(0,0,0,.12));
 }
-html.dark body.site-landing #siteHome .psy-home-flourish .psy-f-fill{fill:#2d5c47}
-html.dark body.site-landing #siteHome .psy-home-flourish .psy-f-warm{stroke:#bd9972}
-html.dark body.site-landing #siteHome .psy-home-flourish .psy-f-warm-fill{fill:#806b52}
+html.dark body.site-landing.site-landing #siteHome .psy-home-flourish .psy-f-fill{fill:#2d5c47}
+html.dark body.site-landing.site-landing #siteHome .psy-home-flourish .psy-f-warm{stroke:#bd9972}
+html.dark body.site-landing.site-landing #siteHome .psy-home-flourish .psy-f-warm-fill{fill:#806b52}
 
 /* Narrow widths: keep decorations away from words and clickable actions. */
 @media(max-width:900px){
-  body.site-landing #siteHome #about .psy-home-flourish--paper{
+  body.site-landing.site-landing #siteHome #about .psy-home-flourish--paper{
     left:auto;right:1.5%;bottom:2%;width:90px;opacity:.16;
   }
-  body.site-landing #siteHome #pricing .psy-home-flourish--people{
+  body.site-landing.site-landing #siteHome #pricing .psy-home-flourish--people{
     right:0;top:0;width:112px;opacity:.15;
   }
 }
 @media(max-width:600px){
-  body.site-landing #siteHome .psy-home-flourish{display:none!important}
-  body.site-landing #siteHome #inside .psy-preview-wrap.psy-home-gallery{border-radius:21px!important}
+  body.site-landing.site-landing #siteHome .psy-home-flourish{display:none!important}
+  body.site-landing.site-landing #siteHome #inside .psy-preview-wrap.psy-home-gallery{border-radius:21px!important}
 }
 @media(prefers-reduced-motion:reduce){
-  body.site-landing #siteHome .psy-home-flourish{filter:none}
+  body.site-landing.site-landing #siteHome .psy-home-flourish{filter:none}
 }
