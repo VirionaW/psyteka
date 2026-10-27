@@ -28,3 +28,6 @@ html.dark .psy-avatar-menu-item:hover,html.dark .psy-avatar-menu-item:focus-visi
 .psy-private-value{display:flex;flex-wrap:wrap;align-items:center;gap:9px}
 .psy-privacy-reveal{border:1px solid #bcd6c7;background:#edf5ef;color:#245a43;border-radius:9px;padding:7px 12px;cursor:pointer;font-weight:650}
 .psy-privacy-reveal:focus-visible{outline:2px solid #267751;outline-offset:2px}
+
+/* Settings and administration now live inside the avatar menu. */
+.site-header a.round-link[href="settings.html"],.library-page .header-gear{display:none!important}
