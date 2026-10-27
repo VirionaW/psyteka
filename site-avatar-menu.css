@@ -19,7 +19,7 @@
 .psy-avatar-menu-item:hover,.psy-avatar-menu-item:focus-visible{
  background:#e9f3ee!important;outline:2px solid transparent;
 }
-.psy-avatar-menu-item:last-child{color:#925442!important}
+.psy-avatar-menu-exit{color:#925442!important}
 .psy-avatar-dropdown .psy-avatar-menu-item:nth-child(3){min-width:0}
 html.dark .psy-avatar-dropdown{background:#20362f;color:#edf6ee;border-color:#4e705d}
 html.dark .psy-avatar-menu-item:hover,html.dark .psy-avatar-menu-item:focus-visible{background:#355345!important}
