@@ -12,7 +12,7 @@
  const client=valid?window.supabase.createClient(conf.url,conf.publishableKey,{
   auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
  }):null;
- let destination="library.html",currentUser=null,role="participant",trial=null,requestAt=0,timer=null,lastFocus=null,opening=false,ownerNeedsMfa=false;
+ let destination="library.html",currentUser=null,role="participant",trial=null,paid=null,requestAt=0,timer=null,lastFocus=null,opening=false,ownerNeedsMfa=false;
  const html=`<dialog id="psyEntryDialog" aria-labelledby="psyEntryTitle" aria-modal="true">
  <div class="psy-entry-inner">
   <div class="psy-entry-top"><div><p class="psy-entry-eyebrow">Психотека · личный доступ</p><h2 id="psyEntryTitle">Войти в Психотеку</h2></div>
@@ -109,12 +109,13 @@
    const {data,error:authError}=await client.auth.getUser();
    if(authError||!data?.user||data.user.is_anonymous){currentUser=null;step("psyEntryEmail");opening=false;return;}
    currentUser=data.user;
-   const [r,t]=await Promise.all([
+   const [r,t,p]=await Promise.all([
     client.from("psy_account_roles").select("role").eq("user_id",currentUser.id).maybeSingle(),
-    client.from("psy_trial_access").select("started_at,expires_at").eq("user_id",currentUser.id).maybeSingle()
+    client.from("psy_trial_access").select("started_at,expires_at").eq("user_id",currentUser.id).maybeSingle(),
+    client.from("psy_paid_access").select("plan,expires_at").eq("user_id",currentUser.id).maybeSingle()
    ]);
-   if(r.error||t.error)throw new Error("Не удалось проверить права доступа.");
-   role=r.data?.role||"participant";trial=t.data||null;
+   if(r.error||t.error||p.error)throw new Error("Не удалось проверить права доступа.");
+   role=r.data?.role||"participant";trial=t.data||null;paid=p.data||null;
    if(["owner","shadow","moderator"].includes(role)){
     if(timer){clearInterval(timer);timer=null;}
     const trialPill=el("psyHomeTrial");if(trialPill)trialPill.hidden=true;
@@ -132,6 +133,15 @@
       el("psyEntryGo").textContent="Открыть библиотеку";
      }else el("psyEntryGo").textContent="Открыть библиотеку";
     }else el("psyEntryGo").textContent="Открыть библиотеку";
+   }else if(paid?.expires_at&&new Date(paid.expires_at).getTime()>Date.now()){
+    if(timer){clearInterval(timer);timer=null;}
+    const trialPill=el("psyHomeTrial");if(trialPill)trialPill.hidden=true;
+    step("psyEntryAccess");
+    el("psyEntryAccessName").textContent=paid.plan==="organization"?"Организация":"Специалист";
+    el("psyEntryTimeCaption").textContent="Оплаченный доступ действует до:";
+    el("psyEntryClock").textContent=new Intl.DateTimeFormat("ru-RU",{dateStyle:"medium",timeStyle:"short"}).format(new Date(paid.expires_at));
+    el("psyEntryGo").textContent="Открыть библиотеку";
+    el("psyEntryGo").disabled=false;
    }else if(trial){
     if(new Date(trial.expires_at).getTime()>Date.now()){
      step("psyEntryAccess");el("psyEntryAccessName").textContent="Бесплатный пробный доступ";
@@ -196,7 +206,8 @@
  el("psyEntryGo").addEventListener("click",()=>{
   // Opening the library needs a valid account, not admin step-up MFA.
   // Administrative operations continue to require AAL2 on the server.
-  if(!["owner","shadow","moderator"].includes(role)&&(!trial||new Date(trial.expires_at).getTime()<=Date.now())){
+  const paidValid=paid?.expires_at&&new Date(paid.expires_at).getTime()>Date.now();
+  if(!["owner","shadow","moderator"].includes(role)&&!paidValid&&(!trial||new Date(trial.expires_at).getTime()<=Date.now())){
    error("Пробный доступ завершен.");return;
   }
   location.assign(destination);
@@ -205,7 +216,7 @@
   if(!client)return;
   const {error:signError}=await client.auth.signOut();
   if(signError){error("Не удалось выйти. Повторите попытку.");return}
-  currentUser=null;trial=null;role="participant";ownerNeedsMfa=false;if(timer)clearInterval(timer);
+  currentUser=null;trial=null;paid=null;role="participant";ownerNeedsMfa=false;if(timer)clearInterval(timer);
   el("psyHomeTrial").hidden=true;step("psyEntryEmail");
  });
  if(authEnabled&&client){
