@@ -2309,6 +2309,7 @@ function renderResults(){
   state.sheetOpen=false;state.editKey=null;state.draft=draftEmpty();renderDetails();
  }
  $("#count").textContent="Найдено: "+found.length+" из "+entries.length;
+ if(state.sheetOpen){var selIndex=found.findIndex(function(e){return e.id===state.selected});if(selIndex>=state.visibleLimit)state.visibleLimit=Math.ceil((selIndex+1)/100)*100;}
  var visible=found.slice(0,state.visibleLimit);
  var previousScroll=$("#results").scrollTop||0;
  $("#results").innerHTML=found.length?visible.map(function(x){
