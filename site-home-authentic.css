@@ -42,12 +42,12 @@
 .site-landing #siteHome .psy-auth-method-pic.psy-auth-mspss{
  background-image:url("assets/psyteka-methods-61-100.webp?v=20261025art");
  background-size:800% 500%;
- background-position:42.857143% 0%;
+ background-position:85.714286% 25%;
 }
 .site-landing #siteHome .psy-auth-method-pic.psy-auth-gad{
  background-image:url("assets/psyteka-methods-61-100.webp?v=20261025art");
  background-size:800% 500%;
- background-position:28.571429% 0%;
+ background-position:57.142857% 0%;
 }
 .site-landing #siteHome .psy-auth-method-description{display:flex;flex-direction:column;flex:1;gap:5px;min-width:0}
 .site-landing #siteHome .psy-auth-method-description strong{font-size:12px;line-height:1.26;color:#204b38;font-weight:900}
