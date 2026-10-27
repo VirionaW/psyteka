@@ -55,6 +55,13 @@
    ]);
    if(r.error||t.error){goHome();return}
    if(r.data?.role==="owner"||r.data?.role==="moderator"){
+    if(r.data.role==="owner"){
+     const {data:level,error:aalError}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
+     if(aalError||level?.currentLevel!=="aal2"){
+      try{sessionStorage.setItem("psy-intended-destination",location.pathname.split("/").pop()+location.search+location.hash)}catch(_){}
+      location.replace("owner-mfa.html");return;
+     }
+    }
     root.classList.add("psy-access-ok");
     pill(r.data.role==="owner"?"Владелец":"Модератор");return;
    }
