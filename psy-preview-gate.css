@@ -1,0 +1,27 @@
+#psy-preview-gate{position:fixed;inset:0;z-index:2147483647;overflow-y:auto;display:flex;align-items:center;justify-content:center;padding:24px 16px;box-sizing:border-box;background:radial-gradient(ellipse at 12% 5%,#eaf1e9 0,transparent 42%),radial-gradient(ellipse at 90% 100%,#eee4d7 0,transparent 42%),#faf9f5;color:#293d35;font-family:inherit,system-ui,sans-serif}
+#psy-preview-gate *,#psy-preview-gate *:before,#psy-preview-gate *:after{box-sizing:border-box}
+#psy-preview-gate .psy-gate-card{width:min(100%,465px);padding:36px 38px 32px;border:1px solid #deddd3;border-radius:25px;background:#fffefa;box-shadow:0 24px 80px rgba(38,57,47,.1);text-align:center}
+#psy-preview-gate .psy-gate-mark{width:80px;height:80px;margin:0 auto 8px;display:grid;place-items:center;background:#ecf2eb;border-radius:24px}
+#psy-preview-gate .psy-gate-mark img{width:58px;height:58px;object-fit:contain}
+#psy-preview-gate .psy-gate-brand{font-size:18px;font-weight:750;margin:0 0 18px;color:#295246}
+#psy-preview-gate .psy-gate-eyebrow{display:inline-block;color:#846b51;background:#f5f0e9;border-radius:50px;padding:7px 13px;font-size:11px;font-weight:750;letter-spacing:.8px;text-transform:uppercase}
+#psy-preview-gate h1{margin:14px 0 10px;font-size:clamp(26px,5vw,33px);line-height:1.18;font-weight:760;color:#263d34}
+#psy-preview-gate .psy-gate-description{color:#68766d;font-size:14px;line-height:1.6;margin:0 0 26px}
+#psy-preview-gate form{text-align:left}
+#psy-preview-gate label{display:block;font-weight:650;font-size:13px;margin:0 0 8px}
+#psy-preview-gate .psy-gate-input{position:relative}
+#psy-preview-gate input{width:100%;height:53px;padding:0 95px 0 15px;background:#fff;color:#263d34;border:1.5px solid #cedbd0;border-radius:12px;font-size:16px;outline:none}
+#psy-preview-gate input:focus{border-color:#3b7560;box-shadow:0 0 0 3px #e4efe7}
+#psy-preview-gate .psy-gate-reveal{position:absolute;right:9px;top:7px;height:39px;padding:0 10px;border:0;background:transparent;font:inherit;font-size:12px;font-weight:650;color:#527263;cursor:pointer}
+#psy-preview-gate .psy-gate-error{min-height:22px;color:#ad443b;margin:6px 0 8px;font-size:12px}
+#psy-preview-gate .psy-gate-submit{width:100%;min-height:52px;padding:10px 16px;border:none;border-radius:12px;background:#285748;color:#fff;font:inherit;font-size:15px;font-weight:750;cursor:pointer}
+#psy-preview-gate .psy-gate-submit:hover{background:#1e4438}
+#psy-preview-gate .psy-gate-submit:disabled{opacity:.6;cursor:wait}
+#psy-preview-gate .psy-gate-note{margin:22px 0 0;font-size:12px;line-height:1.5;color:#89938b}
+#psy-preview-gate button:focus-visible{outline:3px solid #b4ccb9;outline-offset:3px}
+html.dark #psy-preview-gate{background:#172821;color:#ebf1e9}
+html.dark #psy-preview-gate .psy-gate-card{border-color:#3d5547;background:#21382d}
+html.dark #psy-preview-gate h1,html.dark #psy-preview-gate .psy-gate-brand{color:#f0f6eb}
+html.dark #psy-preview-gate .psy-gate-description,html.dark #psy-preview-gate .psy-gate-note{color:#bbc9bd}
+html.dark #psy-preview-gate .psy-gate-mark{background:#304b3e}
+@media(max-width:520px){#psy-preview-gate .psy-gate-card{padding:28px 22px 26px;border-radius:20px}}
