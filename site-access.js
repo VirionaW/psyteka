@@ -19,6 +19,8 @@
  function pill(text,clockEnd,role="participant"){
   document.addEventListener("DOMContentLoaded",()=>{
    const bar=document.querySelector(".topbar");if(!bar)return;
+   // Полный отсчет уже показан под шапкой библиотеки.
+   if(clockEnd&&document.getElementById("psyTrialStrip"))return;
    const old=bar.querySelector("#psyLibraryTrial");if(old)old.remove();
    const item=document.createElement("span");item.id="psyLibraryTrial";item.className="psy-entry-pill";item.dataset.role=role;
    const anchor=bar.querySelector(".header-avatar");bar.insertBefore(item,anchor||null);
