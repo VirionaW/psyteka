@@ -167,5 +167,29 @@
   const summary=clip(fallback||"Описание задачи методики содержится в руководстве выбранной версии.",150);
   return {author,type:age?type:"Опросник",age,quantity,summary,confirmedAge:age!=="Возраст по авторской версии",confirmedQuantity:quantity!=="Число заданий по форме",category:m.theme};
  }
- window.PSY_SCHOOL_CARDS={compose,specific,names:Object.keys(specific)};
+ // Одна карточка – один основной способ предъявления, даже если
+ // рисуночная или графическая методика одновременно относится к проективным.
+ const kindOptions=[
+  {value:"drawing",label:"Рисуночные методики"},
+  {value:"graphic",label:"Графические методики"},
+  {value:"projective",label:"Другие проективные"},
+  {value:"questionnaire",label:"Опросники и анкеты"},
+  {value:"test",label:"Пробы и тесты"},
+  {value:"interview",label:"Беседы и наблюдение"},
+  {value:"sociometry",label:"Социометрия"},
+  {value:"program",label:"Программы и подборки"}
+ ];
+ function classify(m,d,profile,standard){
+  const type=compose(m,d,profile,standard).type.toLowerCase();
+  if(/рисуночн(?!ый тест фрустрации)|рисунок семьи/.test(type))return "drawing";
+  if(/графическ|социограмм/.test(type))return "graphic";
+  if(/проективн|проективная|цветовая/.test(type))return "projective";
+  if(/опросник|анкет|самоотчет|рейтингова/.test(type))return "questionnaire";
+  if(/социометр/.test(type))return "sociometry";
+  if(/бесед|наблюден/.test(type))return "interview";
+  if(/программ|реестр|модель|подборк/.test(type))return "program";
+  if(/проб|тест|интеллект|табличн|нейропсих/.test(type))return "test";
+  return "other";
+ }
+ window.PSY_SCHOOL_CARDS={compose,specific,names:Object.keys(specific),classify,kindOptions};
 })();
