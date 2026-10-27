@@ -358,3 +358,21 @@ html.dark .library-page .method[data-visual-kind="scale"]{border-top-color:#a5d5
  .site-header .site-theme-label{display:none!important}
  .site-header .site-theme-btn{padding:0;width:43px;height:43px;min-width:43px;min-height:43px}
 }
+
+
+/* Единая эмблема в темной теме: без светлой квадратной подложки,
+   также для профиля, настроек и нижних панелей. */
+html.dark .site-landing .site-logo img.psy-brand-mark,
+html.dark .library-page .psy-library-brand img.psy-brand-mark,
+html.dark .site-landing .psy-footer-brand img.psy-brand-mark,
+html.dark .site-landing .psy-account-footer-brand img,
+html.dark .gate-top-logo img.psy-brand-mark{
+ content:url("brand-mark-dark.svg?v=20261026dark2")!important;
+ background:transparent!important;
+ filter:none!important;
+ border:0!important;
+ border-radius:0!important;
+ padding:0!important;
+ box-shadow:none!important;
+ object-fit:contain!important;
+}
