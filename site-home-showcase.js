@@ -6,91 +6,99 @@
  if(!root)return;
  const hero=root.querySelector(".psy-library-preview, .psy-showcase-window");
  if(hero){
-  hero.outerHTML=`<div class="psy-home-hero-art psy-home-ui" aria-label="Иллюстративный макет каталога Психотеки">
-    <div class="psy-demo-window" aria-hidden="true">
-      <div class="psy-demo-toolbar"><span class="psy-demo-traffic"><i></i><i></i><i></i></span><span class="psy-demo-browser-caption">Психотека / рабочая библиотека</span><span class="psy-demo-app-status"><i></i> Каталог</span></div>
+  // A faithful, static visual excerpt of existing Psyteka UI, not a screenshot or a claimed live session.
+  hero.outerHTML=`<div class="psy-home-hero-art psy-home-ui psy-auth-hero" aria-label="Пример интерфейса Психотеки на основе существующих карточек методик">
+    <div class="psy-demo-window">
+      <div class="psy-demo-toolbar"><span class="psy-demo-traffic" aria-hidden="true"><i></i><i></i><i></i></span><span class="psy-demo-browser-caption">Психотека · Методическая библиотека</span></div>
       <div class="psy-demo-layout">
         <aside class="psy-demo-aside">
-          <div class="psy-demo-brand"><span class="psy-demo-brandmark">✳</span><span>Психотека<small>Библиотека методик</small></span></div>
-          <div class="psy-demo-aside-title">НАПРАВЛЕНИЯ</div>
-          <span class="psy-demo-menu current"><span class="psy-demo-menu-symbol">▤</span> Школа</span>
-          <span class="psy-demo-menu"><span class="psy-demo-menu-symbol">✿</span> Детский сад</span>
-          <span class="psy-demo-menu"><span class="psy-demo-menu-symbol">◎</span> Взрослые</span>
-          <div class="psy-demo-aside-line"></div>
+          <div class="psy-demo-brand"><span class="psy-demo-brandmark"><img src="brand-mark.svg" alt="" width="26" height="26"></span><span><span class="psy-auth-brandname">Психо<b>тека</b></span><small>Методическая библиотека</small></span></div>
           <div class="psy-demo-aside-title">МАТЕРИАЛЫ</div>
-          <span class="psy-demo-menu"><span class="psy-demo-menu-symbol">▧</span> Документация</span>
+          <span class="psy-demo-menu current">Школа</span>
+          <span class="psy-demo-menu">Детский сад</span>
+          <span class="psy-demo-menu">Взрослые</span>
+          <span class="psy-demo-menu">ОВЗ и инвалидность</span>
+          <span class="psy-demo-menu">ПМПК</span>
+          <span class="psy-demo-menu">Профилактика</span>
+          <span class="psy-demo-menu">Документация</span>
         </aside>
         <div class="psy-demo-content">
-          <div class="psy-demo-search"><svg viewBox="0 0 24 24" fill="none"><circle cx="10.7" cy="10.7" r="5.8" stroke="currentColor" stroke-width="2"/><path d="m15 15 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Поиск по методикам и авторам</span><span class="psy-demo-search-key">⌕</span></div>
-          <div class="psy-demo-intro"><span>Школьные материалы</span><span>Подборка методик</span></div>
-          <div class="psy-demo-pills"><span>Внимание</span><span>Мышление</span><span>Мотивация</span></div>
-          <div class="psy-demo-method-row">
-            <div class="psy-demo-method-glyph schulte"><svg viewBox="0 0 48 48" fill="none"><rect x="7" y="6" width="31" height="35" rx="4" stroke="currentColor" stroke-width="2"/><path d="M14 16h8m5 0h5M14 23h18M14 30h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="34" cy="36" r="8" fill="#f8dfba" stroke="#ba956b" stroke-width="2"/><path d="M34 31v5l3 2" stroke="#866b48" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div class="psy-demo-method-copy"><strong>Таблицы Шульте</strong><small>Исследование внимания</small><span>От 6 лет · Рабочий протокол</span></div>
-            <span class="psy-demo-method-arrow">↗</span>
+          <div class="psy-demo-search"><svg viewBox="0 0 24 24" fill="none"><circle cx="10.7" cy="10.7" r="5.8" stroke="currentColor" stroke-width="2"/><path d="m15 15 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Название методики, автор, направление...</span></div>
+          <div class="psy-demo-intro"><span>Школьные материалы</span></div>
+          <div class="psy-auth-method-row">
+            <span class="psy-auth-method-pic psy-auth-mspss" aria-hidden="true"></span>
+            <span class="psy-auth-method-description"><strong>Шкала воспринимаемой социальной поддержки (MSPSS)</strong><small>Г. Зимет, Н. Далем, С. Зимет, Г. Фарли (1988)</small><span class="psy-auth-method-badges"><i>Опросник</i><i>12 утверждений</i></span><span class="psy-auth-method-detail">Поддержка семьи, друзей и близких</span></span>
           </div>
-          <div class="psy-demo-method-row">
-            <div class="psy-demo-method-glyph family"><svg viewBox="0 0 48 48" fill="none"><path d="M6 22 24 8l18 14v18H6z" stroke="currentColor" stroke-width="2" fill="#fcf4e8"/><circle cx="18" cy="27" r="4" fill="#a0bfd0"/><circle cx="30" cy="27" r="4" fill="#deb1ae"/><path d="M11 39c0-6 3-9 7-9s7 3 7 9m-1 0c0-6 3-9 7-9s7 3 7 9" stroke="#6d9a85" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div class="psy-demo-method-copy"><strong>Рисунок семьи</strong><small>Рисуночная методика</small><span>Инструкция · Бланк</span></div>
-            <span class="psy-demo-method-arrow">↗</span>
+          <div class="psy-auth-method-row">
+            <span class="psy-auth-method-pic psy-auth-gad" aria-hidden="true"></span>
+            <span class="psy-auth-method-description"><strong>GAD-7 – краткая шкала тревожных симптомов</strong><small>Краткий скрининг тревожных симптомов</small><span class="psy-auth-method-badges"><i>Опросник</i><i>7 вопросов</i></span></span>
           </div>
-          <div class="psy-demo-foot"><span class="psy-demo-mini-dot"></span> Описания, бланки и обработка – в одном месте</div>
         </div>
       </div>
     </div>
-    <div class="psy-demo-float" aria-hidden="true"><span class="psy-demo-float-icon">✓</span><span><strong>Продумано для практики</strong><small>От поиска до рабочего бланка</small></span></div>
-  </div>`;
+    <div class="psy-demo-float" aria-hidden="true"><span class="psy-demo-float-icon">✓</span><span><strong>Материалы в одном месте</strong><small>Каталог, портфолио и бланки</small></span></div>
+   </div>`;
  }
  const inside=root.querySelector("#inside .psy-preview-wrap");
  if(inside){
   inside.classList.add("psy-home-gallery");
   inside.innerHTML=`<div class="psy-gallery-heading">
-    <div class="psy-gallery-heading-copy"><div class="kicker">Внутри Психотеки</div><h2>Все под рукой для работы психолога</h2><p>Каталог для быстрого выбора, методические руководства и рабочие инструменты. Каждая задача – со своим удобным форматом.</p></div>
-    <a class="site-btn small psy-gallery-action" href="library.html?area=school">Перейти в библиотеку <span aria-hidden="true">↗</span></a>
+     <div class="psy-gallery-heading-copy"><div class="kicker">Внутри Психотеки</div><h2>Все под рукой для работы психолога</h2><p>Четыре части рабочего комплекта на примере одной существующей методики – шкалы воспринимаемой социальной поддержки (MSPSS).</p></div>
+     <a class="site-btn small psy-gallery-action" href="library.html?area=school">Перейти в библиотеку <span aria-hidden="true">↗</span></a>
    </div>
-   <div class="psy-gallery-grid psy-interface-gallery">
-    <a class="psy-demo-gallery-card" href="library.html?area=school" aria-label="Открыть каталог школьных методик">
-     <div class="psy-demo-gallery-visual psy-demo-gallery-search" aria-hidden="true">
-      <div class="psy-demo-gallery-window">
-       <div class="psy-demo-gallery-bar"><i></i><i></i><i></i><span>Каталог методик</span></div>
-       <div class="psy-demo-gallery-input"><span>⌕</span><span>Найти методику...</span></div>
-       <div class="psy-demo-gallery-tags"><i>Внимание</i><i>Мышление</i><i>Память</i></div>
-       <div class="psy-demo-gallery-result"><b class="psy-demo-gallery-mini-icon">▦</b><span><strong>Таблицы Шульте</strong><small>Возраст · Инструкция · Бланк</small></span><em>↗</em></div>
-       <div class="psy-demo-gallery-result"><b class="psy-demo-gallery-mini-icon">◇</b><span><strong>Простые аналогии</strong><small>Мышление · Методика</small></span><em>↗</em></div>
+   <div class="psy-gallery-grid psy-auth-gallery">
+    <a class="psy-auth-preview-card" href="library.html?area=school" aria-label="Открыть каталог с методикой MSPSS">
+     <div class="psy-auth-preview-visual psy-auth-preview-catalog" aria-hidden="true">
+      <div class="psy-auth-mini-screen">
+       <div class="psy-auth-mini-title">Школьные материалы</div>
+       <div class="psy-auth-mini-search">⌕ Название методики, автор...</div>
+       <div class="psy-auth-mini-catalog-item"><span class="psy-auth-method-pic psy-auth-mspss"></span><span><b>Шкала воспринимаемой социальной поддержки (MSPSS)</b><small>Г. Зимет, Н. Далем, С. Зимет, Г. Фарли (1988)</small><em>Опросник · 12 утверждений</em></span></div>
+       <div class="psy-auth-mini-catalog-item"><span class="psy-auth-method-pic psy-auth-gad"></span><span><b>GAD-7 – краткая шкала тревожных симптомов</b><small>Краткий скрининг симптомов тревоги</small></span></div>
       </div>
-     </div>
-     <div class="psy-gallery-meta"><div><span class="psy-gallery-category">БЫСТРЫЙ ПОИСК</span><h3>Каталог методик</h3><p>Фильтры, возраст и авторы</p></div><span class="psy-gallery-link-mark" aria-hidden="true">↗</span></div>
+     </div><div class="psy-gallery-meta"><div><span class="psy-gallery-category">ПОИСК</span><h3>Каталог методик</h3><p>Карточка и основные сведения</p></div><span class="psy-gallery-link-mark" aria-hidden="true">↗</span></div>
     </a>
-    <a class="psy-demo-gallery-card" href="cognitive-kit.html?method=schulte" aria-label="Открыть портфолио методики">
-     <div class="psy-demo-gallery-visual psy-demo-gallery-portfolio" aria-hidden="true">
-      <div class="psy-demo-gallery-sheet">
-       <div class="psy-demo-gallery-sheet-top"><span>ПОРТФОЛИО МЕТОДИКИ</span><span>✳</span></div>
-       <strong>Таблицы Шульте</strong>
-       <div class="psy-demo-gallery-sheet-tab"><i>Портфолио</i><i>Руководство</i><i>Бланк</i></div>
-       <div class="psy-demo-gallery-sheet-line"><span>Цель</span><b>Оценка внимания</b></div>
-       <div class="psy-demo-gallery-sheet-line"><span>Материалы</span><b>Таблицы, протокол</b></div>
-       <div class="psy-demo-gallery-sheet-line"><span>Инструкция</span><b>В руководстве</b></div>
-       <div class="psy-demo-gallery-sheet-footer"><span>Методика и бланки</span><em>↗</em></div>
+    <a class="psy-auth-preview-card" href="library.html?area=school" aria-label="Открыть библиотеку и портфолио MSPSS">
+     <div class="psy-auth-preview-visual psy-auth-preview-portfolio" aria-hidden="true">
+      <div class="psy-auth-mini-screen">
+       <div class="psy-auth-mini-method-heading">Шкала воспринимаемой социальной поддержки (MSPSS)</div>
+       <div class="psy-auth-mini-tabs"><span class="selected">Портфолио</span><span>Методика / руководство</span><span>Бланк</span></div>
+       <div class="psy-auth-mini-heading">Общие сведения</div>
+       <div class="psy-auth-mini-row"><b>Методика</b><span>MSPSS</span></div>
+       <div class="psy-auth-mini-row"><b>Автор</b><span>Г. Зимет и соавторы (1988)</span></div>
+       <div class="psy-auth-mini-row"><b>Вид</b><span>Опросник</span></div>
+       <div class="psy-auth-mini-row"><b>Заданий</b><span>12 утверждений</span></div>
+       <div class="psy-auth-mini-heading">Цель методики</div>
+       <p class="psy-auth-mini-purpose">Оценка воспринимаемой социальной поддержки</p>
       </div>
-     </div>
-     <div class="psy-gallery-meta"><div><span class="psy-gallery-category">МЕТОДИЧЕСКАЯ ЧАСТЬ</span><h3>Портфолио</h3><p>Цель, инструкция и материалы</p></div><span class="psy-gallery-link-mark" aria-hidden="true">↗</span></div>
+     </div><div class="psy-gallery-meta"><div><span class="psy-gallery-category">СВЕДЕНИЯ</span><h3>Портфолио</h3><p>Цель, авторы и особенности</p></div><span class="psy-gallery-link-mark" aria-hidden="true">↗</span></div>
     </a>
-    <a class="psy-demo-gallery-card" href="library.html?area=preschool" aria-label="Открыть библиотеку дошкольных методик">
-     <div class="psy-demo-gallery-visual psy-demo-gallery-preschool" aria-hidden="true">
-      <div class="psy-demo-gallery-activity">
-       <div class="psy-demo-gallery-activity-top"><span>ДЕТСКИЙ САД</span><span class="psy-demo-gallery-bubble">✿</span></div>
-       <div class="psy-demo-gallery-activity-title">Наблюдение и развитие</div>
-       <div class="psy-demo-gallery-activity-grid">
-        <div><span class="psy-demo-activity-icon">♡</span><strong>Адаптация</strong><small>Наблюдение</small></div>
-        <div><span class="psy-demo-activity-icon">◎</span><strong>Развитие</strong><small>Диагностика</small></div>
-        <div><span class="psy-demo-activity-icon">✳</span><strong>Игра</strong><small>Задания</small></div>
-       </div>
-       <div class="psy-demo-gallery-activity-foot">Материалы для дошкольников <span>↗</span></div>
+    <a class="psy-auth-preview-card" href="library.html?area=school" aria-label="Открыть библиотеку и обработку данных MSPSS">
+     <div class="psy-auth-preview-visual psy-auth-preview-processing" aria-hidden="true">
+      <div class="psy-auth-mini-screen">
+       <div class="psy-auth-mini-method-heading">Шкала воспринимаемой социальной поддержки (MSPSS)</div>
+       <div class="psy-auth-mini-tabs"><span>Портфолио</span><span>Методика / руководство</span><span>Бланк</span></div>
+       <div class="psy-auth-mini-modes"><span class="selected">Один участник</span><span>Группа / класс</span></div>
+       <div class="psy-auth-mini-field">Фамилия и имя <span>Введите ФИО</span></div>
+       <div class="psy-auth-mini-question answered"><span>1. Поддержка значимого человека в трудной ситуации</span><b>2</b></div>
+       <div class="psy-auth-mini-question"><span>2. Возможность делиться переживаниями</span><b>1-7</b></div>
+       <div class="psy-auth-mini-question"><span>3. Готовность семьи помочь</span><b>1-7</b></div>
       </div>
-     </div>
-     <div class="psy-gallery-meta"><div><span class="psy-gallery-category">ДЕТСКИЙ САД</span><h3>Дошкольные материалы</h3><p>Наблюдения, беседы, задания</p></div><span class="psy-gallery-link-mark" aria-hidden="true">↗</span></div>
+     </div><div class="psy-gallery-meta"><div><span class="psy-gallery-category">РЕЗУЛЬТАТ</span><h3>Обработка данных</h3><p>Один участник или группа</p></div><span class="psy-gallery-link-mark" aria-hidden="true">↗</span></div>
     </a>
-   </div>`;
+    <a class="psy-auth-preview-card" href="library.html?area=school" aria-label="Открыть библиотеку и бланк MSPSS">
+     <div class="psy-auth-preview-visual psy-auth-preview-blank" aria-hidden="true">
+      <div class="psy-auth-mini-screen">
+       <div class="psy-auth-mini-method-heading">Шкала воспринимаемой социальной поддержки (MSPSS)</div>
+       <div class="psy-auth-mini-tabs"><span>Портфолио</span><span>Методика / руководство</span><span class="selected">Бланк</span></div>
+       <div class="psy-auth-mini-heading">Бланк ученика</div>
+       <p class="psy-auth-mini-instruction">Прочитай предложения. Выбери цифру от 1 до 7.</p>
+       <div class="psy-auth-mini-scale"><span>1<br>Совсем не согласен</span><span>4<br>Ни согласен, ни не согласен</span><span>7<br>Полностью согласен</span></div>
+       <table class="psy-auth-mini-blank-table"><thead><tr><th>№</th><th>Утверждение</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr></thead><tbody><tr><td>1</td><td>Когда мне нужна помощь...</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>2</td><td>Есть особенный для меня человек...</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+      </div>
+     </div><div class="psy-gallery-meta"><div><span class="psy-gallery-category">ПЕЧАТЬ</span><h3>Бланк ученика</h3><p>Инструкция и шкала ответов</p></div><span class="psy-gallery-link-mark" aria-hidden="true">↗</span></div>
+    </a>
+   </div>
+   <p class="psy-auth-gallery-note">Это статические фрагменты оформления существующей методики MSPSS, а не отдельные интерактивные формы. Полные материалы открываются в библиотеке.</p>`;
  }
  const kits=root.querySelector("#ready-kits");
  if(kits){
@@ -115,4 +123,8 @@
  finalSkin.rel="stylesheet";
  finalSkin.href="site-home-final.css?v=20261027final3";
  document.head.appendChild(finalSkin);
+ const authentic=document.createElement("link");
+ authentic.rel="stylesheet";
+ authentic.href="site-home-authentic.css?v=20261027authentic1";
+ document.head.appendChild(authentic);
 })();
