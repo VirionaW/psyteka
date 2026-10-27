@@ -131,4 +131,8 @@
  decoration.rel="stylesheet";
  decoration.href="site-home-decoration.css?v=20261027decor2";
  document.head.appendChild(decoration);
+ const seamless=document.createElement("link");
+ seamless.rel="stylesheet";
+ seamless.href="site-home-seamless.css?v=20261027seamless1";
+ document.head.appendChild(seamless);
 })();
