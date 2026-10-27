@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="site-mobile.css">
 <link rel="stylesheet" href="site-unified.css?v=20261025c">
 <link rel="stylesheet" href="site-avatar-menu.css?v=20261027subs1">
-<link rel="stylesheet" href="site-subscriptions.css?v=20261027plans2">
+<link rel="stylesheet" href="site-subscriptions.css?v=20261027payments1">
 </head>
 <body class="site-landing psy-subscription-page">
 <header class="site-header">
@@ -47,7 +47,7 @@
  <div class="psy-subs-price">390 ₽ <small>/ месяц</small></div><p class="psy-subs-price-note">Предварительная цена</p>
  <p class="psy-subs-description">Планируемая месячная подписка для регулярной индивидуальной работы.</p>
  <p class="psy-subs-list-label">Что планируется</p><ul><li>Полная доступная библиотека</li><li>Руководства и печатные бланки</li><li>Обработка данных, где реализована</li><li>Личная работа с материалами</li></ul>
- <div class="psy-subs-action psy-subs-unavailable">Скоро появится</div>
+ <button type="button" class="psy-subs-action psy-subs-unavailable" id="psyPaySpecialist" disabled aria-disabled="true">Оплата скоро появится</button>
  <p class="psy-subs-detail">Покупка не подключена. Окончательная стоимость и условия появятся до запуска.</p>
  </article><article class="psy-subs-card psy-subs-team">
  <div class="psy-subs-card-top"><span class="psy-subs-label">ДЛЯ КОМАНДЫ</span><span class="psy-subs-tag">Для учреждения</span></div>
@@ -55,7 +55,7 @@
  <div class="psy-subs-price">890 ₽ <small>/ месяц</small></div><p class="psy-subs-price-note">Предварительная цена</p>
  <p class="psy-subs-description">Планируемый месячный доступ для нескольких сотрудников учреждения.</p>
  <p class="psy-subs-list-label">Что планируется</p><ul><li>Библиотека и бланки для команды</li><li>Отдельные аккаунты специалистов</li><li>Управление местами сотрудников</li><li>Единый набор методических материалов</li></ul>
- <div class="psy-subs-action psy-subs-unavailable">Скоро появится</div>
+ <button type="button" class="psy-subs-action psy-subs-unavailable" id="psyPayOrganization" disabled aria-disabled="true">Командный тариф готовится</button>
  <p class="psy-subs-detail">Командные функции еще в разработке. Количество мест и цена будут утверждены отдельно.</p>
  </article></div>
  </section>
@@ -66,10 +66,20 @@
  <thead><tr><th scope="col">Возможности</th><th scope="col">Знакомство<small>0 ₽ · 2 дня</small></th><th scope="col" class="psy-subs-col-featured">Специалист<small>390 ₽ / мес.*</small></th><th scope="col">Организация<small>890 ₽ / мес.*</small></th></tr></thead>
  <tbody><tr class="psy-subs-group"><th scope="rowgroup" colspan="4">Методические материалы</th></tr><tr><th scope="row">Каталог методик и поиск</th><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td></tr><tr><th scope="row">Руководства и инструкции</th><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td></tr><tr><th scope="row">Бланки и печатные материалы</th><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td></tr><tr><th scope="row">Обработка результатов, где реализована</th><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td></tr><tr class="psy-subs-group"><th scope="rowgroup" colspan="4">Доступ и организация работы</th></tr><tr><th scope="row">Доступ на 1 месяц</th><td><span class="psy-subs-no" aria-label="Не входит">×</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td></tr><tr><th scope="row">Доступ без ограничения 48 часами</th><td><span class="psy-subs-no" aria-label="Не входит">×</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td></tr><tr><th scope="row">Несколько аккаунтов специалистов в тарифе</th><td><span class="psy-subs-no" aria-label="Не входит">×</span></td><td><span class="psy-subs-no" aria-label="Не входит">×</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td></tr><tr><th scope="row">Управление местами сотрудников</th><td><span class="psy-subs-no" aria-label="Не входит">×</span></td><td><span class="psy-subs-no" aria-label="Не входит">×</span></td><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td></tr><tr class="psy-subs-group"><th scope="rowgroup" colspan="4">Подключение</th></tr><tr><th scope="row">Бесплатно и без банковской карты</th><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td><td><span class="psy-subs-no" aria-label="Не входит">×</span></td><td><span class="psy-subs-no" aria-label="Не входит">×</span></td></tr><tr><th scope="row">Активация доступна сейчас</th><td><span class="psy-subs-yes" aria-label="Входит">✓</span></td><td><span class="psy-subs-no" aria-label="Не входит">×</span></td><td><span class="psy-subs-no" aria-label="Не входит">×</span></td></tr></tbody></table></div>
  <p class="psy-subs-table-note">* Цены 390 ₽ и 890 ₽ предварительные. Галочки в платных столбцах обозначают <strong>запланированные возможности</strong>, а не уже работающую платную подписку. Оплата и командные функции пока недоступны.</p>
- </section> <section class="psy-subs-foot" aria-labelledby="psySubsHelp">
+ </section> <section class="psy-payment-information" aria-labelledby="psyPaymentHow">
+  <div class="psy-subs-section-heading"><div><span class="psy-subs-overline">ПОДКЛЮЧЕНИЕ ОПЛАТЫ</span><h2 id="psyPaymentHow">Как будет проходить оплата</h2></div><p>Без переводов на личную карту</p></div>
+  <div class="psy-payment-steps">
+    <div><span class="psy-payment-step-number">1</span><h3>Выберите тариф</h3><p>Для специалиста – один месяц доступа. Тариф для организаций включим после настройки командной работы.</p></div>
+    <div><span class="psy-payment-step-number">2</span><h3>Оплатите на защищенной странице</h3><p>Платежный провайдер принимает карту или другой поддерживаемый способ. Психотека не получает номер карты.</p></div>
+    <div><span class="psy-payment-step-number">3</span><h3>Получите доступ</h3><p>После подтверждения успешного платежа срок подписки появится в вашем аккаунте.</p></div>
+  </div>
+  <p class="psy-payment-status" id="psyPaymentStatus" role="status" aria-live="polite">Подключение приема платежей готовится. Сейчас списаний нет.</p>
+  <p class="psy-subs-table-note">На первом этапе покупка будет разовой на один месяц, без автоматического списания денег в следующем месяце. Вы сможете оформить следующий месяц самостоятельно. Перед запуском будут опубликованы окончательные цены, реквизиты продавца и условия возврата.</p>
+ </section>
+ <section class="psy-subs-foot" aria-labelledby="psySubsHelp">
   <h2 id="psySubsHelp">Важное о доступе</h2>
   <p>Пробный период начинается в момент активации и длится ровно 48 часов. Он предоставляется один раз на учетную запись. Если он уже использован или закончился, карточка бесплатного варианта больше не показывается. Привилегированным аккаунтам команды пробный тариф не нужен.</p>
-  <p>Платные варианты пока являются описанием планируемых тарифов. Оплата, автоматическое продление и платный доступ сейчас не работают. Перед запуском будут опубликованы окончательные цены, условия и правила обработки платежей.</p>
+  <p>Платные варианты пока являются описанием планируемых тарифов. Оплата еще не включена, автоматических списаний нет. Серверное подтверждение и учет будущих платных заказов подготовлены. Перед запуском будут опубликованы окончательные цены, условия и правила обработки платежей.</p>
   <a class="psy-subs-back" href="library.html">Перейти в библиотеку</a>
  </section>
 </main>
@@ -80,5 +90,6 @@
 <script src="site-chrome.js?v=20261027theme1"></script>
 <script src="site-avatar-menu.js?v=20261027subs1"></script>
 <script src="site-subscriptions.js?v=20261027plans1"></script>
+<script src="site-payment.js?v=20261027payments1"></script>
 </body>
 </html>
