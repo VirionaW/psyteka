@@ -1314,10 +1314,22 @@ var methodName=function(id){var m=METHODS.find(function(x){return x[0]===id});re
 var byId=function(id){return entries.find(function(x){return x.id===id})};
 var categories=["Все"].concat(Array.from(new Set(entries.map(function(x){return x.category}))));
 function init(){
- var url=new URLSearchParams(location.search);var q=url.get("method");if(METHODS.some(function(m){return m[0]===q}))state.method=q;
+ var url=new URLSearchParams(location.search);var q=url.get("method")||document.body.getAttribute("data-offline-method");if(METHODS.some(function(m){return m[0]===q}))state.method=q;
  state.selected=(entries.find(function(e){return e.methods.includes(state.method)})||entries[0]).id;
  $("#method").innerHTML=METHODS.map(function(m){return '<option value="'+esc(m[0])+'">'+esc(m[1])+'</option>'}).join("");
- $("#method").value=state.method;$("#method").addEventListener("change",function(){state.method=this.value;$("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];$("#methodBadge").textContent=methodName(state.method);state.selected=(entries.find(function(e){return e.methods.includes(state.method)})||entries[0]).id;try{history.replaceState(null,"","?method="+encodeURIComponent(state.method))}catch{};renderCategories();renderResults();renderDetails()});
+ $("#method").value=state.method;$("#method").addEventListener("change",function(){
+  var next=this.value;
+  if(state.items.length||$("#subjectCode").value.trim()||$("#contextNotes").value.trim()||$("#conclusion").value.trim()){
+   if(!confirm("При выборе другой методики текущий протокол будет очищен. Сохраните JSON-файл, если хотите вернуться к нему. Продолжить?")){this.value=state.method;return}
+   state.items=[];$("#subjectCode").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords();
+  }
+  state.method=next;state.category="Все";$("#search").value="";
+  $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
+  $("#methodBadge").textContent=methodName(state.method);
+  state.selected=(entries.find(function(e){return e.methods.includes(state.method)})||entries[0]).id;
+  try{history.replaceState(null,"","?method="+encodeURIComponent(state.method))}catch{}
+  renderCategories();renderResults();renderDetails();
+ });
  $("#search").addEventListener("input",renderResults);
  $("#categories").addEventListener("click",function(e){var b=e.target.closest("[data-category]");if(b){state.category=b.dataset.category;renderCategories();renderResults()}});
  $("#results").addEventListener("click",function(e){var b=e.target.closest("[data-element]");if(b){state.selected=b.dataset.element;renderResults();renderDetails()}});
@@ -1332,6 +1344,8 @@ function init(){
  $("#clear").addEventListener("click",function(){if(!confirm("Очистить текущий протокол? Перед очисткой при необходимости сохраните файл."))return;state.items=[];$("#subjectCode").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords()});
  $("#saveOffline").addEventListener("click",function(){
   var clone=document.documentElement.cloneNode(true);
+  clone.querySelector("body").setAttribute("data-offline-method",state.method);
+  clone.querySelectorAll("link[rel=icon]").forEach(function(el){el.remove()});
   ["#recordList","#results","#details","#printSheet"].forEach(function(s){var el=clone.querySelector(s);if(el)el.innerHTML=""});
   clone.querySelectorAll("textarea").forEach(function(el){el.textContent=""});
   clone.querySelectorAll("input").forEach(function(el){el.removeAttribute("value")});
@@ -1360,6 +1374,11 @@ function matched(){
 }
 function renderResults(){
  var found=matched();
+ if(found.length&&!found.some(function(x){return x.id===state.selected})){
+  state.selected=found[0].id;renderDetails();
+ }else if(!found.length){
+  $("#details").innerHTML='<div class="empty">Выберите другой поисковый запрос, чтобы посмотреть описание элемента.</div>';
+ }
  $("#count").textContent="Найдено: "+found.length+" из "+entries.length+". "+($("#search").value?"Поиск по всей библиотеке.":"Подборка по выбранной методике.");
  $("#results").innerHTML=found.length?found.map(function(x){
   return '<button type="button" class="symbol-row" data-element="'+x.id+'" aria-pressed="'+(state.selected===x.id)+'"><span><strong>'+esc(x.name)+'</strong><small>'+esc(x.category)+'</small></span><span class="arrow" aria-hidden="true">›</span></button>';
@@ -1371,10 +1390,10 @@ function renderDetails(){
  '<p><strong>Значение и ассоциации:</strong> '+esc(x.meaning)+'</p>'+
  '<p><strong>Что спросить:</strong> '+esc(x.question)+'</p>'+
  '<div class="two-col"><label>Расположение на рисунке<select id="position">'+Object.keys(POS).map(function(k){return '<option value="'+k+'">'+esc(POS[k][0])+'</option>'}).join("")+'</select></label><label>Размер<select id="size">'+Object.keys(SZ).map(function(k){return '<option value="'+k+'">'+esc(SZ[k])+'</option>'}).join("")+'</select></label></div>'+
- '<p class="subtle" id="positionNote">'+esc(POS.unknown[1])+'</p><label>Описание конкретного элемента (необязательно)<textarea id="elementNote" placeholder="Например: серая гора с тремя вершинами"></textarea></label>'+
+ '<p class="subtle" id="positionNote">'+esc(x.name+": "+POS.unknown[1])+'</p><label>Описание конкретного элемента (необязательно)<textarea id="elementNote" placeholder="Например: серая гора с тремя вершинами"></textarea></label>'+
  '<div class="hintbox">Запись положения – описание композиции, а не готовый психологический вывод. Проверьте ее по словам ребенка и правилам выбранной версии методики.</div>'+
  '<button type="button" class="btn primary" id="addEntry">Добавить в протокол'+(rec?' (уже '+rec+')':'')+'</button>';
- $("#position").addEventListener("change",function(){$("#positionNote").textContent=POS[this.value][1]});
+ $("#position").addEventListener("change",function(){$("#positionNote").textContent=x.name+": "+POS[this.value][1]});
 }
 function addEntry(){
  var x=byId(state.selected);if(!x)return;
@@ -1428,7 +1447,7 @@ async function importFile(e){
    if(!x||typeof x!=="object"||typeof x.elementId!=="string")return null;
    var element=byId(x.elementId);if(!element)return null;
    return {key:"i"+Date.now().toString(36)+i,elementId:element.id,name:element.name,
-    position:POS[x.position]?x.position:"unknown",size:Object.prototype.hasOwnProperty.call(SZ,x.size)?x.size:"",
+    position:Object.prototype.hasOwnProperty.call(POS,x.position)?x.position:"unknown",size:Object.prototype.hasOwnProperty.call(SZ,x.size)?x.size:"",
     note:String(x.note||"").slice(0,4000)};
   }).filter(Boolean);
   if(!confirm("Заменить текущий протокол содержимым файла? Несохраненные записи будут потеряны."))return;
