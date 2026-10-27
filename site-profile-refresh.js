@@ -1,44 +1,202 @@
 "use strict";
+/* Личный кабинет: интерактивное избранное и папки (сохранение прежнего формата).
+   Все данные локальны для вошедшего аккаунта; библиотеки и методики не меняем. */
 (function(){
  const icons={
   moon:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.7A8.7 8.7 0 0 1 8.3 3.8 8.8 8.8 0 1 0 20.2 15.7Z"/></svg>',
   sun:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>'
  };
  function updateTheme(){
-  document.querySelectorAll('.site-theme-icon').forEach(el=>{el.innerHTML=icons[document.documentElement.classList.contains('dark')?'sun':'moon'];});
+  document.querySelectorAll(".site-theme-icon").forEach(el=>{
+   if(el.tagName.toLowerCase()!=="svg")el.innerHTML=icons[document.documentElement.classList.contains("dark")?"sun":"moon"];
+  });
  }
- document.querySelectorAll('.site-theme-btn').forEach(b=>b.addEventListener('click',()=>queueMicrotask(updateTheme)));
- new MutationObserver(updateTheme).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+ document.querySelectorAll(".site-theme-btn").forEach(b=>b.addEventListener("click",()=>queueMicrotask(updateTheme)));
+ new MutationObserver(updateTheme).observe(document.documentElement,{attributes:true,attributeFilter:["class"]});
  updateTheme();
  if(!document.body.matches('[data-account="profile"]'))return;
- const root=document.querySelector('.site-account');if(!root)return;
+ const section=document.getElementById("psyCollections");
+ if(!section)return;
  const identity=window.PSY_IDENTITY;
- let userID=null;
- const key=()=>userID?'psy-collections-v1:'+userID:null;
+ let userID=null,selectedId=null;
+ const key=()=>userID?"psy-collections-v1:"+userID:null;
  const blank=()=>({favorites:[],folders:[]});
- function read(){try{return JSON.parse(localStorage.getItem(key()))||blank()}catch(_){return blank()}}
- function store(data){if(key())localStorage.setItem(key(),JSON.stringify(data))}
- const section=document.createElement('section');section.className='psy-collections-card';section.id='psyCollections';
- section.innerHTML='<h2>Избранные методики и мои папки</h2><p>Сохраняйте нужные методики и объединяйте их в личные подборки. Подборки доступны только на этом устройстве в вашем аккаунте.</p><div class="psy-folder-form"><input id="psyFolderName" placeholder="Название новой папки" maxlength="60" aria-label="Название папки"><button type="button" id="psyFolderCreate">Создать папку</button></div><p id="psyCollectionNotice" role="status"></p><h3>Избранное</h3><ul class="psy-collection-list" id="psyFavorites"></ul><h3>Мои папки</h3><ul class="psy-collection-list" id="psyFolders"></ul>';
- const form=document.getElementById('profileForm');form?.insertAdjacentElement('afterend',section);
- const fav=section.querySelector('#psyFavorites'),folders=section.querySelector('#psyFolders'),notice=section.querySelector('#psyCollectionNotice');
- function methodLink(name){const a=document.createElement('a');a.href='library.html?area=school&method='+encodeURIComponent(name);a.textContent=name;return a}
- function itemRemove(label,fn){const b=document.createElement('button');b.type='button';b.className='psy-remove';b.textContent=label;b.addEventListener('click',fn);return b}
- function render(){
-  fav.replaceChildren();folders.replaceChildren();
-  if(!userID){notice.textContent='Войдите в аккаунт, чтобы сохранять подборки.';return}
-  notice.textContent='';
-  const data=read();
-  for(const name of data.favorites){const li=document.createElement('li');li.append(methodLink(name),itemRemove('Убрать',()=>{data.favorites=data.favorites.filter(x=>x!==name);store(data);render()}));fav.append(li)}
-  if(!data.favorites.length){const li=document.createElement('li');li.textContent='Пока нет избранных методик.';fav.append(li)}
-  for(const folder of data.folders){const li=document.createElement('li');const title=document.createElement('strong');title.textContent=folder.name;li.append(title,itemRemove('Удалить папку',()=>{if(!confirm('Удалить папку и ссылки на методики в ней?'))return;data.folders=data.folders.filter(x=>x.id!==folder.id);store(data);render()}));const ul=document.createElement('ul');for(const name of folder.methods){const x=document.createElement('li');x.append(methodLink(name),' ',itemRemove('Убрать',()=>{folder.methods=folder.methods.filter(z=>z!==name);store(data);render()}));ul.append(x)}li.append(ul);if(!folder.methods.length){const msg=document.createElement('p');msg.textContent='Папка пустая. Добавляйте методики из библиотеки.';li.append(msg)}folders.append(li)}
-  if(!data.folders.length){const li=document.createElement('li');li.textContent='Создайте первую папку.';folders.append(li)}
+ function read(){
+  if(!key())return blank();
+  try{
+   const raw=JSON.parse(localStorage.getItem(key())||"{}");
+   return {
+    favorites:Array.isArray(raw.favorites)?raw.favorites.filter(x=>typeof x==="string"):[],
+    folders:Array.isArray(raw.folders)?raw.folders.filter(f=>f&&typeof f.id==="string"&&typeof f.name==="string").map(f=>({
+     id:f.id,name:f.name,methods:Array.isArray(f.methods)?f.methods.filter(x=>typeof x==="string"):[]
+    })):[]
+   };
+  }catch(_){return blank()}
  }
- section.querySelector('#psyFolderCreate').addEventListener('click',()=>{
-  if(!userID){notice.textContent='Сначала войдите в аккаунт.';return}
-  const input=section.querySelector('#psyFolderName'),name=input.value.trim();if(!name)return;
-  const d=read();if(d.folders.some(x=>x.name.toLowerCase()===name.toLowerCase())){notice.textContent='Такая папка уже есть.';return}
-  d.folders.push({id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),name,methods:[]});store(d);input.value='';render()
+ function store(data){
+  try{if(!key())return false;localStorage.setItem(key(),JSON.stringify(data));return true;}catch(_){return false}
+ }
+ section.innerHTML=`
+  <div class="psy-collection-overview" id="psyCollectionOverview">
+   <div class="psy-collection-topline"><span class="psy-collection-kicker">03 / МОЯ БИБЛИОТЕКА</span><span id="psyFolderCount" class="psy-collection-count">0 папок</span></div>
+   <h2>Ваши подборки</h2>
+   <p class="psy-collection-lead">Свои папки для важных методик. Перелистывайте колесом мыши, стрелками или касанием, открывайте любую папку.</p>
+   <form class="psy-folder-form" id="psyFolderForm">
+    <input id="psyFolderName" name="folder" placeholder="Название папки" maxlength="60" aria-label="Название новой папки" required>
+    <button type="submit">+ Создать</button>
+   </form>
+   <div class="psy-collection-tools"><h3>Папки</h3><div class="psy-collection-arrows">
+    <button type="button" class="psy-scroll-arrow" id="psyFolderPrev" aria-label="Предыдущие папки">‹</button>
+    <button type="button" class="psy-scroll-arrow" id="psyFolderNext" aria-label="Следующие папки">›</button>
+   </div></div>
+   <div class="psy-folder-wheel" id="psyFolders" aria-label="Лента папок" tabindex="0"></div>
+   <div class="psy-favorites-wrap">
+    <div class="psy-favorites-head"><h3>♡ Избранные методики</h3><span id="psyFavoriteCount">0</span></div>
+    <ul id="psyFavorites" class="psy-favorites-list"></ul>
+   </div>
+  </div>
+  <div class="psy-folder-detail" id="psyFolderDetail" hidden>
+   <button type="button" class="psy-folder-back" id="psyFolderBack">← Все папки</button>
+   <span class="psy-collection-kicker">ЛИЧНАЯ ПОДБОРКА</span>
+   <div class="psy-folder-detail-icon" aria-hidden="true">▣</div>
+   <h3 id="psyFolderDetailName" tabindex="-1"></h3>
+   <p id="psyFolderDetailCount"></p>
+   <ul id="psyFolderMethods" class="psy-folder-detail-list"></ul>
+   <form class="psy-add-favorite" id="psyFolderAddForm">
+    <label for="psyFolderFavoriteSelect">Добавить из избранного:</label>
+    <select id="psyFolderFavoriteSelect" aria-label="Выберите избранную методику"></select>
+    <button type="submit">Добавить</button>
+   </form>
+   <div class="psy-folder-detail-actions">
+    <button type="button" id="psyFolderDelete">Удалить папку</button>
+    <a class="psy-studio-small-link" href="library.html">Найти методики ↗</a>
+   </div>
+  </div>
+  <p class="psy-collection-notice" id="psyCollectionNotice" role="status" aria-live="polite"></p>`;
+ const q=s=>section.querySelector(s);
+ const overview=q("#psyCollectionOverview"),detail=q("#psyFolderDetail"),wheel=q("#psyFolders"),fav=q("#psyFavorites"),notice=q("#psyCollectionNotice");
+ const prev=q("#psyFolderPrev"),next=q("#psyFolderNext");
+ const say=message=>{notice.textContent=message||"";};
+ const openLink=name=>{
+  const a=document.createElement("a");
+  a.href="library.html?area=school&method="+encodeURIComponent(name);
+  a.textContent=name;
+  a.title="Найти методику в библиотеке";
+  return a;
+ };
+ const removeButton=(label,action)=>{
+  const b=document.createElement("button");b.type="button";b.className="psy-mini-remove";b.textContent=label;b.addEventListener("click",action);return b;
+ };
+ function updateArrows(){
+  const max=Math.max(0,wheel.scrollWidth-wheel.clientWidth);
+  prev.disabled=wheel.scrollLeft<3||max<3;
+  next.disabled=wheel.scrollLeft>max-3||max<3;
+ }
+ function paintFolders(data){
+  wheel.replaceChildren();
+  q("#psyFolderCount").textContent=data.folders.length+" "+(data.folders.length%10===1&&data.folders.length%100!==11?"папка":data.folders.length%10>=2&&data.folders.length%10<=4&&!(data.folders.length%100>=12&&data.folders.length%100<=14)?"папки":"папок");
+  if(!data.folders.length){
+   const empty=document.createElement("div");empty.className="psy-folder-empty";empty.innerHTML="<strong>Здесь появятся ваши папки</strong><span>Создайте первую подборку для методик</span>";wheel.appendChild(empty);
+  }
+  for(const folder of data.folders){
+   const b=document.createElement("button");b.type="button";b.className="psy-folder-tile";b.dataset.folderId=folder.id;
+   b.setAttribute("aria-label","Открыть папку "+folder.name);
+   const icon=document.createElement("span");icon.className="psy-folder-icon";icon.setAttribute("aria-hidden","true");
+   const arrow=document.createElement("span");arrow.className="psy-folder-chevron";arrow.textContent="↗";arrow.setAttribute("aria-hidden","true");
+   const name=document.createElement("span");name.className="psy-folder-title";name.textContent=folder.name;
+   const count=document.createElement("span");count.className="psy-folder-meta";count.textContent=folder.methods.length+" методик";
+   b.append(icon,arrow,name,count);
+   b.addEventListener("click",()=>{selectedId=folder.id;render();q("#psyFolderDetailName").focus();});
+   wheel.appendChild(b);
+  }
+  window.requestAnimationFrame(updateArrows);
+ }
+ function paintFavorites(data){
+  fav.replaceChildren();q("#psyFavoriteCount").textContent=String(data.favorites.length);
+  if(!data.favorites.length){
+   const li=document.createElement("li");li.textContent="Пока пусто. Добавляйте методики в избранное из библиотеки.";
+   li.className="psy-collection-empty-note";fav.appendChild(li);return;
+  }
+  for(const name of data.favorites){
+   const li=document.createElement("li");
+   li.append(openLink(name),removeButton("Убрать",()=>{
+    const d=read();d.favorites=d.favorites.filter(x=>x!==name);
+    if(store(d)){say("Методика убрана из избранного.");render();}else say("Не удалось сохранить изменение.");
+   }));fav.append(li);
+  }
+ }
+ function paintDetail(data,folder){
+  if(!folder){selectedId=null;overview.hidden=false;detail.hidden=true;return;}
+  overview.hidden=true;detail.hidden=false;
+  q("#psyFolderDetailName").textContent=folder.name;
+  q("#psyFolderDetailCount").textContent=folder.methods.length?"Методик в подборке: "+folder.methods.length:"Папка пока пустая. Добавьте методики из избранного.";
+  const list=q("#psyFolderMethods");list.replaceChildren();
+  for(const name of folder.methods){
+   const li=document.createElement("li");
+   li.append(openLink(name),removeButton("Убрать",()=>{
+    const d=read(),f=d.folders.find(x=>x.id===selectedId);if(!f)return;
+    f.methods=f.methods.filter(x=>x!==name);
+    if(store(d)){say("Методика убрана из папки.");render();}else say("Не удалось сохранить изменение.");
+   }));list.append(li);
+  }
+  const select=q("#psyFolderFavoriteSelect");select.replaceChildren();
+  const available=data.favorites.filter(name=>!folder.methods.includes(name));
+  if(!available.length){
+   const opt=document.createElement("option");opt.textContent="Нет новых избранных методик";opt.value="";select.append(opt);
+  }else{
+   for(const name of available){const opt=document.createElement("option");opt.textContent=name;opt.value=name;select.append(opt);}
+  }
+  select.disabled=!available.length;q("#psyFolderAddForm button").disabled=!available.length;
+ }
+ function render(){
+  if(!userID){
+   overview.hidden=false;detail.hidden=true;wheel.replaceChildren();fav.replaceChildren();
+   say("Для сохранения папок войдите в свой аккаунт.");
+   q("#psyFolderForm button").disabled=true;q("#psyFolderName").disabled=true;
+   updateArrows();return;
+  }
+  q("#psyFolderForm button").disabled=false;q("#psyFolderName").disabled=false;
+  const data=read();
+  paintFolders(data);paintFavorites(data);
+  const folder=data.folders.find(x=>x.id===selectedId);
+  paintDetail(data,folder);
+ }
+ q("#psyFolderForm").addEventListener("submit",event=>{
+  event.preventDefault();if(!userID){say("Войдите в аккаунт.");return;}
+  const input=q("#psyFolderName"),name=input.value.trim();if(!name)return;
+  const d=read();
+  if(d.folders.some(x=>x.name.toLocaleLowerCase("ru")===name.toLocaleLowerCase("ru"))){say("Папка с таким названием уже есть.");return;}
+  d.folders.push({id:String(Date.now())+"-"+Math.random().toString(36).slice(2,9),name,methods:[]});
+  if(!store(d)){say("Не удалось сохранить папку в браузере.");return;}
+  input.value="";say("Папка создана.");render();
+  wheel.scrollTo({left:wheel.scrollWidth,behavior:document.documentElement.classList.contains("reduce-motion")?"auto":"smooth"});
  });
- Promise.resolve(identity?.ready).then(()=>{userID=identity?.user?.id||null;render()});render();
+ q("#psyFolderBack").addEventListener("click",()=>{const old=selectedId;selectedId=null;render();wheel.querySelectorAll("[data-folder-id]").forEach(el=>{if(el.dataset.folderId===old)el.focus();});});
+ q("#psyFolderDelete").addEventListener("click",()=>{
+  const d=read(),f=d.folders.find(x=>x.id===selectedId);if(!f)return;
+  if(!confirm("Удалить папку «"+f.name+"» и ее ссылки на методики? Избранное сохранится."))return;
+  d.folders=d.folders.filter(x=>x.id!==f.id);
+  if(store(d)){selectedId=null;say("Папка удалена.");render();}else say("Не удалось удалить папку.");
+ });
+ q("#psyFolderAddForm").addEventListener("submit",event=>{
+  event.preventDefault();const name=q("#psyFolderFavoriteSelect").value;if(!name)return;
+  const d=read(),f=d.folders.find(x=>x.id===selectedId);
+  if(!f||!d.favorites.includes(name))return;
+  if(!f.methods.includes(name))f.methods.push(name);
+  if(store(d)){say("Добавлено в папку.");render();}else say("Не удалось сохранить изменение.");
+ });
+ const scroll=dir=>wheel.scrollBy({left:dir*Math.max(215,wheel.clientWidth*.68),behavior:document.documentElement.classList.contains("reduce-motion")?"auto":"smooth"});
+ prev.addEventListener("click",()=>scroll(-1));next.addEventListener("click",()=>scroll(1));
+ wheel.addEventListener("scroll",updateArrows,{passive:true});
+ wheel.addEventListener("wheel",e=>{
+  if(!userID||wheel.scrollWidth<=wheel.clientWidth+2||e.ctrlKey)return;
+  const movement=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+  const max=wheel.scrollWidth-wheel.clientWidth;
+  if((movement>0&&wheel.scrollLeft>=max-2)||(movement<0&&wheel.scrollLeft<=2))return;
+  e.preventDefault();wheel.scrollLeft+=movement;
+ },{passive:false});
+ window.addEventListener("resize",updateArrows,{passive:true});
+ window.addEventListener("storage",e=>{if(e.key===key())render();});
+ Promise.resolve(identity?.ready).then(()=>{userID=identity?.user?.id||null;render();}).catch(()=>render());
+ render();
 })();
