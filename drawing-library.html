@@ -213,6 +213,15 @@ html.dark .choice[aria-pressed=true] small{color:#d8ecdd}
 @media(max-width:850px){.layout{grid-template-columns:1fr}.analysis-panel{position:static}.search-panel .results{max-height:340px}.protocol-top-fields{grid-template-columns:1fr}}
 @media(max-width:580px){body{font-size:16px}.intro p{font-size:15px}.analysis-panel,.element-sheet,.protocol-panel{padding:16px}.sheet-tabs{gap:5px}.sheet-tab{font-size:14px;padding:9px 11px}.choices{grid-template-columns:repeat(2,minmax(0,1fr))}.protocol-heading h2{font-size:23px}.record .fields{grid-template-columns:1fr}.workspace-divider{margin:25px 0 16px}}
 @media print{.workspace-divider,.library-caution{display:none!important}#printSheet{display:block!important}}
+
+/* Text-size refinements on wide and narrow screens */
+.analysis-panel .result-entry h4{font-size:17px}
+.analysis-panel .result-entry p{font-size:16px;line-height:1.58}
+.analysis-panel .result-summary .subtle{font-size:15px}
+.search-panel .symbol-row small{font-size:15px}
+.record .fields label{font-size:15px}
+.sheet-hint,.sheet-label{font-size:16px}
+@media(max-width:580px){.analysis-panel .result-entry p{font-size:16px}}
 </style>
 </head>
 <body>
@@ -263,7 +272,7 @@ var RAW=[
  [
   "Гора",
   "Природа",
-  "Высота, подъем, препятствие, пейзаж. Это возможные культурные ассоциации, а не личностное заключение.",
+  "Высота, преодоление, препятствие, вершина, цель, природный ландшафт.",
   "Это место настоящее или придуманное? Что находится за горой?",
   "free tree house-tree-person school-likes",
   "горы холм скала вершина"
@@ -271,7 +280,7 @@ var RAW=[
  [
   "Дерево",
   "Природа",
-  "Рост, природная среда, укрытие, время года. Значение уточняется рассказом.",
+  "Рост, развитие, опора, природная среда, укрытие, время года.",
   "Что это за дерево? Что с ним происходит?",
   "free tree house-tree-person school-likes school-animals",
   "ствол ветви крона"
@@ -535,7 +544,7 @@ var RAW=[
  [
   "Нос",
   "Тело",
-  "Деталь лица или морды; ее размер не является диагнозом.",
+  "Деталь лица или морды, индивидуальные особенности образа, акцент в изображении.",
   "Как существо находит запахи?",
   "fictional-animal person school-animals free",
   "носик ноздри"
@@ -647,7 +656,7 @@ var RAW=[
  [
   "Ссора",
   "Действие",
-  "Изображенный конфликт как сюжет; уточняются участники и причина.",
+  "Конфликт, противостояние персонажей, напряженность взаимодействия как часть сюжета.",
   "Что случилось? Что будет дальше?",
   "family kfd corman school-animals school-likes free",
   "драка спор ругань"
@@ -687,7 +696,7 @@ var RAW=[
  [
   "Стирание",
   "Графика",
-  "След исправления на бумаге, не самостоятельный признак тревоги.",
+  "След изменения первоначального замысла, поиска формы или переработки деталей.",
   "Что ты решил изменить?",
   "fictional-animal family kfd corman person tree free",
   "ластик исправление"
@@ -919,7 +928,7 @@ var RAW=[
  [
   "Брат или сестра",
   "Персонажи",
-  "Родственная роль, которую уточняют со слов автора.",
+  "Родственная роль, отношения между персонажами, близость и взаимодействие в семейном сюжете.",
   "Как связаны эти персонажи?",
   "family kfd corman free",
   "брат сестра сиблинг"
@@ -999,7 +1008,7 @@ var RAW=[
  [
   "Шея",
   "Тело",
-  "Часть тела; длина и форма описываются без заключений.",
+  "Часть тела, которая связывает голову и туловище; пропорции, вытянутая или короткая форма.",
   "Почему у персонажа такая шея?",
   "fictional-animal person family kfd free",
   "длинная шея горло"
@@ -1159,7 +1168,7 @@ var RAW=[
  [
   "Черный цвет",
   "Цвет",
-  "Темный пигмент контура, фона или персонажа; не самостоятельный показатель подавленности.",
+  "Темный контур, контраст, тень, выразительный или драматический акцент.",
   "Чем ты рисовал черные участки?",
   "fictional-animal family kfd corman person tree free",
   "черное темный"
@@ -1351,7 +1360,7 @@ var RAW=[
  [
   "Площадь листа",
   "Пространство",
-  "Доля пространства, занятого рисунком в целом, без диагностического вывода.",
+  "Масштаб рисунка, соотношение заполненного и пустого пространства, композиционный акцент.",
   "Почему композиция получилась такой по размеру?",
   "fictional-animal family kfd corman person tree free",
   "центр листа композиция заполнение"
@@ -1471,7 +1480,7 @@ var RAW=[
  [
   "Тигр",
   "Персонажи",
-  "Крупное хищное животное. В культурных образах может ассоциироваться с силой, опасностью, самостоятельностью или защитой. Эти ассоциации не доказывают наличие личностных черт у автора рисунка.",
+  "Крупное хищное животное, символ силы, самостоятельности, защиты, опасности или соперничества.",
   "",
   "fictional-animal school-animals free",
   "тигренок тигрица полосатый хищник"
