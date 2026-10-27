@@ -47,6 +47,17 @@ Deno.serve(async (request: Request) => {
     if (permission?.role !== "owner")
       return output(403, { error: "Управление ролями доступно только владельцу." });
 
+    // Verified AAL2 is mandatory for both reading private account emails
+    // and changing moderator permissions. This check runs server-side
+    // against the caller's signed JWT, not a client-supplied flag.
+    const { data: aal, error: aalError } =
+      await admin.auth.mfa.getAuthenticatorAssuranceLevel(jwt);
+    if (aalError || aal?.currentLevel !== "aal2")
+      return output(403, {
+        code: "mfa_required",
+        error: "Подтвердите код «Вендиго» в настройках защиты Владельца."
+      });
+
     const body = await request.json().catch(() => null);
     if (!body || typeof body !== "object" || Array.isArray(body))
       return output(400, { error: "Некорректный запрос." });
