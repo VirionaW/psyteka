@@ -7,7 +7,7 @@
  if(!catalog)return;
  function render(){
   for(const card of catalog.querySelectorAll("article.method")){
-   const title=card.querySelector("h3")?.textContent?.replace(/\\s+/g," ").trim();
+   const title=card.querySelector("h3")?.textContent?.replace(/\s+/g," ").trim();
    const encoded=title&&Object.prototype.hasOwnProperty.call(pictures,title)?pictures[title]:null;
    if(!encoded)continue;
    const head=card.querySelector(".head");
