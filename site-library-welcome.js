@@ -6,6 +6,9 @@
  const main=document.querySelector('main.main');
  if(!main)return;
  const hero=main.querySelector('.hero');
+ // Keep the unselected landing separate from any default school banner, including
+ // later async scripts that update the hero or switch a view.
+ document.documentElement.classList.add('psy-library-choose-only');
  const views=['schoolView','preschoolView','specialView','pmpkView','resourceView'];
  const panel=document.createElement('section');
  panel.className='psy-direction-welcome';panel.id='psyDirectionWelcome';
@@ -23,7 +26,7 @@
   document.body.dataset.area='welcome';
  }
  welcome();
- function activate(){if(activated)return;activated=true;panel.hidden=true;if(hero)hero.hidden=false}
+ function activate(){if(activated)return;activated=true;document.documentElement.classList.remove('psy-library-choose-only');panel.hidden=true;if(hero)hero.hidden=false}
  document.querySelectorAll('[data-view],[data-topic],[data-preschool-topic],[data-mobile-area],#showAllMaterials').forEach(el=>el.addEventListener('click',activate,{capture:true}));
  // A deep link added later by client-side navigation also clears the welcome state.
  window.addEventListener('popstate',()=>{if(new URLSearchParams(location.search).has('area'))activate()});
