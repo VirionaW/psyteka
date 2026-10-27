@@ -267,7 +267,7 @@ html.dark .record-color-toggle[aria-pressed=true]{background:#3a7056;color:#fff}
 .record .fields label:last-child{grid-column:1/-1}
 @media(max-width:700px){.record .fields{grid-template-columns:1fr}.record-tools{width:100%;justify-content:flex-start}}
 
-.method-focus{font-size:14px;line-height:1.5;color:var(--ink);margin:9px 0 0;padding:9px 12px;border-radius:9px;background:#eef6ef;border:1px solid var(--line)}
+.method-focus{font-size:15px;line-height:1.5;color:var(--ink);margin:9px 0 0;padding:9px 12px;border-radius:9px;background:#eef6ef;border:1px solid var(--line)}
 html.dark .method-focus{background:#2b493b;color:#deefdf}
 </style>
 </head>
@@ -2083,6 +2083,7 @@ function init(){
  $("#clear").addEventListener("click",function(){if(!confirm("Очистить протокол?"))return;state.items=[];$("#subjectCode").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords();$("#actionStatus").textContent=""});
  $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
  $("#methodBadge").textContent=methodName(state.method);renderMethodFocus();
+ $("#connection").textContent=entries.length+" элементов · автономный справочник";
  renderCategories();renderResults();renderDetails();renderRecords();
  if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register("./drawing-library-sw.js").catch(function(){});
 }
@@ -2101,7 +2102,7 @@ function matched(){
   var validMethod=state.method==="free"||x.methods.includes(state.method)||Boolean(q);
   return cat&&validMethod&&(!q||hay.includes(q));
  }).sort(function(a,b){
-  if(!q)return a.name.localeCompare(b.name,"ru");
+  if(!q)return Number(a.id.split("-")[1])-Number(b.id.split("-")[1]);
   var rank=function(x){var n=normalize(x.name),alias=normalize(x.aliases);return n===q?0:n.startsWith(q)?1:alias.split(" ").some(function(w){return w===q})?2:alias.includes(q)?3:4};
   return rank(a)-rank(b)||a.name.localeCompare(b.name,"ru");
  });
