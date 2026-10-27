@@ -1,10 +1,12 @@
-/* Психотека. Отдельный автономный справочник рисуночных элементов. */
+/* Психотека: автономная библиотека рисунков и официальные логотипы. */
 "use strict";
-const CACHE = "psyteka-drawing-library-v1";
-const PAGE = new URL("./drawing-library.html", self.location.href).pathname;
-const ROOT = new URL("./drawing-library.html", self.location.href).href;
+const CACHE = "psyteka-drawing-library-v2";
+const fileUrl = name => new URL("./" + name, self.location.href).href;
+const PAGE = fileUrl("drawing-library.html");
+const ASSETS = [fileUrl("brand-mark.svg"), fileUrl("brand-mark-dark.svg"), fileUrl("brand-favicon.svg")];
+const URLS = [PAGE, ...ASSETS];
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.add(ROOT)).then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(URLS)).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", event => {
   event.waitUntil(Promise.all([
@@ -13,16 +15,21 @@ self.addEventListener("activate", event => {
   ]));
 });
 self.addEventListener("fetch", event => {
-  const url = new URL(event.request.url);
-  if (event.request.method !== "GET" || url.origin !== self.location.origin || url.pathname !== PAGE) return;
-  event.respondWith(fetch(event.request).then(response => {
-    if (response.ok) {
-      const copy = response.clone();
-      event.waitUntil(caches.open(CACHE).then(cache => cache.put(ROOT, copy)));
+  if (event.request.method !== "GET" || !URLS.includes(event.request.url.split("?")[0])) return;
+  const isPage = event.request.url.split("?")[0] === PAGE;
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE);
+    if (!isPage) {
+      const cachedAsset = await cache.match(event.request.url.split("?")[0]);
+      if (cachedAsset) return cachedAsset;
     }
-    return response;
-  }).catch(async () => {
-    const cached = await caches.match(ROOT);
-    return cached || new Response("Библиотека еще не была открыта онлайн.", {status:503,headers:{"Content-Type":"text/plain; charset=utf-8"}});
-  }));
+    try {
+      const response = await fetch(event.request);
+      if (response.ok) await cache.put(event.request.url.split("?")[0], response.clone());
+      return response;
+    } catch (error) {
+      const fallback = await cache.match(event.request.url.split("?")[0]);
+      return fallback || new Response("Библиотека еще не была открыта онлайн.", {status:503,headers:{"Content-Type":"text/plain; charset=utf-8"}});
+    }
+  })());
 });
