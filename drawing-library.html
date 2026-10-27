@@ -2116,10 +2116,13 @@ function getDocument(){
   code:$("#subjectCode").value.slice(0,70),context:$("#contextNotes").value.slice(0,20000),
   items:state.items.map(function(x){return {
    elementId:x.elementId,name:x.name,position:x.position,size:x.size,
-   color:x.color||"",note:x.note||"",excluded:Array.isArray(x.excluded)?x.excluded.slice():[]
+   color:x.color||"",colors:normalizeColors(x.colors,x.color),
+   features:Array.isArray(x.features)?x.features.slice():[],
+   counts:Object.assign({},x.counts||{}),note:x.note||"",
+   excluded:Array.isArray(x.excluded)?x.excluded.slice():[]
   }}),
   conclusion:$("#conclusion").value.slice(0,20000),
-  notice:"Профессиональный рабочий протокол. Справочные трактовки признаков сами по себе не являются диагнозом."
+  notice:"Справочные трактовки признаков рассматриваются в сочетании с другими данными, не как самостоятельный диагностический ключ."
  };
 }
 function reportBody(){
@@ -2129,18 +2132,20 @@ function reportBody(){
  parts.push('<h2>Элементы рисунка</h2>');
  if(!d.items.length)parts.push('<p>Записей пока нет.</p>');
  else d.items.forEach(function(x,i){
-  var entry=byId(x.elementId);
-  if(!entry)return;
+  var entry=byId(x.elementId);if(!entry)return;
   var excludes=Array.isArray(x.excluded)?x.excluded:[];
   var analysis=interpretationParts(entry,x).filter(function(p){return !excludes.includes(p.key)});
-  var info=['Расположение: '+(POS[x.position]||POS.unknown)[0]];
-  if(x.color)info.push('Цвет: '+colorByKey(x.color)[1]);
+  var info=[];
+  if(x.position&&x.position!=="unknown")info.push('Расположение: '+(POS[x.position]||POS.unknown)[0]);
+  var chosen=normalizeColors(x.colors,x.color);
+  if(chosen.length)info.push('Цвета: '+chosen.map(function(k){return colorByKey(k)[1]}).join(", "));
   if(x.size)info.push('Размер: '+(SZ[x.size]||"Не указан"));
-  parts.push('<div class="print-item"><strong>'+(i+1)+'. '+esc(entry.name)+'</strong><p>'+esc(info.join(" · "))+'</p>'+
+  parts.push('<div class="print-item"><strong>'+(i+1)+'. '+esc(entry.name)+'</strong>'+
+   (info.length?'<p>'+esc(info.join(" · "))+'</p>':'')+
    (analysis.length?'<div>'+analysis.map(function(p){return '<p><strong>'+esc(p.title)+':</strong> '+esc(p.text)+'</p>'}).join("")+'</div>':'')+'</div>');
  });
  if(d.conclusion)parts.push('<h2>Сводка специалиста</h2><p>'+esc(d.conclusion)+'</p>');
- parts.push('<hr><p><small>Справочные ассоциации используются как гипотезы при анализе рисунка.</small></p>');
+ parts.push('<hr><p><small>Справочные значения и наблюдаемые признаки могут использоваться как гипотезы, но не являются отдельным диагнозом.</small></p>');
  return parts.join("");
 }
 function reportHTML(){
@@ -2158,14 +2163,23 @@ async function importFile(e){
   if(d.schema!=="psyteka-drawing-protocol"||d.version!==1||!Array.isArray(d.items)||d.items.length>400)throw Error("Недопустимый формат");
   var clean=d.items.map(function(x,i){
    if(!x||typeof x!=="object"||typeof x.elementId!=="string")return null;
-   var element=byId(x.elementId);if(!element)return null;
+   var elem=byId(x.elementId);if(!elem)return null;
+   var colors=normalizeColors(x.colors,x.color);
+   var features=Array.isArray(x.features)?Array.from(new Set(x.features.filter(function(v){return typeof v==="string"&&featureById(elem,v)}))).slice(0,90):[];
+   var counts={};
+   var permitted=countFields(elem).map(function(t){return t[0]});
+   if(x.counts&&typeof x.counts==="object"&&!Array.isArray(x.counts))Object.keys(x.counts).forEach(function(k){
+    var v=Number(x.counts[k]);if(permitted.includes(k)&&Number.isInteger(v)&&v>=0&&v<=99)counts[k]=v;
+   });
+   var allowedKeys=["element","position","size","note"].concat(colors.map(function(c){return "color:"+c})).concat(features.map(function(k){return "feature:"+k})).concat(Object.keys(counts).map(function(k){return "count:"+k}));
+   var excl=Array.isArray(x.excluded)?Array.from(new Set(x.excluded.filter(function(v){return typeof v==="string"&&allowedKeys.includes(v)}))).slice(0,120):[];
+   if(x.excluded&&x.excluded.includes("color"))excl=excl.concat(colors.map(function(c){return "color:"+c}));
    return {
-    key:"i"+Date.now().toString(36)+i,elementId:element.id,name:element.name,
+    key:"i"+Date.now().toString(36)+i,elementId:elem.id,name:elem.name,
     position:Object.prototype.hasOwnProperty.call(POS,x.position)?x.position:"unknown",
     size:Object.prototype.hasOwnProperty.call(SZ,x.size)?x.size:"",
-    color:COLORS.some(function(c){return c[0]===x.color})?x.color:"",
-    note:String(x.note||"").slice(0,4000),
-    excluded:Array.isArray(x.excluded)?x.excluded.filter(function(v){return ["element","position","color","size","note"].includes(v)}):[]
+    color:colors[0]||"",colors:colors,features:features,counts:counts,
+    note:String(x.note||"").slice(0,4000),excluded:Array.from(new Set(excl))
    };
   }).filter(Boolean);
   if(!confirm("Заменить текущий протокол содержимым файла?"))return;
@@ -2176,10 +2190,10 @@ async function importFile(e){
   $("#subjectCode").value=String(d.code||"").slice(0,70);
   $("#contextNotes").value=String(d.context||"").slice(0,20000);
   $("#conclusion").value=String(d.conclusion||"").slice(0,20000);
-  state.sheetOpen=false;state.draft=draftEmpty();state.tab="position";state.category="Все";$("#search").value="";
-  renderCategories();renderResults();renderSheet();renderDetails();renderRecords();
+  state.sheetOpen=false;state.draft=draftEmpty();state.editKey=null;state.tab="position";state.category="Все";$("#search").value="";
+  renderCategories();renderResults();renderDetails();renderRecords();
   $("#actionStatus").textContent="Протокол загружен: "+clean.length+" записей.";
- }catch(err){alert("Не удалось открыть файл. Нужен JSON-протокол, сохраненный в Психотеке.")}
+ }catch(err){alert("Не удалось открыть файл. Нужен JSON-протокол Психотеки.")}
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
