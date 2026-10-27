@@ -24,30 +24,31 @@
  </section>
  <section class="auth-card" aria-labelledby="authTitle">
   <p class="auth-eyebrow">Вход и регистрация</p>
-  <h2 id="authTitle">Войти по электронной почте</h2>
-  <p class="auth-help">Пришлем письмо для подтверждения. Если в нем будет код, его можно ввести здесь; если ссылка – откройте ее.</p>
-  <p id="authNotConfigured" class="auth-note" role="status" hidden>База аккаунтов создана. Сейчас настраивается доставка писем и безопасное подтверждение входа.</p>
+  <h2 id="authTitle">Вход и регистрация по почте</h2>
+  <p class="auth-help">Введите адрес почты. Пришлем одноразовый код для регистрации или входа. Пароль не требуется.</p>
+  <p id="authNotConfigured" class="auth-note" role="status" hidden>Сервис входа временно недоступен. Обновите страницу или попробуйте позже.</p>
   <form id="authEmailForm" novalidate>
    <label for="authEmail">Электронная почта</label>
    <input id="authEmail" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="name@example.com" required>
-   <button id="authSend" type="submit">Продолжить</button>
+   <button id="authSend" type="submit">Получить код</button>
   </form>
   <form id="authCodeForm" hidden novalidate>
-   <label for="authCode">Код из письма, если он указан</label>
+   <label for="authCode">Код подтверждения из письма</label>
    <input id="authCode" type="text" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" minlength="6" maxlength="8" placeholder="Код из письма">
    <button id="authVerify" type="submit">Подтвердить код</button>
-   <button class="auth-link-button" type="button" id="authAgain">Указать другую почту</button>
+   <button class="auth-link-button" type="button" id="authAgain">Изменить почту или запросить новый код</button>
   </form>
   <div id="authSignedIn" hidden>
    <h3>Вы вошли в аккаунт</h3>
    <p id="authEmailLabel"></p>
    <p class="auth-help">Профиль пока сохраняет сведения локально. Синхронизация избранного и папок будет подключена отдельно.</p>
+   <a href="index.html?home=1&entry=1" class="auth-button-link">Перейти к библиотеке</a>
    <a href="profile.html" class="auth-button-link">Открыть профиль</a>
    <a href="manage-users.html" class="auth-button-link" id="authManageLink" hidden>Управление пользователями</a>
    <button class="auth-secondary" id="authSignOut" type="button">Выйти</button>
   </div>
   <p class="auth-status" id="authStatus" role="status" aria-live="polite"></p>
-  <p class="auth-disclaimer">Код тестового доступа Психотеки и личный аккаунт – разные механизмы.</p>
+  <p class="auth-disclaimer">Новые участники могут выбрать пробные 48 часов после подтверждения почты. Банковская карта не требуется.</p>
  </section>
 </main>
 <footer class="auth-footer">Психотека · Бережно к личным данным</footer>
