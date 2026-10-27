@@ -7,10 +7,10 @@
 <title>Управление пользователями – Психотека</title>
 <link rel="icon" type="image/svg+xml" href="brand-favicon.svg?v=20261025e">
 <link rel="stylesheet" href="registration.css?v=20261026a1">
-<link rel="stylesheet" href="manage-users.css?v=20261026a1">
+<link rel="stylesheet" href="manage-users.css?v=20261027mfa1">
 <script defer src="auth-config.js?v=20261027public1"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
-<script defer src="manage-users.js?v=20261026a1"></script>
+<script defer src="manage-users.js?v=20261027mfa1"></script>
 </head>
 <body>
 <header class="auth-header">
@@ -25,6 +25,11 @@
  <h1>Управление пользователями</h1>
  <p class="psy-users-lead">Здесь только владелец проекта может назначать и снимать модераторов. Участники не могут изменять свои роли.</p>
  <div id="usersStatus" role="status" aria-live="polite" class="auth-note">Проверяем доступ...</div>
+ <section id="usersMfaRequired" hidden class="psy-users-panel" aria-labelledby="usersMfaHeading">
+  <h2 id="usersMfaHeading">Подтвердите защиту «Вендиго»</h2>
+  <p>Для просмотра участников и назначения модераторов Владелец должен подтвердить второй фактор через приложение-аутентификатор.</p>
+  <a class="auth-button-link" href="owner-mfa.html">Подключить защиту или ввести код</a>
+ </section>
  <section id="usersPanel" hidden aria-labelledby="usersTitle" class="psy-users-panel">
   <div class="psy-users-heading">
    <div><h2 id="usersTitle">Аккаунты Психотеки</h2><p>Чтобы назначить подругу модератором, сначала она должна зарегистрироваться и подтвердить почту.</p></div>
