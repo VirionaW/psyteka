@@ -11,7 +11,7 @@
  apply();
  function flash(msg){const node=qs("#accountToast");if(node)node.textContent=msg}
  if(page==="profile"){
-  const form=qs("#profileForm"),fields={accName:"name",accRole:"role",accRoleOther:"roleOther",accWorkplace:"workplace",accWorkOther:"workOther",accOrganization:"organization",accDirection:"direction",accNote:"note"};
+  const form=qs("#profileForm"),fields={accName:"name",accRole:"role",accRoleOther:"roleOther",accWorkplace:"workplace",accWorkOther:"workOther",accOrganization:"organization"};
   Object.entries(fields).forEach(([id,key])=>{const el=qs("#"+id);if(!el)return;el.value=profile[key]||(id==="accRole"?"Педагог-психолог":id==="accWorkplace"?"Школа":"")});
   const sync=()=>{qs("#roleExtra").hidden=qs("#accRole").value!=="other";qs("#workExtra").hidden=qs("#accWorkplace").value!=="other"};
   qs("#accRole").addEventListener("change",sync);
