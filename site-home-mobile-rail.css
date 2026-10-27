@@ -1,0 +1,140 @@
+/* Главная Психотеки: компактная навигация по разделам на телефонах.
+   Дополнение к утвержденной коричневой боковой полоске на компьютерах. */
+body.site-landing #siteHome .psy-rail-links {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+}
+body.site-landing #siteHome .psy-rail-toggle {
+  display:none;
+}
+@media (max-width:920px) {
+  body.site-landing #siteHome .psy-anchor-rail {
+    display:flex!important;
+    position:fixed!important;
+    left:clamp(10px,3vw,20px)!important;
+    bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
+    top:auto!important;
+    width:auto!important;
+    max-width:calc(100vw - 25px);
+    transform:none!important;
+    flex-direction:column-reverse!important;
+    align-items:flex-start!important;
+    gap:8px!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    z-index:95;
+  }
+  body.site-landing #siteHome .psy-anchor-rail .psy-rail-leaf {
+    display:none!important;
+  }
+  body.site-landing #siteHome .psy-anchor-rail .psy-rail-links {
+    display:none!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:3px!important;
+    min-width:205px;
+    max-width:min(275px,calc(100vw - 30px));
+    padding:8px!important;
+    border:1px solid rgba(255,241,217,.36);
+    border-radius:17px;
+    background:linear-gradient(155deg,#876047,#694b3a)!important;
+    box-shadow:0 15px 40px rgba(33,42,29,.28);
+  }
+  body.site-landing #siteHome .psy-anchor-rail[data-open="true"] .psy-rail-links {
+    display:flex!important;
+  }
+  body.site-landing #siteHome .psy-anchor-rail .psy-rail-separator {display:none!important}
+  body.site-landing #siteHome .psy-anchor-rail .psy-rail-toggle {
+    display:inline-flex!important;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    min-height:44px;
+    padding:10px 15px;
+    border:1px solid #ddc3a5;
+    border-radius:999px;
+    background:#76533d;
+    color:#fff8e9;
+    font:750 13px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;
+    letter-spacing:0;
+    cursor:pointer;
+    box-shadow:0 9px 28px rgba(29,47,33,.27);
+  }
+  body.site-landing #siteHome .psy-anchor-rail .psy-rail-toggle-icon {
+    display:grid;place-items:center;
+    width:17px;height:17px;
+    font-size:18px;line-height:1;
+    font-weight:600;
+  }
+  body.site-landing #siteHome .psy-anchor-rail[data-open="true"] .psy-rail-toggle {
+    background:#4e392e;
+  }
+  body.site-landing #siteHome .psy-anchor-rail a[data-psy-anchor] {
+    justify-content:flex-start!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:39px;
+    gap:11px;
+    border-radius:10px!important;
+    padding:8px 11px;
+    font-size:13px;
+    color:#fff8e8!important;
+  }
+  body.site-landing #siteHome .psy-anchor-rail a[data-psy-anchor]:hover,
+  body.site-landing #siteHome .psy-anchor-rail a[data-psy-anchor]:focus-visible,
+  body.site-landing #siteHome .psy-anchor-rail a[data-psy-anchor][aria-current="location"] {
+    background:rgba(255,249,231,.18)!important;
+  }
+  body.site-landing #siteHome .psy-anchor-rail a .psy-rail-marker,
+  body.site-landing #siteHome .psy-anchor-rail a:hover .psy-rail-marker,
+  body.site-landing #siteHome .psy-anchor-rail a:focus-visible .psy-rail-marker,
+  body.site-landing #siteHome .psy-anchor-rail a[aria-current="location"] .psy-rail-marker {
+    width:7px!important;height:7px!important;
+    flex:none;border-radius:50%;
+    background:#e9d3b4!important;
+    box-shadow:none!important;
+  }
+  body.site-landing #siteHome .psy-anchor-rail a[aria-current="location"] .psy-rail-marker {
+    background:#fff!important;
+    box-shadow:0 0 0 3px rgba(255,248,222,.20)!important;
+  }
+  body.site-landing #siteHome .psy-anchor-rail a .psy-rail-tip {
+    display:block!important;
+    position:static!important;
+    transform:none!important;
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto;
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    font-size:13px;
+    color:inherit!important;
+  }
+  body.site-landing #siteHome .psy-anchor-rail .psy-rail-toggle:focus-visible,
+  body.site-landing #siteHome .psy-anchor-rail a:focus-visible {
+    outline:3px solid #f2cf94!important;
+    outline-offset:2px!important;
+  }
+  html.dark body.site-landing #siteHome .psy-anchor-rail .psy-rail-links {
+    background:linear-gradient(155deg,#5e4639,#3c3029)!important;
+    border-color:#aa8b6b!important;
+  }
+  html.dark body.site-landing #siteHome .psy-anchor-rail .psy-rail-toggle {
+    background:#624633!important;
+    border-color:#a78767!important;
+    color:#fff9ea!important;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  body.site-landing #siteHome .psy-anchor-rail .psy-rail-toggle,
+  body.site-landing #siteHome .psy-anchor-rail .psy-rail-links {
+    transition:none!important;
+  }
+}
