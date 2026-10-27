@@ -77,6 +77,16 @@
     say(role==="shadow"?"У вас постоянный доступ «Тень». Пробный период не требуется.":"У вашей административной роли доступ к библиотеке не зависит от пробного периода.");
     return;
    }
+   // Paid access, once granted by the server, takes precedence over trial.
+   const {data:paid,error:paidError}=await client.from("psy_paid_access")
+    .select("plan,expires_at").eq("user_id",user.id).maybeSingle();
+   if(paidError)throw paidError;
+   if(paid?.expires_at&&new Date(paid.expires_at).getTime()>Date.now()){
+    hideTrial();
+    say("Ваша подписка «"+(paid.plan==="organization"?"Организация":"Специалист")+
+     "» активна до "+new Intl.DateTimeFormat("ru-RU",{dateStyle:"long"}).format(new Date(paid.expires_at))+".");
+    return;
+   }
    const row=await fetchTrial(user.id);
    if(row){displayExisting(row);return;}
    if(!user.email_confirmed_at){
