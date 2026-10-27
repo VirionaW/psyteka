@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#285747">
+<meta name="description" content="Психотека – автономная библиотека элементов рисуночных методик и протокол наблюдения.">
+<link rel="icon" type="image/svg+xml" href="brand-favicon.svg">
+<title>Библиотека рисунков | Психотека</title>
+<style>
+:root{color-scheme:light;--ink:#243d34;--muted:#596e65;--green:#285747;--line:#d5e2d8;--paper:#f6f8f5;--white:#fff;--warm:#fff8e8;--warm-line:#e3c68a;--lav:#ede9f5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink)}
+button,input,select,textarea{font:inherit}button,a{touch-action:manipulation}button{cursor:pointer}
+a{color:var(--green)}header{background:#fff;border-bottom:1px solid var(--line);padding:16px max(18px,calc((100vw - 1300px)/2))}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;gap:12px;align-items:center;text-decoration:none;font-weight:800;font-size:20px}
+.brand svg{width:38px;height:38px}.header-nav{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.link-btn,.btn{display:inline-flex;align-items:center;justify-content:center;min-height:41px;padding:9px 14px;border-radius:10px;border:1px solid var(--line);text-decoration:none;background:#fff;color:var(--ink);font-weight:650}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green)}.btn:focus-visible,.link-btn:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #91b49c;outline-offset:2px}
+.btn:disabled{opacity:.5;cursor:not-allowed}.btn.danger{color:#8a3030}
+main{max-width:1340px;margin:auto;padding:26px 20px 64px}.intro{display:flex;justify-content:space-between;align-items:end;gap:22px;flex-wrap:wrap;margin-bottom:20px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#487864;margin:0 0 6px}
+h1{font-size:clamp(29px,4vw,44px);line-height:1.12;letter-spacing:-.025em;margin:0 0 12px}h2{font-size:20px;margin:0 0 12px}h3{font-size:17px;margin:0 0 8px}
+.intro p{margin:0;color:var(--muted);max-width:750px}.status{border:1px solid var(--line);background:#fff;padding:8px 13px;border-radius:999px;font-size:13px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 3px 16px #284e4008}
+.method-line{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:end;margin-bottom:18px}
+label{display:block;font-size:13px;font-weight:700;color:var(--muted)}
+input,textarea,select{border:1px solid #bdcec3;border-radius:9px;background:#fff;color:var(--ink);min-height:44px;padding:10px 12px;width:100%;margin-top:6px}
+textarea{min-height:78px;resize:vertical}.method-hint{font-size:13px;color:var(--muted);margin:7px 0 0}.active-method{background:#e5f1e9;border:1px solid #bfd9c7;color:#214f3b;border-radius:999px;padding:7px 11px;font-size:13px;font-weight:750;display:inline-block}
+.layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(340px,.9fr);gap:18px;align-items:start}
+.column{min-width:0}.search-field{position:relative;margin:0 0 12px}.search-field input{padding-left:18px;font-size:16px}
+.search-info{font-size:13px;color:var(--muted);margin:8px 0 14px}.pill-group{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 17px}
+.pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-size:13px;min-height:35px}
+.pill[aria-pressed=true]{background:var(--green);color:#fff;border-color:var(--green)}
+.results{display:grid;gap:9px;max-height:445px;overflow-y:auto;padding-right:3px}
+.symbol-row{display:flex;text-align:left;justify-content:space-between;align-items:center;gap:12px;width:100%;padding:11px 14px;border-radius:12px;background:#fbfdfb;border:1px solid var(--line);color:var(--ink)}
+.symbol-row[aria-pressed=true]{border-color:var(--green);background:#eaf3ed}
+.symbol-row strong{display:block;font-size:15px}.symbol-row small{color:var(--muted);display:block}.symbol-row .arrow{color:#4f8067;font-size:22px}
+.empty{padding:20px;border-radius:12px;background:#f6f8f5;color:var(--muted)}
+.details{background:#f7faf7;border:1px solid var(--line);border-radius:14px;margin-top:16px;padding:18px}
+.details p{margin:6px 0 12px}.badge{background:#e5efe7;color:#24583b;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:750}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hintbox{margin-top:14px;background:var(--warm);border:1px solid var(--warm-line);border-radius:12px;padding:12px 14px;font-size:13px}
+.subtle{color:var(--muted);font-size:13px}.details .btn{margin-top:16px}
+.record-list{display:grid;gap:10px;margin:16px 0}.record{border:1px solid var(--line);border-radius:12px;padding:13px;background:#fcfdfc}
+.record-head{display:flex;align-items:start;justify-content:space-between;gap:8px}.record-head strong{font-size:15px}.record-num{color:var(--muted);font-size:12px}
+.record .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.record .fields label:last-child{grid-column:1/-1}.record select,.record textarea{font-size:14px}
+.record .remove{border:0;background:none;color:#9c4141;text-decoration:underline;font-size:13px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.notice{border:1px solid var(--warm-line);background:var(--warm);border-radius:12px;padding:13px 16px;margin:18px 0;font-size:13px}
+footer{max-width:1340px;margin:auto;padding:0 20px 25px;font-size:13px;color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+#printSheet{display:none}.privacy{font-size:12px;color:#667e6f;margin:8px 0 0}
+@media(max-width:950px){.layout{grid-template-columns:1fr}.results{max-height:350px}.method-line{grid-template-columns:1fr}}@media(max-width:600px){main{padding:20px 12px 40px}.panel{padding:14px;border-radius:13px}.two-col,.record .fields{grid-template-columns:1fr}.header-inner{align-items:flex-start}.intro{gap:10px}}
+@media print{header,main,footer{display:none!important}body{background:#fff;color:#000}#printSheet{display:block!important;margin:12mm;font:12pt/1.5 Arial,sans-serif}#printSheet h1{font-size:18pt}#printSheet h2{font-size:13pt;margin:15px 0 4px}#printSheet table{border-collapse:collapse;width:100%;margin:10px 0}#printSheet th,#printSheet td{border:1px solid #aaa;padding:6px;vertical-align:top;text-align:left}#printSheet .print-item{break-inside:avoid;border-bottom:1px solid #bbb;padding:7px 0}#printSheet p{white-space:pre-wrap}}
+</style>
+</head>
+<body>
+<header><div class="header-inner"><a class="brand" href="library.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="1" y="1" width="38" height="38" rx="11" fill="#285747"/><path d="M11 27V12h8c6 0 9 8 3 11-2 1-5 1-6 1" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="3"/><circle cx="27" cy="12" r="3" fill="#e3c68a"/></svg><span>Психотека <span style="font-weight:450">/ Рисунки</span></span></a><nav class="header-nav"><a class="link-btn" href="library.html">Вернуться в библиотеку</a><button class="btn" id="saveOffline" type="button">Скачать для работы без интернета</button></nav></div></header>
+<main>
+<section class="intro"><div><p class="eyebrow">Справочник и рабочий протокол</p><h1>Библиотека рисунков</h1><p>Ищите изображенные элементы, уточняйте расположение и описание, собирайте собственный перечень наблюдений. Выбранная методика сохраняется в файле протокола.</p></div><div class="status" id="connection" role="status">Автономный справочник</div></section>
+<section class="panel method-line"><div><label for="method">Методика, по которой выполнен рисунок</label><select id="method"></select><p class="method-hint" id="methodHint"></p></div><div><span class="active-method" id="methodBadge">Выбрана методика</span></div></section>
+<div class="layout">
+<section class="panel column" aria-label="Поиск по справочнику"><h2>Что нарисовано?</h2><label class="search-field" for="search">Поиск элемента, синонима или ассоциации<input id="search" type="search" autocomplete="off" placeholder="Например: гора, рога, облако, глаза"></label><div class="pill-group" id="categories" role="group" aria-label="Категории символов"></div><div class="search-info" id="count" aria-live="polite"></div><div id="results" class="results" aria-label="Результаты поиска"></div><div id="details" class="details" aria-live="polite"></div></section>
+<section class="panel column" aria-label="Протокол наблюдения"><h2>Мой протокол</h2><p class="subtle">Составляйте список того, что действительно изображено. Один символ можно добавить несколько раз с разными характеристиками.</p><label for="subjectCode">Код обследования без ФИО (необязательно)<input id="subjectCode" maxlength="70" placeholder="Например: А-01"></label><label for="contextNotes" style="margin-top:12px">Комментарии ребенка и контекст (без персональных данных)<textarea id="contextNotes" placeholder="Дословные пояснения, особенности ситуации обследования"></textarea></label><div class="record-list" id="recordList"><div class="empty">Пока нет записей. Выберите элемент слева и нажмите «Добавить в протокол».</div></div>
+<label for="conclusion">Сводка специалиста (не автоматический диагноз)<textarea id="conclusion" placeholder="Наблюдения, вопросы для беседы, сопоставление с другими данными"></textarea></label>
+<div class="actions"><button class="btn primary" id="exportReport" type="button">Скачать отчет HTML</button><button class="btn" id="printReport" type="button">Печать / PDF</button><button class="btn" id="exportJSON" type="button">Сохранить для продолжения</button><button class="btn" id="loadBtn" type="button">Открыть файл</button><input class="sr-only" id="importJSON" type="file" accept=".json,application/json"></div>
+<div class="actions"><button class="btn danger" id="clear" type="button">Очистить протокол</button></div>
+<p class="privacy">Записи не отправляются на сервер и не сохраняются автоматически в браузере. Перед закрытием страницы скачайте файл, если хотите продолжить работу позднее. Не вносите ФИО и другие идентифицирующие данные детей.</p></section></div>
+<div class="notice"><strong>Важно.</strong> Слова «значение» и «ассоциации» в справочнике обозначают культурные и описательные варианты, а не доказанную диагностику. Положение объекта слева или справа, его размер и цвет сами по себе не позволяют сделать вывод о личности, травме, агрессии или психическом состоянии ребенка. Используйте беседу, контекст развития и проверенное руководство выбранной методики. <a href="https://pubmed.ncbi.nlm.nih.gov/9631202/" target="_blank" rel="noopener noreferrer">Обзор ограничений рисуночной интерпретации</a>.</div>
+</main><footer>Психотека – автономный инструмент для специалиста. При первом онлайн-открытии страница сохраняется в браузере для повторного посещения без сети; скачанный HTML работает как отдельный файл.</footer><div id="printSheet" aria-hidden="true"></div>
+<script>
+(function(){
+"use strict";
+var METHODS=[
+ ["fictional-animal","Несуществующее животное","Особенно полезны придуманные части тела, движения, защита, среда и пояснение названия."],
+ ["family","Рисунок семьи","Фиксируйте состав, роли, взаимодействия и слова ребенка. Не трактуйте отсутствие фигуры как доказательство конфликта."],
+ ["kfd","Кинетический рисунок семьи","Отмечайте, кто что делает и как участники взаимодействуют в изображенном действии."],
+ ["corman","Рисунок семьи в концепции Л. Кормана","Уточните, реальная или воображаемая семья изображена. Не смешивайте инструкции разных вариантов."],
+ ["school-animals","Школа зверей","Главное – школьный сюжет, роли персонажей и объяснения ребенка."],
+ ["school-likes","Что мне нравится в школе","Главное – выбранный сюжет, комментарии и соответствие конкретной инструкции."],
+ ["tree","Рисунок дерева","Фиксируйте особенности изображения и рассказ, не приписывая признакам универсальный диагностический смысл."],
+ ["house-tree-person","Дом – дерево – человек","Разделяйте наблюдения по отдельным объектам и придерживайтесь инструкции выбранной версии."],
+ ["person","Рисунок человека","Описывайте фигуру и ответы ребенка. Признаки не являются самостоятельными диагностическими критериями."],
+ ["free","Свободный рисунок","Описательное наблюдение без стандартизированного диагностического ключа."]
+];
+/* Справочник описаний: название | категория | нейтральные ассоциации | вопрос | тематические теги | синонимы.
+   Не является авторским ключом и не содержит нормативных уровней. */
+var RAW=[
+ ["Гора","Природа","Высота, подъем, препятствие, пейзаж. Это возможные культурные ассоциации, а не личностное заключение.","Это место настоящее или придуманное? Что находится за горой?","free tree house-tree-person school-likes","горы холм скала вершина"],
+ ["Дерево","Природа","Рост, природная среда, укрытие, время года. Значение уточняется рассказом.","Что это за дерево? Что с ним происходит?","free tree house-tree-person school-likes school-animals","ствол ветви крона"],
+ ["Корни","Природа","Часть дерева, опора, связь с почвой в буквальном смысле.","Почему ты показал корни? Что происходит под землей?","tree house-tree-person free","корешки"],
+ ["Ветви","Природа","Части кроны, направление роста, место для листьев и птиц.","Какие ветви ты хотел показать?","tree house-tree-person free","ветки"],
+ ["Листья","Природа","Время года, состояние растения, детали пейзажа.","Какое сейчас время года на рисунке?","tree house-tree-person free school-likes","лист листва"],
+ ["Цветок","Природа","Растение, украшение, подарок, забота – возможные сюжеты.","Для кого этот цветок? Откуда он здесь?","free school-likes family","цветы роза ромашка"],
+ ["Трава","Природа","Поверхность земли, окружение персонажа, пейзаж.","Где именно происходит событие?","free school-likes tree house-tree-person school-animals","лужайка"],
+ ["Солнце","Природа","Источник света, погода, день; может быть просто частью пейзажа.","Какое здесь время суток и погода?","free school-likes tree house-tree-person school-animals","солнышко свет"],
+ ["Луна","Природа","Ночь, время суток, небо.","Это ночное событие? Почему выбрана ночь?","free school-likes fictional-animal","месяц полумесяц"],
+ ["Звезды","Природа","Ночное небо, украшение, фантастический мир.","Где происходит действие?","free fictional-animal school-likes","звездочка созвездие"],
+ ["Облако","Природа","Погода, небо, настроение сцены как художественный прием.","Какая тут погода? Что будет дальше?","free school-likes tree house-tree-person","туча тучи облака"],
+ ["Дождь","Природа","Осадки, погода, условия движения персонажей.","Что делают герои во время дождя?","free school-likes fictional-animal","капли ливень"],
+ ["Вода","Природа","Река, море или водоем; источник и препятствие в сюжете.","Какая это вода? Можно ли ее перейти?","free school-likes fictional-animal","река озеро море ручей"],
+ ["Огонь","Природа","Тепло, свет, событие или опасность – зависит от сюжета.","Где этот огонь и для чего он нужен?","free fictional-animal house-tree-person","пламя костер"],
+ ["Дорога","Пространство","Путь, маршрут, движение в композиции.","Куда ведет дорога? Кто по ней идет?","free school-likes school-animals house-tree-person family","тропа дорожка путь"],
+ ["Мост","Пространство","Переход через преграду, часть маршрута.","Кто переходит мост и куда?","free school-likes fictional-animal","мостик переправа"],
+ ["Забор","Пространство","Граница участка или ограждение в сюжете.","Для чего поставлен забор? Есть ли калитка?","free house-tree-person school-likes family","ограда изгородь"],
+ ["Дом","Предметы","Жилище, место действия, знакомая или воображаемая обстановка.","Кто живет в доме? Есть ли у него название?","free house-tree-person family kfd corman school-likes","здание избушка хижина"],
+ ["Окно","Предметы","Часть здания, источник света, вид на улицу.","Что видно из окна? Оно открыто?","house-tree-person free family corman school-likes","окна форточка"],
+ ["Дверь","Предметы","Вход, выход, часть архитектуры.","Куда ведет дверь? Кто может войти?","house-tree-person free family corman school-likes","вход ворота калитка"],
+ ["Лестница","Предметы","Подъем и спуск, часть здания или маршрута.","Куда ведет лестница?","house-tree-person free family school-likes","ступени"],
+ ["Стол","Предметы","Мебель, совместная деятельность, еда или учеба.","Что происходит за столом?","family kfd corman school-likes free","парта столик"],
+ ["Книга","Предметы","Чтение, учеба, подарок или часть обстановки.","Что написано в книге? Кто ее читает?","school-likes family kfd school-animals free","книжка учебник"],
+ ["Игрушка","Предметы","Игра, персонаж, любимая вещь или деталь сюжета.","Кому принадлежит игрушка?","family kfd corman free school-likes","кукла мяч машинка"],
+ ["Оружие","Предметы","Предмет сюжета, игры или воображаемого конфликта; сам по себе не указывает на агрессию.","Зачем персонажу этот предмет? Что он с ним делает?","fictional-animal free","меч пистолет копье"],
+ ["Человек","Персонажи","Персонаж, его роль и действия имеют смысл прежде всего в рассказе.","Кто это? Что делает и что чувствует, по твоим словам?","family kfd corman person house-tree-person free school-likes","люди персонаж мальчик девочка"],
+ ["Ребенок","Персонажи","Возраст или роль изображенного персонажа со слов автора.","Кто это? Как его зовут?","family kfd corman school-likes person free","дети малыш школьник"],
+ ["Родитель","Персонажи","Семейная роль, которую важно выяснять, а не угадывать по внешности.","Кем этот человек приходится остальным?","family kfd corman free","мама папа мать отец"],
+ ["Учитель","Персонажи","Школьная роль в изображенном сюжете.","Что делает учитель? Что происходит в классе?","school-likes school-animals free","учительница педагог"],
+ ["Животное","Персонажи","Реальный или фантастический персонаж, роль определяется сюжетом.","Кто это? Где живет? Что делает?","fictional-animal school-animals free","зверь существо"],
+ ["Глаза","Тело","Часть лица; число, форма и направление взгляда описываются отдельно.","Куда смотрит персонаж? Зачем ему такие глаза?","fictional-animal person family kfd corman school-animals free","глаз зрачок ресницы"],
+ ["Рот","Тело","Часть лица, выражение и функция определяются в контексте рисунка.","Что персонаж говорит? Почему так нарисован рот?","fictional-animal person family kfd corman school-animals free","губы пасть"],
+ ["Зубы","Тело","Анатомическая или фантастическая деталь, иногда связанная с питанием персонажа.","Для чего этому существу зубы?","fictional-animal school-animals free","клыки зуб"],
+ ["Уши","Тело","Часть головы, особенности животного или существа.","Как персонаж слышит? Почему эти уши такие?","fictional-animal school-animals person free","ухо"],
+ ["Нос","Тело","Деталь лица или морды; ее размер не является диагнозом.","Как существо находит запахи?","fictional-animal person school-animals free","носик ноздри"],
+ ["Рога","Тело","Часть реального или вымышленного животного, украшение или средство защиты в придуманном мире.","Для чего нужны рога?","fictional-animal school-animals free","рог рога олень"],
+ ["Крылья","Тело","Возможность полета, образ фантастического существа; ответ зависит от сюжета.","Может ли оно летать? Куда?","fictional-animal school-animals free","крыло перья"],
+ ["Хвост","Тело","Часть тела животного; функция может быть придумана ребенком.","Для чего нужен хвост?","fictional-animal school-animals free","хвостик"],
+ ["Лапы","Тело","Опора и передвижение, иногда фантастические функции.","Как существо ходит?","fictional-animal school-animals free","лапа ноги конечности"],
+ ["Руки","Тело","Действия человека или фантастического существа.","Что персонаж делает руками?","person family kfd corman fictional-animal free","ладони пальцы рука"],
+ ["Когти","Тело","Деталь лап или рук, функция устанавливается через пояснение.","Зачем нарисованы когти?","fictional-animal school-animals free","коготь"],
+ ["Шипы","Тело","Защитная или декоративная деталь в образе существа.","Для чего нужны эти шипы?","fictional-animal free","иглы колючки"],
+ ["Панцирь","Тело","Покров тела; может служить защитой или быть декоративным.","Как работает панцирь?","fictional-animal free","броня чешуя раковина"],
+ ["Шерсть","Тело","Покров животного, текстура и деталь образа.","Где живет существо? Почему у него такая шерсть?","fictional-animal school-animals free","мех пух волосы"],
+ ["Дополнительная конечность","Тело","Необычная анатомическая деталь придуманного персонажа.","Для чего существу дополнительная часть тела?","fictional-animal free","третья лапа много рук много ног"],
+ ["Улыбка","Выражение","Графическая деталь лица. Улыбка не обязательно означает положительное переживание автора рисунка.","Что чувствует этот персонаж, по твоим словам?","fictional-animal person family kfd school-animals school-likes free","улыбается улыбчивый"],
+ ["Слезы","Выражение","Изображенная эмоция персонажа, не обязательно автора рисунка.","Почему персонаж плачет? Что ему нужно?","person family kfd corman fictional-animal school-likes free","плач грусть"],
+ ["Объятия","Действие","Сюжет физического контакта между фигурами.","Кто кого обнимает? Что произошло перед этим?","family kfd corman free","обнимает прикосновение"],
+ ["Ссора","Действие","Изображенный конфликт как сюжет; уточняются участники и причина.","Что случилось? Что будет дальше?","family kfd corman school-animals school-likes free","драка спор ругань"],
+ ["Игра","Действие","Совместная или индивидуальная деятельность.","Кто играет? Какие правила?","family kfd corman school-likes school-animals free","играют мяч футбол"],
+ ["Движение","Действие","Поза, следы и линии, показывающие действие.","Что делает персонаж? Куда движется?","fictional-animal kfd family school-animals free","летит бежит идет прыгает"],
+ ["Штриховка","Графика","Техника нанесения линий; плотность может зависеть от материала и привычки.","Какой частью рисунка ты работал дольше всего?","fictional-animal family kfd corman person tree free","заштриховано темный нажим"],
+ ["Контур","Графика","Граница формы, характер линии и ее прерывания.","Что это за линия? Что она отделяет?","fictional-animal family kfd corman person tree free","обводка обведено линия"],
+ ["Стирание","Графика","След исправления на бумаге, не самостоятельный признак тревоги.","Что ты решил изменить?","fictional-animal family kfd corman person tree free","ластик исправление"],
+ ["Отсутствие детали","Графика","Отмечается только относительно задания и собственного объяснения ребенка.","Эту часть ты хотел нарисовать или решил не добавлять?","fictional-animal family kfd corman person tree free","нет детали пропуск"],
+ ["Надпись","Графика","Подписи, название, реплики или символические обозначения.","Что написано и зачем?","fictional-animal family kfd corman school-likes free","буквы текст имя подпись"],
+ ["Повторение элемента","Графика","Один и тот же объект изображен несколько раз; причины могут быть композиционными.","Что объединяет эти объекты?","fictional-animal family kfd corman school-likes free","много одинаковых"],
+ ["Необычная форма","Графика","Фантастическая или стилизованная форма, отличающаяся от привычного образца.","Почему выбрана такая форма?","fictional-animal free tree person","необычный странный форма"],
+ ["Большой размер","Графика","Относительный масштаб объекта на листе, без автоматического вывода о доминировании.","Почему этот элемент такой большой?","fictional-animal family kfd corman school-likes free","крупный огромный"],
+ ["Маленький размер","Графика","Небольшой масштаб относительно других объектов, без вывода о неуверенности.","Как ты выбирал размер?","fictional-animal family kfd corman school-likes free","мелкий крошечный"],
+ ["Пустое пространство","Пространство","Незаполненная часть композиции, может быть связана с задачей, временем или стилем.","Ты хотел что-то еще добавить?","fictional-animal family kfd corman school-likes free","пустота пустой лист"]
+];
+var POS={
+ "left":["Слева","Объект в левой части листа. Иногда левую сторону связывают с прошлым, но это не универсальный подтвержденный ключ. Уточняйте последовательность рисования и замысел."],
+ "center":["В центре","Объект занимает центральную часть композиции. Это описывает расположение, но само по себе не подтверждает его психологическую значимость."],
+ "right":["Справа","Объект в правой части листа. Иногда правую сторону связывают с будущим, но такая трактовка не может применяться как достоверная оценка."],
+ "top":["Сверху","Объект расположен ближе к верхнему краю. Это не является доказательством высоких притязаний или иной личностной черты."],
+ "bottom":["Снизу","Объект расположен ближе к нижнему краю. Это не является самостоятельным показателем неуверенности, страха или неблагополучия."],
+ "whole":["По всему листу","Объект занимает значительную часть листа или проходит через несколько его областей."],
+ "unknown":["Не указано","Местоположение можно уточнить при просмотре оригинала рисунка."]
+};
+var SZ={"":"Не указано","small":"Маленький","medium":"Средний","large":"Крупный"};
+var entries=RAW.map(function(a,i){return {id:"element-"+(i+1),name:a[0],category:a[1],meaning:a[2],question:a[3],methods:a[4].split(" "),aliases:a[5]};});
+var state={method:"fictional-animal",selected:entries[0].id,category:"Все",items:[]};
+var $=function(s){return document.querySelector(s)};
+var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+var normalize=function(s){return String(s||"").toLocaleLowerCase("ru").replace(/ё/g,"е").trim()};
+var methodName=function(id){var m=METHODS.find(function(x){return x[0]===id});return m?m[1]:METHODS[0][1]};
+var byId=function(id){return entries.find(function(x){return x.id===id})};
+var categories=["Все"].concat(Array.from(new Set(entries.map(function(x){return x.category}))));
+function init(){
+ var url=new URLSearchParams(location.search);var q=url.get("method");if(METHODS.some(function(m){return m[0]===q}))state.method=q;
+ $("#method").innerHTML=METHODS.map(function(m){return '<option value="'+esc(m[0])+'">'+esc(m[1])+'</option>'}).join("");
+ $("#method").value=state.method;$("#method").addEventListener("change",function(){state.method=this.value;$("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];$("#methodBadge").textContent=methodName(state.method);try{history.replaceState(null,"","?method="+encodeURIComponent(state.method))}catch{};renderCategories();renderResults();renderDetails()});
+ $("#search").addEventListener("input",renderResults);
+ $("#categories").addEventListener("click",function(e){var b=e.target.closest("[data-category]");if(b){state.category=b.dataset.category;renderCategories();renderResults()}});
+ $("#results").addEventListener("click",function(e){var b=e.target.closest("[data-element]");if(b){state.selected=b.dataset.element;renderResults();renderDetails()}});
+ $("#details").addEventListener("click",function(e){if(e.target.closest("#addEntry"))addEntry()});
+ $("#recordList").addEventListener("click",function(e){var b=e.target.closest("[data-remove]");if(b){state.items=state.items.filter(function(x){return x.key!==b.dataset.remove});renderRecords()}});
+ $("#recordList").addEventListener("input",recordChange);$("#recordList").addEventListener("change",recordChange);
+ $("#exportJSON").addEventListener("click",function(){if(!state.items.length&&!$("#contextNotes").value&&!$("#conclusion").value&&!$("#subjectCode").value){alert("В протоколе пока нет записей.");return}download("psyteka_drawing_protocol.json",JSON.stringify(getDocument(),null,2),"application/json")});
+ $("#exportReport").addEventListener("click",function(){download("psyteka_drawing_report.html",reportHTML(),"text/html")});
+ $("#printReport").addEventListener("click",function(){$("#printSheet").innerHTML=reportBody();window.print()});
+ $("#loadBtn").addEventListener("click",function(){$("#importJSON").click()});
+ $("#importJSON").addEventListener("change",importFile);
+ $("#clear").addEventListener("click",function(){if(!confirm("Очистить текущий протокол? Перед очисткой при необходимости сохраните файл."))return;state.items=[];$("#subjectCode").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords()});
+ $("#saveOffline").addEventListener("click",function(){download("psyteka_drawing_library_offline.html","<!doctype html>\n"+document.documentElement.outerHTML,"text/html")});
+ $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
+ $("#methodBadge").textContent=methodName(state.method);
+ renderCategories();renderResults();renderDetails();renderRecords();
+ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){navigator.serviceWorker.register("./drawing-library-sw.js").catch(function(){})}
+}
+function renderCategories(){
+ $("#categories").innerHTML=categories.map(function(c){return '<button type="button" class="pill" data-category="'+esc(c)+'" aria-pressed="'+(state.category===c)+'">'+esc(c)+'</button>'}).join("");
+}
+function matched(){
+ var q=normalize($("#search").value);
+ return entries.filter(function(x){
+  var inCategory=state.category==="Все"||x.category===state.category;
+  var hay=normalize([x.name,x.aliases,x.category,x.meaning,x.question].join(" "));
+  var matchedMethod=state.method==="free"||x.methods.includes(state.method)||q!=="";
+  return inCategory&&matchedMethod&&(!q||hay.includes(q));
+ });
+}
+function renderResults(){
+ var found=matched();
+ $("#count").textContent="Найдено: "+found.length+" из "+entries.length+". "+($("#search").value?"Поиск по всей библиотеке.":"Подборка по выбранной методике.");
+ $("#results").innerHTML=found.length?found.map(function(x){
+  return '<button type="button" class="symbol-row" data-element="'+x.id+'" aria-pressed="'+(state.selected===x.id)+'"><span><strong>'+esc(x.name)+'</strong><small>'+esc(x.category)+'</small></span><span class="arrow" aria-hidden="true">›</span></button>';
+ }).join(""):'<div class="empty">Ничего не найдено. Попробуйте другой запрос или категорию.</div>';
+}
+function renderDetails(){
+ var x=byId(state.selected)||entries[0];var rec=state.items.filter(function(y){return y.elementId===x.id}).length;
+ $("#details").innerHTML='<h3>'+esc(x.name)+' <span class="badge">'+esc(x.category)+'</span></h3>'+
+ '<p><strong>Значение и ассоциации:</strong> '+esc(x.meaning)+'</p>'+
+ '<p><strong>Что спросить:</strong> '+esc(x.question)+'</p>'+
+ '<div class="two-col"><label>Расположение на рисунке<select id="position">'+Object.keys(POS).map(function(k){return '<option value="'+k+'">'+esc(POS[k][0])+'</option>'}).join("")+'</select></label><label>Размер<select id="size">'+Object.keys(SZ).map(function(k){return '<option value="'+k+'">'+esc(SZ[k])+'</option>'}).join("")+'</select></label></div>'+
+ '<p class="subtle" id="positionNote">'+esc(POS.unknown[1])+'</p><label>Описание конкретного элемента (необязательно)<textarea id="elementNote" placeholder="Например: серая гора с тремя вершинами"></textarea></label>'+
+ '<div class="hintbox">Запись положения – описание композиции, а не готовый психологический вывод. Проверьте ее по словам ребенка и правилам выбранной версии методики.</div>'+
+ '<button type="button" class="btn primary" id="addEntry">Добавить в протокол'+(rec?' (уже '+rec+')':'')+'</button>';
+ $("#position").addEventListener("change",function(){$("#positionNote").textContent=POS[this.value][1]});
+}
+function addEntry(){
+ var x=byId(state.selected);if(!x)return;
+ state.items.push({key:"r"+Date.now().toString(36)+Math.random().toString(36).slice(2,8),elementId:x.id,name:x.name,position:$("#position").value,size:$("#size").value,note:$("#elementNote").value.slice(0,4000)});
+ renderRecords();renderDetails();$("#recordList").lastElementChild?.scrollIntoView({block:"nearest",behavior:"smooth"});
+}
+function recordChange(e){
+ var record=e.target.closest("[data-row]");if(!record)return;
+ var item=state.items.find(function(x){return x.key===record.dataset.row});if(!item)return;
+ if(e.target.matches("[data-field]"))item[e.target.dataset.field]=e.target.value;
+}
+function renderRecords(){
+ $("#recordList").innerHTML=state.items.length?state.items.map(function(x,i){
+  return '<div class="record" data-row="'+esc(x.key)+'"><div class="record-head"><div><span class="record-num">Элемент '+(i+1)+'</span><strong style="display:block">'+esc(x.name)+'</strong></div><button type="button" class="remove" data-remove="'+esc(x.key)+'" aria-label="Удалить '+esc(x.name)+'">Удалить</button></div>'+
+  '<div class="fields"><label>Положение<select data-field="position">'+Object.keys(POS).map(function(k){return '<option value="'+k+'" '+(x.position===k?'selected':'')+'>'+esc(POS[k][0])+'</option>'}).join("")+'</select></label>'+
+  '<label>Размер<select data-field="size">'+Object.keys(SZ).map(function(k){return '<option value="'+k+'" '+(x.size===k?'selected':'')+'>'+esc(SZ[k])+'</option>'}).join("")+'</select></label>'+
+  '<label>Описание и слова ребенка<textarea data-field="note" maxlength="4000">'+esc(x.note)+'</textarea></label></div></div>';
+ }).join(""):'<div class="empty">Пока нет записей. Выберите элемент слева и нажмите «Добавить в протокол».</div>';
+}
+function getDocument(){
+ return {schema:"psyteka-drawing-protocol",version:1,method:state.method,methodName:methodName(state.method),
+ code:$("#subjectCode").value.slice(0,70),context:$("#contextNotes").value.slice(0,20000),
+ items:state.items.map(function(x){return {elementId:x.elementId,name:x.name,position:x.position,size:x.size,note:x.note}}),
+ conclusion:$("#conclusion").value.slice(0,20000),notice:"Качественный протокол наблюдений, не автоматический диагноз."};
+}
+function reportBody(){
+ var d=getDocument();
+ var parts=['<h1>Протокол наблюдений по рисунку</h1><p><strong>Методика:</strong> '+esc(d.methodName)+'</p><p><strong>Код:</strong> '+esc(d.code||"Не указан")+'</p>'];
+ if(d.context)parts.push('<h2>Контекст и пояснения</h2><p>'+esc(d.context)+'</p>');
+ parts.push('<h2>Элементы рисунка</h2>');
+ if(!d.items.length)parts.push('<p>Записи отсутствуют.</p>');
+ else d.items.forEach(function(x,i){var e=byId(x.elementId);parts.push('<div class="print-item"><strong>'+(i+1)+'. '+esc(x.name)+'</strong> – '+esc((POS[x.position]||POS.unknown)[0])+', '+esc(SZ[x.size]||"Не указано")+'.<p><strong>Описание:</strong> '+esc(x.note||"Не указано")+'</p>'+(e?'<p><strong>Возможные ассоциации справочника:</strong> '+esc(e.meaning)+'</p>':'')+'</div>')});
+ if(d.conclusion)parts.push('<h2>Сводка специалиста</h2><p>'+esc(d.conclusion)+'</p>');
+ parts.push('<hr><p><small>Записи отражают рисунок и слова обследуемого. Ассоциации справочника не являются диагностическим ключом и не позволяют делать выводы о психическом состоянии по одному признаку.</small></p>');
+ return parts.join("");
+}
+function reportHTML(){
+ return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Протокол рисунка – Психотека</title><style>body{max-width:900px;margin:25px auto;padding:12px 25px;font:15px/1.5 Arial,sans-serif;color:#243d34}h1{font-size:24px}h2{font-size:19px;margin-top:22px}.print-item{border-top:1px solid #cad8cb;padding:12px 0;break-inside:avoid}p{white-space:pre-wrap}hr{border:0;border-top:1px solid #aaa}@media print{body{margin:10mm;padding:0}}</style></head><body>'+reportBody()+'</body></html>';
+}
+function download(name,content,type){
+ var blob=new Blob([content],{type:type+';charset=utf-8'});var u=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},2000);
+}
+async function importFile(e){
+ var file=e.target.files&&e.target.files[0];e.target.value="";if(!file)return;
+ if(file.size>2000000){alert("Файл слишком большой.");return}
+ try{
+  var d=JSON.parse(await file.text());
+  if(d.schema!=="psyteka-drawing-protocol"||d.version!==1||!Array.isArray(d.items)||d.items.length>400){throw Error("Недопустимый формат протокола")}
+  var clean=d.items.map(function(x,i){
+   if(!x||typeof x!=="object"||typeof x.elementId!=="string")return null;
+   var element=byId(x.elementId);if(!element)return null;
+   return {key:"i"+Date.now().toString(36)+i,elementId:element.id,name:element.name,
+    position:POS[x.position]?x.position:"unknown",size:Object.prototype.hasOwnProperty.call(SZ,x.size)?x.size:"",
+    note:String(x.note||"").slice(0,4000)};
+  }).filter(Boolean);
+  if(!confirm("Заменить текущий протокол содержимым файла? Несохраненные записи будут потеряны."))return;
+  state.items=clean;state.method=METHODS.some(function(x){return x[0]===d.method})?d.method:"free";
+  $("#method").value=state.method;$("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];$("#methodBadge").textContent=methodName(state.method);
+  $("#subjectCode").value=String(d.code||"").slice(0,70);$("#contextNotes").value=String(d.context||"").slice(0,20000);
+  $("#conclusion").value=String(d.conclusion||"").slice(0,20000);
+  renderCategories();renderResults();renderDetails();renderRecords();
+ }catch(err){alert("Не удалось открыть файл. Нужен JSON-протокол, созданный этой библиотекой.")}
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+})();
+</script>
+</body></html>
