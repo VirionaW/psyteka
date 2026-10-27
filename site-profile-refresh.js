@@ -21,8 +21,14 @@
  let userID=null,selectedId=null;
  const key=()=>userID?"psy-collections-v1:"+userID:null;
  const blank=()=>({favorites:[],folders:[]});
- const colorNames={sage:"Шалфей",clay:"Терракота",sky:"Небо",lilac:"Лаванда",amber:"Песок",mint:"Мята"};
- const validColor=color=>Object.prototype.hasOwnProperty.call(colorNames,color)?color:"sage";
+ // Единая палитра с библиотекой: здесь названия, в хранилище шестнадцатеричный цвет.
+ const colorNames={sage:"Шалфей",lilac:"Лаванда",amber:"Песок",rose:"Роза",sky:"Небо",clay:"Терракота"};
+ const colorHex={sage:"#4b997b",lilac:"#8c76cf",amber:"#d5a151",rose:"#d77b8c",sky:"#7299c7",clay:"#b78262"};
+ const validColor=value=>{
+  if(Object.prototype.hasOwnProperty.call(colorHex,value))return value;
+  return Object.keys(colorHex).find(name=>colorHex[name]===String(value).toLowerCase())||"sage";
+ };
+ const colorValue=name=>colorHex[validColor(name)];
  function read(){
   if(!key())return blank();
   try{
@@ -30,7 +36,7 @@
    return {
     favorites:Array.isArray(raw.favorites)?raw.favorites.filter(x=>typeof x==="string"):[],
     folders:Array.isArray(raw.folders)?raw.folders.filter(f=>f&&typeof f.id==="string"&&typeof f.name==="string").map(f=>({
-     id:f.id,name:f.name,color:validColor(f.color),methods:Array.isArray(f.methods)?f.methods.filter(x=>typeof x==="string"):[]
+     ...f,id:f.id,name:f.name,color:f.color||colorHex.sage,description:typeof f.description==="string"?f.description:"",methods:Array.isArray(f.methods)?f.methods.filter(x=>typeof x==="string"):[]
     })):[]
    };
   }catch(_){return blank()}
@@ -68,6 +74,7 @@
    <span class="psy-collection-kicker">ЛИЧНАЯ ПОДБОРКА</span>
    <div class="psy-folder-detail-icon" aria-hidden="true"><span class="psy-folder-icon"></span></div>
    <h3 id="psyFolderDetailName" tabindex="-1"></h3>
+   <p id="psyFolderDetailDescription" hidden></p>
    <p id="psyFolderDetailCount"></p>
    <fieldset class="psy-folder-palette psy-folder-palette-edit" id="psyFolderPaletteEdit"><legend>Цвет этой папки</legend><div class="psy-folder-palette-options"></div></fieldset>
    <div class="psy-folder-search-box psy-folder-search-inside">
@@ -166,6 +173,9 @@
   if(!folder){selectedId=null;overview.hidden=false;detail.hidden=true;return;}
   overview.hidden=true;detail.hidden=false;
   q("#psyFolderDetailName").textContent=folder.name;
+  const description=q("#psyFolderDetailDescription");
+  description.textContent=folder.description||"";
+  description.hidden=!folder.description;
   detail.dataset.folderColor=validColor(folder.color);
   q('input[name="psyFolderColorEdit"][value="'+validColor(folder.color)+'"]').checked=true;
   q("#psyFolderDetailCount").textContent=folder.methods.length?"Методик в подборке: "+folder.methods.length:"Папка пока пустая. Добавьте методики из избранного.";
@@ -213,7 +223,7 @@
   const input=q("#psyFolderName"),name=input.value.trim();if(!name)return;
   const d=read();
   if(d.folders.some(x=>x.name.toLocaleLowerCase("ru")===name.toLocaleLowerCase("ru"))){say("Папка с таким названием уже есть.");return;}
-  d.folders.push({id:String(Date.now())+"-"+Math.random().toString(36).slice(2,9),name,color:validColor(selectedColor("psyFolderColorNew")),methods:[]});
+  d.folders.push({id:String(Date.now())+"-"+Math.random().toString(36).slice(2,9),name,color:colorValue(selectedColor("psyFolderColorNew")),description:"",methods:[]});
   if(!store(d)){say("Не удалось сохранить папку в браузере.");return;}
   input.value="";q("#psyFolderSearch").value="";say("Папка создана.");render();
   wheel.scrollTo({left:wheel.scrollWidth,behavior:document.documentElement.classList.contains("reduce-motion")?"auto":"smooth"});
@@ -224,7 +234,7 @@
   if(!event.target.matches('input[name="psyFolderColorEdit"]')||!selectedId||!userID)return;
   const d=read(),folder=d.folders.find(f=>f.id===selectedId);
   if(!folder)return;
-  folder.color=validColor(event.target.value);
+  folder.color=colorValue(event.target.value);
   if(store(d)){say("Цвет папки сохранен.");render();}else say("Не удалось сохранить цвет.");
  });
  q("#psyFolderBack").addEventListener("click",()=>{const old=selectedId;selectedId=null;render();wheel.querySelectorAll("[data-folder-id]").forEach(el=>{if(el.dataset.folderId===old)el.focus();});});
