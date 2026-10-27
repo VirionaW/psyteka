@@ -35,6 +35,7 @@
  document.addEventListener("keydown",e=>{if(e.key==="Escape"){close();current.focus();}});
  async function leave(switching){
   if(!identity.client)return;
+  if(switching&&!window.confirm("Смена аккаунта завершит текущий вход. Для другого аккаунта понадобится отдельный код подтверждения. Продолжить?"))return;
   close();
   try{
    const {error}=await identity.client.auth.signOut();
