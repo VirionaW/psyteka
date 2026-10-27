@@ -577,3 +577,262 @@ body[data-account="profile"] .psy-studio-security{
   padding:8px!important;
  }
 }
+
+
+/* Кабинет 4.0: переключаемые вкладки и светлая гармоничная палитра.
+   Важные состояния оформлены отдельными панелями, не помещены под анкетой. */
+body[data-account="profile"] .psy-studio-grid{
+ grid-template-columns:168px minmax(0,1fr) minmax(0,1fr)!important;
+ align-items:start!important;
+ column-gap:clamp(18px,1.9vw,28px)!important;
+}
+body[data-account="profile"] .psy-studio-left[hidden],
+body[data-account="profile"] .psy-studio-pane[hidden]{display:none!important}
+body[data-account="profile"] .psy-studio-left,
+body[data-account="profile"] .psy-studio-right{min-width:0}
+body[data-account="profile"] .psy-studio-left{
+ grid-column:2!important;grid-row:1!important;
+ display:block!important;
+}
+body[data-account="profile"] .psy-studio-right{
+ grid-column:3!important;grid-row:1!important;
+ display:block!important;
+}
+body[data-account="profile"] .psy-studio-side-nav{
+ grid-column:1!important;grid-row:1!important;
+ padding:11px!important;gap:6px!important;
+ background:#f3f7f2!important;border:1px solid #d4e2d7!important;
+ border-radius:18px!important;box-shadow:0 12px 36px #193e2610!important;
+}
+body[data-account="profile"] .psy-studio-side-caption{
+ display:block!important;color:#94795c!important;
+ font-size:10px!important;font-weight:850!important;
+ letter-spacing:.115em!important;padding:6px 7px 7px!important;
+}
+body[data-account="profile"] .psy-studio-side-link{
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ width:100%!important;min-height:46px!important;max-height:none!important;height:auto!important;
+ gap:8px!important;padding:10px 11px!important;
+ color:#294f3c!important;background:transparent!important;
+ border:1px solid transparent!important;border-radius:11px!important;
+ box-shadow:none!important;font:750 12px/1.32 system-ui,-apple-system,"Segoe UI",sans-serif!important;
+ cursor:pointer!important;text-align:left!important;
+ white-space:normal!important;transition:background .17s,box-shadow .17s,transform .17s!important;
+}
+body[data-account="profile"] .psy-studio-side-link:nth-of-type(even){
+ background:transparent!important;
+}
+body[data-account="profile"] .psy-studio-side-link:hover{
+ background:#e3ede5!important;border-color:#d4e3d7!important;
+ transform:none!important;
+}
+body[data-account="profile"] .psy-studio-side-link[aria-selected="true"],
+body[data-account="profile"] .psy-studio-side-link[aria-selected="true"]:hover{
+ background:#2a694f!important;border-color:#245a44!important;
+ color:#fffdf6!important;box-shadow:0 5px 15px #21553b30!important;
+ transform:none!important;
+}
+body[data-account="profile"] .psy-studio-side-link .psy-nav-icon{
+ display:grid;place-items:center;flex:0 0 25px!important;
+ width:25px!important;height:25px!important;
+ border-radius:8px!important;font-size:14px!important;
+ color:#647d69!important;background:#e5eee7!important;
+}
+body[data-account="profile"] .psy-studio-side-link[aria-selected="true"] .psy-nav-icon{
+ color:#e9efd9!important;background:#ffffff26!important;
+}
+body[data-account="profile"] .psy-studio-side-link span:nth-child(2){
+ overflow:visible!important;text-overflow:clip!important;
+ white-space:normal!important;
+}
+body[data-account="profile"] .psy-studio-side-link:focus-visible{
+ outline:3px solid #bd9467!important;outline-offset:2px!important;
+}
+body[data-account="profile"] .psy-studio-pane{
+ animation:psy-profile-pane-enter .21s ease-out both;
+}
+@keyframes psy-profile-pane-enter{
+ from{opacity:.6;transform:translateY(5px)}
+ to{opacity:1;transform:translateY(0)}
+}
+body[data-account="profile"] .psy-studio-section-heading,
+body[data-account="profile"] .psy-studio-collections-heading{
+ display:flex!important;
+ align-items:flex-start!important;
+ justify-content:flex-start!important;
+ min-height:122px!important;
+ margin:0!important;
+ padding:4px 2px 20px!important;
+ gap:12px!important;
+}
+body[data-account="profile"] .psy-studio-section-heading h2,
+body[data-account="profile"] .psy-studio-collections-heading h2{
+ margin:6px 0 7px!important;font-size:clamp(25px,2.4vw,33px)!important;
+ letter-spacing:-.025em!important;line-height:1.16!important;
+}
+body[data-account="profile"] .psy-studio-section-heading p{
+ margin:0!important;line-height:1.45!important;font-size:13px!important;
+}
+body[data-account="profile"] .psy-studio-left #profileForm,
+body[data-account="profile"] .psy-collections-studio{
+ border-radius:24px!important;
+ border:1px solid #d5e5dc!important;
+ box-shadow:0 14px 37px rgba(22,61,39,.055)!important;
+ background:linear-gradient(160deg,#fff 35%,#fafdf9)!important;
+}
+body[data-account="profile"] .psy-collections-studio{
+ padding:clamp(19px,2.5vw,30px)!important;
+}
+body[data-account="profile"] .psy-collection-overview > h2,
+body[data-account="profile"] .psy-collection-overview > .psy-collection-lead{display:none!important}
+body[data-account="profile"] .psy-collection-overview > .psy-collection-topline{
+ justify-content:flex-end!important;min-height:32px;margin:0 0 15px!important;
+}
+body[data-account="profile"] .psy-collection-overview > .psy-collection-topline > .psy-collection-kicker{display:none!important}
+body[data-account="profile"] .psy-collection-count{font-size:12px!important}
+body[data-account="profile"] .psy-studio #profileForm .psy-profile-heading{
+ align-items:center!important;padding-bottom:20px!important;
+}
+body[data-account="profile"] .psy-studio #avatarPreview,
+body[data-account="profile"] .psy-avatar-preview{
+ display:grid!important;place-items:center!important;flex:0 0 auto!important;
+ width:108px!important;height:108px!important;
+ min-width:108px!important;min-height:108px!important;
+ aspect-ratio:1!important;border-radius:50%!important;overflow:hidden!important;
+ background:#e3f0e7!important;color:#26714f!important;
+ border:3px solid #fff!important;outline:1px solid #c8ddcf!important;
+ box-shadow:0 6px 20px #214f3522!important;font-size:38px!important;
+}
+body[data-account="profile"] #avatarPreview img{
+ display:block!important;width:100%!important;height:100%!important;
+ border-radius:50%!important;object-fit:cover!important;
+}
+body[data-account="profile"] #profileForm .psy-avatar-controls h2{
+ font-size:17px!important;line-height:1.3!important;
+}
+body[data-account="profile"] #profileForm .psy-avatar-controls small{
+ max-width:330px;line-height:1.45!important;
+}
+body[data-account="profile"] .psy-studio-security{
+ margin-top:0!important;
+}
+body[data-account="profile"] #psySecurity .psy-studio-section-heading{
+ min-height:122px!important;
+}
+body[data-account="profile"] #psySecurity .account-card{
+ margin-bottom:15px!important;
+}
+body[data-account="profile"] .psy-studio-settings-form,
+body[data-account="profile"] .psy-studio-subscription-card{
+ display:grid;gap:12px;padding:clamp(23px,2.9vw,34px)!important;
+}
+body[data-account="profile"] .psy-studio-settings-form h3,
+body[data-account="profile"] .psy-studio-subscription-card h3{
+ font-size:21px;color:#244c38;margin:0 0 8px;
+}
+body[data-account="profile"] .psy-studio-settings-form label:not(.psy-studio-check){
+ font-size:13px;font-weight:800;color:#27533d;
+}
+body[data-account="profile"] .psy-studio-settings-form select{
+ width:100%;min-height:46px;padding:10px 13px;
+ border:1px solid #cbded2;border-radius:11px;
+ background:#fff;color:#224737;margin-bottom:6px;
+}
+body[data-account="profile"] .psy-studio-settings-form .psy-studio-check{
+ display:flex;align-items:center;gap:10px;font-size:13px;
+}
+body[data-account="profile"] .psy-studio-settings-form .psy-studio-check input{
+ margin:0;accent-color:#2f7753;width:18px;height:18px;
+}
+body[data-account="profile"] .psy-studio-settings-form .account-actions{margin-top:12px}
+body[data-account="profile"] .psy-studio-subscription-card p{
+ line-height:1.65;color:#607a68;margin:0 0 12px;
+}
+body[data-account="profile"] .psy-studio-subscription-card .site-btn{
+ display:inline-flex;align-items:center;justify-content:center;
+ justify-self:start;min-height:44px;
+ padding:10px 17px;text-decoration:none;
+}
+body[data-account="profile"] .psy-studio-subscription-mark{
+ display:grid;place-items:center;width:62px;height:62px;
+ border-radius:18px;background:#eaf2e7;color:#ad8a5f;font-size:34px;
+}
+body[data-account="profile"] .psy-studio-grid[data-active-panel="folders"] .psy-studio-left{display:none!important}
+body[data-account="profile"] .psy-studio-grid[data-active-panel="folders"] .psy-studio-right{
+ grid-column:2 / 4!important;
+}
+body[data-account="profile"] .psy-studio-grid[data-active-panel="folders"] .psy-collections-studio{
+ max-width:100%;
+}
+html.dark body[data-account="profile"] .psy-studio-side-nav{
+ background:#20382c!important;border-color:#496c54!important;
+ box-shadow:none!important;
+}
+html.dark body[data-account="profile"] .psy-studio-side-caption{color:#d4b58d!important}
+html.dark body[data-account="profile"] .psy-studio-side-link{
+ background:transparent!important;border-color:transparent!important;
+ color:#d8e8d9!important;
+}
+html.dark body[data-account="profile"] .psy-studio-side-link:hover{
+ background:#2e4c3a!important;border-color:#4c735a!important;
+}
+html.dark body[data-account="profile"] .psy-studio-side-link[aria-selected="true"]{
+ background:#41775a!important;border-color:#679d76!important;color:#fff!important;
+}
+html.dark body[data-account="profile"] .psy-studio-side-link .psy-nav-icon{
+ background:#345440!important;color:#bcd1be!important;
+}
+html.dark body[data-account="profile"] .psy-studio-side-link[aria-selected="true"] .psy-nav-icon{
+ color:#edf5e8!important;background:#ffffff25!important;
+}
+html.dark body[data-account="profile"] #profileForm,
+html.dark body[data-account="profile"] .psy-collections-studio{
+ background:linear-gradient(150deg,#1c342a,#20372d)!important;
+ border-color:#426452!important;
+}
+html.dark body[data-account="profile"] #avatarPreview{
+ background:#365f47!important;color:#ecf5e8!important;
+ border-color:#20382d!important;outline-color:#557b62!important;
+}
+html.dark body[data-account="profile"] .psy-studio-settings-form h3,
+html.dark body[data-account="profile"] .psy-studio-subscription-card h3{color:#eff6ec}
+html.dark body[data-account="profile"] .psy-studio-settings-form select{
+ background:#1b3429;color:#ebf6ee;border-color:#52715c;
+}
+html.dark body[data-account="profile"] .psy-studio-subscription-card p{color:#c3d4c5}
+@media(max-width:1159px){
+ body[data-account="profile"] .psy-studio-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body[data-account="profile"] .psy-studio-side-nav{grid-column:1/-1!important}
+ body[data-account="profile"] .psy-studio-side-link{
+  flex:1 1 130px!important;width:auto!important;
+ }
+ body[data-account="profile"] .psy-studio-left{grid-column:1!important;grid-row:2!important}
+ body[data-account="profile"] .psy-studio-right{grid-column:2!important;grid-row:2!important}
+ body[data-account="profile"] .psy-studio-grid[data-active-panel="folders"] .psy-studio-right{
+  grid-column:1/-1!important;
+ }
+}
+@media(max-width:839px){
+ body[data-account="profile"] .psy-studio-grid{grid-template-columns:minmax(0,1fr)!important}
+ body[data-account="profile"] .psy-studio-left{grid-column:1!important;grid-row:2!important}
+ body[data-account="profile"] .psy-studio-right{grid-column:1!important;grid-row:3!important}
+ body[data-account="profile"] .psy-studio-grid[data-active-panel="folders"] .psy-studio-right{
+  grid-column:1!important;grid-row:2!important;
+ }
+ body[data-account="profile"] .psy-studio-section-heading,
+ body[data-account="profile"] .psy-studio-collections-heading{
+  min-height:0!important;padding:3px 1px 17px!important;
+ }
+}
+@media(max-width:520px){
+ body[data-account="profile"] .psy-studio-side-link{
+  flex:1 1 calc(50% - 7px)!important;min-height:42px!important;
+ }
+ body[data-account="profile"] #avatarPreview{width:88px!important;height:88px!important;min-width:88px!important;min-height:88px!important}
+ body[data-account="profile"] .psy-studio-hero{min-height:190px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ body[data-account="profile"] .psy-studio-pane{animation:none!important}
+ body[data-account="profile"] .psy-studio-side-link{transition:none!important}
+}
+html.reduce-motion body[data-account="profile"] .psy-studio-pane{animation:none!important}
