@@ -56,6 +56,12 @@
    if(["owner","shadow","moderator"].includes(role?.role)){
     clear();strip.hidden=true;return;
    }
+   const {data:paid,error:paidError}=await client.from("psy_paid_access")
+     .select("expires_at").eq("user_id",data.user.id).maybeSingle();
+   if(paidError||stop){clear();strip.hidden=true;return;}
+   if(paid?.expires_at&&new Date(paid.expires_at).getTime()>Date.now()){
+    clear();strip.hidden=true;return;
+   }
    const {data:trial,error:readError}=await client.from("psy_trial_access")
      .select("expires_at").eq("user_id",data.user.id).maybeSingle();
    if(readError||stop){clear();strip.hidden=true;return;}
