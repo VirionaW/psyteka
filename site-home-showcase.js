@@ -6,49 +6,89 @@
  if(!root)return;
  const hero=root.querySelector(".psy-library-preview, .psy-showcase-window");
  if(hero){
-  hero.outerHTML=`<div class="psy-home-hero-art" aria-label="Иллюстрация рабочего пространства психолога и материалов библиотеки">
-    <div class="psy-hero-illustration" aria-hidden="true">
-      <img src="assets/psyteka-banner-school-approved.webp" width="800" height="520" alt="" fetchpriority="high">
+  hero.outerHTML=`<div class="psy-home-hero-art psy-home-ui" aria-label="Иллюстративный макет каталога Психотеки">
+    <div class="psy-demo-window" aria-hidden="true">
+      <div class="psy-demo-toolbar"><span class="psy-demo-traffic"><i></i><i></i><i></i></span><span class="psy-demo-browser-caption">Психотека / рабочая библиотека</span><span class="psy-demo-app-status"><i></i> Каталог</span></div>
+      <div class="psy-demo-layout">
+        <aside class="psy-demo-aside">
+          <div class="psy-demo-brand"><span class="psy-demo-brandmark">✳</span><span>Психотека<small>Библиотека методик</small></span></div>
+          <div class="psy-demo-aside-title">НАПРАВЛЕНИЯ</div>
+          <span class="psy-demo-menu current"><span class="psy-demo-menu-symbol">▤</span> Школа</span>
+          <span class="psy-demo-menu"><span class="psy-demo-menu-symbol">✿</span> Детский сад</span>
+          <span class="psy-demo-menu"><span class="psy-demo-menu-symbol">◎</span> Взрослые</span>
+          <div class="psy-demo-aside-line"></div>
+          <div class="psy-demo-aside-title">МАТЕРИАЛЫ</div>
+          <span class="psy-demo-menu"><span class="psy-demo-menu-symbol">▧</span> Документация</span>
+        </aside>
+        <div class="psy-demo-content">
+          <div class="psy-demo-search"><svg viewBox="0 0 24 24" fill="none"><circle cx="10.7" cy="10.7" r="5.8" stroke="currentColor" stroke-width="2"/><path d="m15 15 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Поиск по методикам и авторам</span><span class="psy-demo-search-key">⌕</span></div>
+          <div class="psy-demo-intro"><span>Школьные материалы</span><span>Подборка методик</span></div>
+          <div class="psy-demo-pills"><span>Внимание</span><span>Мышление</span><span>Мотивация</span></div>
+          <div class="psy-demo-method-row">
+            <div class="psy-demo-method-glyph schulte"><svg viewBox="0 0 48 48" fill="none"><rect x="7" y="6" width="31" height="35" rx="4" stroke="currentColor" stroke-width="2"/><path d="M14 16h8m5 0h5M14 23h18M14 30h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="34" cy="36" r="8" fill="#f8dfba" stroke="#ba956b" stroke-width="2"/><path d="M34 31v5l3 2" stroke="#866b48" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div class="psy-demo-method-copy"><strong>Таблицы Шульте</strong><small>Исследование внимания</small><span>От 6 лет · Рабочий протокол</span></div>
+            <span class="psy-demo-method-arrow">↗</span>
+          </div>
+          <div class="psy-demo-method-row">
+            <div class="psy-demo-method-glyph family"><svg viewBox="0 0 48 48" fill="none"><path d="M6 22 24 8l18 14v18H6z" stroke="currentColor" stroke-width="2" fill="#fcf4e8"/><circle cx="18" cy="27" r="4" fill="#a0bfd0"/><circle cx="30" cy="27" r="4" fill="#deb1ae"/><path d="M11 39c0-6 3-9 7-9s7 3 7 9m-1 0c0-6 3-9 7-9s7 3 7 9" stroke="#6d9a85" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div class="psy-demo-method-copy"><strong>Рисунок семьи</strong><small>Рисуночная методика</small><span>Инструкция · Бланк</span></div>
+            <span class="psy-demo-method-arrow">↗</span>
+          </div>
+          <div class="psy-demo-foot"><span class="psy-demo-mini-dot"></span> Описания, бланки и обработка – в одном месте</div>
+        </div>
+      </div>
     </div>
-    <div class="psy-visual-topline" aria-hidden="true"><span class="psy-visual-mark"><img src="brand-mark.svg" alt="" width="24" height="24"></span><span><strong>Психотека</strong><small>Библиотека психолога</small></span><span class="psy-visual-dot"></span></div>
-    <div class="psy-hero-floating" aria-hidden="true">
-      <div class="psy-hero-floating-mark"><svg viewBox="0 0 32 32" fill="none"><path d="M7 9h18M7 16h18M7 23h12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="24" cy="23" r="4" fill="#edc78c"/></svg></div>
-      <div><strong>Все для работы</strong><span>Методики · бланки · протоколы</span></div>
-      <svg class="psy-visual-check" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" fill="#e5f3e7"/><path d="m8 14 4 4 8-9" stroke="#2f805c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
+    <div class="psy-demo-float" aria-hidden="true"><span class="psy-demo-float-icon">✓</span><span><strong>Продумано для практики</strong><small>От поиска до рабочего бланка</small></span></div>
   </div>`;
  }
  const inside=root.querySelector("#inside .psy-preview-wrap");
  if(inside){
   inside.classList.add("psy-home-gallery");
   inside.innerHTML=`<div class="psy-gallery-heading">
-    <div class="psy-gallery-heading-copy"><div class="kicker">Внутри Психотеки</div><h2>Все под рукой для работы психолога</h2><p>Удобный каталог, понятные методические описания и материалы для разных возрастов – в едином рабочем пространстве.</p></div>
+    <div class="psy-gallery-heading-copy"><div class="kicker">Внутри Психотеки</div><h2>Все под рукой для работы психолога</h2><p>Каталог для быстрого выбора, методические руководства и рабочие инструменты. Каждая задача – со своим удобным форматом.</p></div>
     <a class="site-btn small psy-gallery-action" href="library.html?area=school">Перейти в библиотеку <span aria-hidden="true">↗</span></a>
    </div>
-   <div class="psy-gallery-grid">
-    <a class="psy-gallery-card psy-gallery-school" href="library.html?area=school" aria-label="Открыть каталог школьных методик">
-     <div class="psy-gallery-visual">
-      <div class="psy-gallery-art-sheen" aria-hidden="true"></div>
-      <span class="psy-gallery-sticker" aria-hidden="true">01 <span>Каталог</span></span>
-      <span class="psy-gallery-visual-corner" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="M11 16h26M11 24h19M11 32h14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="33" cy="31" r="7" stroke="currentColor" stroke-width="2.6"/><path d="m38 36 5 5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span>
+   <div class="psy-gallery-grid psy-interface-gallery">
+    <a class="psy-demo-gallery-card" href="library.html?area=school" aria-label="Открыть каталог школьных методик">
+     <div class="psy-demo-gallery-visual psy-demo-gallery-search" aria-hidden="true">
+      <div class="psy-demo-gallery-window">
+       <div class="psy-demo-gallery-bar"><i></i><i></i><i></i><span>Каталог методик</span></div>
+       <div class="psy-demo-gallery-input"><span>⌕</span><span>Найти методику...</span></div>
+       <div class="psy-demo-gallery-tags"><i>Внимание</i><i>Мышление</i><i>Память</i></div>
+       <div class="psy-demo-gallery-result"><b class="psy-demo-gallery-mini-icon">▦</b><span><strong>Таблицы Шульте</strong><small>Возраст · Инструкция · Бланк</small></span><em>↗</em></div>
+       <div class="psy-demo-gallery-result"><b class="psy-demo-gallery-mini-icon">◇</b><span><strong>Простые аналогии</strong><small>Мышление · Методика</small></span><em>↗</em></div>
+      </div>
      </div>
-     <div class="psy-gallery-meta"><div><span class="psy-gallery-category">ШКОЛА</span><h3>Подбор методик</h3><p>Темы, возраст, авторы и цель исследования</p></div><span class="psy-gallery-link-mark" aria-hidden="true">↗</span></div>
+     <div class="psy-gallery-meta"><div><span class="psy-gallery-category">БЫСТРЫЙ ПОИСК</span><h3>Каталог методик</h3><p>Фильтры, возраст и авторы</p></div><span class="psy-gallery-link-mark" aria-hidden="true">↗</span></div>
     </a>
-    <a class="psy-gallery-card psy-gallery-docs" href="library.html?area=school" aria-label="Открыть методические руководства в библиотеке">
-     <div class="psy-gallery-visual">
-      <div class="psy-gallery-art-sheen" aria-hidden="true"></div>
-      <span class="psy-gallery-sticker" aria-hidden="true">02 <span>Руководства</span></span>
-      <span class="psy-gallery-visual-corner" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="M12 8h20l6 7v25H12z" stroke="currentColor" stroke-width="2.7" stroke-linejoin="round"/><path d="M32 8v8h6M18 23h14M18 29h14M18 35h9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+    <a class="psy-demo-gallery-card" href="cognitive-kit.html?method=schulte" aria-label="Открыть портфолио методики">
+     <div class="psy-demo-gallery-visual psy-demo-gallery-portfolio" aria-hidden="true">
+      <div class="psy-demo-gallery-sheet">
+       <div class="psy-demo-gallery-sheet-top"><span>ПОРТФОЛИО МЕТОДИКИ</span><span>✳</span></div>
+       <strong>Таблицы Шульте</strong>
+       <div class="psy-demo-gallery-sheet-tab"><i>Портфолио</i><i>Руководство</i><i>Бланк</i></div>
+       <div class="psy-demo-gallery-sheet-line"><span>Цель</span><b>Оценка внимания</b></div>
+       <div class="psy-demo-gallery-sheet-line"><span>Материалы</span><b>Таблицы, протокол</b></div>
+       <div class="psy-demo-gallery-sheet-line"><span>Инструкция</span><b>В руководстве</b></div>
+       <div class="psy-demo-gallery-sheet-footer"><span>Методика и бланки</span><em>↗</em></div>
+      </div>
      </div>
-     <div class="psy-gallery-meta"><div><span class="psy-gallery-category">МАТЕРИАЛЫ</span><h3>Портфолио и бланки</h3><p>Инструкции, формы и рабочие протоколы</p></div><span class="psy-gallery-link-mark" aria-hidden="true">↗</span></div>
+     <div class="psy-gallery-meta"><div><span class="psy-gallery-category">МЕТОДИЧЕСКАЯ ЧАСТЬ</span><h3>Портфолио</h3><p>Цель, инструкция и материалы</p></div><span class="psy-gallery-link-mark" aria-hidden="true">↗</span></div>
     </a>
-    <a class="psy-gallery-card psy-gallery-preschool" href="library.html?area=preschool" aria-label="Открыть методики для детского сада">
-     <div class="psy-gallery-visual">
-      <div class="psy-gallery-art-sheen" aria-hidden="true"></div>
-      <span class="psy-gallery-sticker" aria-hidden="true">03 <span>Дошкольники</span></span>
-      <span class="psy-gallery-visual-corner" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><circle cx="16" cy="19" r="6" stroke="currentColor" stroke-width="2.6"/><circle cx="32" cy="19" r="6" stroke="currentColor" stroke-width="2.6"/><path d="M5 38c0-9 4-13 11-13s11 4 11 13M21 38c0-9 4-13 11-13s11 4 11 13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span>
+    <a class="psy-demo-gallery-card" href="library.html?area=preschool" aria-label="Открыть библиотеку дошкольных методик">
+     <div class="psy-demo-gallery-visual psy-demo-gallery-preschool" aria-hidden="true">
+      <div class="psy-demo-gallery-activity">
+       <div class="psy-demo-gallery-activity-top"><span>ДЕТСКИЙ САД</span><span class="psy-demo-gallery-bubble">✿</span></div>
+       <div class="psy-demo-gallery-activity-title">Наблюдение и развитие</div>
+       <div class="psy-demo-gallery-activity-grid">
+        <div><span class="psy-demo-activity-icon">♡</span><strong>Адаптация</strong><small>Наблюдение</small></div>
+        <div><span class="psy-demo-activity-icon">◎</span><strong>Развитие</strong><small>Диагностика</small></div>
+        <div><span class="psy-demo-activity-icon">✳</span><strong>Игра</strong><small>Задания</small></div>
+       </div>
+       <div class="psy-demo-gallery-activity-foot">Материалы для дошкольников <span>↗</span></div>
+      </div>
      </div>
-     <div class="psy-gallery-meta"><div><span class="psy-gallery-category">ДЕТСКИЙ САД</span><h3>Развитие и адаптация</h3><p>Наблюдение, беседы и игровые задания</p></div><span class="psy-gallery-link-mark" aria-hidden="true">↗</span></div>
+     <div class="psy-gallery-meta"><div><span class="psy-gallery-category">ДЕТСКИЙ САД</span><h3>Дошкольные материалы</h3><p>Наблюдения, беседы, задания</p></div><span class="psy-gallery-link-mark" aria-hidden="true">↗</span></div>
     </a>
    </div>`;
  }
