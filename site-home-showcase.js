@@ -137,6 +137,6 @@
  document.head.appendChild(seamless);
  const editorial=document.createElement("link");
  editorial.rel="stylesheet";
- editorial.href="site-home-editorial-rail.css?v=20261027editorial1";
+ editorial.href="site-home-editorial-rail.css?v=20261027editorial2";
  document.head.appendChild(editorial);
 })();
