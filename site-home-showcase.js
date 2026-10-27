@@ -111,4 +111,8 @@
  polish.rel="stylesheet";
  polish.href="site-home-polish.css?v=20261027polish1";
  document.head.appendChild(polish);
+ const finalSkin=document.createElement("link");
+ finalSkin.rel="stylesheet";
+ finalSkin.href="site-home-final.css?v=20261027final3";
+ document.head.appendChild(finalSkin);
 })();
