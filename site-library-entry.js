@@ -72,7 +72,7 @@
   return (days?days+" д. ":"")+String(hrs).padStart(2,"0")+":"+String(mins).padStart(2,"0")+":"+String(secs).padStart(2,"0");
  }
  function ticker(){
-  if(!trial)return;
+  if(!trial||["owner","shadow","moderator"].includes(role))return;
   const left=new Date(trial.expires_at).getTime()-Date.now();
   const value=hourText(left);
   el("psyEntryClock").textContent=value;
@@ -90,7 +90,7 @@
   try{sessionStorage.setItem("psy-intended-destination",destination)}catch(_){}}
  function show(){
   const pill=el("psyHomeTrial");
-  if(pill&&trial&&new Date(trial.expires_at)>new Date())pill.hidden=false;
+  if(pill&&trial&&!["owner","shadow","moderator"].includes(role)&&new Date(trial.expires_at)>new Date())pill.hidden=false;
   if(!dialog.open){lastFocus=document.activeElement;dialog.showModal()}
  }
  function close(){if(dialog.open)dialog.close()}
@@ -116,6 +116,8 @@
    if(r.error||t.error)throw new Error("Не удалось проверить права доступа.");
    role=r.data?.role||"participant";trial=t.data||null;
    if(["owner","shadow","moderator"].includes(role)){
+    if(timer){clearInterval(timer);timer=null;}
+    const trialPill=el("psyHomeTrial");if(trialPill)trialPill.hidden=true;
     step("psyEntryAccess");el("psyEntryAccessName").textContent=role==="owner"?"Доступ владельца":role==="shadow"?"Резервный доступ «Тень»":"Доступ модератора";
     el("psyEntryTimeCaption").textContent="Для команды проекта пробный период не требуется.";
     el("psyEntryClock").textContent="Без ограничения";el("psyEntryGo").disabled=false;
@@ -209,10 +211,13 @@
  if(authEnabled&&client){
   client.auth.getUser().then(async ({data, error:authError})=>{
    if(authError||!data?.user)return;
+   const {data:roleResult,error:roleError}=await client.from("psy_account_roles")
+      .select("role").eq("user_id",data.user.id).maybeSingle();
+   if(roleError||["owner","shadow","moderator"].includes(roleResult?.role))return;
    const {data:access,error:readError}=await client.from("psy_trial_access")
       .select("started_at,expires_at").eq("user_id",data.user.id).maybeSingle();
    if(!readError&&access&&new Date(access.expires_at).getTime()>Date.now()){
-    trial=access;clock();
+    role=roleResult?.role||"participant";trial=access;clock();
    }
   }).catch(()=>{});
  }
