@@ -133,6 +133,14 @@ const server=http.createServer(async(req,res)=>{
  try{
   const stat=await fs.promises.stat(target.full);
   if(!stat.isFile()){response(res,404,"Not found","text/plain; charset=utf-8");return}
+  // On this server the password has already been verified. Avoid asking again
+  // via the legacy client-only preview overlay embedded in static HTML.
+  if(target.ext===".html"){
+   const source=await fs.promises.readFile(target.full,"utf8");
+   const legacy='<style>html:not(.psy-gate-open) body > :not(#psy-preview-gate){display:none!important}</style><link rel="stylesheet" href="psy-preview-gate.css?v=20261027"><script defer src="psy-preview-gate.js?v=20261027"></script>';
+   const clean=source.replace(legacy,"");
+   response(res,200,req.method==="HEAD"?"":clean,contentTypes[target.ext]);return;
+  }
   res.writeHead(200,{"Content-Type":contentTypes[target.ext],"Content-Length":stat.size,"Cache-Control":"private, no-store, max-age=0","X-Content-Type-Options":"nosniff","X-Frame-Options":"SAMEORIGIN","Referrer-Policy":"same-origin","Vary":"Cookie"});
   if(req.method==="HEAD"){res.end();return}
   fs.createReadStream(target.full).on("error",()=>res.destroy()).pipe(res);
