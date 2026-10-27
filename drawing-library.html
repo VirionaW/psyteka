@@ -1374,9 +1374,10 @@ function matched(){
 }
 function renderResults(){
  var found=matched();
- if(found.length&&!found.some(function(x){return x.id===state.selected})){
-  state.selected=found[0].id;renderDetails();
- }else if(!found.length){
+ if(found.length){
+  if(!found.some(function(x){return x.id===state.selected}))state.selected=found[0].id;
+  renderDetails();
+ }else{
   $("#details").innerHTML='<div class="empty">Выберите другой поисковый запрос, чтобы посмотреть описание элемента.</div>';
  }
  $("#count").textContent="Найдено: "+found.length+" из "+entries.length+". "+($("#search").value?"Поиск по всей библиотеке.":"Подборка по выбранной методике.");
@@ -1425,7 +1426,7 @@ function reportBody(){
  if(d.context)parts.push('<h2>Контекст и пояснения</h2><p>'+esc(d.context)+'</p>');
  parts.push('<h2>Элементы рисунка</h2>');
  if(!d.items.length)parts.push('<p>Записи отсутствуют.</p>');
- else d.items.forEach(function(x,i){var e=byId(x.elementId);parts.push('<div class="print-item"><strong>'+(i+1)+'. '+esc(x.name)+'</strong> – '+esc((POS[x.position]||POS.unknown)[0])+', '+esc(SZ[x.size]||"Не указано")+'.<p><strong>Описание:</strong> '+esc(x.note||"Не указано")+'</p>'+(e?'<p><strong>Возможные ассоциации справочника:</strong> '+esc(e.meaning)+'</p>':'')+'</div>')});
+ else d.items.forEach(function(x,i){var e=byId(x.elementId);parts.push('<div class="print-item"><strong>'+(i+1)+'. '+esc(x.name)+'</strong> – '+esc((POS[x.position]||POS.unknown)[0])+', '+esc(SZ[x.size]||"Не указано")+'.<p><strong>Описание:</strong> '+esc(x.note||"Не указано")+'</p>'+(x.position!=="unknown"?'<p><strong>Описание расположения:</strong> '+esc((POS[x.position]||POS.unknown)[1])+'</p>':'')+(e?'<p><strong>Возможные ассоциации справочника:</strong> '+esc(e.meaning)+'</p>':'')+'</div>')});
  if(d.conclusion)parts.push('<h2>Сводка специалиста</h2><p>'+esc(d.conclusion)+'</p>');
  parts.push('<hr><p><small>Записи отражают рисунок и слова обследуемого. Ассоциации справочника не являются диагностическим ключом и не позволяют делать выводы о психическом состоянии по одному признаку.</small></p>');
  return parts.join("");
