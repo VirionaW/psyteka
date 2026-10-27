@@ -17,6 +17,6 @@
   if(error||!data?.user||data.user.is_anonymous||!data.user.email_confirmed_at)return;
   const {data:permissions,error:readError}=await client.from("psy_account_roles")
    .select("role").eq("user_id",data.user.id).maybeSingle();
-  if(!readError&&permissions?.role==="owner")link.hidden=false;
+  if(!readError&&["owner","shadow"].includes(permissions?.role))link.hidden=false;
  }catch(_){link.hidden=true}
 })();
