@@ -124,10 +124,10 @@
      const {data:aal,error:aalError}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
      if(aalError||aal?.currentLevel!=="aal2"){
       ownerNeedsMfa=true;
-      el("psyEntryAccessName").textContent="Защита Владельца – Вендиго";
-      el("psyEntryTimeCaption").textContent="Для доступа к библиотеке подтвердите код в приложении-аутентификаторе.";
-      el("psyEntryClock").textContent="Второй фактор";
-      el("psyEntryGo").textContent="Подключить или подтвердить защиту";
+      el("psyEntryAccessName").textContent=role==="shadow"?"Резервный доступ «Тень»":"Доступ владельца";
+      el("psyEntryTimeCaption").textContent="Для управления пользователями понадобится второй фактор. Библиотеку можно открыть сейчас.";
+      el("psyEntryClock").textContent="MFA для управления";
+      el("psyEntryGo").textContent="Открыть библиотеку";
      }else el("psyEntryGo").textContent="Открыть библиотеку";
     }else el("psyEntryGo").textContent="Открыть библиотеку";
    }else if(trial){
@@ -192,10 +192,8 @@
   finally{b.disabled=false}
  });
  el("psyEntryGo").addEventListener("click",()=>{
-  if((role==="owner"||role==="shadow")&&ownerNeedsMfa){
-   try{sessionStorage.setItem("psy-intended-destination",destination)}catch(_){}
-   location.assign("owner-mfa.html");return;
-  }
+  // Opening the library needs a valid account, not admin step-up MFA.
+  // Administrative operations continue to require AAL2 on the server.
   if(!["owner","shadow","moderator"].includes(role)&&(!trial||new Date(trial.expires_at).getTime()<=Date.now())){
    error("Пробный доступ завершен.");return;
   }
