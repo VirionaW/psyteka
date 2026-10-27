@@ -202,6 +202,7 @@
    updateArrows();return;
   }
   q("#psyFolderForm button").disabled=false;q("#psyFolderName").disabled=false;
+  if(notice.textContent==="Для сохранения папок войдите в свой аккаунт.")say("");
   const data=read();
   paintFolders(data);paintFavorites(data);
   const folder=data.folders.find(x=>x.id===selectedId);
