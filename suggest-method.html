@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Предложить методику или сообщить об ошибке | Психотека</title>
+<meta name="description" content="Предложение новых методик, сообщения об ошибках и сведения об авторских правах Психотеки.">
+<link rel="icon" href="brand-favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="site-v2.css"><link rel="stylesheet" href="site-mobile.css"><link rel="stylesheet" href="site-unified.css">
+<style>
+:root{--ink:#173e35;--muted:#6d8279;--line:#c8dfd0;--paper:#f8fbf8}
+*{box-sizing:border-box}body{margin:0;background:#eef6ef;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.5}
+.suggest-wrap{max-width:1220px;padding:24px 20px 80px;margin:auto}
+.suggest-top{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:24px}
+.suggest-brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:23px;text-decoration:none;color:var(--ink)}
+.suggest-brand img{width:38px;height:38px}
+.suggest-back{border:1px solid var(--line);background:white;border-radius:999px;padding:9px 17px;text-decoration:none;color:var(--ink);font-weight:650}
+.suggest-hero{padding:32px;border:1px solid var(--line);background:linear-gradient(125deg,#fff 10%,#e1f2e7 100%);border-radius:24px;margin-bottom:24px}
+.suggest-hero h1{font-size:clamp(25px,3vw,38px);margin:0 0 12px}.suggest-hero p{max-width:850px;margin:0;color:#526c60}
+.suggest-panel{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:24px;margin-bottom:22px}
+.suggest-panel h2{margin:0 0 12px;font-size:23px}.suggest-panel p{margin:0 0 16px}
+.suggest-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.suggest-field{display:flex;flex-direction:column;gap:6px;font-weight:650;font-size:14px}
+.suggest-field.full{grid-column:1/-1}
+.suggest-field input,.suggest-field textarea,.suggest-field select,.suggest-search{width:100%;padding:12px 14px;border:1px solid #b9d1c3;border-radius:12px;background:white;color:#163d34;font:inherit}
+.suggest-field textarea{min-height:125px;resize:vertical}
+.suggest-actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.suggest-action{background:#285a49;color:white;border:0;border-radius:12px;padding:12px 17px;text-decoration:none;font:inherit;cursor:pointer;font-weight:700}
+.suggest-action.secondary{background:white;color:#285a49;border:1px solid #b9d1c3}
+.suggest-hint{color:var(--muted);font-size:13px}
+.suggest-catalogbar{display:flex;align-items:center;gap:16px;justify-content:space-between;flex-wrap:wrap;margin:18px 0}
+.suggest-catalogbar .suggest-search{max-width:480px;flex:1 1 260px}
+.suggest-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.suggest-card{border:1.5px solid var(--line);border-radius:20px;background:#f7faf7;padding:23px;min-height:105px}
+.suggest-card h3{font-size:19px;line-height:1.3;margin:0 0 8px;color:#1d4035}
+.suggest-card p{margin:0;color:#73877c;font-size:13px;font-weight:650}
+.suggest-empty{color:var(--muted);padding:20px}
+@media(max-width:660px){.suggest-wrap{padding:16px 12px 55px}.suggest-hero,.suggest-panel{padding:20px}.suggest-form,.suggest-cards{grid-template-columns:1fr}.suggest-card{padding:18px;min-height:auto}}
+</style></head>
+<body><main class="suggest-wrap">
+<div class="suggest-top"><a class="suggest-brand" href="index.html?home=1"><img src="brand-mark.svg" alt="">Психотека</a><a class="suggest-back" href="library.html?area=school">Вернуться в библиотеку</a></div>
+<section class="suggest-hero"><h1>Предложить методику или сообщить об ошибке</h1>
+<p>Помогите сделать Психотеку точнее и полезнее. Здесь можно предложить настоящую опубликованную методику, сообщить о неточности, неработающей функции или проблеме с авторскими правами.</p></section>
+<section class="suggest-panel" aria-labelledby="feedback-heading"><h2 id="feedback-heading">Сообщить нам</h2>
+<p>Если вы автор или правообладатель материала и считаете, что он опубликован без необходимого разрешения, пожалуйста, укажите название методики, источник и основания обращения. Мы рассмотрим сообщение и при необходимости ограничим доступ к спорным материалам.</p>
+<form class="suggest-form" id="suggestForm">
+<label class="suggest-field">Тема обращения<select name="type"><option>Предложить методику</option><option>Сообщить об ошибке</option><option>Вопрос об авторских правах</option></select></label>
+<label class="suggest-field">Название методики<input name="method" placeholder="Например, Школа зверей" required></label>
+<label class="suggest-field full">Ссылка на источник (если есть)<input name="source" type="url" placeholder="https://..."></label>
+<label class="suggest-field full">Описание<textarea name="details" required placeholder="Опишите предложение, ошибку или вопрос о правах"></textarea></label>
+<div class="suggest-actions"><button class="suggest-action" type="submit">Подготовить обращение</button><button class="suggest-action secondary" type="button" id="copyRequest">Скопировать текст</button><span class="suggest-hint">Обращение не отправляется автоматически. Для отправки потребуется GitHub.</span></div>
+</form>
+<p id="suggestStatus" role="status" class="suggest-hint" style="margin-top:12px"></p>
+</section>
+<section class="suggest-panel" aria-labelledby="rights-heading"><h2 id="rights-heading">Список методик и авторов</h2>
+<p>Поиск по методикам, представленным в основном каталоге Психотеки. Названия и авторы приведены для идентификации материалов. <strong>Наличие методики в списке не означает, что ее материалы свободны от авторских прав.</strong> Если вы заметили возможное нарушение, воспользуйтесь формой выше.</p>
+<div class="suggest-catalogbar"><input class="suggest-search" id="suggestSearch" type="search" placeholder="Поиск по названию или автору" aria-label="Поиск методик"><span id="suggestCount" class="suggest-hint"></span></div>
+<div class="suggest-cards" id="suggestCards"></div><p class="suggest-empty" id="suggestEmpty" hidden>Методики не найдены.</p>
+</section></main>
+<script src="catalog.js"></script>
+<script>
+(function(){
+"use strict";
+const all=(window.PSY_CATALOG||[]).filter(x=>x&&x.name&&x.theme!=="Программы");
+const normalized=s=>String(s||"").toLocaleLowerCase("ru").replace(/ё/g,"е").trim();
+const unique=[...new Map(all.map(m=>[normalized(m.name),m])).values()].sort((a,b)=>a.name.localeCompare(b.name,"ru"));
+const search=document.getElementById("suggestSearch"),container=document.getElementById("suggestCards");
+const count=document.getElementById("suggestCount"),empty=document.getElementById("suggestEmpty");
+function render(){
+const q=normalized(search.value),items=unique.filter(m=>normalized(m.name+" "+m.author).includes(q));
+container.replaceChildren();
+const fragment=document.createDocumentFragment();
+for(const m of items){const card=document.createElement("article");card.className="suggest-card";const name=document.createElement("h3");name.textContent=m.name;const author=document.createElement("p");author.textContent=m.author&& !/уточняются по первоисточнику/i.test(m.author)?m.author:"Автор уточняется";card.append(name,author);fragment.append(card);}
+container.append(fragment);count.textContent="Найдено: "+items.length;empty.hidden=items.length>0;
+}
+search.addEventListener("input",render);render();
+const form=document.getElementById("suggestForm"),status=document.getElementById("suggestStatus");
+function message(){const f=new FormData(form);return "Тема: "+f.get("type")+"\nМетодика: "+f.get("method")+"\nИсточник: "+(f.get("source")||"не указан")+"\n\n"+f.get("details");}
+document.getElementById("copyRequest").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(message());status.textContent="Текст обращения скопирован.";}catch(e){status.textContent="Не удалось скопировать. Выделите текст полей вручную.";}}); 
+form.addEventListener("submit",e=>{e.preventDefault();if(!form.reportValidity())return;const fd=new FormData(form),params=new URLSearchParams({title:String(fd.get("type"))+": "+fd.get("method"),body:message()});window.open("https://github.com/VirionaW/psyteka/issues/new?"+params.toString(),"_blank","noopener,noreferrer");status.textContent="Открыта страница создания обращения на GitHub. Для отправки нужно войти в аккаунт и нажать Submit new issue.";});
+})();
+</script></body></html>
