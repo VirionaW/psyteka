@@ -42,7 +42,7 @@
     <div class="psy-entry-cost">0 ₽</div>
     <button type="button" class="psy-entry-btn" id="psyEntryStart">Начать бесплатные 2 дня</button>
    </article>
-   <div class="psy-entry-secondary-choice">Подписки для специалистов и организаций появятся позже. Оплата пока не подключена.</div>
+   <div class="psy-entry-secondary-choice">Три платных тарифа пока готовятся. <a href="subscriptions.html">Посмотреть варианты подписки</a>. Оплата еще не подключена.</div>
   </div>
   <div class="psy-entry-step" id="psyEntryAccess" hidden>
    <p class="psy-entry-lead" id="psyEntryAccessText">Ваш доступ активен.</p>
@@ -55,7 +55,7 @@
   </div>
   <div class="psy-entry-step" id="psyEntryExpired" hidden>
    <p class="psy-entry-lead">Ваш пробный доступ на 2 дня завершился.</p>
-   <div class="psy-entry-choice"><strong>Подписки скоро появятся</strong><p>Мы еще не подключили оплату. Никаких списаний не будет.</p></div>
+   <div class="psy-entry-choice"><strong>Посмотрите будущие тарифы</strong><p>Есть три планируемых платных варианта. Покупка еще не подключена, списаний не будет.</p><p><a href="subscriptions.html">Описание подписок и условий</a></p></div>
    <div class="psy-entry-actions"><button class="psy-entry-btn secondary" type="button" id="psyEntryExpiredClose">Вернуться на главную</button></div>
   </div>
   <p class="psy-entry-error" id="psyEntryError" role="status" aria-live="polite" hidden></p>
