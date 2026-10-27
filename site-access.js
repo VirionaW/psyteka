@@ -16,11 +16,11 @@
   }catch(_){}
   location.replace("index.html?home=1&entry=1");
  }
- function pill(text,clockEnd){
+ function pill(text,clockEnd,role="participant"){
   document.addEventListener("DOMContentLoaded",()=>{
    const bar=document.querySelector(".topbar");if(!bar)return;
    const old=bar.querySelector("#psyLibraryTrial");if(old)old.remove();
-   const item=document.createElement("span");item.id="psyLibraryTrial";item.className="psy-entry-pill";
+   const item=document.createElement("span");item.id="psyLibraryTrial";item.className="psy-entry-pill";item.dataset.role=role;
    const anchor=bar.querySelector(".header-avatar");bar.insertBefore(item,anchor||null);
    if(!clockEnd){item.textContent=text;return;}
    const update=()=>{
@@ -54,8 +54,8 @@
     client.from("psy_trial_access").select("expires_at").eq("user_id",uid).maybeSingle()
    ]);
    if(r.error||t.error){goHome();return}
-   if(r.data?.role==="owner"||r.data?.role==="moderator"){
-    if(r.data.role==="owner"){
+   if(["owner","shadow","moderator"].includes(r.data?.role)){
+    if(r.data.role==="owner"||r.data.role==="shadow"){
      const {data:level,error:aalError}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
      if(aalError||level?.currentLevel!=="aal2"){
       try{sessionStorage.setItem("psy-intended-destination",location.pathname.split("/").pop()+location.search+location.hash)}catch(_){}
@@ -63,7 +63,7 @@
      }
     }
     root.classList.add("psy-access-ok");
-    pill(r.data.role==="owner"?"Владелец":"Модератор");return;
+    pill(r.data.role==="owner"?"Владелец":r.data.role==="shadow"?"Тень":"Модератор",null,r.data.role);return;
    }
    if(!t.data?.expires_at||new Date(t.data.expires_at).getTime()<=Date.now()){goHome();return}
    root.classList.add("psy-access-ok");pill("Пробный доступ",t.data.expires_at);
