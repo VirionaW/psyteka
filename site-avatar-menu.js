@@ -50,13 +50,15 @@
   menu.replaceChildren();
   if(!state.user){
    add("Войти в аккаунт","index.html?home=1&entry=1");
+   add("Подписка","subscriptions.html");
    return;
   }
   add("Профиль","profile.html");
   add("Настройки","settings.html");
+  add("Подписка","subscriptions.html");
   if(state.role==="owner"||state.role==="shadow")add("Управление","manage-users.html");
   if(["owner","shadow","moderator"].includes(state.role))
    add("Сменить аккаунт",null,()=>leave(true));
   add("Выйти из аккаунта",null,()=>leave(false));
- }).catch(()=>{menu.replaceChildren();add("Войти в аккаунт","index.html?home=1&entry=1");});
+ }).catch(()=>{menu.replaceChildren();add("Войти в аккаунт","index.html?home=1&entry=1");add("Подписка","subscriptions.html");});
 })();
