@@ -58,7 +58,7 @@
   <div class="psy-folder-detail" id="psyFolderDetail" hidden>
    <button type="button" class="psy-folder-back" id="psyFolderBack">← Все папки</button>
    <span class="psy-collection-kicker">ЛИЧНАЯ ПОДБОРКА</span>
-   <div class="psy-folder-detail-icon" aria-hidden="true">▣</div>
+   <div class="psy-folder-detail-icon" aria-hidden="true"><span class="psy-folder-icon"></span></div>
    <h3 id="psyFolderDetailName" tabindex="-1"></h3>
    <p id="psyFolderDetailCount"></p>
    <ul id="psyFolderMethods" class="psy-folder-detail-list"></ul>
@@ -77,6 +77,7 @@
  const overview=q("#psyCollectionOverview"),detail=q("#psyFolderDetail"),wheel=q("#psyFolders"),fav=q("#psyFavorites"),notice=q("#psyCollectionNotice");
  const prev=q("#psyFolderPrev"),next=q("#psyFolderNext");
  const say=message=>{notice.textContent=message||"";};
+ const methodNoun=n=>n%10===1&&n%100!==11?"методика":n%10>=2&&n%10<=4&&!(n%100>=12&&n%100<=14)?"методики":"методик";
  const openLink=name=>{
   const a=document.createElement("a");
   a.href="library.html?area=school&method="+encodeURIComponent(name);
@@ -104,7 +105,7 @@
    const icon=document.createElement("span");icon.className="psy-folder-icon";icon.setAttribute("aria-hidden","true");
    const arrow=document.createElement("span");arrow.className="psy-folder-chevron";arrow.textContent="↗";arrow.setAttribute("aria-hidden","true");
    const name=document.createElement("span");name.className="psy-folder-title";name.textContent=folder.name;
-   const count=document.createElement("span");count.className="psy-folder-meta";count.textContent=folder.methods.length+" методик";
+   const count=document.createElement("span");count.className="psy-folder-meta";count.textContent=folder.methods.length+" "+methodNoun(folder.methods.length);
    b.append(icon,arrow,name,count);
    b.addEventListener("click",()=>{selectedId=folder.id;render();q("#psyFolderDetailName").focus();});
    wheel.appendChild(b);
