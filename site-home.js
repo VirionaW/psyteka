@@ -13,9 +13,5 @@
   top.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
   update();
  }
- try{
-  const p=JSON.parse(localStorage.getItem("psy-profile-demo")||"{}");
-  const avatar=document.getElementById("homeAvatar");
-  if(avatar)avatar.textContent=(p.name||"Специалист").trim().charAt(0).toUpperCase()||"С";
- }catch(_){}
+ // The authenticated avatar is rendered centrally by site-chrome.js.
 })();
