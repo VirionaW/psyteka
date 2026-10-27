@@ -439,3 +439,9 @@ html.dark .psy-collections-studio .psy-folder-detail-actions #psyFolderDelete:ho
  body[data-account="profile"] .psy-studio-side-link:hover{transform:none}
 }
 html.reduce-motion body[data-account="profile"] .psy-studio-side-link{transition:none}
+
+/* Убираем случайную черную рамку у заголовка при входе в папку. */
+.psy-collections-studio #psyFolderDetailName:focus{outline:none}
+.psy-collections-studio #psyFolderDetailName:focus-visible{
+ outline:2px solid #c7a579;outline-offset:5px;border-radius:4px;
+}
