@@ -18,5 +18,6 @@
     "Социометрическое исследование класса"
   ]);
   const original = window.PSY_CATALOG || [];
+  window.PSY_RIGHTS_EXCLUDED = original.filter(m => m.theme !== "Программы" && !keep.has(m.name));
   window.PSY_CATALOG = original.filter(m => m.theme === "Программы" || keep.has(m.name));
 })();
