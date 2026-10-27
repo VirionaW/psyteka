@@ -95,3 +95,24 @@ html.dark .psy-subs-table .psy-subs-col-featured{background:#39714d}
 html.dark .psy-subs-table thead th small{color:#c1dcc6}
 html.dark .psy-subs-table th,html.dark .psy-subs-table td,html.dark .psy-subs-table caption{border-color:#456450}
 html.dark .psy-subs-table tbody tr:not(.psy-subs-group):nth-child(odd){background:#284438}
+
+/* One-time monthly checkout preview. No payment fields or fake checkout. */
+.psy-payment-information{margin:66px 0 0}
+.psy-payment-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.psy-payment-steps>div{background:#fff;border:1px solid #d3e4d8;border-radius:20px;padding:24px;min-width:0}
+.psy-payment-step-number{display:grid;place-items:center;width:37px;height:37px;border:1px solid #c1ddc9;border-radius:12px;background:#edf6ef;color:#3c7555;font-weight:900;margin-bottom:16px}
+.psy-payment-steps h3{font-size:17px;color:#28533a;line-height:1.25;margin:0 0 10px}
+.psy-payment-steps p{font-size:13px;line-height:1.65;margin:0;color:#687f70}
+.psy-payment-status{margin:23px 0 12px;padding:15px 19px;border-radius:13px;background:#edf5ee;color:#356b49;border:1px solid #c7dfcc;font-size:14px;line-height:1.5}
+.psy-payment-status[data-state="success"]{border-color:#7cb78c;background:#e4f4e7;color:#1e6d3d}
+.psy-payment-status[data-state="error"]{border-color:#ebc0ad;background:#fff1e9;color:#985541}
+button.psy-subs-unavailable{font:inherit;font-weight:800;font-size:13px;cursor:not-allowed}
+button.psy-subs-unavailable:disabled{opacity:1}
+button.psy-subs-unavailable:not(:disabled){background:#267451;color:#fff;border-color:#267451;cursor:pointer}
+button.psy-subs-unavailable:not(:disabled):hover{background:#205f43}
+@media(max-width:760px){.psy-payment-steps{grid-template-columns:1fr}.psy-payment-information{margin-top:52px}.psy-payment-steps>div{padding:20px}}
+html.dark .psy-payment-steps>div{background:#243d32;border-color:#50705a}
+html.dark .psy-payment-steps h3{color:#d2edda}
+html.dark .psy-payment-steps p{color:#c1d4c7}
+html.dark .psy-payment-step-number{background:#355b42;border-color:#5f8568;color:#d9f0dc}
+html.dark .psy-payment-status{background:#2e4a38;border-color:#56775c;color:#d6eeda}
