@@ -227,7 +227,7 @@
  const type=d=>d?.id==="cdi-27"?"cdi":d?.workflow==="phillips58"?"ph":null;
  const max=d=>type(d)==="cdi"?2:1;
  const size=d=>type(d)==="cdi"?27:58;
- const subjects=d=>type(d)==="cdi"?norms.items:phillips.topics;
+ const subjects=d=>type(d)==="cdi"?Array(27).fill("Балл по ключу оригинального бланка"):phillips.topics;
  const status=r=>r?.attendance==="absent"?"Отсутствовал":"Присутствует";
  const valid=(v,d)=>type(d)==="cdi"?[0,1,2,"0","1","2"].includes(v):v==="yes"||v==="no";
  function done(d,answers){return Array.from({length:size(d)},(_,i)=>answers?.[i]).filter(v=>valid(v,d)).length;}
@@ -293,6 +293,7 @@
   }else h+='<div class="psy-mspss-entry">';
   h+='<label class="psy-mspss-name-field" for="cpCurrentName"><span>Фамилия и имя / условный код</span><input type="text" id="cpCurrentName" maxlength="120" autocomplete="off" value="'+esc(r.name||"")+'" placeholder="Введите имя или код"></label>';
   if(type(d)==="cdi")h+='<div class="psy-cp-demographics"><label>Возраст, полных лет<select id="cpAge"><option value="">Не выбран</option>'+Array.from({length:11},(_,i)=>i+7).map(age=>'<option value="'+age+'" '+(r.ageYears===age?"selected":"")+'>'+age+'</option>').join("")+'</select></label><label>Пол для Т-баллов<select id="cpSex"><option value="">Не выбран</option><option value="m" '+(r.sex==="m"?"selected":"")+'>Мальчик</option><option value="f" '+(r.sex==="f"?"selected":"")+'>Девочка</option></select></label></div>';
+  if(type(d)==="cdi")h+='<div class="psy-cdi-student-note psy-cdi-specialist-note"><strong>Только для психолога – ввод баллов</strong><p>Ребенок выбирает ОДНО из трех утверждений в оригинальном опроснике, а не цифру. Здесь вводятся баллы <b>0, 1 или 2</b>, соответствующие выбранному тексту по ключу. Порядок утверждений может отличаться от порядка баллов.</p></div>';
   h+='<p class="psy-mspss-progress" id="cpProgress">Заполнено '+n+' из '+total+'</p>';
   if(r.attendance==="absent")h+='<p class="psy-cp-absence">Ученик отмечен отсутствующим. Ввод заблокирован до возвращения в список присутствующих.</p>';
   h+='<div class="psy-mspss-grid psy-cp-grid">'+subjects(d).map((topic,i)=>{
