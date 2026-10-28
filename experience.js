@@ -276,7 +276,7 @@ function viewOverview(m){
  if(d.workflow==='phillips58'){
   scoringScale='<section class="psy-portfolio-scoring-scale"><h3>Шкала и обработка</h3><p><b>Общее число несовпадений: 0-58.</b> Каждый ответ сверяется с ключом. 30 и более несовпадений – свыше 50%, 44 и более – свыше 75%. Это пороги интерпретации из приложенного PDF, не медицинский диагноз.</p><div class="psy-portfolio-ruler"><span>0</span><div class="psy-portfolio-ruler-track psy-ph-ruler"></div><span>58</span></div><p>Восемь факторов подсчитываются независимо; максимумы по перечисленным пунктам: 22, 11, 12, 6, 6, 5, 5 и 8. Третий фактор в PDF ошибочно подписан как 13, но содержит 12 номеров. Показатели факторов нельзя суммировать.</p></section>';
  }
- return '<section class="psy-portfolio-reference psy-portfolio-unified"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div>'+goalHtml+indicatorHtml+scoringScale+sourceHtml+packLinks+'</section>';
+ return '<section class="psy-portfolio-reference psy-portfolio-unified"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div>'+(d.id==='cdi-27'||d.workflow==='phillips58'?indicatorHtml+scoringScale+goalHtml:goalHtml+indicatorHtml+scoringScale)+sourceHtml+packLinks+'</section>';
 }
 
 function viewInstruction(m){
