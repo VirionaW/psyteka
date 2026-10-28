@@ -54,7 +54,7 @@
  }
  function materials(){
   return '<div class="psy-common-guide-head"><h3>Лист ответов</h3><div class="psy-common-guide-actions"><a class="btn" href="downloads/phq4_student_register.html" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать</a><a class="btn primary" href="downloads/phq4_answers.docx" download>Скачать Word</a></div></div>'+'<h3>Материалы</h3><p>Регистрационный бланк А4 содержит четыре номера и шкалу 0-3. Для фактического обследования требуется <a href="'+ORIGINAL+'" target="_blank" rel="noopener noreferrer">полный авторский текст четырех пунктов</a>.</p>'+
-  '<p>Русскоязычные ориентиры в Психотеке только помогают специалисту перенести ответы:</p><ol>'+TOPICS.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ol>'+
+  '<p>Русскоязычные ориентиры в Метоларии только помогают специалисту перенести ответы:</p><ol>'+TOPICS.map(t=>'<li>'+esc(t)+'</li>').join("")+'</ol>'+
   '<p>Сверяйте порядок двух субшкал, так как в разных публикациях четыре пункта бывают расположены по-разному.</p>';
  }
  function processing(){
@@ -64,7 +64,7 @@
   '<tr><td>Общий PHQ-4</td><td>1 + 2 + 3 + 4</td><td>0-12</td></tr></tbody></table>'+
   '<p>Значения ответов: '+CHOICES.map(c=>c.join(" - ")).join("; ")+'. Обратных пунктов нет.</p>'+
   '<h3>Интерпретация</h3><p>'+esc(d.scoring)+'</p>'+
-  '<p>Для общей шкалы взрослые описательные интервалы: 0-2, 3-5, 6-8, 9-12. В Психотеке намеренно не выводятся автоматические возрастные ярлыки, диагнозы и сигналы риска для школьников.</p>'+
+  '<p>Для общей шкалы взрослые описательные интервалы: 0-2, 3-5, 6-8, 9-12. В Метоларии намеренно не выводятся автоматические возрастные ярлыки, диагнозы и сигналы риска для школьников.</p>'+
   '<div class="notice psy-phq-note">'+esc(NOTE)+'</div>'+
   '<p><a href="'+NINDS+'" target="_blank" rel="noopener noreferrer">NINDS - ключ и шкалы ↗</a> · <a href="'+YOUTH+'" target="_blank" rel="noopener noreferrer">Исследование среди детей и подростков (2026) ↗</a></p>';
  }
