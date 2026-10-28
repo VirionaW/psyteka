@@ -153,6 +153,7 @@ function setTab(name){
    }
  }
  bindControls();
+ if(DETAILS[methodNow?.name]?.workflow==='semester2026')window.PSY_SEMESTER_2026.syncFooter(DETAILS[methodNow.name],rows,rowIndex);
  if(DETAILS[methodNow?.name]?.workflow==='preschoolSheet')window.PSY_PRESCHOOL.updateFooter(DETAILS[methodNow.name],mainTab);
  if(DETAILS[methodNow?.name]?.workflow==='specialSheet')window.PSY_SPECIAL.updateFooter(DETAILS[methodNow.name],mainTab);
  if(DETAILS[methodNow?.name]?.workflow==='specialToolkit')window.PSY_SPECIAL_TOOLKIT.updateFooter(DETAILS[methodNow.name],mainTab);
@@ -830,6 +831,10 @@ function openMethod(m){
     ['transform','none']
    ])action.style.setProperty(property,value,'important');
   }
+ }
+ if(d?.workflow==='semester2026'){
+  const standard=footer.querySelector('.psy-standard-footer');
+  if(standard){standard.classList.add('psy-semester-footer');standard.insertAdjacentHTML('afterbegin','<span class="psy-semester-status is-pending" id="semesterFooterStatus">Ответы не заполнены полностью</span>');}
  }
  if(d?.guideFile&&d?.answerFile&&d?.processingFile){const buttons=footer.querySelector('#methodButtons');if(buttons)buttons.insertAdjacentHTML('afterbegin','<a class="btn" href="'+escapeHTML(d.guideFile)+'" target="_blank" rel="noopener noreferrer">Руководство А4</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк А4</a><a class="btn" href="'+escapeHTML(d.processingFile)+'" target="_blank" rel="noopener noreferrer">Обработка А4</a>'+(d.stimulusFile?'<a class="btn" href="'+escapeHTML(d.stimulusFile)+'" target="_blank" rel="noopener noreferrer">Стимулы А4</a>':''));}
  if(d?.workflow==='storycards'||d?.workflow==='ladder7'||d?.workflow==='schulte5'||d?.workflow==='familySocio110'||d?.workflow==='luria10x5'){const link=[...footer.querySelectorAll('a')].find(a=>a.textContent.includes('Первоисточник'));if(link||d?.workflow==='kfdBurns72'){link.href=d.source;link.textContent=d.workflow==='ladder7'?'Опубликованное руководство PDF ↗':'Методическое описание ↗';}}
