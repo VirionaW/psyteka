@@ -14,7 +14,7 @@ html.dark .psy-direction-welcome h2{color:#ebf4ee}html.dark .psy-direction-welco
    Не полагаемся только на [hidden], который перебивают стили hero. */
 html.psy-library-choose-only body.library-page .main > .hero,
 html.psy-library-choose-only body.library-page .main > .hero[hidden],
-html.psy-library-choose-only body.library-page .main :is(#schoolView,#preschoolView,#specialView,#pmpkView,#resourceView){
+html.psy-library-choose-only body.library-page .main:has(> .psy-direction-welcome) :is(#schoolView,#preschoolView,#specialView,#pmpkView,#resourceView){
  display:none!important;
  visibility:hidden!important;
 }
@@ -80,4 +80,10 @@ html.dark.psy-library-choose-only body.library-page .main .psy-welcome-arrow{
  html.psy-library-choose-only body.library-page .main .psy-welcome-arrow{
   transition:none!important;animation:none!important;
  }
+}
+
+/* The fallback catalog stays usable even if the welcome script fails.
+   Only hide sections once the actual welcome screen exists in the DOM. */
+html.psy-library-choose-only body.library-page .main:not(:has(> .psy-direction-welcome)) > #schoolView{
+ display:block!important;visibility:visible!important;
 }
