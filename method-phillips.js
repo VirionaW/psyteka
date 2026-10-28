@@ -43,6 +43,7 @@
  D[NAME]=DATA;
  const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const fmt=n=>Number(n).toFixed(1).replace(".",",");
+ const level=p=>p>75?"Высокий показатель по ключу":p>50?"Повышенный показатель по ключу":"50% или меньше";
  const valid=x=>x==="yes"||x==="no";
  const val=(r,i)=>r?.answers?.[i];
  function score(d,answers){
@@ -93,8 +94,8 @@
   let html='<section class="psy-ph-result"><div class="psy-ph-progress"><strong>Заполнено '+n+' из 58</strong><div class="psy-ph-track"><span style="width:'+(n/58*100)+'%"></span></div></div>';
   if(row?.attendance==="absent")return '<section class="psy-ph-result"><strong>Отсутствовал – результаты не рассчитываются</strong></section>';
   if(!z)return html+'<p>Для автоматического подсчета требуются ответы на все 58 вопросов. Пустые поля не засчитываются как «Нет».</p></section>';
-  html+='<div class="psy-ph-overall"><span>Общий показатель: несовпадения с ключом</span><b>'+z.raw+' / 58</b><strong>'+fmt(z.percent)+'%</strong></div><h3>Восемь факторов школьной тревожности</h3><div class="psy-ph-factors">'+z.scales.map(s=>
-   '<div class="psy-ph-factor"><div><span>'+esc(s.name)+'</span><b>'+s.raw+' / '+s.max+' · '+fmt(s.percent)+'%</b></div><div class="psy-ph-track"><span style="width:'+s.percent+'%"></span></div></div>').join("")+'</div>'+
+  html+='<div class="psy-ph-overall"><span>Общий показатель: несовпадения с ключом</span><b>'+z.raw+' / 58</b><strong>'+fmt(z.percent)+'%</strong><em>'+level(z.percent)+'</em></div><h3>Восемь факторов школьной тревожности</h3><div class="psy-ph-factors">'+z.scales.map(s=>
+   '<div class="psy-ph-factor"><div><span>'+esc(s.name)+'</span><b>'+s.raw+' / '+s.max+' · '+fmt(s.percent)+'%</b></div><small>'+level(s.percent)+'</small><div class="psy-ph-track"><span style="width:'+s.percent+'%"></span></div></div>').join("")+'</div>'+
    '<p class="psy-ph-small">Это показатель по опроснику, а не диагноз. Профиль оценивают в контексте беседы и наблюдений. Факторы имеют общие пункты; суммы факторов не складываются.</p></section>';
   return html;
  }
@@ -102,7 +103,10 @@
   const th=SCALES.map((s,i)=>'<th title="'+esc(s.name)+'">Ф'+(i+1)+'</th>').join("");
   const body=rows.map((r,i)=>{const z=r.attendance==="absent"?null:score(DATA,r.answers);return '<tr><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td><td>'+(r.attendance==="absent"?"Отсутствовал":z?z.raw+' / 58':'Заполнено '+count(r.answers)+'/58')+'</td><td>'+(z?fmt(z.percent)+'%':'—')+'</td>'+
    SCALES.map((s,k)=>'<td>'+(z?fmt(z.scales[k].percent)+'%':'—')+'</td>').join("")+'</tr>'}).join("");
-  return '<div class="psy-ph-scroll"><table><thead><tr><th>Код</th><th>Общий балл</th><th>%</th>'+th+'</tr></thead><tbody>'+body+'</tbody></table></div>'+
+  const validRows=rows.filter(r=>r.attendance!=="absent").map(r=>score(DATA,r.answers)).filter(Boolean);
+  const counts=SCALES.map((s,i)=>({name:s.name,raised:validRows.filter(z=>z.scales[i].percent>50).length,high:validRows.filter(z=>z.scales[i].percent>75).length}));
+  const groupSummary=validRows.length?'<h3>Сводка по классу</h3><p>Обработано '+validRows.length+' полных анкет; отсутствующие и незаполненные анкеты исключены.</p><div class="psy-ph-scroll"><table><thead><tr><th>Фактор</th><th>Выше 50%</th><th>Выше 75%</th></tr></thead><tbody>'+counts.map(x=>'<tr><td>'+esc(x.name)+'</td><td>'+x.raised+'</td><td>'+x.high+'</td></tr>').join("")+'</tbody></table></div>':'';
+  return '<div class="psy-ph-scroll"><table><thead><tr><th>Код</th><th>Общий балл</th><th>%</th>'+th+'</tr></thead><tbody>'+body+'</tbody></table></div>'+groupSummary+
   '<p class="psy-ph-small">Ф1–Ф8 — восемь факторов в том же порядке, что в разделе «Обработка». Для неполных форм числовые результаты не рассчитываются.</p>';
  }
  function calculator(d,ctx){
