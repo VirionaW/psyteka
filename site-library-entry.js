@@ -63,6 +63,18 @@
  document.body.insertAdjacentHTML("beforeend",html);
  const el=id=>document.getElementById(id);
  const dialog=el("psyEntryDialog");
+ const checkStatus=document.createElement("div");
+ checkStatus.id="psyEntryNavStatus";
+ checkStatus.className="psy-entry-nav-status";
+ checkStatus.setAttribute("role","status");
+ checkStatus.setAttribute("aria-live","polite");
+ checkStatus.textContent="Проверяю доступ к библиотеке...";
+ checkStatus.hidden=true;
+ document.body.append(checkStatus);
+ const withTimeout=(promise,ms=10000)=>new Promise((resolve,reject)=>{
+  const timeout=setTimeout(()=>reject(new Error("Проверка доступа занимает слишком много времени. Повторите попытку.")),ms);
+  Promise.resolve(promise).then(value=>{clearTimeout(timeout);resolve(value)},err=>{clearTimeout(timeout);reject(err)});
+ });
  const steps=["psyEntryEmail","psyEntryCode","psyEntryPlans","psyEntryAccess","psyEntryExpired"];
  function step(id){for(const s of steps)el(s).hidden=s!==id;el("psyEntryError").hidden=true}
  function error(text){const e=el("psyEntryError");e.textContent=text;e.hidden=!text}
@@ -110,17 +122,19 @@
  }
  async function load({direct=false}={}){
   if(opening)return;opening=true;
-  // Check the verified session and entitlement first; never flash a login dialog.
-  if(!authEnabled||!client){noSignup();show();opening=false;return}
+  checkStatus.hidden=!direct;
+  // Keep the existing entitlement check, but give clear click feedback and
+  // recover if the network or session API never answers.
+  if(!authEnabled||!client){noSignup();show();checkStatus.hidden=true;opening=false;return}
   try{
-   const {data,error:authError}=await client.auth.getUser();
+   const {data,error:authError}=await withTimeout(client.auth.getUser());
    if(authError||!data?.user||data.user.is_anonymous){currentUser=null;step("psyEntryEmail");show();return;}
    currentUser=data.user;
-   const [r,t,p]=await Promise.all([
+   const [r,t,p]=await withTimeout(Promise.all([
     client.from("psy_account_roles").select("role").eq("user_id",currentUser.id).maybeSingle(),
     client.from("psy_trial_access").select("started_at,expires_at").eq("user_id",currentUser.id).maybeSingle(),
     client.from("psy_paid_access").select("plan,expires_at").eq("user_id",currentUser.id).maybeSingle()
-   ]);
+   ]));
    if(r.error||t.error||p.error)throw new Error("Не удалось проверить права доступа.");
    role=r.data?.role||"participant";trial=t.data||null;paid=p.data||null;
    if(["owner","shadow","moderator"].includes(role)){
@@ -131,7 +145,7 @@
     el("psyEntryClock").textContent="Без ограничения";el("psyEntryGo").disabled=false;
     ownerNeedsMfa=false;
     if(role==="owner"||role==="shadow"){
-     const {data:aal,error:aalError}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
+     const {data:aal,error:aalError}=await withTimeout(client.auth.mfa.getAuthenticatorAssuranceLevel());
      if(aalError||aal?.currentLevel!=="aal2"){
       ownerNeedsMfa=true;
       el("psyEntryAccessName").textContent=role==="shadow"?"Резервный доступ «Тень»":"Доступ владельца";
@@ -163,7 +177,7 @@
    }
    show();
   }catch(ex){step("psyEntryEmail");show();error(ex?.message||"Не удалось проверить вход. Попробуйте еще раз.")}
-  finally{opening=false}
+  finally{opening=false;checkStatus.hidden=true}
  }
  const badge=document.createElement("span");badge.id="psyHomeTrial";badge.className="psy-entry-pill";badge.hidden=true;
  const homeNav=root.querySelector(".site-header nav");if(homeNav)homeNav.prepend(badge);
