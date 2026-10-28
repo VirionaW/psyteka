@@ -117,12 +117,18 @@
    if(proposed.length>300||proposed.some(s=>s.length>40)){message("Не более 300 кодов длиной до 40 символов за раз.");return;}
    const existing=new Set(ctx.rows.map(r=>(r.name||"").toLocaleLowerCase("ru")));
    let added=0;
+   let emptyFirst=ctx.rows.length===1&&!ctx.rows[0].name?.trim()&&
+      ctx.rows[0].attendance!=="absent"&&answered(ctx.rows[0].answers,max)===0;
+   let firstIndex=-1;
    for(const code of proposed){
     if(existing.has(code.toLocaleLowerCase("ru")))continue;
-    existing.add(code.toLocaleLowerCase("ru"));ctx.rows.push({name:code,answers:[],attendance:"present"});added++;
+    existing.add(code.toLocaleLowerCase("ru"));
+    if(emptyFirst){ctx.rows[0].name=code;ctx.rows[0].attendance="present";emptyFirst=false;if(firstIndex<0)firstIndex=0;}
+    else{ctx.rows.push({name:code,answers:[],attendance:"present"});if(firstIndex<0)firstIndex=ctx.rows.length-1;}
+    added++;
    }
    if(!added){message("Такие коды уже есть в списке.");return;}
-   ctx.selectRow(ctx.rows.length-added);
+   ctx.selectRow(firstIndex);
   });
  }
  window.PSY_CLASS_ENTRY_2026={enhance,bind};
