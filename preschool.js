@@ -30,7 +30,7 @@
  const reuse=[
   {group:"Диагностика",topic:"Самооценка",title:"Лесенка",age:"5-7",goal:"Изучение представлений ребенка о себе в рамках выбранной редакции методики.",existing:"Лесенка"},
   {group:"Диагностика",topic:"Готовность к школе",title:"Графический диктант",age:"6-7",goal:"Оценка выполнения графической инструкции в условиях конкретной версии методики.",existing:"Графический диктант"},
-  {group:"Диагностика",topic:"Мышление",title:"Методика классификации предметов",age:"5-7",goal:"Используйте только доступный комплект Психотеки с указанными ограничениями.",existing:"Методика классификации предметов"}
+  {group:"Диагностика",topic:"Мышление",title:"Методика классификации предметов",age:"5-7",goal:"Используйте только доступный комплект Метоларии с указанными ограничениями.",existing:"Методика классификации предметов"}
  ];
 
  const portfolioDetails={
@@ -75,7 +75,7 @@
  const data=subjects.concat(reuse,verified,window.PSY_PMPK_SOURCED?.preschool||[],window.PSY_PMPK_PIERON?.preschool||[],window.PSY_PMPK_OBJECT56?.catalog||[]).map((m,i)=>Object.assign({
   id:"preschool-"+String(i+1).padStart(2,"0"),
   format:m.existing?"Диагностическая методика":m.group==="Диагностика"?"Карта наблюдения / протокол":"Рабочий материал",
-  author:m.existing?"":"Психотека"
+  author:m.existing?"":"Метолария"
  },m));
  const detailById=new Map(data.filter(m=>!m.existing).map(m=>[m.id,m]));
  // Все 21 рабочие записи ДОУ должны иметь портфолио, а не пустую вкладку.
@@ -95,7 +95,7 @@
  for(const m of detailById.values()){
   if(m.verified){window.PSY_FULL_METHODS[m.title]={workflow:"preschoolSheet",preschoolId:m.id,verified:true,verifiedKey:m.verifiedKey,portfolioFilled:true,author:m.author,age:m.age+" лет",kind:m.format,goal:m.goal,count:m.verifiedKey==="mittens"?"5 критериев":"3 выбора",source:m.source,calculator:true};continue;}
   window.PSY_FULL_METHODS[m.title]={
-   workflow:"preschoolSheet",preschoolId:m.id,author:"Психотека",age:m.age+" лет",portfolioFilled:!!m.detailed,
+   workflow:"preschoolSheet",preschoolId:m.id,author:"Метолария",age:m.age+" лет",portfolioFilled:!!m.detailed,
    kind:m.format,goal:m.goal,count:m.items.length+" наблюдаемых пунктов",
    indicators:m.items.slice(0,5),indicatorsTitle:"Области наблюдения и работы",
    calculator:true,scoring:"Описательная регистрация без баллов и нормативных порогов.",
@@ -170,7 +170,7 @@
   if(d.verified)return window.PSY_PRESCHOOL_VERIFIED.profile(d);
   const m=detailById.get(d.preschoolId),p=m?.detailed;
   if(!m||!p)return "";
-  const rows=[["Материал",m.title],["Составитель","Психотека"],["Возраст",m.age+" лет"],["Вид",p.format],["Количество пунктов",String(m.items.length)],["Заполняет",m.audience]];
+  const rows=[["Материал",m.title],["Составитель","Метолария"],["Возраст",m.age+" лет"],["Вид",p.format],["Количество пунктов",String(m.items.length)],["Заполняет",m.audience]];
   const fields=rows.map(([label,value])=>'<div class="psy-profile-row"><strong>'+esc(label)+'</strong><span>'+esc(value)+'</span></div>').join("");
   const indicators=p.indicators.map(value=>'<div class="psy-profile-indicator"><span>'+esc(value)+'</span></div>').join("");
   return '<section class="psy-portfolio-reference psy-portfolio-unified">'+

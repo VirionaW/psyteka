@@ -65,7 +65,7 @@
     specialist.disabled=false;
     specialist.removeAttribute("aria-disabled");
     specialist.textContent="Оформить на 1 месяц";
-    message("Оплата будет открываться у платежного провайдера. На Психотеке не нужно вводить данные карты.");
+    message("Оплата будет открываться у платежного провайдера. На Метоларии не нужно вводить данные карты.");
    }else{
     specialist.disabled=false;
     specialist.removeAttribute("aria-disabled");
