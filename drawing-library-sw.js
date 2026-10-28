@@ -1,4 +1,4 @@
-/* Психотека: автономная библиотека рисунков и официальные логотипы. */
+/* Метолария: автономная библиотека рисунков и официальные логотипы. */
 "use strict";
 const CACHE = "psyteka-drawing-library-v2";
 const fileUrl = name => new URL("./" + name, self.location.href).href;

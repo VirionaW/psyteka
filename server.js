@@ -54,7 +54,7 @@ function response(res,status,body,type){
 function page(next,error){
  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
  '<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#285748">'+
- '<title>Доступ в Психотеку</title><style>'+
+ '<title>Доступ в Метоларию</title><style>'+
  '*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:25px 16px;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#253c31;background:radial-gradient(ellipse at 12% 2%,#e7eee4,transparent 48%),radial-gradient(ellipse at 95% 100%,#eee5d8,transparent 44%),#faf9f5}'+
  'main{max-width:455px;width:100%;padding:38px;background:#fffefa;border:1px solid #dce2d9;border-radius:25px;box-shadow:0 18px 58px #17382915;text-align:center}'+
  '.mark{width:70px;height:70px;display:grid;place-items:center;margin:auto auto 12px;border-radius:22px;color:#285748;background:#e7f0e9;font-size:38px}'+
@@ -63,13 +63,13 @@ function page(next,error){
  'input{width:100%;height:54px;padding:0 14px;border:1.5px solid #c8d7cb;background:#fff;border-radius:12px;color:#253c31;font-size:17px;outline:none}input:focus{border-color:#3b745d;box-shadow:0 0 0 3px #e0eee4}'+
  'button{width:100%;margin-top:12px;min-height:53px;background:#285748;border:0;border-radius:12px;color:white;font-weight:750;font-size:15px;cursor:pointer}button:hover{background:#1e4338}button:focus-visible{outline:3px solid #a8cfb4;outline-offset:3px}'+
  '.error{min-height:23px;font-size:13px;color:#ae4039;margin:8px 0 0}.foot{color:#89958b;margin:23px 0 0;font-size:12px}@media(max-width:530px){main{padding:29px 23px}h1{font-size:28px}}'+
- '</style></head><body><main><div class="mark" aria-hidden="true">✧</div><div class="brand">Психотека</div>'+
+ '</style></head><body><main><div class="mark" aria-hidden="true">✧</div><div class="brand">Метолария</div>'+
  '<span class="tag">ЗАКРЫТАЯ ВЕРСИЯ САЙТА</span><h1>Доступ по коду</h1>'+
  '<p>Введите код, чтобы открыть методическую библиотеку.</p>'+
  '<form action="/__psy_login" method="post"><input type="hidden" name="next" value="'+escapeHtml(next)+'">'+
  '<label for="code">Код доступа</label><input id="code" type="password" name="code" autocomplete="off" spellcheck="false" autocapitalize="none" maxlength="100" required autofocus>'+
  '<div class="error" role="status" aria-live="polite">'+escapeHtml(error||"")+'</div>'+
- '<button type="submit">Войти в Психотеку</button></form>'+
+ '<button type="submit">Войти в Метоларию</button></form>'+
  '<p class="foot">Если у вас нет кода, обратитесь к владельцу проекта.</p></main></body></html>';
 }
 function recentAttempts(key){
