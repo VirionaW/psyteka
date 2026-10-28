@@ -204,3 +204,9 @@ body.site-landing{background:#f7faf6;color:#173e31}
  .site-logo .psy-wordmark{font-size:19px!important}
  .library-page .brand .psy-wordmark{font-size:21px!important}
 }
+
+/* Метолария: единый акцент для названия, не для обычного текста. */
+.psy-brand-name-first{color:#28534a}
+.psy-brand-name-last{color:#81715e}
+html.dark .psy-brand-name-first{color:#e9f5ed}
+html.dark .psy-brand-name-last{color:#ddc8aa}

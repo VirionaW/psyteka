@@ -25,3 +25,9 @@ html.dark #psy-preview-gate h1,html.dark #psy-preview-gate .psy-gate-brand{color
 html.dark #psy-preview-gate .psy-gate-description,html.dark #psy-preview-gate .psy-gate-note{color:#bbc9bd}
 html.dark #psy-preview-gate .psy-gate-mark{background:#304b3e}
 @media(max-width:520px){#psy-preview-gate .psy-gate-card{padding:28px 22px 26px;border-radius:20px}}
+
+/* Двухцветное название на экране доступа: Мето / лария. */
+#psy-preview-gate .psy-gate-brand .psy-brand-name-first{color:#28534a}
+#psy-preview-gate .psy-gate-brand .psy-brand-name-last{color:#81715e}
+html.dark #psy-preview-gate .psy-gate-brand .psy-brand-name-first{color:#e9f5ed}
+html.dark #psy-preview-gate .psy-gate-brand .psy-brand-name-last{color:#ddc8aa}
