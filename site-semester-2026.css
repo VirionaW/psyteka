@@ -45,3 +45,56 @@
 .psy-semester-status.is-skipped{background:#efefed;border-color:#b7b8b4;color:#4c514e}
 .psy-ph-grid select:focus-visible,.psy-semester-grid select:focus-visible{outline:3px solid #d1a45e;outline-offset:3px}
 @media(max-width:720px){.psy-entry-roster{padding:11px}.psy-entry-roster-actions .btn{flex:1 1 145px}.psy-entry-roster-head{display:block}}
+
+
+/* CDI и Филлипс: единая обработка по удобному шаблону MSPSS */
+.library-page #modal .psy-semester-grid .psy-semester-item,
+.library-page #modal .psy-ph-grid .psy-ph-item{background:#fff2de;border:1px solid #efbb6c;min-height:98px}
+.library-page #modal .psy-semester-grid input[data-sanswer],
+.library-page #modal .psy-ph-grid input[data-ph-answer]{
+ display:block;width:116px;max-width:100%;height:52px;margin-top:auto;
+ box-sizing:border-box;background:var(--paper,#fff);border:2px solid #e6b05d;
+ border-radius:12px;text-align:center;color:var(--ink,#183e30);
+ font:800 22px/1.3 system-ui,-apple-system,sans-serif;outline:none
+}
+.library-page #modal .psy-semester-grid input[data-sanswer]:focus,
+.library-page #modal .psy-ph-grid input[data-ph-answer]:focus{
+ border-color:#cf9844;box-shadow:0 0 0 3px rgba(224,173,89,.26)
+}
+.library-page #modal .psy-cdi-note{background:var(--soft,#edf5ef);padding:12px 14px;border-radius:11px;line-height:1.5;margin:13px 0}
+.library-page #modal .psy-cdi-demographics{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin:14px 0 18px}
+.library-page #modal .psy-cdi-demographics label{font-weight:700;display:grid;gap:7px;flex:0 1 280px}
+.library-page #modal .psy-cdi-demographics select{width:100%;min-height:44px;border:1px solid var(--line,#bfd0c4);border-radius:10px;background:var(--paper,#fff);color:var(--ink,#193e2c);padding:8px;font:inherit}
+.library-page #modal .psy-cdi-overall{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0}
+.library-page #modal .psy-cdi-overall>div{display:grid;gap:5px;background:var(--soft,#f2f7f4);border:1px solid var(--line,#c6d7ca);padding:15px 22px;border-radius:13px;min-width:160px}
+.library-page #modal .psy-cdi-overall span{font-size:.88rem;color:var(--muted,#536a5a)}
+.library-page #modal .psy-cdi-overall strong{font-size:1.8rem;color:var(--green,#267a52)}
+.library-page #modal .psy-cdi-scale{height:13px;border-radius:999px;background:#dce4de;overflow:hidden;margin:10px 0}
+.library-page #modal .psy-cdi-scale>span{display:block;height:100%;background:#49896a;border-radius:999px}
+.library-page #modal .psy-cdi-context{font-weight:650;line-height:1.6}
+.library-page #modal .psy-cdi-safety{background:#fff0e2;border:1px solid #d98a4d;padding:14px;border-radius:12px;color:#774020;font-weight:700;line-height:1.5}
+.library-page #modal .psy-portfolio-scoring-scale{margin:18px 0 0}
+.library-page #modal .psy-portfolio-scoring-scale p{line-height:1.65;font-size:16px}
+.library-page #modal .psy-portfolio-ruler{display:flex;align-items:center;gap:9px;margin:12px 0;font-weight:750}
+.library-page #modal .psy-portfolio-ruler-track{height:15px;border-radius:9px;flex:1;background:linear-gradient(90deg,#a7cdb5,#e6b56c)}
+.library-page #modal .psy-portfolio-ruler-track.psy-ph-ruler{background:linear-gradient(90deg,#a7cdb5 0 50%,#efbd6b 50% 75%,#d88a75 75% 100%)}
+/* Статус заполнения остается слева, зеленая кнопка обработки справа, без перекрытия. */
+.library-page #modal .modalfoot .psy-standard-footer.psy-semester-footer{justify-content:space-between!important;gap:14px!important;position:relative}
+.library-page #modal.psy-main-tabs .modalfoot .psy-standard-footer.psy-semester-footer .psy-semester-status{position:absolute;left:0;top:50%;transform:translateY(-50%);max-width:calc(100% - 285px);font-size:12px;z-index:1}
+.library-page #modal.psy-main-tabs .modalfoot .psy-standard-footer.psy-semester-footer #bottomProcessing{z-index:2}
+.library-page #modal .psy-class-scoring-layout{display:grid;grid-template-columns:minmax(238px,310px) minmax(0,1fr);align-items:start;gap:16px;margin-top:16px}
+.library-page #modal .psy-class-scoring-layout .psy-entry-roster{margin:0;position:sticky;top:5px}
+.library-page #modal .psy-class-scoring-layout .psy-semester-grid,
+.library-page #modal .psy-class-scoring-layout .psy-ph-grid{margin:0}
+.library-page #modal .psy-class-scoring-layout .psy-ph-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+html.dark .library-page #modal .psy-semester-grid .psy-semester-item,
+html.dark .library-page #modal .psy-ph-grid .psy-ph-item{background:#453928;border-color:#a87b42;color:#f3e7d2}
+html.dark .library-page #modal .psy-cdi-note{color:var(--ink)}
+@media(max-width:920px){.library-page #modal .psy-class-scoring-layout{grid-template-columns:1fr}.library-page #modal .psy-class-scoring-layout .psy-entry-roster{position:static}}
+@media(max-width:640px){
+ .library-page #modal .psy-cdi-demographics label{flex:1 1 100%}
+ .library-page #modal .psy-semester-grid,.library-page #modal .psy-ph-grid{grid-template-columns:1fr 1fr}
+ .library-page #modal .psy-cdi-overall>div{flex:1 1 120px}
+ .library-page #modal.psy-main-tabs .modalfoot .psy-standard-footer.psy-semester-footer .psy-semester-status{max-width:calc(100% - 205px);font-size:11px;padding:5px}
+ .library-page #modal .psy-portfolio-scoring-scale p{font-size:14px}
+}
