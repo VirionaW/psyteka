@@ -264,7 +264,8 @@ function viewOverview(m){
 }
 
 function viewInstruction(m){
- if(DETAILS[m.name]?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.instruction(DETAILS[m.name]);
+ if(DETAILS[m.name]?.workflow==='semester2026')return window.PSY_SEMESTER_2026.instruction(DETAILS[m.name]);
+  if(DETAILS[m.name]?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialToolkit')return window.PSY_SPECIAL_TOOLKIT.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialSheet')return window.PSY_SPECIAL.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='preschoolSheet')return window.PSY_PRESCHOOL.instruction(DETAILS[m.name]);
@@ -400,6 +401,7 @@ function materials(m,blank){
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
 function viewMaterials(m){
+ if(DETAILS[m.name]?.workflow==='semester2026')return window.PSY_SEMESTER_2026.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialToolkit')return window.PSY_SPECIAL_TOOLKIT.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialSheet')return window.PSY_SPECIAL.materials(DETAILS[m.name]);
@@ -433,6 +435,7 @@ function viewMaterials(m){
  return '<h3>Стимульный материал и бланк</h3>'+materials(m,false)+(d.questions?.length && d.graphic ? '<h3>Протокол беседы</h3><table class="questions-table"><thead><tr><th>№</th><th>Вопрос психолога</th><th>Ответ / наблюдение</th></tr></thead><tbody>'+d.questions.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHTML(q)+'</td><td>________________</td></tr>').join('')+'</tbody></table>':"");
 }
 function viewProcessing(m){
+ if(DETAILS[m.name]?.workflow==='semester2026')return window.PSY_SEMESTER_2026.processing(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.processing(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialToolkit')return window.PSY_SPECIAL_TOOLKIT.calculator(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialSheet')return window.PSY_SPECIAL.calculator(DETAILS[m.name]);
@@ -469,6 +472,7 @@ function viewProcessing(m){
  return '<h3>Подсчет / фиксация</h3><p>'+escapeHTML(d.scoring)+'</p><h3>Интерпретация</h3><p>'+escapeHTML(d.interpret)+'</p>'+(d.source?'<p>Источник: <a target="_blank" rel="noopener noreferrer" href="'+escapeHTML(d.source)+'">'+escapeHTML(d.source)+'</a></p>':'');
 }
 function getScores(d,answers){
+ if(d?.workflow==='semester2026')return window.PSY_SEMESTER_2026.score(d,answers,rows[rowIndex]);
  if(d?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.score(d,answers);
  if(d?.workflow==='objectClass16')return window.PSY_OBJECT_CLASSIFY.score(d,answers);
  if(d?.workflow==='schoolDrawingL')return window.PSY_SCHOOL_DRAWING.score(d,answers);
@@ -512,6 +516,7 @@ function getScores(d,answers){
  return {raw,index:null,max:n*(d.options.length-1),caption:'Сырая сумма'};
 }
 function viewCalculator(m){
+ if(DETAILS[m.name]?.workflow==='semester2026')return window.PSY_SEMESTER_2026.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  if(DETAILS[m.name]?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.calculator(DETAILS[m.name],{rows,rowIndex,calcMode});
  if(DETAILS[m.name]?.workflow==='specialToolkit')return window.PSY_SPECIAL_TOOLKIT.calculator(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialSheet')return window.PSY_SPECIAL.calculator(DETAILS[m.name]);
@@ -573,6 +578,7 @@ function viewCalculator(m){
  return head+'<div class="notice">Ответы вводятся цифрами от 0 до '+(d.options.length-1)+'. После ввода курсор переходит к следующему полю.</div>'+qhtml+results+'<div class="class-actions"><button class="btn" id="resetParticipant">Сбросить ответы участника</button></div>';
 }
 function bindControls(){
+ if(DETAILS[methodNow?.name]?.workflow==='semester2026')window.PSY_SEMESTER_2026.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode,rerender:()=>setTab('score')});
  if(DETAILS[methodNow?.name]?.workflow==='verifiedSix')window.PSY_REQUESTED_SIX.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  if(DETAILS[methodNow?.name]?.workflow==='specialToolkit'){window.PSY_SPECIAL_TOOLKIT.bind(DETAILS[methodNow.name]);return;}
  if(DETAILS[methodNow?.name]?.workflow==='specialSheet'){window.PSY_SPECIAL.bind(DETAILS[methodNow.name]);return;}
@@ -738,6 +744,7 @@ function exportGroup(d){
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Метолария_результаты.csv';a.click();URL.revokeObjectURL(url);
 }
 function makePrintPage(d,blank,combined=false){
+ if(d?.workflow==='semester2026')return window.PSY_SEMESTER_2026.printPage(d,blank,combined);
  if(d?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.printPage(d,blank,combined,rows[rowIndex]);
  const css='@page{size:A4 portrait;margin:15mm}*{box-sizing:border-box}body{font:11pt/1.45 Arial,sans-serif;color:#233a2f}h1{font-size:19pt;margin:0 0 9px}h2{font-size:13pt;margin:20px 0 7px}p{margin:8px 0}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #8da998;padding:7px;vertical-align:top;font-size:9pt;overflow-wrap:anywhere}tr{break-inside:avoid}svg{max-width:100%;height:auto}.drawing-space{min-height:500px;border:1px solid #9eb9a7}.print-student{break-before:page;page-break-before:always}.print-note{font-size:9pt;color:#526b5d}button,.actions,.toolbar,.print-links{display:none!important}';
  const head='<html lang="ru"><head><meta charset="utf-8"><title>'+escapeHTML(methodNow?.name||'Материалы специалиста')+'</title><style>'+css+'</style></head><body>';
