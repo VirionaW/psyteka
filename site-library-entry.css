@@ -80,3 +80,31 @@ html.dark .psy-entry-nav-status{
  background:#253d30;color:#eff7ee;border-color:#58735d;
 }
 @media(prefers-reduced-motion:reduce){.psy-entry-nav-status:before{animation:none}}
+
+
+/* OTP request and verification states. */
+#psyEntryDialog .psy-entry-email{
+ margin:-10px 0 20px;
+ color:#2e674b;font-weight:800;
+ font-size:14px;overflow-wrap:anywhere;
+}
+#psyEntryDialog .psy-entry-code-actions{
+ display:flex;flex-wrap:wrap;gap:8px;margin-top:15px;
+}
+#psyEntryDialog .psy-entry-code-actions .psy-entry-btn{
+ min-height:40px;padding:8px 11px;
+}
+#psyEntryDialog .psy-entry-code-actions .psy-entry-btn:disabled{
+ opacity:.5;cursor:wait;
+}
+#psyEntryDialog .psy-entry-step .psy-entry-lead[role="status"]{
+ min-height:44px;
+}
+html.dark #psyEntryDialog .psy-entry-email{
+ color:#c6e2ce;
+}
+@media(max-width:520px){
+ #psyEntryDialog .psy-entry-code-actions{
+  flex-direction:column;align-items:stretch;
+ }
+}
