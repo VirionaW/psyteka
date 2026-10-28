@@ -320,13 +320,25 @@
    '<p class="psy-mspss-small">Печатный текст полного опросника берется из предоставленного PDF. Данный онлайн-комплект представляет регистрационный бланк и расчет, а не новую авторскую редакцию стимулов.</p></section>';
  }
  function materials(d){
-  const isCDI=type(d)==="cdi",options=isCDI?["0","1","2"]:["Нет","Да"];
-  return '<section class="psy-mspss-section psy-mspss-student"><div class="psy-mspss-blank-head"><div><h3>Бланк ученика</h3><p>Регистрация ответов по исходным номерам вопросов.</p></div><button class="btn primary psy-mspss-view" type="button" data-cp-print="blank">Посмотреть и распечатать</button></div>'+
-   '<p><strong>Инструкция.</strong> '+(isCDI?"Выбери одно из трех утверждений в каждом пункте бланка PDF. Записывается балл 0, 1 или 2, указанный возле выбранного текста.":"Для каждого вопроса оригинального PDF отметь «Да» или «Нет».")+'</p>'+
-   '<div class="psy-mspss-rating">'+options.map((o,i)=>'<div><strong>'+i+'</strong><span>'+(isCDI?"Балл "+o:o)+'</span></div>').join("")+'</div>'+
+  const isCDI=type(d)==="cdi";
+  if(isCDI){
+   const positions=["Первое","Второе","Третье"];
+   return '<section class="psy-mspss-section psy-mspss-student"><div class="psy-mspss-blank-head">'+
+    '<div><h3>Лист ответов ученика</h3><p>Только вместе с полным текстом оригинальной CDI из проверенного бланка.</p></div>'+
+    '<button class="btn primary psy-mspss-view" type="button" data-cp-print="blank">Посмотреть и распечатать</button></div>'+
+    '<div class="psy-cdi-student-note"><strong>Инструкция ученику</strong><p>Перед тобой 27 групп по три утверждения. Внимательно прочитай каждую группу в полном бланке опросника. Выбери ОДНО утверждение, которое лучше всего описывает твое самочувствие за последние две недели, и отметь, какое оно по порядку – первое, второе или третье. Здесь нет правильных и неправильных ответов.</p></div>'+
+    '<p class="psy-mspss-small"><b>Важно:</b> здесь не напечатаны сами утверждения, поэтому этот лист не является самостоятельным опросником. Числа 1, 2 и 3 означают только порядок утверждений, а НЕ баллы 0, 1 и 2. Баллы переносит психолог по ключу оригинального бланка.</p>'+
+    '<div class="psy-mspss-blank-scroll"><table class="psy-mspss-blank-table psy-cdi-student-table">'+
+    '<thead><tr><th>№</th><th>Первое</th><th>Второе</th><th>Третье</th></tr></thead><tbody>'+
+    Array.from({length:27},(_,i)=>'<tr><td>'+(i+1)+'</td>'+positions.map(()=>'<td class="psy-mspss-answer-cell">○</td>').join("")+'</tr>').join("")+
+    '</tbody></table></div></section>';
+  }
+  const options=["Нет","Да"];
+  return '<section class="psy-mspss-section psy-mspss-student"><div class="psy-mspss-blank-head"><div><h3>Лист ответов ученика</h3><p>Используется вместе с полным текстом 58 вопросов исходного PDF.</p></div><button class="btn primary psy-mspss-view" type="button" data-cp-print="blank">Посмотреть и распечатать</button></div>'+
+   '<p><strong>Инструкция:</strong> прочитай каждый вопрос в полном опроснике и отметь «Да» или «Нет».</p>'+
    '<div class="psy-mspss-blank-scroll"><table class="psy-mspss-blank-table"><thead><tr><th>№</th><th>Тема пункта</th>'+options.map(x=>'<th>'+esc(x)+'</th>').join("")+'</tr></thead><tbody>'+
-   subjects(d).map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(q)+'</td>'+options.map(()=>'<td class="psy-mspss-answer-cell"></td>').join("")+'</tr>').join("")+'</tbody></table></div>'+
-   '<p class="psy-mspss-small">Для стандартизованного обследования используйте полный текст оригинального PDF. Здесь представлены только краткие темы для регистрации ответов.</p></section>';
+   subjects(d).map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(q)+'</td>'+options.map(()=>'<td class="psy-mspss-answer-cell">○</td>').join("")+'</tr>').join("")+'</tbody></table></div>'+
+   '<p class="psy-mspss-small">Краткая тема не заменяет текст вопроса. Для обследования используйте полную проверенную редакцию.</p></section>';
  }
  function printable(d,mode){
   const source=type(d)==="cdi"?"Предоставленный 8-страничный PDF CDI, 27 пунктов":"Предоставленный PDF Гребень (2007), 58 пунктов";
