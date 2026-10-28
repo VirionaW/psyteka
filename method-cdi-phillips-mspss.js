@@ -83,7 +83,7 @@
    return '<label class="psy-mspss-item '+(complete?"is-complete":"is-missing")+'"><span><b>'+(i+1)+'.</b> '+esc(topic)+'</span>'+
     '<input class="psy-mspss-score-input psy-cp-answer" data-cp-answer="'+i+'" type="text" inputmode="numeric" autocomplete="off" maxlength="1" placeholder="'+(type(d)==="cdi"?"0-2":"0-1")+'" aria-label="Пункт '+(i+1)+' – балл" value="'+esc(answer)+'" '+(r.attendance==="absent"?"disabled":"")+'></label>';
   }).join("")+'</div>';
-  if(ctx.calcMode==="class")h+='<div class="psy-mspss-after-questions psy-cp-next-actions"><button type="button" class="btn" id="cpAbsent">'+(r.attendance==="absent"?"Вернуть в список присутствующих":"Отсутствовал")+'</button><button type="button" class="btn primary" id="cpNext">Следующий участник →</button></div>';
+  if(ctx.calcMode==="class")h+='<div class="psy-mspss-after-questions psy-cp-next-actions"><button type="button" class="btn" id="cpAbsent">'+(r.attendance==="absent"?"Вернуть в список присутствующих":"Отсутствовал – следующий")+'</button><button type="button" class="btn primary" id="cpNext" '+(rows.slice(ctx.rowIndex+1).some(x=>x.attendance!=="absent")?"":"disabled")+' >Следующий участник →</button></div>';
   h+='<div id="cpResult">'+result(d,r)+'</div></div>';
   if(ctx.calcMode==="class")h+='</div><div id="cpGroup">'+group(d,rows)+'</div>';
   return h+'</section>';
@@ -162,7 +162,7 @@
   document.getElementById("cpAbsent")?.addEventListener("click",()=>{
    if(r.attendance==="absent"){r.attendance="present";ctx.onRender?.();return;}
    if(done(d,r.answers)>0&&!confirm("У ученика есть ответы. Отметить отсутствующим, сохранив ответы, но исключив их из подсчета?"))return;
-   r.attendance="absent";ctx.onRender?.();
+   r.attendance="absent";(ctx.onAbsentNext||ctx.onRender)?.();
   });
   document.getElementById("cpNext")?.addEventListener("click",()=>ctx.onNext?.());
   const inputs=[...document.querySelectorAll("input[data-cp-answer]")];
