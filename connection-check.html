@@ -64,7 +64,7 @@ footer{margin:22px 0;font-size:12px;color:#607969}
  let reports={};
  try{reports=JSON.parse(localStorage.getItem(key)||"{}")||{}}catch(_){}
  let busy=false;
- async function once(url,mode){
+ async function once(url,mode,kind){
   const abort=new AbortController();
   const timer=setTimeout(()=>abort.abort(),12500);
   const begin=performance.now();
@@ -75,17 +75,18 @@ footer{margin:22px 0;font-size:12px;color:#607969}
    const ms=Math.round(performance.now()-begin);
    if(r.type==="opaque")return {status:"warn",text:"Есть сетевой ответ ("+ms+" мс)",detail:"Статус сервера не виден"};
    if(r.ok)return {status:"good",text:"Доступно · HTTP "+r.status,detail:ms+" мс"};
+   if(kind==="auth"&&(r.status===401||r.status===403))return {status:"good",text:"Сервер отвечает · HTTP "+r.status,detail:"Без авторизационного ключа · "+ms+" мс"};
    return {status:r.status>=500?"bad":"warn",text:"HTTP "+r.status,detail:ms+" мс"};
   }catch(e){return {status:"bad",text:"Нет соединения",detail:e?.name==="AbortError"?"Тайм-аут 12,5 сек.":"Ошибка сети или CORS"}}
   finally{clearTimeout(timer)}
  }
  async function check(task){
-  if(task.key!=="cdn"&&task.key!=="auth")return once(task.url);
+  if(task.key!=="cdn"&&task.key!=="auth")return once(task.url,null,task.key);
   // When cross-origin restrictions prevent reading HTTP status, test basic
   // reachability separately. An opaque response is only a transport signal.
-  const first=await once(task.url,"cors");
+  const first=await once(task.url,"cors",task.key);
   if(first.status!=="bad")return first;
-  return once(task.url,"no-cors");
+  return once(task.url,"no-cors",task.key);
  }
  function node(task){
   const wrap=document.createElement("div");wrap.className="test";
