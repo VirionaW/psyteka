@@ -32,6 +32,11 @@
    '<div class="psy-entry-roster-msg" id="psyRosterMessage" role="status" aria-live="polite"></div>'+
    '</section>';
   target.insertAdjacentHTML("afterend",html);
+  const roster=document.querySelector(".psy-entry-roster");
+  if(roster&&grid.parentNode&&document.createElement){
+   const layout=document.createElement("div");layout.className="psy-class-scoring-layout";
+   grid.parentNode.insertBefore(layout,grid);layout.appendChild(roster);layout.appendChild(grid);
+  }
   const select=document.getElementById("participantSelect");
   if(select)Array.from(select.options).forEach((o,i)=>{if(ctx.rows[i]?.attendance==="absent")o.textContent+=" (отсутствует)"});
   if(status){grid.querySelectorAll("select, input").forEach(e=>e.disabled=true);grid.classList.add("psy-entry-disabled");}
