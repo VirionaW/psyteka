@@ -191,3 +191,35 @@ html.dark .library-page #modal.psy-mspss-example .psy-cp-scales>div strong{color
  .library-page #modal.psy-mspss-example .psy-cp-demographics label{max-width:none;flex:1 1 100%}
  .library-page #modal.psy-mspss-example .psy-cp-next-actions .btn{flex:1 1 130px}
 }
+
+
+/* CDI child answer sheet and specialist-only coded response input */
+.library-page #modal.psy-mspss-example .psy-cdi-student-note{
+ padding:15px 18px;margin:15px 0 19px;
+ border:1px solid var(--line,#bbd0c1);
+ border-left:4px solid var(--green,#267c5a);
+ border-radius:11px;background:var(--soft,#edf5ef);color:var(--ink,#1e3e30);
+ line-height:1.65
+}
+.library-page #modal.psy-mspss-example .psy-cdi-student-note strong{
+ display:block;font-size:17px;margin-bottom:7px;color:var(--green,#27794f)
+}
+.library-page #modal.psy-mspss-example .psy-cdi-student-note p{margin:0;line-height:1.65}
+.library-page #modal.psy-mspss-example .psy-cdi-student-table{
+ width:100%;max-width:740px;margin-inline:auto;border-collapse:collapse
+}
+.library-page #modal.psy-mspss-example .psy-cdi-student-table th:not(:first-child),
+.library-page #modal.psy-mspss-example .psy-cdi-student-table td:not(:first-child){
+ text-align:center;min-width:75px;font-size:18px
+}
+.library-page #modal.psy-mspss-example .psy-cdi-student-table .psy-mspss-answer-cell{font-size:22px}
+.library-page #modal.psy-mspss-example .psy-cdi-specialist-note{margin:5px 0 17px}
+.library-page #modal.psy-mspss-example .psy-cdi-single-result .psy-mspss-mean{color:var(--green,#267c5a)}
+.library-page #modal.psy-mspss-example .psy-cdi-single-result>.psy-mspss-track{max-width:100%;margin:16px 0}
+@media(max-width:560px){
+ .library-page #modal.psy-mspss-example .psy-cdi-student-table th:not(:first-child),
+ .library-page #modal.psy-mspss-example .psy-cdi-student-table td:not(:first-child){
+  min-width:60px;padding:7px 4px
+ }
+ .library-page #modal.psy-mspss-example .psy-cdi-student-note{padding:12px}
+}
