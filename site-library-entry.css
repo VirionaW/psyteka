@@ -51,3 +51,32 @@ html.dark #psyEntryDialog .psy-entry-btn.secondary{background:#294636;border-col
 html.dark #psyEntryDialog .psy-entry-notice{background:#443925;border-color:#655039;color:#f1deaf}
 @media(max-width:640px){#psyEntryDialog{width:calc(100vw - 20px);max-height:96vh;border-radius:17px}.psy-entry-inner{padding:22px}.psy-entry-actions{flex-direction:column}}
 @media(prefers-reduced-motion:reduce){#psyEntryDialog::backdrop{backdrop-filter:none}}
+
+
+/* Visible, nonblocking response to library navigation from the home page. */
+.psy-entry-nav-status{
+ position:fixed;
+ left:50%;bottom:clamp(18px,4vh,36px);
+ transform:translateX(-50%);
+ z-index:10000;
+ display:flex;align-items:center;justify-content:center;gap:11px;
+ max-width:min(calc(100vw - 28px),380px);
+ padding:13px 18px;
+ border:1px solid #c3d8c9;border-radius:999px;
+ background:#f8fcf7;color:#20533d;
+ font:750 13px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;
+ text-align:center;box-shadow:0 12px 35px #0e3b2542;
+ pointer-events:none;
+}
+.psy-entry-nav-status[hidden]{display:none!important}
+.psy-entry-nav-status:before{
+ content:"";display:block;flex:none;
+ width:16px;height:16px;
+ border:2px solid #bdd9c6;border-top-color:#267251;
+ border-radius:50%;animation:psy-entry-pending .8s linear infinite;
+}
+@keyframes psy-entry-pending{to{transform:rotate(360deg)}}
+html.dark .psy-entry-nav-status{
+ background:#253d30;color:#eff7ee;border-color:#58735d;
+}
+@media(prefers-reduced-motion:reduce){.psy-entry-nav-status:before{animation:none}}
