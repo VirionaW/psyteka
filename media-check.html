@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Проверка загрузки – Психотека</title>
+<link rel="stylesheet" href="psy-preview-gate.css?v=20261027">
+<style>
+html:not(.psy-gate-open) body>:not(#psy-preview-gate){display:none!important}
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#234d3c;background:#f4f8f4}
+*{box-sizing:border-box}main{max-width:750px;margin:35px auto;padding:0 18px 60px}article{background:white;border:1px solid #d7e5d9;border-radius:23px;padding:clamp(20px,4vw,34px)}
+h1{line-height:1.17;margin:12px 0 14px}p{color:#577267;line-height:1.6}
+a{color:#1f6848}.task{padding:14px 0;border-top:1px solid #e1ebe4;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px}
+.task strong,.task small{display:block}.task small{font-size:12px;color:#7b877d;margin-top:3px;word-break:break-all}
+.task label{font:700 12px/1.4 system-ui;padding:4px 9px;border-radius:10px;align-self:start}
+.ok{color:#126339;background:#e4f5e6}.bad{color:#9b382d;background:#ffe8e4}.neutral{color:#70613b;background:#f7f0d8}
+button{border:0;background:#226c50;color:#fff;padding:13px 20px;border-radius:12px;font:700 14px system-ui;cursor:pointer;min-height:42px}
+button:disabled{opacity:.55}.actions{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}#output{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.5 ui-monospace,monospace;max-height:250px;overflow:auto;background:#f6f9f6;border-radius:12px;padding:12px}
+</style>
+<script defer src="psy-preview-gate.js?v=20261027"></script></head>
+<body><main><p><a href="index.html?home=1">← Вернуться на главную</a></p>
+<article><h1>Проверка загрузки файлов</h1>
+<p>Покажет, почему на Timeweb не видны изображения и доступен ли сервис входа. Проверка не использует личные данные и не отправляет письма.</p>
+<div class="actions"><button id="start" type="button">Проверить снова</button><button id="copy" type="button" disabled>Скопировать результат</button></div>
+<div id="rows" aria-live="polite"></div><p id="summary" role="status"></p>
+<details><summary>Текст отчета</summary><pre id="output"></pre></details>
+</article></main>
+<script>
+"use strict";
+(async function(){
+ const tests=[
+ {label:"Логотип без версии",url:"brand-mark.svg",kind:"img"},
+ {label:"Логотип с версией",url:"brand-mark.svg?v=20261025c",kind:"img"},
+ {label:"Иллюстрация «Школа»",url:"assets/psyteka-banner-school-approved.webp",kind:"img"},
+ {label:"Иллюстрация «Детский сад»",url:"assets/psyteka-banner-preschool-approved.webp",kind:"img"},
+ {label:"Иллюстрация «О проекте»",url:"assets/psyteka-banner-information-approved.webp",kind:"img"},
+ {label:"Иллюстрация «ПМПК»",url:"assets/psyteka-banner-pmpk-scene.webp",kind:"img"},
+ {label:"Скрипт входа",url:"site-library-entry.js",kind:"file"},
+ {label:"Сервер входа Supabase",url:"https://uwouubzabqpuujuovala.supabase.co/auth/v1/health",kind:"remote"}
+ ];
+ const rows=document.getElementById("rows"),output=document.getElementById("output");
+ const btn=document.getElementById("start"),copy=document.getElementById("copy");
+ let report="";
+ const timeout=(promise,ms=9000)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error("Тайм-аут")),ms))]);
+ function previewImage(src){
+  return timeout(new Promise((resolve,reject)=>{
+   const img=new Image();img.onload=()=>resolve(img.naturalWidth+"×"+img.naturalHeight);
+   img.onerror=()=>reject(new Error("Браузер не может отобразить файл"));
+   img.src=src;
+  }),9000);
+ }
+ async function run(){
+  btn.disabled=true;copy.disabled=true;rows.replaceChildren();
+  const results=[];const nonce=Date.now();
+  for(const t of tests){
+   const div=document.createElement("div");div.className="task";
+   const info=document.createElement("div");const head=document.createElement("strong");head.textContent=t.label;
+   const sub=document.createElement("small");sub.textContent=t.url;info.append(head,sub);
+   const state=document.createElement("label");state.className="neutral";state.textContent="Проверка";div.append(info,state);rows.append(div);
+   let status="",detail="",good=false;
+   try{
+    if(t.kind==="remote"){
+     // Connectivity only. A blocked 401 status also counts as a server response.
+     await timeout(fetch(t.url,{mode:"no-cors",cache:"no-store"}),9000);
+     status="Сервер отвечает";detail="Ответ получен, вход по почте не проверен";good=true;
+    }else{
+     const path=t.url+(t.url.includes("?")?"&":"?")+"test="+nonce;
+     const response=await timeout(fetch(path,{cache:"no-store"}),9000);
+     const type=response.headers.get("content-type")||"не указан";
+     if(!response.ok)throw new Error("HTTP "+response.status);
+     if(t.kind==="img"){
+      const dimensions=await previewImage(path);
+      status="Изображение видно";detail="HTTP "+response.status+", "+type+", "+dimensions;good=true;
+     }else{
+      const body=await timeout(response.text(),9000);
+      status=body.includes("psyEntryDialog")?"Скрипт найден":"Неверный ответ";
+      detail="HTTP "+response.status+", "+type+", "+body.length+" символов";
+      good=body.includes("psyEntryDialog");
+     }
+    }
+   }catch(e){status="Ошибка";detail=e?.message||"Ошибка загрузки"}
+   state.className=good?"ok":"bad";state.textContent=status;
+   results.push(t.label+": "+status+" ("+detail+")");
+  }
+  report="Психотека. Проверка Timeweb: "+location.origin+"\n"+new Date().toLocaleString("ru-RU")+"\n"+results.join("\n");
+  output.textContent=report;
+  document.getElementById("summary").textContent="Проверка завершена. Если есть ошибки, скопируйте отчет или пришлите скриншот.";
+  btn.disabled=false;copy.disabled=false;
+ }
+ btn.addEventListener("click",run);
+ copy.addEventListener("click",async()=>{
+  try{await navigator.clipboard.writeText(report);document.getElementById("summary").textContent="Результат скопирован."}
+  catch(_){document.getElementById("summary").textContent="Не удалось скопировать. Можно прислать скриншот."}
+ });
+ await run();
+})();
+</script></body></html>
