@@ -137,11 +137,20 @@
    // server-side account and entitlement checks remain mandatory for access.
    const {data:cached,error:sessionError}=await withTimeout(client.auth.getSession(),6500);
    if(sessionError||!cached?.session?.user){
-    currentUser=null;step("psyEntryEmail");show();return;
+    currentUser=null;
+    const pendingEmail=el("psyEntryCode").dataset.email;
+    // Keep the OTP input available when the person reopens the dialog
+    // after requesting a code (the mail may arrive after a delay).
+    if(pendingEmail&&requestAt&&Date.now()-requestAt<600000)step("psyEntryCode");
+    else step("psyEntryEmail");
+    show();return;
    }
    const {data,error:authError}=await withTimeout(client.auth.getUser(),8500);
    if(authError||!data?.user||data.user.is_anonymous){
-    currentUser=null;step("psyEntryEmail");show();return;
+    currentUser=null;
+    if(el("psyEntryCode").dataset.email&&requestAt&&Date.now()-requestAt<600000)step("psyEntryCode");
+    else step("psyEntryEmail");
+    show();return;
    }
    currentUser=data.user;
    const [r,t,p]=await withTimeout(Promise.all([
