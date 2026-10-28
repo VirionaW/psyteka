@@ -19,3 +19,8 @@
 .psy-semester-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin:15px 0}
 .psy-semester-note{margin:14px 0}
 @media(max-width:720px){.psy-semester-grid{grid-template-columns:1fr}.psy-semester-item{padding:10px 11px}.psy-semester-table th,.psy-semester-table td{padding:7px}}
+
+.psy-semester-footer{display:flex!important;align-items:center!important;justify-content:space-between!important;width:100%;gap:12px;flex-wrap:wrap}
+.psy-semester-footer .psy-bottom-processing{margin-left:auto!important}
+.psy-semester-footer .psy-semester-status{margin:0;font-size:.84rem;padding:6px 9px}
+@media(max-width:480px){.psy-semester-footer{justify-content:flex-end!important}.psy-semester-footer .psy-semester-status{margin-right:auto}}
