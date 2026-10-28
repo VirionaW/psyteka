@@ -644,6 +644,49 @@ function bindControls(){
  if(DETAILS[methodNow.name]?.workflow==='motivationInterview')window.PSY_MOTIVATION_INTERVIEW.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  if(DETAILS[methodNow.name]?.workflow==='schoolAdaptObserve')window.PSY_SCHOOL_ADAPT.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  const d=DETAILS[methodNow.name];
+ if(window.PSY_MATCH_MSPSS?.supports(d)){
+  const go=i=>{rowIndex=i;modeIndices.class=i;setTab('score');};
+  const addNames=names=>{
+   if(!names?.length)return;
+   if(rows.length===1&&!rows[0].name?.trim()&&!window.PSY_MATCH_MSPSS.done(d,rows[0].answers))rows.splice(0,1);
+   let first=-1;
+   for(const name of names){
+    const trimmed=String(name).trim();if(!trimmed)continue;
+    if(!rows.some(x=>x.name?.trim().toLocaleLowerCase('ru')===trimmed.toLocaleLowerCase('ru'))){
+     if(first<0)first=rows.length;
+     rows.push({name:trimmed,answers:[],attendance:"present"});
+    }
+   }
+   if(!rows.length)rows.push({name:"",answers:[]});
+   return first;
+  };
+  window.PSY_MATCH_MSPSS.bind(d,{
+   rows,rowIndex,calcMode,tab:tabNow,
+   onRender:()=>setTab('score'),
+   onSelect:go,
+   onBulkAdd:names=>{const first=addNames(names);go(first>=0?first:Math.min(rowIndex,rows.length-1));},
+   onSort:names=>{
+    const first=addNames(names),current=first>=0?rows[first]:rows[rowIndex];
+    rows.sort((a,b)=>(a.name||"").localeCompare(b.name||"","ru",{sensitivity:"base"}));
+    go(Math.max(0,rows.indexOf(current)));
+   },
+   onDelete:i=>{
+    rows.splice(i,1);if(!rows.length)rows.push({name:"",answers:[]});
+    go(Math.max(0,Math.min(rowIndex>i?rowIndex-1:rowIndex,rows.length-1)));
+   },
+   onDeleteAll:()=>{rows.splice(0,rows.length,{name:"",answers:[]});go(0);},
+   onNext:()=>{
+    let next=rowIndex+1;
+    while(next<rows.length&&rows[next].attendance==="absent")next++;
+    if(next<rows.length)go(next);
+   },
+   onAbsentNext:()=>{
+    let next=rowIndex+1;
+    while(next<rows.length&&rows[next].attendance==="absent")next++;
+    if(next<rows.length)go(next);else setTab('score');
+   }
+  });
+ }
  if(d?.workflow==='objectClass16')window.PSY_OBJECT_CLASSIFY.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='schoolDrawingL')window.PSY_SCHOOL_DRAWING.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='cormanFamily')window.PSY_CORMAN.bind(d,{rows,rowIndex,calcMode});
