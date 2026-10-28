@@ -78,7 +78,7 @@
    });
    el.addEventListener("paste",e=>{
     const pasted=e.clipboardData?.getData("text")||"";
-    if(!pasted||!^[0-9\s,;]+$/.test(pasted))return;
+    if(!pasted||!/^[0-9\s,;]+$/.test(pasted))return;
     const numbers=pasted.replace(/[\s,;]/g,"").split("");
     if(numbers.some(n=>Number(n)>max))return;
     e.preventDefault();
