@@ -159,12 +159,12 @@
  function diagnosis(r){
   const z=score(r);if(r?.attendance==="absent")return '<div class="psy-semester-status is-skipped">Отсутствовал – результат не рассчитывается</div>';
   if(!z)return '<div class="psy-semester-status is-pending">Заполнено '+orig.count(orig.methods[0],r.answers||[])+' из 27</div><p>Все 27 ответов нужны для подсчета. Незаполненный пункт не равен 0.</p>';
-  const n=norm(z.raw,r),pct=Math.round(z.raw/54*100),suicidality=Number(r.answers[8])>=1;
+  const n=norm(z.raw,r),pct=Math.round(z.raw/54*100);
   return '<div class="psy-semester-status is-complete">Обработка готова</div>'+
    '<div class="psy-cdi-overall"><div><span>Сырой балл</span><strong>'+z.raw+' / 54</strong></div><div><span>Т-балл</span><strong>'+(n.status==="ok"?n.t:"–")+'</strong></div></div>'+
    '<div class="psy-cdi-scale"><span style="width:'+pct+'%"></span></div>'+
    '<p class="psy-cdi-context">'+esc(n.status==="ok"?n.level:n.message)+'</p>'+
-   (suicidality?'<div class="psy-cdi-safety">По пункту 9 выбран ответ о мыслях о самоубийстве. Необходима безотлагательная индивидуальная оценка безопасности – независимо от общей суммы.</div>':'')+
+   '<p class="psy-mspss-small">Пункт 9 необходимо сверять по исходному тексту: цифровой балл не определяет наличие суицидальных мыслей.</p>'+
    '<p class="psy-semester-muted">Баллы и категория не заменяют клиническую оценку. Для сравнения нужны нормы именно этой версии.</p>';
  }
  function classTable(rows){
@@ -204,7 +204,7 @@
   document.getElementById("semesterClear")?.addEventListener("click",()=>{if(r.answers.some(x=>x!==null&&x!==undefined&&x!=="")&&!confirm("Очистить ответы ученика?"))return;r.answers=[];ctx.rerender?.()});
   document.getElementById("semesterExport")?.addEventListener("click",()=>{
    const z=score(r);if(!z)return;const n=norm(z.raw,r);
-   const text=["Опросник детской депрессии М. Ковач (CDI, 27 пунктов)","Условный код: "+(r.name||"не задан"),"Возраст: "+(r.ageYears??"не указан"),"Сырой балл: "+z.raw+" / 54","Т-балл: "+(n.t??"нет в таблице"),n.message,"Пункт 9: "+r.answers[8]+" (требует отдельной проверки при 1 или 2)","Основа: PDF, предоставленный пользователем. Не является диагнозом."].join("\n");
+   const text=["Опросник детской депрессии М. Ковач (CDI, 27 пунктов)","Условный код: "+(r.name||"не задан"),"Возраст: "+(r.ageYears??"не указан"),"Сырой балл: "+z.raw+" / 54","Т-балл: "+(n.t??"нет в таблице"),n.message,"Пункт 9: "+r.answers[8]+" (оценить выбранное утверждение по оригинальному тексту; балл не означает конкретный ответ)","Основа: PDF, предоставленный пользователем. Не является диагнозом."].join("\n");
    const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><style>@page{size:A4;margin:16mm}body{font:12pt/1.5 Arial;white-space:pre-wrap;color:#23382f}</style></head><body>'+esc(text)+'</body></html>';
    download("Metolaria_CDI_27_protocol.html",html,"text/html;charset=utf-8");
   });
@@ -316,7 +316,7 @@
    '<h3>Порядок проведения</h3><ol><li>Подготовьте бланк из проверенной версии и обеспечьте спокойную обстановку.</li><li>Прочитайте инструкцию участнику. Не подсказывайте ответы.</li><li>Перенесите ответы в обработку по тем же номерам, затем проверьте полноту и итог.</li></ol>'+
    '<h3>Инструкция для чтения ученику</h3><div class="psy-mspss-script">'+esc(pupil)+'</div>'+
    '<h3>Ключ и подсчет</h3><p>'+esc(key)+'</p>'+
-   (isCDI?'<h3>Интерпретация</h3><p>Основной показатель – общий сырой балл. Перевод в Т-балл доступен только для сочетаний возраста, пола и суммы, приведенных в таблице PDF. Пункт 9 требует отдельной оценки безопасности при положительном ответе.</p>':
+   (isCDI?'<h3>Интерпретация</h3><p>Основной показатель – общий сырой балл. Перевод в Т-балл доступен только для сочетаний возраста, пола и суммы, приведенных в таблице PDF. Пункт 9 требует отдельной оценки безопасности, если выбранное утверждение указывает на суицидальные мысли.</p>':
     '<h3>Восемь факторов</h3><div class="psy-mspss-key-wrap"><table class="psy-mspss-key"><thead><tr><th>Фактор</th><th>Пункты</th><th>Максимум</th></tr></thead><tbody>'+phillips.scales.map(s=>'<tr><td>'+esc(s.name)+'</td><td>'+s.q.join(", ")+'</td><td>'+s.q.length+'</td></tr>').join("")+'</tbody></table></div><h3>Интерпретация</h3><p>Свыше 50% несовпадений – повышенный, свыше 75% – высокий показатель по данной редакции. Это не диагноз.</p>')+
    '<p class="psy-mspss-small">Печатный текст полного опросника берется из предоставленного PDF. Данный онлайн-комплект представляет регистрационный бланк и расчет, а не новую авторскую редакцию стимулов.</p></section>';
  }
