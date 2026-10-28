@@ -12,7 +12,7 @@
   grid.insertAdjacentHTML("beforebegin",'<p class="psy-entry-keyboard-hint">Быстрый ввод с клавиатуры: <kbd>0</kbd>-<kbd>'+max+'</kbd>'+(d.workflow==="phillips58"?" (0 – Нет, 1 – Да)":"")+'; ответ сразу переводит к следующему вопросу. <kbd>Backspace</kbd> очищает ответ; <kbd>←</kbd> / <kbd>→</kbd> перемещают между вопросами. Можно вставить последовательность цифр.</p>');
   if(d.workflow==="phillips58"){
    const footer=document.querySelector("#modal .psy-standard-footer");
-   if(footer){footer.classList.add("psy-semester-footer");footer.insertAdjacentHTML("afterbegin",'<span class="psy-semester-status is-pending" id="psyEntryFooter">Ответы не заполнены полностью</span>');}
+   if(footer&&!document.getElementById("psyEntryFooter")){footer.classList.add("psy-semester-footer");footer.insertAdjacentHTML("afterbegin",'<span class="psy-semester-status is-pending" id="psyEntryFooter">Ответы не заполнены полностью</span>');}
   }
   if(ctx.calcMode!=="class")return;
   const r=ctx.rows[ctx.rowIndex],status=r?.attendance==="absent";
