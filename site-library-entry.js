@@ -234,7 +234,7 @@
   step("psyEntryCode");show();
   try{
    const {error:mailError}=await withTimeout(client.auth.signInWithOtp({
-    email,options:{shouldCreateUser:true,emailRedirectTo:location.origin+"/index.html?home=1&entry=1"}
+    email,options:{shouldCreateUser:true,emailRedirectTo:new URL("index.html?home=1&entry=1",location.href).href}
    }),20000);
    if(mailError)throw mailError;
    codeInput.disabled=false;verifyButton.disabled=false;
