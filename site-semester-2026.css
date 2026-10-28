@@ -98,3 +98,11 @@ html.dark .library-page #modal .psy-cdi-note{color:var(--ink)}
  .library-page #modal.psy-main-tabs .modalfoot .psy-standard-footer.psy-semester-footer .psy-semester-status{max-width:calc(100% - 205px);font-size:11px;padding:5px}
  .library-page #modal .psy-portfolio-scoring-scale p{font-size:14px}
 }
+
+/* Темы 58 пунктов Филлипса должны помещаться без обрезки. */
+.library-page #modal .psy-ph-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.library-page #modal .psy-ph-item{min-height:100px;align-content:space-between}
+.library-page #modal .psy-ph-item span{font-size:14px;line-height:1.45}
+.library-page #modal .psy-ph-factor small{display:block;margin:-1px 0 8px;color:var(--muted);font-size:12px}
+.library-page #modal .psy-ph-overall em{font-size:13px;font-weight:700;line-height:1.5;font-style:normal}
+@media(max-width:590px){.library-page #modal .psy-ph-grid{grid-template-columns:1fr!important}}
