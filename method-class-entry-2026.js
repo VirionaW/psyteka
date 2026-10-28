@@ -9,7 +9,11 @@
   const grid=document.querySelector(d.workflow==="phillips58"?".psy-ph-grid":".psy-semester-grid");
   if(!grid)return;
   const max=limits(d).max;
-  grid.insertAdjacentHTML("beforebegin",'<p class="psy-entry-keyboard-hint">Быстрый ввод: <kbd>0</kbd>-<kbd>'+max+'</kbd> – ответ и автоматический переход к следующему вопросу; <kbd>Backspace</kbd> – очистка; <kbd>←</kbd> / <kbd>→</kbd> – переход между вопросами. Можно вставить ряд ответов через пробелы или подряд.</p>');
+  grid.insertAdjacentHTML("beforebegin",'<p class="psy-entry-keyboard-hint">Быстрый ввод с клавиатуры: <kbd>0</kbd>-<kbd>'+max+'</kbd>'+(d.workflow==="phillips58"?" (0 – Нет, 1 – Да)":"")+'; ответ сразу переводит к следующему вопросу. <kbd>Backspace</kbd> очищает ответ; <kbd>←</kbd> / <kbd>→</kbd> перемещают между вопросами. Можно вставить последовательность цифр.</p>');
+  if(d.workflow==="phillips58"){
+   const footer=document.querySelector("#modal .psy-standard-footer");
+   if(footer){footer.classList.add("psy-semester-footer");footer.insertAdjacentHTML("afterbegin",'<span class="psy-semester-status is-pending" id="psyEntryFooter">Ответы не заполнены полностью</span>');}
+  }
   if(ctx.calcMode!=="class")return;
   const r=ctx.rows[ctx.rowIndex],status=r?.attendance==="absent";
   const target=document.querySelector(".group-tools")||grid;
@@ -31,6 +35,15 @@
   const select=document.getElementById("participantSelect");
   if(select)Array.from(select.options).forEach((o,i)=>{if(ctx.rows[i]?.attendance==="absent")o.textContent+=" (отсутствует)"});
   if(status){grid.querySelectorAll("select, input").forEach(e=>e.disabled=true);grid.classList.add("psy-entry-disabled");}
+ }
+ function syncFooter(d,ctx){
+  const indicator=document.getElementById("psyEntryFooter");if(!indicator)return;
+  const r=ctx.rows?.[ctx.rowIndex]||{answers:[]},absent=r.attendance==="absent";
+  const ready=!absent&&!!window.PSY_PHILLIPS?.score(d,r.answers);
+  indicator.classList.toggle("is-complete",ready);
+  indicator.classList.toggle("is-skipped",absent);
+  indicator.classList.toggle("is-pending",!absent&&!ready);
+  indicator.textContent=absent?"Отсутствовал":ready?"Обработка готова":"Ответы не заполнены полностью";
  }
  function bind(d,ctx){
   if(!supported(d)||ctx.tab!=="score")return;
@@ -73,6 +86,11 @@
     focusIndex(Math.min(i+numbers.length,count-1));
    });
   });
+  if(d.workflow==="phillips58"){
+   fields.forEach(el=>el.addEventListener("change",()=>syncFooter(d,ctx)));
+   document.getElementById("phClear")?.addEventListener("click",()=>syncFooter(d,ctx));
+   syncFooter(d,ctx);
+  }
   if(ctx.calcMode!=="class")return;
   const message=s=>{const el=document.getElementById("psyRosterMessage");if(el)el.textContent=s;};
   const navigate=(direction,includeAbsent)=>{
