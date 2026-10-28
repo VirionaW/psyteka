@@ -285,15 +285,11 @@ function viewOverview(m){
  const source=profileText(o.source||d.source||m.source||"");
  const sourceHtml=/^https?:\/\/[^\s]+$/i.test(source)?'<h3>Первоисточник</h3><p class="psy-profile-source"><a href="'+escapeHTML(source)+'" target="_blank" rel="noopener noreferrer">Открыть первоисточник ↗</a></p>':"";
  const packLinks='';
- const norms=window.PSY_CDI_NORMS_2026;
  let scoringScale='';
- if(d.id==='cdi-27'){
-  scoringScale='<section class="psy-portfolio-scoring-scale"><h3>Шкала и обработка</h3><p><b>Общий сырой балл: от 0 до 54.</b> Сумма 27 кодов (0, 1, 2), затем перевод в Т-балл по полу и возрасту 7-12 или 13-17 лет.</p><div class="psy-portfolio-ruler"><span>0</span><div class="psy-portfolio-ruler-track"></div><span>54</span></div><p>По Т-баллу в приложенной таблице: 45-55 – средний интервал, 56-60 – чуть выше, 61-65 – выше, 66-70 – значительно выше, свыше 70 – группа риска по источнику. Это не диагноз. Для некоторых сочетаний в PDF Т-балл не определен надежно.</p></section>';
- }
  if(d.workflow==='phillips58'){
   scoringScale='<section class="psy-portfolio-scoring-scale"><h3>Шкала и обработка</h3><p><b>Общее число несовпадений: 0-58.</b> Каждый ответ сверяется с ключом. 30 и более несовпадений – свыше 50%, 44 и более – свыше 75%. Это пороги интерпретации из приложенного PDF, не медицинский диагноз.</p><div class="psy-portfolio-ruler"><span>0</span><div class="psy-portfolio-ruler-track psy-ph-ruler"></div><span>58</span></div><p>Восемь факторов подсчитываются независимо; максимумы по перечисленным пунктам: 22, 11, 12, 6, 6, 5, 5 и 8. Третий фактор в PDF ошибочно подписан как 13, но содержит 12 номеров. Показатели факторов нельзя суммировать.</p></section>';
  }
- return '<section class="psy-portfolio-reference psy-portfolio-unified"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div>'+(d.id==='cdi-27'||d.workflow==='phillips58'?indicatorHtml+scoringScale+goalHtml:goalHtml+indicatorHtml+scoringScale)+sourceHtml+packLinks+'</section>';
+ return '<section class="psy-portfolio-reference psy-portfolio-unified"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div>'+(d.id==='cdi-27'?goalHtml:d.workflow==='phillips58'?indicatorHtml+scoringScale+goalHtml:goalHtml+indicatorHtml+scoringScale)+sourceHtml+packLinks+'</section>';
 }
 
 function viewInstruction(m){
