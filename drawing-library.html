@@ -2326,7 +2326,7 @@ function featureById(entry,id){
 }
 function countFields(entry){
  var type=featureType(entry);
- var general=[["objects","Одинаковых объектов"],["nearby","Объектов рядом"],["groups","Групп объектов"]];
+ var general=[["objects","Одинаковых объектов"],["nearby","Объектов рядом"],["groups","Групп объектов"],["near-flowers","Цветов вокруг"],["near-trees","Деревьев вокруг"],["near-plants","Других растений"],["near-people","Людей рядом"],["near-animals","Животных рядом"],["near-birds","Птиц рядом"],["near-houses","Домов вокруг"],["near-clouds","Облаков"],["near-stars","Звезд"],["near-rocks","Камней вокруг"],["near-mushrooms","Грибов рядом"],["near-gifts","Предметов у персонажа"]];
  if(type==="animal")return [["paws","Лап"],["legs","Конечностей"],["ears","Ушей"],["fangs","Клыков"],["teeth","Зубов"],["claws","Когтей"],["horns","Рогов"],["heads","Голов"],["tails","Хвостов"],["wings","Крыльев"],["eyes","Глаз"],["spikes","Шипов"],["spots","Пятен"],["stripes","Полос"],["scars","Шрамов или ран"]].concat(general);
  if(type==="plant")return [["flowers","Цветков"],["petals","Лепестков"],["leaves","Листьев"],["branches","Ветвей"],["fruits","Плодов"],["buds","Бутонов"],["seeds","Семян"],["stems","Стеблей"],["roots","Корневых отростков"],["thorns","Колючек"],["trees","Деревьев"],["plants","Растений"]].concat(general);
  if(type==="house")return [["windows","Окон"],["doors","Дверей"],["floors","Этажей"],["chimneys","Труб"],["stairs","Ступеней"],["roof","Скатов крыши"],["people","Людей рядом"],["animals","Животных рядом"],["fence","Секций забора"]].concat(general);
