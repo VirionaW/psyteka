@@ -35,10 +35,10 @@
   "Если я не согласен с другим человеком, могу сказать об этом уважительно.",
   "При решении проблемы я стараюсь рассмотреть больше одного варианта."
  ];
- const WARN="Авторский рабочий опросник Психотеки (2026), созданный с опорой на пять направлений рамки CASEL. Это НЕ официальная шкала CASEL и НЕ стандартизированный психодиагностический тест. Для него не установлены возрастные нормы, надежность, валидность и диагностические пороги. Ответы отражают самооценку школьника и не позволяют делать вывод о клиническом состоянии или устойчивом уровне навыков.";
+ const WARN="Авторский рабочий опросник Метоларии (2026), созданный с опорой на пять направлений рамки CASEL. Это НЕ официальная шкала CASEL и НЕ стандартизированный психодиагностический тест. Для него не установлены возрастные нормы, надежность, валидность и диагностические пороги. Ответы отражают самооценку школьника и не позволяют делать вывод о клиническом состоянии или устойчивом уровне навыков.";
  const E=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const D={
-  author:"Редакционная рабочая форма Психотеки, 2026; направления по рамке CASEL",
+  author:"Редакционная рабочая форма Метоларии, 2026; направления по рамке CASEL",
   age:"Ориентировочно 10-17 лет, при понимании текста; возрастная валидизация отсутствует",
   kind:"Авторский опросник самооценки навыков (не стандартизирован)",
   count:"20 утверждений, 5 направлений, ответы 0-3",
@@ -121,7 +121,7 @@
   }));
   document.getElementById("selIndividualExport")?.addEventListener("click",()=>{
    const z=score(d,row.answers);if(!z){alert("Сначала внесите все 20 ответов; пропуски не заменяются нулем.");return;}
-   const out='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Протокол SEL</title><style>@page{size:A4;margin:14mm}body{font:14px/1.5 Arial,sans-serif;color:#25372d;max-width:820px;margin:25px auto}table{border-collapse:collapse;width:100%}td,th{border:1px solid #a6b8ac;padding:7px;text-align:left}p{line-height:1.5}</style></head><body><h1>Опросник социально-эмоциональных навыков</h1><p>Авторская рабочая форма Психотеки, SEL-WORK-20-2026-v1. Не стандартизировано.</p><p>Код: '+E(row.name||"не указан")+'; дата выгрузки: '+new Date().toLocaleDateString("ru-RU")+'</p><p>Общая сумма: <b>'+z.raw+' / 60</b>; среднее: <b>'+z.mean.toFixed(2)+' / 3</b>.</p><h2>Направления</h2><table><tr><th>Направление</th><th>Пункты</th><th>Сумма</th></tr>'+
+   const out='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Протокол SEL</title><style>@page{size:A4;margin:14mm}body{font:14px/1.5 Arial,sans-serif;color:#25372d;max-width:820px;margin:25px auto}table{border-collapse:collapse;width:100%}td,th{border:1px solid #a6b8ac;padding:7px;text-align:left}p{line-height:1.5}</style></head><body><h1>Опросник социально-эмоциональных навыков</h1><p>Авторская рабочая форма Метоларии, SEL-WORK-20-2026-v1. Не стандартизировано.</p><p>Код: '+E(row.name||"не указан")+'; дата выгрузки: '+new Date().toLocaleDateString("ru-RU")+'</p><p>Общая сумма: <b>'+z.raw+' / 60</b>; среднее: <b>'+z.mean.toFixed(2)+' / 3</b>.</p><h2>Направления</h2><table><tr><th>Направление</th><th>Пункты</th><th>Сумма</th></tr>'+
    z.scales.map(s=>'<tr><td>'+E(s.name)+'</td><td>'+s.items.join(", ")+'</td><td>'+s.raw+' / 12</td></tr>').join("")+'</table><h2>Ответы</h2><table><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr>'+
    ITEMS.map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(q)+'</td><td>'+z.answers[i]+'</td></tr>').join("")+'</table><p><b>Ограничения:</b> '+E(WARN)+'</p></body></html>';
    download("SEL_протокол_ученика.html",out,"text/html;charset=utf-8");

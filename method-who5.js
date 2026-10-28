@@ -35,7 +35,7 @@
   source:WHO,officialBlank:RUS,officialPDF:RUS,
   sourceScoring:REVIEW,guideFile:"downloads/who5_guide.html",guideWithBlankFile:"downloads/who5_guide_with_blank.html",answerFile:BLANK,answerWordFile:"downloads/who5_answers.docx",
   calculator:true,workflow:"who5",
-  license:"Используйте официальный PDF ВОЗ без изменений; оригинальная публикация 2024 года распространяется по CC BY-NC-SA 3.0 IGO. Локальный лист Психотеки только регистрирует ответы по номерам."
+  license:"Используйте официальный PDF ВОЗ без изменений; оригинальная публикация 2024 года распространяется по CC BY-NC-SA 3.0 IGO. Локальный лист Метоларии только регистрирует ответы по номерам."
  };
  (window.PSY_FULL_METHODS||(window.PSY_FULL_METHODS={}))[NAME]=d;
  const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -65,7 +65,7 @@
   '<div class="notice psy-who-note">'+esc(NOTE)+'</div>';
  }
  function materials(){
-  return '<div class="psy-common-guide-head"><h3>Лист ответов</h3><div class="psy-common-guide-actions"><a class="btn" href="downloads/who5_student_register.html" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать</a><a class="btn primary" href="downloads/who5_answers.docx" download>Скачать Word</a></div></div>'+'<h3>Бланк ученика и исходные утверждения</h3><p><b>Полный официальный текст пяти утверждений</b> находится в <a href="'+RUS+'" target="_blank" rel="noopener noreferrer">русском PDF ВОЗ</a>. В Психотеке представлен отдельный регистрационный лист: пять строк, шесть вариантов ответов и место для кода обследуемого.</p>'+
+  return '<div class="psy-common-guide-head"><h3>Лист ответов</h3><div class="psy-common-guide-actions"><a class="btn" href="downloads/who5_student_register.html" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать</a><a class="btn primary" href="downloads/who5_answers.docx" download>Скачать Word</a></div></div>'+'<h3>Бланк ученика и исходные утверждения</h3><p><b>Полный официальный текст пяти утверждений</b> находится в <a href="'+RUS+'" target="_blank" rel="noopener noreferrer">русском PDF ВОЗ</a>. В Метоларии представлен отдельный регистрационный лист: пять строк, шесть вариантов ответов и место для кода обследуемого.</p>'+
   '<p>Тематические ориентиры пунктов (не заменяют исходных формулировок):</p><ol>'+TOPICS.map(q=>'<li>'+esc(q)+'</li>').join("")+'</ol>'+
   '<p>При регистрации важно сохранить исходный порядок вопросов, направление шкалы и период «последние две недели».</p>';
  }
