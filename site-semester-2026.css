@@ -1,0 +1,21 @@
+/* Метолария: дополнительные опросники первого полугодия 2026 */
+.psy-semester{display:block;max-width:100%;padding-bottom:10px}
+.psy-semester-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}
+.psy-semester-item{display:flex;flex-direction:column;justify-content:space-between;gap:9px;padding:12px 14px;background:var(--surface, #f7faf8);border:1px solid #c8dacf;border-radius:13px;min-width:0;color:var(--text, #24362e)}
+.psy-semester-item span{font-size:.94rem;line-height:1.45;overflow-wrap:anywhere}
+.psy-semester-item select,.psy-semester-version select{display:block;width:100%;min-height:40px;box-sizing:border-box;border:1px solid #a9c0b5;border-radius:9px;background:var(--card-bg, #fff);color:var(--text,#26382e);padding:6px 8px;font:inherit}
+.psy-semester-version{display:block;margin:14px 0;font-weight:650}
+.psy-semester-version select{margin-top:8px}
+.psy-semester-status{display:inline-flex;align-items:center;border:1px solid;padding:9px 12px;border-radius:12px;font-weight:700;margin:10px 0}
+.psy-semester-status.is-pending{background:#fff2df;border-color:#d6a15a;color:#81451a}
+.psy-semester-status.is-complete{background:#e2f2e8;border-color:#75b68d;color:#185a37}
+.psy-semester-table{max-width:100%;overflow:auto;margin:12px 0 18px}
+.psy-semester-table table{border-collapse:collapse;width:100%;min-width:430px;line-height:1.5}
+.psy-semester-table th,.psy-semester-table td{border:1px solid var(--border,#bbd1c3);padding:9px 11px;vertical-align:top;text-align:left;overflow-wrap:anywhere}
+.psy-semester-table th{background:var(--surface,#edf4f0)}
+.psy-semester-total{margin:12px 0;font-size:1.1rem}
+.psy-semester-total strong{font-size:1.45rem}
+.psy-semester-muted{color:var(--text-muted,#516a5c);font-size:.94rem}
+.psy-semester-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin:15px 0}
+.psy-semester-note{margin:14px 0}
+@media(max-width:720px){.psy-semester-grid{grid-template-columns:1fr}.psy-semester-item{padding:10px 11px}.psy-semester-table th,.psy-semester-table td{padding:7px}}
