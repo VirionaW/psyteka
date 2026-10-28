@@ -3,7 +3,7 @@
 /* School semester 2026: version-bound registration and scoring. Never infer a diagnosis from screening scores. */
 const EYSENCK_FIRST="https://azps.ru/tests/tests_eysenck_so.html";
 const EYSENCK_SECOND="https://chain-ddt.dou.tomsk.ru/wp-content/uploads/2025/04/Diagnostika-suitsidalnogo-povedeniya-podrostkov-modifikatsiya-Ajzenka.pdf";
-const WCQ_SOURCE="https://www.consultant.ru/document/cons_doc_LAW_395563/2962eb3ccd49a43f4c7f37f29539635973935c79/";
+const WCQ_SOURCE="https://nevapmsc.ru/wp-content/uploads/rmoppmk51.pdf";
 const RAZ_SOURCE="https://kmc23.ru/press-center/psihologicheskaya-kopilka/903";
 const CDI_SOURCE="https://mhpssknowledgehub.sph.cuny.edu/measures/childrens-depression-inventory-cdi/";
 const CDI_RIGHTS="https://storefront.mhs.com/collections/cdi-2";
