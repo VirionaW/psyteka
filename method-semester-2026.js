@@ -70,7 +70,7 @@ function effectiveScales(m,row){return getVersion(m,row)?.scales||m.scales||[]}
 function complete(m,a){return Array.isArray(a)&&Array.from({length:m.n},(_,i)=>a[i]).every(v=>(typeof v==="number"&&Number.isInteger(v)&&v>=0&&v<=m.max)||(typeof v==="string"&&/^\d$/.test(v)&&+v<=m.max))}
 function count(m,a){return Array.from({length:m.n},(_,i)=>a?.[i]).filter(v=>(typeof v==="number"&&Number.isInteger(v)&&v>=0&&v<=m.max)||(typeof v==="string"&&/^\d$/.test(v)&&+v<=m.max)).length}
 function score(d,a,row){
- const m=cfg(d);if(!m||!complete(m,a))return null;
+ const m=cfg(d);if(!m||row?.attendance==="absent"||!complete(m,a))return null;
  const answers=Array.from({length:m.n},(_,i)=>Number(a[i]));
  if(m.id==="cdi-27")return {raw:answers.reduce((x,y)=>x+y,0),max:54,complete:true,answers};
  const scales=effectiveScales(m,row).map(s=>{
@@ -103,6 +103,7 @@ function processing(d){const m=cfg(d);if(!m)return "";
 function scaleTable(scales){return '<div class="psy-semester-table"><table><thead><tr><th>Шкала</th><th>Номера пунктов</th><th>Коэффициент</th></tr></thead><tbody>'+
  scales.map(s=>'<tr><td>'+esc(s.name)+'</td><td>'+s.q.join(", ")+'</td><td>'+(s.factor||1).toString().replace(".",",")+'</td></tr>').join("")+'</tbody></table></div>'}
 function result(d,row){const m=cfg(d),n=count(m,row.answers),z=score(d,row.answers,row);
+ if(row.attendance==="absent")return '<div class="psy-semester-status is-skipped">Отсутствовал – результаты не рассчитываются</div>';
  let html='<div class="psy-semester-status '+(z?"is-complete":"is-pending")+'">'+(z?"Заполнено – обработано":"Заполнено "+n+" из "+m.n+" – расчет не готов")+'</div>';
  if(!z)return html+'<p class="psy-semester-muted">Все '+m.n+' ответов обязательны. Пустое поле не равно нулю. После удаления ответа прежние итоги скрываются.</p>';
  if(m.id==="cdi-27")return html+'<div class="psy-semester-total">Сырой балл: <strong>'+z.raw+' / 54</strong></div><p>'+esc(m.interpret)+'</p>';
@@ -110,8 +111,8 @@ function result(d,row){const m=cfg(d),n=count(m,row.answers),z=score(d,row.answe
  '<tr><td>'+esc(s.name)+'</td><td>'+s.raw+' / '+s.max+'</td>'+(m.id==="razuvaeva-osr29"?'<td>'+s.adjusted.toFixed(2).replace(".",",")+'</td>':"")+'</tr>').join("")+'</tbody></table></div><p class="psy-semester-muted">'+esc(m.interpret)+'</p>';
 }
 function groupResult(d,rows){const m=cfg(d);
- return '<div class="psy-semester-table"><table><thead><tr><th>Код</th><th>Полнота</th><th>Результаты</th></tr></thead><tbody>'+
- rows.map((r,i)=>{const z=score(d,r.answers,r);return '<tr><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td><td>'+count(m,r.answers)+' / '+m.n+'</td><td>'+(z?(m.id==="cdi-27"?z.raw+" / 54":z.scales.map(s=>esc(s.name)+": "+(m.id==="razuvaeva-osr29"?s.adjusted:s.raw)).join("; ")):"Не рассчитано")+'</td></tr>'}).join("")+'</tbody></table></div>';
+ return '<div class="psy-semester-table"><table><thead><tr><th>Код</th><th>Статус</th><th>Полнота</th><th>Результаты</th></tr></thead><tbody>'+
+ rows.map((r,i)=>{const z=score(d,r.answers,r),absent=r.attendance==="absent";return '<tr><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td><td>'+(absent?"Отсутствовал":z?"Обработан":"Нет полного результата")+'</td><td>'+(absent?"–":count(m,r.answers)+' / '+m.n)+'</td><td>'+(absent?"Исключен из результатов":z?(m.id==="cdi-27"?z.raw+" / 54":z.scales.map(s=>esc(s.name)+": "+(m.id==="razuvaeva-osr29"?s.adjusted:s.raw)).join("; ")):"Не рассчитано")+'</td></tr>'}).join("")+'</tbody></table></div>';
 }
 function calculator(d,ctx){const m=cfg(d),rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],a=r.answers||[];
  let html='<section class="psy-semester"><div class="calc-mode"><button type="button" class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button type="button" class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>';
@@ -122,13 +123,13 @@ function calculator(d,ctx){const m=cfg(d),rows=ctx.rows?.length?ctx.rows:[{name:
  '<div class="psy-semester-grid">'+Array.from({length:m.n},(_,i)=>
  '<label class="psy-semester-item"><span><b>'+(i+1)+'.</b> '+(m.id==="eysenck-40"&&getVersion(m,r)?.id==="interleaved"&&i<6?esc(["Часто я не уверен в своих силах","Нередко мне кажется безысходным положение, из которого можно было бы найти выход","Я часто оставляю за собой последнее слово","Мне трудно менять свои привычки","Я часто из-за пустяков краснею","Неприятности меня сильно расстраивают, и я падаю духом"][i]):"Пункт "+(i+1))+'</span><select data-sanswer="'+i+'" aria-label="Ответ на пункт '+(i+1)+'"><option value="">Нет ответа</option>'+Array.from({length:m.max+1},(_,v)=>'<option value="'+v+'" '+(String(a[i])===String(v)?"selected":"")+'>'+v+(m.id==="razuvaeva-osr29"?(v?" – Да":" – Нет"):"")+'</option>').join("")+'</select></label>').join("")+'</div>'+
  '<div id="semesterResult">'+result(d,r)+'</div><div class="psy-semester-actions"><button type="button" class="btn" id="semesterClear">Очистить ответы</button><button type="button" class="btn primary" id="semesterExport" '+(score(d,r.answers,r)?"":"disabled")+'>Скачать протокол</button></div>';
- if(ctx.calcMode==="class")html+='<h3>Результаты группы</h3><div id="semesterGroup">'+groupResult(d,rows)+'</div><div class="psy-semester-actions"><button type="button" class="btn" id="nextParticipant">Следующий участник</button><button type="button" class="btn primary" id="semesterCSV">Скачать CSV класса</button></div>';
+ if(ctx.calcMode==="class")html+='<h3>Результаты группы</h3><div id="semesterGroup">'+groupResult(d,rows)+'</div><div class="psy-semester-actions"><button type="button" class="btn" id="semesterLegacyNext" hidden>Следующий участник</button><button type="button" class="btn primary" id="semesterCSV">Скачать CSV класса</button></div>';
  return html+'</section>';
 }
 const csvCell=v=>{let t=String(v??"");if(/^\s*[=+@-]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"'};
 function save(filename,body,type){const url=URL.createObjectURL(new Blob([body],{type})),a=document.createElement("a");a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
-function csv(d,rows){const m=cfg(d),head=["Условный код","Версия","Заполнено",...(m.id==="cdi-27"?["Сырой балл"]:effectiveScales(m,rows[0]).map(s=>s.name)),...Array.from({length:m.n},(_,i)=>"Пункт "+(i+1))];
- const data=[head,...rows.map((r,i)=>{const z=score(d,r.answers,r);const values=z?(z.scales?z.scales.map(s=>m.id==="razuvaeva-osr29"?s.adjusted:s.raw):[z.raw]):Array.from({length:m.id==="cdi-27"?1:effectiveScales(m,r).length},()=>"");return [r.name||"У-"+(i+1),m.versions?getVersion(m,r)?.title||"":"",count(m,r.answers),...values,...Array.from({length:m.n},(_,k)=>r.answers?.[k]??"")];})];
+function csv(d,rows){const m=cfg(d),head=["Условный код","Статус","Версия","Заполнено",...(m.id==="cdi-27"?["Сырой балл"]:effectiveScales(m,rows[0]).map(s=>s.name)),...Array.from({length:m.n},(_,i)=>"Пункт "+(i+1))];
+ const data=[head,...rows.map((r,i)=>{const z=score(d,r.answers,r);const values=z?(z.scales?z.scales.map(s=>m.id==="razuvaeva-osr29"?s.adjusted:s.raw):[z.raw]):Array.from({length:m.id==="cdi-27"?1:effectiveScales(m,r).length},()=>"");return [r.name||"У-"+(i+1),r.attendance==="absent"?"Отсутствовал":z?"Обработан":"Нет полного результата",m.versions?getVersion(m,r)?.title||"":"",r.attendance==="absent"?"":count(m,r.answers),...values,...Array.from({length:m.n},(_,k)=>r.attendance==="absent"?"":r.answers?.[k]??"")];})];
  return "\uFEFF"+data.map(row=>row.map(csvCell).join(";")).join("\r\n")}
 function printPage(d,blank,combined){const m=cfg(d);
  const css='@page{size:A4;margin:15mm}body{font:10.5pt/1.45 Arial;color:#24362e}h1{font-size:17pt}h2{font-size:12pt;margin:18px 0 7px}table{border-collapse:collapse;width:100%;font-size:9pt}th,td{padding:5px;border:1px solid #9cb2a7;text-align:left}tr{break-inside:avoid}.student.separate{break-before:page}';
@@ -151,6 +152,6 @@ function bind(d,ctx){const m=cfg(d),r=ctx.rows?.[ctx.rowIndex];if(!m||!r)return;
  });
  document.getElementById("semesterCSV")?.addEventListener("click",()=>save("Metolaria_"+m.id+"_class.csv",csv(d,ctx.rows),"text/csv;charset=utf-8"));
 }
-function syncFooter(d,rows,rowIndex){const indicator=document.getElementById("semesterFooterStatus");if(!indicator)return;const r=rows?.[rowIndex]||{answers:[]};const ready=!!score(d,r.answers,r);indicator.classList.toggle("is-complete",ready);indicator.classList.toggle("is-pending",!ready);indicator.textContent=ready?"Обработка готова":"Ответы не заполнены полностью";}
+function syncFooter(d,rows,rowIndex){const indicator=document.getElementById("semesterFooterStatus");if(!indicator)return;const r=rows?.[rowIndex]||{answers:[]};const ready=!!score(d,r.answers,r);indicator.classList.toggle("is-complete",ready);indicator.classList.toggle("is-pending",!ready);indicator.classList.toggle("is-skipped",r.attendance==="absent");indicator.textContent=r.attendance==="absent"?"Отсутствовал":ready?"Обработка готова":"Ответы не заполнены полностью";}
 window.PSY_SEMESTER_2026={methods,score,count,instruction,materials,processing,calculator,bind,printPage,csv,syncFooter};
 })();
