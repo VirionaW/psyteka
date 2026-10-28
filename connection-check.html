@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Проверка подключения – Психотека</title>
+<style>
+html:not(.psy-gate-open) body > :not(#psy-preview-gate){display:none!important}
+:root{color-scheme:light;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:#f4f8f3;color:#214a39;line-height:1.55}
+main{max-width:920px;margin:38px auto 70px;padding:0 18px}
+a{color:#23684b}header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:22px}
+header a{font-weight:750;text-decoration:none}
+article{background:#fff;border:1px solid #d5e3d8;border-radius:24px;padding:clamp(21px,4vw,39px);box-shadow:0 12px 34px #153c2811}
+.eyebrow{color:#9a7859;font-size:12px;font-weight:850;letter-spacing:.13em}
+h1{font-size:clamp(29px,5vw,45px);line-height:1.13;letter-spacing:-.035em;margin:8px 0 16px}h2{font-size:20px;margin:0}
+p{margin:8px 0 19px;color:#5f796a}.buttons{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 16px}
+button{cursor:pointer;font:800 14px/1.35 inherit;border:1px solid #bcd4c0;border-radius:12px;padding:13px 17px;background:#e9f1e9;color:#26583f;min-height:47px}
+button.primary{background:#286d50;color:white;border-color:#286d50}button:disabled{opacity:.5;cursor:wait}button:focus-visible,a:focus-visible{outline:3px solid #b89266;outline-offset:3px}
+.test{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid #e3ebe4}
+.test:last-child{border:0}.test strong{font-size:14px}.test small{display:block;color:#667a6f;overflow-wrap:anywhere}
+.status{font:750 12px/1.3 system-ui,sans-serif;padding:7px 11px;border-radius:100px;max-width:185px;text-align:center}
+.status.good{background:#e0f3e5;color:#175f3c}.status.bad{background:#fbe5e1;color:#923e38}.status.warn{background:#fff1d5;color:#765729}.status.pending{background:#edf2ee;color:#677b6e}
+section{margin-top:26px}.mini{font-size:13px;color:#678271}.comparison{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+.snapshot{background:#f5f8f4;border:1px solid #dce7dc;border-radius:14px;padding:16px;min-width:0}
+.snapshot h3{font-size:15px;margin:0 0 8px}.snapshot p{font-size:12px;margin:0 0 8px}
+.snapshot ul{padding-left:20px;font-size:12px;margin:0;overflow-wrap:anywhere}
+footer{margin:22px 0;font-size:12px;color:#607969}
+@media(max-width:590px){main{margin-top:20px}.test{align-items:flex-start;flex-direction:column;gap:7px}.comparison{grid-template-columns:1fr}}
+</style>
+<link rel="stylesheet" href="psy-preview-gate.css?v=20261027gate2">
+<script src="psy-preview-gate.js?v=20261027gate2" defer></script>
+</head>
+<body>
+<main>
+<header><a href="index.html">← Главная Психотеки</a><a href="library.html">Библиотека</a></header>
+<article>
+<span class="eyebrow">ДИАГНОСТИКА ДОСТУПНОСТИ</span>
+<h1>Проверка соединения</h1>
+<p>Сравните загрузку Психотеки <strong>без VPN</strong> и <strong>с VPN</strong>. Проверяется только доступ к техническим ресурсам. Мы не запрашиваем пароль, код из письма или личные сведения.</p>
+<div class="buttons">
+<button class="primary" type="button" id="without">Проверить без VPN</button>
+<button type="button" id="with">Проверить с VPN</button>
+<button type="button" id="copy" disabled>Скопировать результаты</button>
+</div>
+<p id="intro" role="status" aria-live="polite" class="mini">Выключите VPN и нажмите первую кнопку. Затем включите VPN и запустите вторую проверку в этом же браузере.</p>
+<div id="checks" aria-live="polite"></div>
+<section><h2>Сравнение</h2><p class="mini">Результаты сохраняются только в вашем браузере и не отправляются нам автоматически.</p>
+<div class="comparison"><div class="snapshot"><h3>Без VPN</h3><div id="noResult">Пока нет проверки</div></div><div class="snapshot"><h3>С VPN</h3><div id="yesResult">Пока нет проверки</div></div></div></section>
+</article>
+<footer>Если без VPN этот адрес вообще не открывается, это уже признак проблемы на уровне сайта или сети. Проверка сетевой доступности не подтверждает работу доставки писем или подписок. VPN автоматически не определяется: выбирайте кнопку только после включения или отключения VPN.</footer>
+</main>
+<script>
+"use strict";
+(function(){
+ const tasks=[
+  {key:"home",title:"Главная страница",subtitle:"psyteka.onrender.com",url:"index.html?connection-check=1"},
+  {key:"library",title:"Библиотека",subtitle:"psyteka.onrender.com/library.html",url:"library.html?connection-check=1"},
+  {key:"authScript",title:"Скрипт входа",subtitle:"Скрипт с нашего сайта",url:"site-library-entry.js?connection-check=1"},
+  {key:"cdn",title:"Библиотека Supabase JS",subtitle:"cdn.jsdelivr.net",url:"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"},
+  {key:"auth",title:"Сервис авторизации",subtitle:"uwouubzabqpuujuovala.supabase.co",url:"https://uwouubzabqpuujuovala.supabase.co/auth/v1/health"}
+ ];
+ const $=id=>document.getElementById(id);
+ const key="psy-network-diagnostic-v1";
+ let reports={};
+ try{reports=JSON.parse(localStorage.getItem(key)||"{}")||{}}catch(_){}
+ let busy=false;
+ async function once(url,mode){
+  const abort=new AbortController();
+  const timer=setTimeout(()=>abort.abort(),12500);
+  const begin=performance.now();
+  try{
+   const options={signal:abort.signal,cache:"no-store",credentials:"omit",redirect:"follow"};
+   if(mode)options.mode=mode;
+   const r=await fetch(url,options);
+   const ms=Math.round(performance.now()-begin);
+   if(r.type==="opaque")return {status:"warn",text:"Есть сетевой ответ ("+ms+" мс)",detail:"Статус сервера не виден"};
+   if(r.ok)return {status:"good",text:"Доступно · HTTP "+r.status,detail:ms+" мс"};
+   return {status:r.status>=500?"bad":"warn",text:"HTTP "+r.status,detail:ms+" мс"};
+  }catch(e){return {status:"bad",text:"Нет соединения",detail:e?.name==="AbortError"?"Тайм-аут 12,5 сек.":"Ошибка сети или CORS"}}
+  finally{clearTimeout(timer)}
+ }
+ async function check(task){
+  if(task.key!=="cdn"&&task.key!=="auth")return once(task.url);
+  // When cross-origin restrictions prevent reading HTTP status, test basic
+  // reachability separately. An opaque response is only a transport signal.
+  const first=await once(task.url,"cors");
+  if(first.status!=="bad")return first;
+  return once(task.url,"no-cors");
+ }
+ function node(task){
+  const wrap=document.createElement("div");wrap.className="test";
+  const left=document.createElement("div");const label=document.createElement("strong");
+  label.textContent=task.title;const sub=document.createElement("small");sub.textContent=task.subtitle;left.append(label,sub);
+  const status=document.createElement("span");status.className="status pending";status.textContent="Проверка...";wrap.append(left,status);
+  $("checks").append(wrap);
+  return status;
+ }
+ function snapshot(report,elementId){
+  const dest=$(elementId);dest.replaceChildren();
+  if(!report){dest.textContent="Пока нет проверки";return}
+  const p=document.createElement("p");p.textContent=new Date(report.time).toLocaleString("ru-RU");dest.append(p);
+  const ul=document.createElement("ul");
+  for(const item of report.items){const li=document.createElement("li");li.textContent=item.name+": "+item.text;ul.append(li)}
+  dest.append(ul);
+ }
+ function paint(){
+  snapshot(reports.no,"noResult");snapshot(reports.yes,"yesResult");
+  $("copy").disabled=!reports.no&&!reports.yes;
+ }
+ function asText(){
+  return "Психотека. Диагностика соединения\n"+
+   ["no","yes"].map(which=>{
+    const r=reports[which];if(!r)return (which==="no"?"Без VPN":"С VPN")+": нет измерений";
+    return (which==="no"?"Без VPN":"С VPN")+" · "+new Date(r.time).toLocaleString("ru-RU")+"\n"+
+      r.items.map(it=>it.name+": "+it.text+(it.detail?" ("+it.detail+")":"")).join("\n");
+   }).join("\n\n");
+ }
+ async function run(which){
+  if(busy)return;busy=true;reports[which]=null;
+  $("without").disabled=true;$("with").disabled=true;$("copy").disabled=true;
+  $("checks").replaceChildren();
+  $("intro").textContent="Проверка выполняется. Не переключайте VPN до ее завершения.";
+  const items=[];
+  for(const task of tasks){
+   const el=node(task);
+   const result=await check(task);
+   el.className="status "+result.status;el.textContent=result.text;
+   el.title=result.detail;
+   items.push({key:task.key,name:task.title,...result});
+  }
+  reports[which]={time:new Date().toISOString(),items};
+  try{localStorage.setItem(key,JSON.stringify(reports))}catch(_){}
+  busy=false;$("without").disabled=false;$("with").disabled=false;
+  $("intro").textContent="Готово. Теперь переключите VPN и выполните другую проверку.";
+  paint();
+ }
+ $("without").addEventListener("click",()=>run("no"));
+ $("with").addEventListener("click",()=>run("yes"));
+ $("copy").addEventListener("click",async()=>{
+  try{await navigator.clipboard.writeText(asText());$("intro").textContent="Результаты скопированы."; }
+  catch(_){$("intro").textContent="Копирование недоступно. Можно сделать скриншот таблицы."}
+ });
+ paint();
+})();
+</script>
+</body></html>
