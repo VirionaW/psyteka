@@ -161,6 +161,10 @@ function setTab(name){
  if(DETAILS[methodNow?.name]?.workflow==='specialSheet')window.PSY_SPECIAL.updateFooter(DETAILS[methodNow.name],mainTab);
  if(DETAILS[methodNow?.name]?.workflow==='specialToolkit')window.PSY_SPECIAL_TOOLKIT.updateFooter(DETAILS[methodNow.name],mainTab);
  document.querySelectorAll('[data-generic-print]').forEach(button=>button.addEventListener('click',()=>printMaterial(button.dataset.genericPrint)));
+ if(name==='score'&&['semester2026','phillips58'].includes(DETAILS[methodNow.name]?.workflow)){
+  const inputs=[...document.querySelectorAll('.psy-semester-grid select:not(:disabled), .psy-ph-grid select:not(:disabled)')];
+  const input=inputs.find(x=>x.value==='')||inputs[0];if(input)input.focus({preventScroll:true});
+ }
  updateLuriaFooter();
 }
 
