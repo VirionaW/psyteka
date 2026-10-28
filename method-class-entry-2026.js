@@ -64,7 +64,7 @@
     if(e.key.length===1&&/^[0-9]$/.test(e.key)){
      e.preventDefault();
      if(Number(e.key)>max)return;
-     const answer=d.workflow==="phillips58"?(e.key==="1"?"yes":"no"):e.key;
+     const answer=e.key;
      setField(el,answer);
      if(i<fields.length-1)focusIndex(i+1);
      else document.getElementById("psyNextChild")?.focus();
@@ -82,7 +82,7 @@
     const numbers=pasted.replace(/[\s,;]/g,"").split("");
     if(numbers.some(n=>Number(n)>max))return;
     e.preventDefault();
-    numbers.forEach((v,k)=>{const index=i+k;if(index>=count)return;setField(fields[index],d.workflow==="phillips58"?(v==="1"?"yes":"no"):v)});
+    numbers.forEach((v,k)=>{const index=i+k;if(index>=count)return;setField(fields[index],v)});
     focusIndex(Math.min(i+numbers.length,count-1));
    });
   });
