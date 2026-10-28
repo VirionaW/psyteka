@@ -152,7 +152,10 @@ function setTab(name){
     const reset=document.getElementById('schulteResetBottom');if(reset)reset.hidden=!insideProcessing;
    }
  }
+ const quickEntryContext={tab:name,calcMode,rows,rowIndex,rerender:()=>setTab("score"),selectRow:i=>{rowIndex=i;modeIndices[calcMode]=i;setTab("score");const el=document.querySelector('.psy-semester-grid select:not(:disabled), .psy-ph-grid select:not(:disabled)');if(el)el.focus();}};
+ window.PSY_CLASS_ENTRY_2026?.enhance(DETAILS[methodNow.name],quickEntryContext);
  bindControls();
+ window.PSY_CLASS_ENTRY_2026?.bind(DETAILS[methodNow.name],quickEntryContext);
  if(DETAILS[methodNow?.name]?.workflow==='semester2026')window.PSY_SEMESTER_2026.syncFooter(DETAILS[methodNow.name],rows,rowIndex);
  if(DETAILS[methodNow?.name]?.workflow==='preschoolSheet')window.PSY_PRESCHOOL.updateFooter(DETAILS[methodNow.name],mainTab);
  if(DETAILS[methodNow?.name]?.workflow==='specialSheet')window.PSY_SPECIAL.updateFooter(DETAILS[methodNow.name],mainTab);
