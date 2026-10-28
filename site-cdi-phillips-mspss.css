@@ -1,0 +1,83 @@
+/* CDI and Phillips share exactly the approved MSPSS layout, while keeping their own scoring */
+.library-page #modal.psy-mspss-example .psy-cp-calculator{width:100%;max-width:none}
+.library-page #modal.psy-mspss-example .psy-cp-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.library-page #modal.psy-mspss-example .psy-cp-grid .psy-mspss-item{
+ display:flex;flex-direction:column;justify-content:space-between;gap:13px;
+ min-height:132px;padding:16px 17px
+}
+.library-page #modal.psy-mspss-example .psy-cp-grid .psy-mspss-item>span{font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+.library-page #modal.psy-mspss-example .psy-cp-grid input.psy-cp-answer{
+ width:139px;max-width:100%;min-height:64px;height:64px;
+ text-align:center;font-size:24px;font-weight:750;letter-spacing:.01em
+}
+.library-page #modal.psy-mspss-example .psy-cp-demographics{display:flex;flex-wrap:wrap;gap:14px;margin:12px 0 15px}
+.library-page #modal.psy-mspss-example .psy-cp-demographics label{display:grid;gap:7px;flex:1 1 170px;max-width:310px;font-weight:700;color:var(--ink)}
+.library-page #modal.psy-mspss-example .psy-cp-demographics select{
+ min-height:46px;width:100%;font:inherit;border:1px solid var(--line);
+ border-radius:10px;background:var(--paper);color:var(--ink);padding:8px 11px
+}
+.library-page #modal.psy-mspss-example .psy-cp-scales{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div{
+ min-height:116px;padding:16px;border-radius:13px;display:flex;flex-direction:column;gap:5px;
+ border:1px solid var(--line);background:var(--soft)
+}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div b{font-size:14px;line-height:1.5}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div strong{font-size:19px;font-variant-numeric:tabular-nums}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div p{font-size:12px;line-height:1.45;margin:4px 0 0}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div small{font-size:12px;line-height:1.5}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-purple{background:#efe6f8!important;border-color:#d9c4ed!important;color:#693e91!important}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-purple b,
+.library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-purple strong{color:#693e91!important}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-purple .psy-mspss-track span{background:#9567bd!important}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-green{background:#e5f2e8!important;border-color:#b8dfc3!important;color:#266d42!important}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-green b,
+.library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-green strong{color:#266d42!important}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-green .psy-mspss-track span{background:#368b55!important}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-blue{background:#e5f0fd!important;border-color:#bed5f2!important;color:#2e5c94!important}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-blue b,
+.library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-blue strong{color:#2e5c94!important}
+.library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-blue .psy-mspss-track span{background:#497fba!important}
+.library-page #modal.psy-mspss-example .psy-cp-scales .psy-mspss-track{width:100%;margin:9px 0}
+.library-page #modal.psy-mspss-example .psy-cp-alert{
+ padding:13px 16px;margin-top:18px;border:1px solid #e1a05b;border-radius:12px;
+ background:#fff0e0;color:#743e21;font-weight:700;line-height:1.55
+}
+.library-page #modal.psy-mspss-example .psy-cp-absence{
+ background:#f6efe5;border:1px solid #dcc5a6;border-radius:11px;
+ padding:11px 13px;color:#734f2c;line-height:1.5
+}
+.library-page #modal.psy-mspss-example .psy-cp-next-actions{
+ gap:10px;flex-wrap:wrap;align-items:center
+}
+.library-page #modal.psy-mspss-example #cpAbsent{background:var(--paper);color:var(--ink);border:1px solid var(--line)}
+.library-page #modal.psy-mspss-example .psy-cp-next-actions #cpNext:disabled{
+ background:#e8eeea!important;border-color:#cbd9d0!important;color:#64776c!important;cursor:not-allowed
+}
+.library-page #modal.psy-mspss-example .psy-cp-calculator .psy-mspss-person.active{background:#def0e4}
+.library-page #modal.psy-mspss-example .psy-cp-calculator .psy-mspss-person small{white-space:nowrap}
+.library-page #modal.psy-mspss-example .psy-cp-calculator .psy-mspss-result{margin-top:23px}
+.library-page #modal.psy-mspss-example .psy-cp-calculator .psy-mspss-result>p{font-size:15px}
+.library-page #modal.psy-mspss-example .psy-cp-calculator .psy-mspss-scroll{margin:15px 0}
+.library-page #modal.psy-mspss-example .psy-cp-calculator .psy-mspss-scroll table{white-space:nowrap}
+.library-page #modal.psy-mspss-example .psy-cp-calculator .psy-mspss-scroll th{font-weight:750}
+.library-page #modal.psy-mspss-example .psy-mspss-blank-scroll{max-height:none}
+.library-page #modal.psy-mspss-example .psy-cp-absent{border-color:#cfb89f;background:var(--soft)}
+html.dark .library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-purple{background:#352845!important;border-color:#624b7c!important;color:#e3d1f7!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-green{background:#183b2f!important;border-color:#317454!important;color:#c0f0d1!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cp-scales>div.psy-cp-blue{background:#1c3046!important;border-color:#3a688d!important;color:#c4e3ff!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cp-scales>div b,
+html.dark .library-page #modal.psy-mspss-example .psy-cp-scales>div strong{color:inherit!important}
+@media(max-width:1000px){
+ .library-page #modal.psy-mspss-example .psy-mspss-workspace .psy-cp-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .library-page #modal.psy-mspss-example .psy-cp-scales{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:820px){
+ .library-page #modal.psy-mspss-example .psy-mspss-workspace .psy-cp-grid{grid-template-columns:1fr}
+}
+@media(max-width:670px){
+ .library-page #modal.psy-mspss-example .psy-cp-grid{grid-template-columns:1fr}
+ .library-page #modal.psy-mspss-example .psy-cp-scales{grid-template-columns:1fr}
+ .library-page #modal.psy-mspss-example .psy-cp-grid .psy-mspss-item{min-height:118px;padding:13px}
+ .library-page #modal.psy-mspss-example .psy-cp-demographics label{max-width:none;flex:1 1 100%}
+ .library-page #modal.psy-mspss-example .psy-cp-next-actions .btn{flex:1 1 130px}
+}
