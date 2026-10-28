@@ -93,8 +93,8 @@
   }catch(_){note("Не удалось подключить аутентификатор. Проверьте настройки MFA Supabase.",true);}
   finally{busy=false;button.disabled=false;}
  }
- node("psyMfaStartBtn").addEventListener("click",()=>enroll("Психотека – Вендиго"));
- node("psyMfaBackup").addEventListener("click",()=>enroll("Психотека – резервный фактор"));
+ node("psyMfaStartBtn").addEventListener("click",()=>enroll("Метолария – Вендиго"));
+ node("psyMfaBackup").addEventListener("click",()=>enroll("Метолария – резервный фактор"));
  node("psyMfaEnrollForm").addEventListener("submit",async event=>{
   event.preventDefault();if(!pending||busy)return;
   const code=validCode(node("psyMfaEnrollCode").value);
