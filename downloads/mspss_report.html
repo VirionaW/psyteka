@@ -27,7 +27,7 @@ table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}th{text-a
 const data=window.opener && window.opener.PSY_MSPSS && window.opener.PSY_MSPSS.pendingReport;
 const category=x=>{const r=Math.round(x*10)/10;return r<=2.9?"Низкая":r<=5?"Умеренная":"Высокая";};
 const E=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-if(!data){document.getElementById("report").innerHTML='<h1>Результат не найден</h1><p>Откройте отчет из раздела «Обработка» в Психотеке.</p>';return;}
+if(!data){document.getElementById("report").innerHTML='<h1>Результат не найден</h1><p>Откройте отчет из раздела «Обработка» в Метоларии.</p>';return;}
 document.getElementById("report").innerHTML='<h1>Результаты обследования</h1>'+
  '<p>Шкала воспринимаемой социальной поддержки (MSPSS)</p><div class="meta"><span><strong>ФИО:</strong> '+E(data.name)+'</span><span><strong>Дата:</strong> '+E(data.date)+'</span></div>'+
  '<section class="value"><div>Общий средний показатель</div><strong>'+data.overall.toFixed(2)+' / 7</strong><div>Сумма ответов: '+data.raw+' из 84</div><div><b>Ориентир: '+category(data.overall).toLowerCase()+' воспринимаемая поддержка</b></div></section>'+
