@@ -145,7 +145,7 @@
   });
   document.getElementById("phDownloadReport")?.addEventListener("click",()=>{
    const z=r.attendance==="absent"?null:score(d,r.answers);if(!z){alert("Для протокола нужны все 58 ответов присутствующего ученика.");return}
-   const body='<h1>Тест школьной тревожности Филлипса</h1><p>Код ученика: '+esc(r.name||"Без персональных данных")+
+   const body='<h1>Тест школьной тревожности Филлипса</h1><p>Редакция обработки: Н. Ф. Гребень, 2007 (третий фактор – 12 пунктов)</p><p>Код ученика: '+esc(r.name||"Без персональных данных")+
    '<br>Дата формирования: '+new Date().toLocaleDateString("ru-RU")+'</p><p><b>Общий показатель:</b> '+z.raw+' из 58; '+fmt(z.percent)+'%.</p>'+
    '<table><thead><tr><th>Фактор</th><th>Несовпадений</th><th>Процент</th></tr></thead><tbody>'+
    z.scales.map(s=>'<tr><td>'+esc(s.name)+'</td><td>'+s.raw+' / '+s.max+'</td><td>'+fmt(s.percent)+'%</td></tr>').join("")+'</tbody></table>'+
@@ -153,9 +153,9 @@
    save("Phillips_58_protocol.html",'<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Филлипс · протокол</title><style>@page{size:A4;margin:15mm}body{font:14px/1.55 Arial;color:#24382e;max-width:780px;margin:20px auto}h1{font-size:22px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #9cb5a5;padding:8px;text-align:left}.small{font-size:12px;color:#5f7265}</style></head><body>'+body+'</body></html>',"text/html;charset=utf-8");
   });
   document.getElementById("phDownloadCsv")?.addEventListener("click",()=>{
-   const head=["Код","Статус","Заполнено из 58","Всего несовпадений","Всего, %",...SCALES.flatMap((s,i)=>["Ф"+(i+1)+": "+s.name+" (балл)","Ф"+(i+1)+": %"]),...Array.from({length:58},(_,i)=>"Ответ "+(i+1))];
+   const head=["Код","Редакция","Статус","Заполнено из 58","Всего несовпадений","Всего, %",...SCALES.flatMap((s,i)=>["Ф"+(i+1)+": "+s.name+" (балл)","Ф"+(i+1)+": %"]),...Array.from({length:58},(_,i)=>"Ответ "+(i+1))];
    const out=[head];
-   rows.forEach((x,i)=>{const absent=x.attendance==="absent",z=absent?null:score(d,x.answers);out.push([x.name||"У-"+(i+1),absent?"Отсутствовал":z?"Обработан":"Нет полного результата",absent?"":count(x.answers),z?.raw??"",z?fmt(z.percent):"",...SCALES.flatMap((s,k)=>z?[z.scales[k].raw,fmt(z.scales[k].percent)]:["",""]),...Array.from({length:58},(_,k)=>!absent&&valid(x.answers?.[k])?x.answers[k]==="yes"?"Да":"Нет":"")])});
+   rows.forEach((x,i)=>{const absent=x.attendance==="absent",z=absent?null:score(d,x.answers);out.push([x.name||"У-"+(i+1),"Гребень 2007, фактор 3: 12 пунктов",absent?"Отсутствовал":z?"Обработан":"Нет полного результата",absent?"":count(x.answers),z?.raw??"",z?fmt(z.percent):"",...SCALES.flatMap((s,k)=>z?[z.scales[k].raw,fmt(z.scales[k].percent)]:["",""]),...Array.from({length:58},(_,k)=>!absent&&valid(x.answers?.[k])?x.answers[k]==="yes"?"Да":"Нет":"")])});
    save("Phillips_school_anxiety_class.csv",csv(out),"text/csv;charset=utf-8");
   });
  }
