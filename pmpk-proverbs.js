@@ -23,14 +23,14 @@ function portfolio(){return '<section class="pmpk-method-box"><h3>Общие с�
  ["Возраст","11-18 лет в школьном маршруте"],["Материал","10 народных пословиц, качественная регистрация"],["Оценка","Характер объяснения и обобщения без нормативных баллов"]
  ].map(([a,b])=>'<div><small>'+esc(a)+'</small><strong>'+esc(b)+'</strong></div>').join("")+'</div></section>'+
  '<section class="pmpk-method-box"><h3>Цель</h3><p>Выявить особенности понимания переносного смысла, абстрагирования, целенаправленности и связности объяснений.</p>'+
- '<p>Метод толкования пословиц описан в клинической патопсихологии. Представлена открытая рабочая серия общенародных пословиц Психотеки. Она не является стандартизированным авторским вариантом Б. В. Зейгарник с подбором фраз и не имеет возрастных количественных норм.</p>'+
+ '<p>Метод толкования пословиц описан в клинической патопсихологии. Представлена открытая рабочая серия общенародных пословиц Метоларии. Она не является стандартизированным авторским вариантом Б. В. Зейгарник с подбором фраз и не имеет возрастных количественных норм.</p>'+
  '<p><a href="'+SOURCE+'" target="_blank" rel="noopener noreferrer">Клиническая патопсихология – описание приема</a> · <a href="'+OTHER+'" target="_blank" rel="noopener noreferrer">Описание процедуры и примеры пословиц</a></p></section>'}
 function guide(){return '<section class="pmpk-method-box"><div class="pmpk-toolbar"><h3>Методика / руководство</h3><div class="pmpk-actions">'+
  '<button type="button" class="pmpk-mini" data-proverbs-action="print-guide">Без бланка</button><button type="button" class="pmpk-action primary" data-proverbs-action="print-combined">С бланком</button></div></div>'+
  '<h4>Цель</h4><p>Качественное исследование понимания переносного смысла народных пословиц.</p>'+
  '<h4>Инструкция ребенку</h4><blockquote>Я буду называть пословицы. Объясни, что каждая пословица означает, какую общую мысль она выражает.</blockquote>'+
  '<h4>Проведение</h4><ol><li>По одной предъявлять пословицы с отдельного списка специалиста или читать с листа.</li><li>Дословно записывать объяснение и примеры. Не подсказывать правильную идею.</li><li>При необходимости задавать нейтральное уточнение о смысле высказывания, помечать помощь.</li><li>Отличать понимание общего смысла от буквального пересказа и от частного жизненного примера без обобщения.</li><li>Зафиксировать влияние речевых трудностей и знания самого выражения.</li></ol>'+
- '<h4>Качественные критерии</h4><p>Для каждой пословицы отметьте одну из категорий: обобщенный переносный смысл, буквальная трактовка, ситуативный пример без обобщения, иное объяснение, либо не предъявлялось. Слова ребенка записываются дословно; категории – рабочая схема регистрации Психотеки, а не валидизированная шкала.</p>'+
+ '<h4>Качественные критерии</h4><p>Для каждой пословицы отметьте одну из категорий: обобщенный переносный смысл, буквальная трактовка, ситуативный пример без обобщения, иное объяснение, либо не предъявлялось. Слова ребенка записываются дословно; категории – рабочая схема регистрации Метоларии, а не валидизированная шкала.</p>'+
  '<h4>Интерпретация</h4><p>Общая оценка строится по содержанию ответов, их устойчивости, самокоррекции и контексту. Из этой серии нельзя рассчитывать IQ, возрастной норматив или диагноз.</p></section>'}
 function blankTab(){return '<section class="pmpk-method-box"><div class="pmpk-toolbar"><h3>Бланки А4</h3><div class="pmpk-actions"><button type="button" class="pmpk-mini" data-proverbs-action="print-child">Лист ребенка</button><button type="button" class="pmpk-mini" data-proverbs-action="print-blank">Протокол специалиста</button><button type="button" class="pmpk-action primary" data-proverbs-action="word-blank">Word</button></div></div><p>Лист ребенка содержит только пословицы. В протоколе специалиста предусмотрены пустые поля для дословных ответов и наблюдений; готовые толкования на бланке не печатаются.</p></section>'}
 function processing(){return '<section class="pmpk-method-box"><h3>Обработка результатов</h3><p class="pmpk-note">Только качественная регистрация. Пустое поле не означает отсутствие понимания.</p>'+
@@ -41,7 +41,7 @@ function processing(){return '<section class="pmpk-method-box"><h3>Обрабо�
  '<label>Дословный ответ *<textarea rows="2" data-proverbs-meaning="'+i+'">'+esc(r.meaning)+'</textarea></label>')+'</section>'}).join("")+'</div>'+
  '<label class="pmpk-method-blockfield">Общее качественное заключение *<textarea rows="4" data-proverbs-summary>'+esc(info.summary)+'</textarea></label></section>'}
 function bodyPrint(kind){
- const header='<h1>'+esc(NAME)+'</h1><p>Возраст 11-18 лет. Рабочая серия общеупотребимых народных пословиц, регистрация Психотеки.</p>';
+ const header='<h1>'+esc(NAME)+'</h1><p>Возраст 11-18 лет. Рабочая серия общеупотребимых народных пословиц, регистрация Метоларии.</p>';
  const child=header+'<h2>Пословицы</h2><ol>'+phrases.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol>';
  const blank=header+'<h2>Протокол специалиста</h2><p>Код ____ Возраст ____ Дата ____</p>'+
  '<table><tr><th>Пословица</th><th>Дословный ответ</th><th>Наблюдения / помощь</th></tr>'+
@@ -84,6 +84,6 @@ document.addEventListener("click",e=>{if(!overlay||!overlay.contains(e.target))r
  if(b.dataset.proverbsTab){tab=b.dataset.proverbsTab;draw();return}
  const a=b.dataset.proverbsAction;if(a==="close")close();else if(a==="back"){tab="portfolio";draw()}else if(a==="processing"){tab="processing";draw()}else if(a.startsWith("print-"))print(a.slice(6));else if(a.startsWith("word-"))word(a.slice(5));
 });
-if(window.PSY_CATALOG&&!window.PSY_CATALOG.some(x=>x.name===NAME))window.PSY_CATALOG.push({id:ID,name:NAME,theme:"Мышление",author:"Классическая патопсихологическая проба; подбор народных пословиц Психотеки",age:"11-18 лет",format:"Словесная качественная проба",goal:"Понимание переносного смысла и обобщений.",source:SOURCE});
+if(window.PSY_CATALOG&&!window.PSY_CATALOG.some(x=>x.name===NAME))window.PSY_CATALOG.push({id:ID,name:NAME,theme:"Мышление",author:"Классическая патопсихологическая проба; подбор народных пословиц Метоларии",age:"11-18 лет",format:"Словесная качественная проба",goal:"Понимание переносного смысла и обобщений.",source:SOURCE});
 window.PSY_PMPK_PROVERBS={name:NAME,open,has:n=>n===NAME,test:{phrases:phrases.length,ready,initial:blank}};
 })();

@@ -1,6 +1,6 @@
 "use strict";
 /* Источниковые предметные пробы из обследования шестого года жизни под ред. Е. А. Стребелевой.
-   Бланк специалиста и интерфейс Психотеки, без самостоятельных нормативов. */
+   Бланк специалиста и интерфейс Метоларии, без самостоятельных нормативов. */
 (function(){
 const BASE="https://www.pedlib.ru/Books/3/0496/3_0496-243.shtml";
 const PAGE2="https://www.pedlib.ru/Books/3/0496/3_0496-244.shtml";
@@ -63,7 +63,7 @@ function profile(){const m=M[active];return '<section class="pmpk-method-box"><h
  ["Возраст","5-6 лет, обследование шестого года жизни"],["Форма",TYPE[active]],["Материал",m.material]
  ].map(([k,v])=>'<div><small>'+esc(k)+'</small><strong>'+esc(v)+'</strong></div>').join("")+'</div></section>'+
  '<section class="pmpk-method-box"><h3>Цель</h3><p>'+esc(m.goal)+'</p><h3>Наблюдаемые показатели</h3><ul>'+m.signals.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>'+
- '<p>Одна предметная проба не заменяет комплексного обследования. Процедура из опубликованного сборника, протокол и поля обработки составлены Психотекой. Нормативные диагностические уровни не рассчитываются.</p>'+
+ '<p>Одна предметная проба не заменяет комплексного обследования. Процедура из опубликованного сборника, протокол и поля обработки составлены Метоларией. Нормативные диагностические уровни не рассчитываются.</p>'+
  '<p><a href="'+m.source+'" target="_blank" rel="noopener noreferrer">Описание задания в первоисточнике</a></p></section>';
 }
 function guide(){const m=M[active];return '<section class="pmpk-method-box"><div class="pmpk-toolbar"><h3>Методика / руководство</h3><div class="pmpk-actions">'+
@@ -92,7 +92,7 @@ function processing(){const m=M[active],d=data();return '<section class="pmpk-me
  (ready()?'<div class="pmpk-sourced-result"><h3>Регистрация заполнена</h3><p>Указаны самостоятельность, способы действия и помощь. Автоматические диагнозы и возрастные шкалы не используются.</p></div>':
  '<p class="pmpk-note">Для завершения заполните все обязательные данные по фактическому предъявлению.</p>')+'</section>';
 }
-function printBody(kind){const m=M[active],d=data();const heading='<h1>'+esc(m.name)+'</h1><p>Возраст: 5-6 лет. Издание под ред. Е. А. Стребелевой (1998). Протокол Психотеки.</p>';
+function printBody(kind){const m=M[active],d=data();const heading='<h1>'+esc(m.name)+'</h1><p>Возраст: 5-6 лет. Издание под ред. Е. А. Стребелевой (1998). Протокол Метоларии.</p>';
  const guide=heading+'<h2>Цель</h2><p>'+esc(m.goal)+'</p><h2>Материалы</h2><p>'+esc(m.material)+'</p>'+
  '<h2>Инструкция ребенку</h2><p>'+esc(m.child)+'</p><h2>Процедура</h2><ol>'+m.procedure.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol>'+
  '<h2>Критерии и интерпретация</h2><p>'+esc(m.key)+'</p><p>Источник: '+esc(m.source)+'</p>';
