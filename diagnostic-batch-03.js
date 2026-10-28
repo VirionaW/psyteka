@@ -51,7 +51,7 @@ D["Vanderbilt Assessment Scales"]={
  source:"https://nichq.org/downloadable/nichq-vanderbilt-assessment-scales/",
  officialBlank:"https://nichq.org/wp-content/uploads/2024/09/NICHQ-Vanderbilt-Assessment-Scales.pdf",
  sourceScoring:"https://nichq.org/wp-content/uploads/2024/09/NICHQ-Vanderbilt-Assessment-Scales.pdf#page=10",
- license:"©2002 American Academy of Pediatrics и NICHQ. Оригинальный PDF бесплатно опубликован NICHQ; полный текст пунктов не копируется на «Психотеку». Используйте оригинал из источника, с указанием авторства. Встроена обработка только первичных форм, не follow-up.",
+ license:"©2002 American Academy of Pediatrics и NICHQ. Оригинальный PDF бесплатно опубликован NICHQ; полный текст пунктов не копируется на «Метоларию». Используйте оригинал из источника, с указанием авторства. Встроена обработка только первичных форм, не follow-up.",
  originalLanguage:"Оригинал: английский. Русский стандартизированный бланк здесь не предоставляется.",
  scope:"Родители: за последние 6 месяцев. Учитель: с начала учебного года (с указанием срока наблюдения).",
  variants:[parent,teacher],

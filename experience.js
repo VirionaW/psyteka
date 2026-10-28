@@ -101,7 +101,7 @@ function setTab(name){
  name==="processing"?viewProcessing(methodNow):viewCalculator(methodNow);
  if(name==='instruction'||name==='materials')body.innerHTML=enhanceMethodView(name,body.innerHTML);
  if(name==='materials'&&window.PSY_GUIDE_STANDARD?.selectionUnsupported(methodNow.name)){
-   body.innerHTML='<div class="notice">Для выбранной возрастной версии в Психотеке нет проверенного бланка или стимулов. Не используйте материалы другой редакции. Откройте вкладку «Методика / руководство» и перейдите к опубликованному источнику.</div>';
+   body.innerHTML='<div class="notice">Для выбранной возрастной версии в Метоларии нет проверенного бланка или стимулов. Не используйте материалы другой редакции. Откройте вкладку «Методика / руководство» и перейдите к опубликованному источнику.</div>';
  }
  if(name==='instruction'&&window.PSY_GUIDE_STANDARD){
    body.innerHTML=window.PSY_GUIDE_STANDARD.supplement(methodNow.name,DETAILS[methodNow.name],methodNow,body.innerHTML);
@@ -730,12 +730,12 @@ function exportGroup(d){
   const head=['Участник','Узор 2 диктовка','Узор 2 самостоятельно','Узор 3 диктовка','Узор 3 самостоятельно','Узор 4 диктовка','Узор 4 самостоятельно','Итог /16'];
   const data=[head,...rows.map((x,i)=>[x.name||'Участник '+(i+1),...Array.from({length:6},(_,k)=>x.answers[k]??''),getScores(d,x.answers)?.raw??''])];
   const blob=new Blob(['\uFEFF'+data.map(row=>row.map(safe).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});
-  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Психотека_Графический_диктант.csv';a.click();URL.revokeObjectURL(url);return;
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Метолария_Графический_диктант.csv';a.click();URL.revokeObjectURL(url);return;
  }
  let data=[['Участник','Сырая сумма',...(d.options.length===6?['Индекс']:[])]];
  rows.forEach((r,i)=>{let z=getScores(d,r.answers);data.push([r.name||'Участник '+(i+1),z?.raw??'',...(d.options.length===6?[z?.index??'']:[])])});
  const csv='\uFEFF'+data.map(row=>row.map(safe).join(';')).join('\r\n');
- const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Психотека_результаты.csv';a.click();URL.revokeObjectURL(url);
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Метолария_результаты.csv';a.click();URL.revokeObjectURL(url);
 }
 function makePrintPage(d,blank,combined=false){
  if(d?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.printPage(d,blank,combined,rows[rowIndex]);

@@ -156,9 +156,9 @@
    z.groups.map(x=>'<tr><td>'+E(x.name)+'</td><td>'+x.positive+' / '+x.total+
     ' · порог '+x.cutoff+' · '+(x.screenPositive?'достигнут':'не достигнут')+'</td></tr>').join('');
   const rawRows=(r.answers||[]).slice(0,v?.count||10);
-  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Психотека · результат '+E(isR(d)?'RSES':'Vanderbilt')+'</title>'+
+  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Метолария · результат '+E(isR(d)?'RSES':'Vanderbilt')+'</title>'+
    '<style>@page{size:A4;margin:15mm}body{font:14px/1.5 Arial,sans-serif;color:#253b32;max-width:850px;margin:auto;padding:25px}h1{font-size:22px;color:#216546}h2{font-size:17px;margin-top:28px}table{border-collapse:collapse;width:100%;margin:10px 0}th,td{border:1px solid #aecab6;padding:8px;text-align:left}thead{background:#e6f1e9}.note{padding:13px;background:#e6f1e9;border-left:4px solid #267751}tr{break-inside:avoid}@media print{body{padding:0}}</style></head><body>'+
-   '<h1>Психотека · Протокол диагностики</h1><p><strong>'+E(isR(d)?'Шкала самооценки Розенберга (RSES)':'NICHQ Vanderbilt Assessment Scales (первичные формы 2002)')+'</strong></p>'+
+   '<h1>Метолария · Протокол диагностики</h1><p><strong>'+E(isR(d)?'Шкала самооценки Розенберга (RSES)':'NICHQ Vanderbilt Assessment Scales (первичные формы 2002)')+'</strong></p>'+
    '<p>Код участника: '+name+' · Дата формирования: '+E(date)+'</p>'+
    '<h2>Подсчет</h2><table><thead><tr><th>Показатель</th><th>Результат</th></tr></thead><tbody>'+summary+'</tbody></table>'+
    '<h2>Интерпретация</h2><p class="note">'+E(z.summary)+'</p><p>'+E(d.interpret)+'</p>'+
@@ -181,9 +181,9 @@
  function saveBlank(d){
   if(!isR(d)){window.open(d.officialBlank,"_blank","noopener,noreferrer");return;}
   const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>RSES · бланк</title>'+
-   '<style>@page{size:A4;margin:14mm}body{font:14px/1.55 Arial;color:#234036;max-width:790px;margin:auto}h1{font-size:22px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #a6bdaa;padding:9px;text-align:left}tr{break-inside:avoid}.diag-sheet{padding:5px}.diag-attribution{margin-top:20px;font-size:12px}</style></head><body><h1>Психотека · Бланк RSES</h1>'+
+   '<style>@page{size:A4;margin:14mm}body{font:14px/1.55 Arial;color:#234036;max-width:790px;margin:auto}h1{font-size:22px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #a6bdaa;padding:9px;text-align:left}tr{break-inside:avoid}.diag-sheet{padding:5px}.diag-attribution{margin-top:20px;font-size:12px}</style></head><body><h1>Метолария · Бланк RSES</h1>'+
    materials(d)+'</body></html>';
-  download(html,'Психотека_RSES_бланк.html');
+  download(html,'Метолария_RSES_бланк.html');
  }
  function bind(d,ctx,redraw){
   const r=ctx.rows[ctx.rowIndex];

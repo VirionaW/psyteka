@@ -19,7 +19,7 @@
   return definitions[name].fields.map(([id,label])=>({id,label,value:form.querySelector('[name="'+id+'"]').value.trim()}));
  }
  function protocol(name){
-  return ["ПСИХОТЕКА – КАЧЕСТВЕННЫЙ ПРОТОКОЛ",definitions[name].title,"Рабочая версия. Без ФИО и автоматической диагностики.","",...fieldData(name).flatMap(({label,value})=>[label+":",value||"Не заполнено",""]),"Не интерпретировать отдельные элементы рисунка как диагноз. Дополнительная беседа и проверка гипотез обязательны."].join("\n");
+  return ["МЕТОЛАРИЯ – КАЧЕСТВЕННЫЙ ПРОТОКОЛ",definitions[name].title,"Рабочая версия. Без ФИО и автоматической диагностики.","",...fieldData(name).flatMap(({label,value})=>[label+":",value||"Не заполнено",""]),"Не интерпретировать отдельные элементы рисунка как диагноз. Дополнительная беседа и проверка гипотез обязательны."].join("\n");
  }
  function feedback(name,msg){const p=document.querySelector('[data-feedback="'+name+'"]');if(p)p.textContent=msg}
  function fallbackCopy(txt){const t=document.createElement("textarea");t.value=txt;document.body.appendChild(t);t.select();let ok=false;try{ok=document.execCommand("copy")}catch(_){}t.remove();return ok}

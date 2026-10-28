@@ -11,7 +11,7 @@
   document.querySelectorAll("[data-ad-section]").forEach(el=>el.hidden=el.dataset.adSection!==mode);
   tabs.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.adTab===mode)));
   try{const url=new URL(location.href);url.searchParams.set("method",mode);history.replaceState(null,"",url)}catch(_){}
-  document.title=names[mode]+" | Психотека";
+  document.title=names[mode]+" | Метолария";
  }
  tabs.forEach(btn=>btn.addEventListener("click",()=>choose(btn.dataset.adTab)));
  function report(type){

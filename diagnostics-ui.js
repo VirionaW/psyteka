@@ -22,7 +22,7 @@
   return '<div class="diagnostic-intro"><p><strong>Период:</strong> '+escape(d.scope)+'. <strong>Версия:</strong> '+escape(d.originalLanguage)+
   '</p><p>Сначала проведите бумажную методику, затем перенесите ответы по порядку. При пропуске хотя бы одного ответа результат не рассчитывается.</p>'+
   '<a class="btn primary" href="'+escape(d.officialBlank)+'" rel="noopener noreferrer" target="_blank">Открыть официальный бланк PDF ↗</a>'+
-  '<p class="privacy-inline">PDF открывается у первоисточника. Психотека не отправляет ответы на сервер и не сохраняет их автоматически. Используйте код участника, не ФИО.</p></div>';
+  '<p class="privacy-inline">PDF открывается у первоисточника. Метолария не отправляет ответы на сервер и не сохраняет их автоматически. Используйте код участника, не ФИО.</p></div>';
  }
  function materials(d,blank){
   if(isWho(d)){
@@ -128,9 +128,9 @@
    "</tbody></table>";
   let answerTable='<h2>Введенные ответы</h2><table><thead><tr><th>Пункт</th><th>Балл</th></tr></thead><tbody>'+
    d.questions.map((_,i)=>'<tr><td>'+(i+1)+'</td><td>'+escape(row.answers[i])+'</td></tr>').join('')+'</tbody></table>';
-  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Психотека · Результат '+escape(d===null?'':(isWho(d)?"WHO-5":"SCARED"))+'</title>'+
+  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Метолария · Результат '+escape(d===null?'':(isWho(d)?"WHO-5":"SCARED"))+'</title>'+
    '<style>@page{size:A4;margin:16mm}body{font:15px/1.5 Arial,sans-serif;max-width:850px;margin:auto;color:#253c32;padding:22px}h1{color:#176042}h2{margin-top:30px;font-size:18px}table{border-collapse:collapse;width:100%;margin:12px 0}td,th{border:1px solid #afc9b5;padding:7px;text-align:left}thead{background:#e8f3ea}.note{background:#edf5ef;padding:13px;border-left:4px solid #227855;margin:20px 0}.muted{color:#526b5e;font-size:13px}tr{break-inside:avoid}@media print{body{padding:0}}</style></head><body>'+
-   '<h1>Психотека · Протокол диагностики</h1><p class="muted">Результат психологического скрининга · '+escape(d.scope)+'</p>'+table+
+   '<h1>Метолария · Протокол диагностики</h1><p class="muted">Результат психологического скрининга · '+escape(d.scope)+'</p>'+table+
    '<h2>Интерпретация</h2><p class="note">'+escape(z.summary)+'</p><p>'+escape(d.interpret)+'</p>'+
    '<p class="muted">Данный документ не подтверждает диагноз; вывод специалиста строится на комплексном обследовании.</p>'+
    answerTable+'<h2>Источник и версия</h2><p><a href="'+escape(d.source)+'">'+escape(d.source)+'</a></p>'+
