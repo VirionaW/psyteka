@@ -23,6 +23,7 @@ button,input,select,textarea{font:inherit}button,a{touch-action:manipulation}but
 a{color:var(--green)}header{background:#fff;border-bottom:1px solid var(--line);padding:16px max(18px,calc((100vw - 1300px)/2))}
 .header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .brand{display:flex;gap:12px;align-items:center;text-decoration:none;font-weight:800;font-size:20px}
+.brand .brand-title-green{color:#28534a}.brand .brand-title-brown{color:#81715e}html.dark .brand .brand-title-green{color:#e9f5ed}html.dark .brand .brand-title-brown{color:#ddc8aa}
 .brand svg{width:38px;height:38px}.header-nav{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .link-btn,.btn{display:inline-flex;align-items:center;justify-content:center;min-height:41px;padding:9px 14px;border-radius:10px;border:1px solid var(--line);text-decoration:none;background:#fff;color:var(--ink);font-weight:650}
 .btn.primary{background:var(--green);color:#fff;border-color:var(--green)}.btn:focus-visible,.link-btn:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #91b49c;outline-offset:2px}
@@ -281,7 +282,7 @@ html.dark .method-focus{background:#2b493b;color:#deefdf}
 </style>
 </head>
 <body>
-<header><div class="header-inner"><a class="brand" href="library.html"><span class="brand-art"><img class="logo-light" src="brand-mark.svg" alt=""><img class="logo-dark" src="brand-mark-dark.svg" alt=""></span><span>Метолария <span class="brand-crumb">/ Рисунки</span></span></a><nav class="header-nav"><a class="link-btn" href="library.html">Вернуться в библиотеку</a><button class="btn theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему" aria-pressed="false"><span id="themeIcon" aria-hidden="true">☾</span><span id="themeText">Темная тема</span></button></nav></div></header>
+<header><div class="header-inner"><a class="brand" href="library.html"><span class="brand-art"><img class="logo-light" src="brand-mark.svg" alt=""><img class="logo-dark" src="brand-mark-dark.svg" alt=""></span><span><span class="brand-title-green">Мето</span><span class="brand-title-brown">лария</span> <span class="brand-crumb">/ Рисунки</span></span></a><nav class="header-nav"><a class="link-btn" href="library.html">Вернуться в библиотеку</a><button class="btn theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему" aria-pressed="false"><span id="themeIcon" aria-hidden="true">☾</span><span id="themeText">Темная тема</span></button></nav></div></header>
 <main>
 <section class="intro"><div><p class="eyebrow">Рисуночные методики · справочник элементов</p><h1>Библиотека рисунков</h1><p>Выберите изображенный элемент, уточните цвет, расположение и детали. Интерпретации появятся справа, а нужные записи можно включить в протокол.</p></div><div class="status" id="connection" role="status">Автономный справочник</div></section>
 <div class="layout">

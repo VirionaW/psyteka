@@ -12,6 +12,7 @@ body{margin:0;background:var(--canvas);color:var(--ink);font-family:system-ui,-a
 .suggest-wrap{max-width:1760px;width:calc(100% - 44px);padding:24px 12px 80px;margin:0 auto}
 .suggest-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:27px}
 .suggest-brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:24px;text-decoration:none;color:var(--ink)}
+.suggest-brand .brand-title-green{color:#28534a}.suggest-brand .brand-title-brown{color:#81715e}.suggest-brand .brand-title-green + .brand-title-brown{margin-left:-10px}
 .suggest-brand img{width:40px;height:40px}
 .suggest-back{display:inline-flex;align-items:center;border:1px solid var(--edge);background:white;border-radius:12px;padding:10px 16px;text-decoration:none;color:var(--ink);font-size:14px;font-weight:650}
 .suggest-hero{padding:36px 44px;background:linear-gradient(125deg,#302952,#51498a 70%,#7669b3);color:#fff;border-radius:24px;margin-bottom:24px;box-shadow:0 12px 32px #30295216}
@@ -42,7 +43,7 @@ body{margin:0;background:var(--canvas);color:var(--ink);font-family:system-ui,-a
 @media(max-width:1100px){.suggest-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}\n@media(max-width:690px){.suggest-wrap{width:100%;padding:16px 12px 65px}.suggest-hero,.suggest-panel{padding:23px}.suggest-form,.suggest-cards{grid-template-columns:1fr}.suggest-hero h1{font-size:29px}.suggest-panel h2{font-size:21px}}
 .suggest-status{background:#f0edff;border-left:4px solid #7867c9;border-radius:10px;padding:16px 20px;color:#352b68!important;font-size:15px}.suggest-status strong{font-weight:800;color:#3b2b83}.suggest-card{min-width:0}\n</style></head>
 <body><main class="suggest-wrap">
-<div class="suggest-top"><a class="suggest-brand" href="index.html?home=1"><img src="brand-mark.svg" alt="">Метолария</a><a class="suggest-back" href="library.html?area=school">Вернуться в библиотеку</a></div>
+<div class="suggest-top"><a class="suggest-brand" href="index.html?home=1"><img src="brand-mark.svg" alt=""><span class="brand-title-green">Мето</span><span class="brand-title-brown">лария</span></a><a class="suggest-back" href="library.html?area=school">Вернуться в библиотеку</a></div>
 <section class="suggest-hero"><h1>Предложить методику или сообщить об ошибке</h1>
 <p>Помогите сделать Метоларию точнее и полезнее. Здесь можно предложить опубликованную методику или новую идею для сайта, сообщить о неточности, неработающей функции, проблеме с авторскими правами или написать по другому вопросу.</p></section>
 <section class="suggest-panel" aria-labelledby="feedback-heading"><h2 id="feedback-heading">Сообщить нам</h2>
