@@ -148,7 +148,7 @@
  const d=window.PSY_FULL_METHODS?.["Опросник детской депрессии М. Ковач (CDI)"];
  if(d){
   d.age="7-17 лет (27-пунктная версия предоставленного PDF)";
-  d.indicators=["Сниженное настроение (область симптомов)","Снижение удовольствия (область симптомов)","Вегетативные проявления (область симптомов)","Самооценка (область симптомов)","Межличностные отношения (область симптомов)","Общий сырой балл 0-54","Т-балл по возрасту и полу из таблицы PDF"];
+  d.indicators=[]; // CDI is scored as one total scale; do not invent subscales.
   d.sourceDescription="Предоставленный пользователем PDF «Опросник детской депрессии», 8 страниц. Нормативная таблица – страницы 6-8.";
   d.scoring="Сумма закодированных ответов на 27 пунктов (0, 1 или 2), диапазон 0-54. Для Т-балла укажите пол и возраст 7-17 лет. Таблица в PDF имеет несогласованность для мальчиков 7-12 лет при сумме 27-28, поэтому результат не подменяется догадкой.";
   d.interpret="Основной показатель – общий балл. Интервалы Т-баллов берутся из предоставленной таблицы и описывают отклонение от среднего, но не являются диагнозом.";
@@ -241,16 +241,13 @@
   if(r?.attendance==="absent")return '<section class="psy-mspss-result psy-cp-absent"><h3>Ученик отсутствовал</h3><p>Ответы сохранены, но результаты не рассчитываются и не входят в сводку класса.</p></section>';
   if(!z)return '<section class="psy-mspss-result"><h3>Заполнено '+n+' из '+total+'</h3>'+progress(n,total)+'<p>После ввода всех ответов появится автоматическая обработка. Пропуск не равен нулевому баллу.</p></section>';
   if(type(d)==="cdi"){
-   const t=norms.norm(z.raw,r.ageYears,r.sex),tValue=t.status==="ok"?String(t.t):"–";
-   return '<section class="psy-mspss-result"><h3>Общий показатель депрессивных симптомов</h3>'+
+   const t=norms.norm(z.raw,r.ageYears,r.sex);
+   return '<section class="psy-mspss-result psy-cdi-single-result"><h3>Общий результат CDI</h3>'+
     '<strong class="psy-mspss-mean">'+z.raw+' <small>/ 54</small></strong>'+
-    '<p>Сумма 27 кодов из выбранных утверждений. Для расчета Т-балла используются возраст и пол из таблицы PDF.</p>'+
-    '<div class="psy-mspss-scales psy-cp-scales">'+
-     '<div class="'+palette(0)+'"><b>Общий сырой балл</b><strong>'+z.raw+' / 54</strong>'+progress(z.raw,54)+'</div>'+
-     '<div class="'+palette(1)+'"><b>Т-балл по таблице PDF</b><strong>'+tValue+'</strong><p>'+esc(t.status==="ok"?t.level:t.message)+'</p></div>'+
-     '<div class="'+palette(2)+'"><b>Проверка полноты</b><strong>27 / 27</strong>'+progress(27,27)+'</div></div>'+
-    (Number(r.answers[8])>=1?'<div class="psy-cp-alert">В пункте 9 выбран ответ о суицидальных мыслях. Нужна безотлагательная личная оценка безопасности независимо от общего результата.</div>':"")+
-    '<p class="psy-mspss-small">Основной показатель CDI – общая сумма. Отдельные симптомные области не выдаются за нормированные подшкалы. Показатель не является диагнозом.</p></section>';
+    progress(z.raw,54)+
+    '<p><b>Т-балл:</b> '+(t.status==="ok"?'<strong>'+t.t+'</strong> – '+esc(t.level):'не рассчитан – '+esc(t.message))+'</p>'+
+    '<p class="psy-mspss-small">Это одна суммарная шкала из 27 пунктов, отдельных баллов по «настроению», «самооценке» и другим областям здесь нет. Результат не является диагнозом.</p>'+
+    '<p class="psy-mspss-small">Пункт 9 нужно просматривать по оригинальному тексту отдельно: цифровой код сам по себе не подтверждает и не исключает суицидальные мысли. При их наличии необходима очная оценка безопасности.</p></section>';
   }
   const scaleHtml=z.scales.map((s,i)=>'<div class="'+palette(i)+'"><b>'+esc(s.name)+'</b><strong>'+s.raw+' / '+s.max+' · '+s.percent.toFixed(1)+'%</strong>'+
    progress(s.raw,s.max)+'<small>'+esc(interpretation(s.percent))+'</small></div>').join("");
