@@ -17,7 +17,7 @@
  let destination="library.html",currentUser=null,role="participant",trial=null,paid=null,requestAt=0,timer=null,lastFocus=null,opening=false,ownerNeedsMfa=false,sendingEmail=false;
  const html=`<dialog id="psyEntryDialog" aria-labelledby="psyEntryTitle" aria-modal="true">
  <div class="psy-entry-inner">
-  <div class="psy-entry-top"><div><p class="psy-entry-eyebrow">Психотека · личный доступ</p><h2 id="psyEntryTitle">Войти в Психотеку</h2></div>
+  <div class="psy-entry-top"><div><p class="psy-entry-eyebrow">Метолария · личный доступ</p><h2 id="psyEntryTitle">Войти в Метоларию</h2></div>
    <button type="button" class="psy-entry-x" id="psyEntryClose" aria-label="Закрыть окно">×</button></div>
   <p class="psy-entry-lead" id="psyEntryLead">Войдите или зарегистрируйтесь по электронной почте. Пришлем одноразовый код, пароль не нужен.</p>
   <div class="psy-entry-step" id="psyEntryEmail">

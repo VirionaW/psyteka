@@ -1,11 +1,11 @@
 "use strict";
-/* Главная Психотеки открыта без кода тестера.
+/* Главная Метоларии открыта без кода тестера.
    Вход и выбор ознакомительного доступа – отдельное окно перед библиотекой. */
 (function(){
  const home=document.getElementById("siteHome");
  if(!home)return;
  home.hidden=false;
- document.title="Психотека – методики и материалы";
+ document.title="Метолария – методики и материалы";
  const top=document.getElementById("backTop");
  if(top){
   const update=()=>top.classList.toggle("visible",window.scrollY>480);

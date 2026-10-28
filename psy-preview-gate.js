@@ -12,14 +12,14 @@
   node.innerHTML=[
    '<section class="psy-gate-card" aria-labelledby="psyGateTitle">',
    '<div class="psy-gate-mark"><img src="brand-mark.svg" alt="" width="58" height="58"></div>',
-   '<p class="psy-gate-brand">Психотека</p><span class="psy-gate-eyebrow">Закрытая версия сайта</span>',
+   '<p class="psy-gate-brand">Метолария</p><span class="psy-gate-eyebrow">Закрытая версия сайта</span>',
    '<h1 id="psyGateTitle">Доступ по коду</h1>',
-   '<p class="psy-gate-description">Введите код, чтобы открыть Психотеку. Сейчас сайт доступен только участникам тестирования.</p>',
+   '<p class="psy-gate-description">Введите код, чтобы открыть Метоларию. Сейчас сайт доступен только участникам тестирования.</p>',
    '<form id="psyGateForm" novalidate><label for="psyGateCode">Код доступа</label><div class="psy-gate-input">',
    '<input id="psyGateCode" type="password" autocomplete="off" spellcheck="false" autocapitalize="none" maxlength="64" placeholder="Введите код" required>',
    '<button class="psy-gate-reveal" id="psyGateReveal" type="button" aria-label="Показать код" aria-pressed="false">Показать</button></div>',
    '<p id="psyGateError" class="psy-gate-error" role="status" aria-live="polite"></p>',
-   '<button type="submit" id="psyGateSubmit" class="psy-gate-submit">Войти в Психотеку</button></form>',
+   '<button type="submit" id="psyGateSubmit" class="psy-gate-submit">Войти в Метоларию</button></form>',
    '<p class="psy-gate-note">Если у вас нет кода, обратитесь к владельцу проекта.</p></section>'
   ].join("");
   document.body.appendChild(node);
