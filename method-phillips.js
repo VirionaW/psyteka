@@ -159,5 +159,5 @@
    save("Phillips_school_anxiety_class.csv",csv(out),"text/csv;charset=utf-8");
   });
  }
- window.PSY_PHILLIPS={score,count,instruction,materials,processing,calculator,bind,report,table,key:KEY,scales:SCALES};
+ window.PSY_PHILLIPS={score,count,instruction,materials,processing,calculator,bind,report,table,topics:TOPICS,key:KEY,scales:SCALES};
 })();
