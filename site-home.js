@@ -5,7 +5,7 @@
  const home=document.getElementById("siteHome");
  if(!home)return;
  home.hidden=false;
- document.title="Метолария – методики и материалы";
+ document.title="Метолария – методическая библиотека и рабочее пространство психолога";
  const top=document.getElementById("backTop");
  if(top){
   const update=()=>top.classList.toggle("visible",window.scrollY>480);
