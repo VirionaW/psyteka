@@ -88,9 +88,10 @@
   '<p>Источники: <a target="_blank" rel="noopener noreferrer" href="'+SOURCE+'">публикация с полным текстом и ключом ↗</a> · <a target="_blank" rel="noopener noreferrer" href="'+SECOND+'">публикация для сопоставления варианта ↗</a>.</p>';
   return html;
  }
- function report(a){
-  const n=count(a),z=score(DATA,a);
+ function report(a,row){
+  const n=count(a),z=row?.attendance==="absent"?null:score(DATA,a);
   let html='<section class="psy-ph-result"><div class="psy-ph-progress"><strong>Заполнено '+n+' из 58</strong><div class="psy-ph-track"><span style="width:'+(n/58*100)+'%"></span></div></div>';
+  if(row?.attendance==="absent")return '<section class="psy-ph-result"><strong>Отсутствовал – результаты не рассчитываются</strong></section>';
   if(!z)return html+'<p>Для автоматического подсчета требуются ответы на все 58 вопросов. Пустые поля не засчитываются как «Нет».</p></section>';
   html+='<div class="psy-ph-overall"><span>Общий показатель: несовпадения с ключом</span><b>'+z.raw+' / 58</b><strong>'+fmt(z.percent)+'%</strong></div><h3>Восемь факторов школьной тревожности</h3><div class="psy-ph-factors">'+z.scales.map(s=>
    '<div class="psy-ph-factor"><div><span>'+esc(s.name)+'</span><b>'+s.raw+' / '+s.max+' · '+fmt(s.percent)+'%</b></div><div class="psy-ph-track"><span style="width:'+s.percent+'%"></span></div></div>').join("")+'</div>'+
@@ -99,7 +100,7 @@
  }
  function table(rows){
   const th=SCALES.map((s,i)=>'<th title="'+esc(s.name)+'">Ф'+(i+1)+'</th>').join("");
-  const body=rows.map((r,i)=>{const z=score(DATA,r.answers);return '<tr><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td><td>'+(z?z.raw+' / 58':'Заполнено '+count(r.answers)+'/58')+'</td><td>'+(z?fmt(z.percent)+'%':'—')+'</td>'+
+  const body=rows.map((r,i)=>{const z=r.attendance==="absent"?null:score(DATA,r.answers);return '<tr><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td><td>'+(r.attendance==="absent"?"Отсутствовал":z?z.raw+' / 58':'Заполнено '+count(r.answers)+'/58')+'</td><td>'+(z?fmt(z.percent)+'%':'—')+'</td>'+
    SCALES.map((s,k)=>'<td>'+(z?fmt(z.scales[k].percent)+'%':'—')+'</td>').join("")+'</tr>'}).join("");
   return '<div class="psy-ph-scroll"><table><thead><tr><th>Код</th><th>Общий балл</th><th>%</th>'+th+'</tr></thead><tbody>'+body+'</tbody></table></div>'+
   '<p class="psy-ph-small">Ф1–Ф8 — восемь факторов в том же порядке, что в разделе «Обработка». Для неполных форм числовые результаты не рассчитываются.</p>';
@@ -114,9 +115,9 @@
   }else html+='<label class="psy-ph-code">Код ученика<input id="phSingleCode" maxlength="50" value="'+esc(r.name||"")+'" placeholder="Например, У-01"></label>';
   html+='<h3>Ответы на 58 вопросов</h3><p>Расположение полностью соответствует номерам в источнике. Выберите «Да» или «Нет», оставьте пустым только при пропуске.</p>'+
    '<div class="psy-ph-grid">'+Array.from({length:58},(_,i)=>'<label class="psy-ph-item"><span>Вопрос <b>'+String(i+1).padStart(2,"0")+'</b></span><select data-ph-answer="'+i+'" aria-label="Вопрос '+(i+1)+'"><option value="">— не отмечено —</option><option value="yes" '+(a[i]==="yes"?"selected":"")+'>Да</option><option value="no" '+(a[i]==="no"?"selected":"")+'>Нет</option></select></label>').join("")+'</div>'+
-   '<div id="phResults">'+report(a)+'</div>'+
+   '<div id="phResults">'+report(a,r)+'</div>'+
    '<div class="psy-ph-actions"><button class="btn" id="phClear">Очистить ответы</button><button class="btn primary" id="phDownloadReport">Скачать индивидуальный протокол</button></div>';
-  if(ctx.calcMode==="class")html+='<h3>Результаты класса</h3><div id="phClassResults">'+table(rows)+'</div><div class="psy-ph-actions"><button class="btn" id="nextParticipant">Следующий ребенок</button><button class="btn primary" id="phDownloadCsv">Скачать таблицу Excel / CSV</button></div>';
+  if(ctx.calcMode==="class")html+='<h3>Результаты класса</h3><div id="phClassResults">'+table(rows)+'</div><div class="psy-ph-actions"><button class="btn" id="phLegacyNext" hidden>Следующий ребенок</button><button class="btn primary" id="phDownloadCsv">Скачать таблицу Excel / CSV</button></div>';
   return html;
  }
  function save(filename,content,type){
@@ -128,7 +129,7 @@
  function bind(d,ctx){
   const rows=ctx.rows||[],r=rows[ctx.rowIndex];if(!r)return;
   r.answers ||= [];
-  const refresh=()=>{const x=document.getElementById("phResults");if(x)x.innerHTML=report(r.answers);
+  const refresh=()=>{const x=document.getElementById("phResults");if(x)x.innerHTML=report(r.answers,r);
    const g=document.getElementById("phClassResults");if(g)g.innerHTML=table(rows);
   };
   document.getElementById("phSingleCode")?.addEventListener("input",e=>{r.name=e.target.value});
@@ -138,7 +139,7 @@
    r.answers=[];document.querySelectorAll("[data-ph-answer]").forEach(el=>el.value="");refresh();
   });
   document.getElementById("phDownloadReport")?.addEventListener("click",()=>{
-   const z=score(d,r.answers);if(!z){alert("Для протокола заполните все 58 ответов.");return}
+   const z=r.attendance==="absent"?null:score(d,r.answers);if(!z){alert("Для протокола нужны все 58 ответов присутствующего ученика.");return}
    const body='<h1>Тест школьной тревожности Филлипса</h1><p>Код ученика: '+esc(r.name||"Без персональных данных")+
    '<br>Дата формирования: '+new Date().toLocaleDateString("ru-RU")+'</p><p><b>Общий показатель:</b> '+z.raw+' из 58; '+fmt(z.percent)+'%.</p>'+
    '<table><thead><tr><th>Фактор</th><th>Несовпадений</th><th>Процент</th></tr></thead><tbody>'+
@@ -147,9 +148,9 @@
    save("Phillips_58_protocol.html",'<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Филлипс · протокол</title><style>@page{size:A4;margin:15mm}body{font:14px/1.55 Arial;color:#24382e;max-width:780px;margin:20px auto}h1{font-size:22px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #9cb5a5;padding:8px;text-align:left}.small{font-size:12px;color:#5f7265}</style></head><body>'+body+'</body></html>',"text/html;charset=utf-8");
   });
   document.getElementById("phDownloadCsv")?.addEventListener("click",()=>{
-   const head=["Код","Заполнено из 58","Всего несовпадений","Всего, %",...SCALES.flatMap((s,i)=>["Ф"+(i+1)+": "+s.name+" (балл)","Ф"+(i+1)+": %"]),...Array.from({length:58},(_,i)=>"Ответ "+(i+1))];
+   const head=["Код","Статус","Заполнено из 58","Всего несовпадений","Всего, %",...SCALES.flatMap((s,i)=>["Ф"+(i+1)+": "+s.name+" (балл)","Ф"+(i+1)+": %"]),...Array.from({length:58},(_,i)=>"Ответ "+(i+1))];
    const out=[head];
-   rows.forEach((x,i)=>{const z=score(d,x.answers);out.push([x.name||"У-"+(i+1),count(x.answers),z?.raw??"",z?fmt(z.percent):"",...SCALES.flatMap((s,k)=>z?[z.scales[k].raw,fmt(z.scales[k].percent)]:["",""]),...Array.from({length:58},(_,k)=>valid(x.answers?.[k])?x.answers[k]==="yes"?"Да":"Нет":"")])});
+   rows.forEach((x,i)=>{const absent=x.attendance==="absent",z=absent?null:score(d,x.answers);out.push([x.name||"У-"+(i+1),absent?"Отсутствовал":z?"Обработан":"Нет полного результата",absent?"":count(x.answers),z?.raw??"",z?fmt(z.percent):"",...SCALES.flatMap((s,k)=>z?[z.scales[k].raw,fmt(z.scales[k].percent)]:["",""]),...Array.from({length:58},(_,k)=>!absent&&valid(x.answers?.[k])?x.answers[k]==="yes"?"Да":"Нет":"")])});
    save("Phillips_school_anxiety_class.csv",csv(out),"text/csv;charset=utf-8");
   });
  }
