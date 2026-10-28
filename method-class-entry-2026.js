@@ -341,11 +341,17 @@
    '<p class="psy-mspss-small">Краткая тема не заменяет текст вопроса. Для обследования используйте полную проверенную редакцию.</p></section>';
  }
  function printable(d,mode){
-  const source=type(d)==="cdi"?"Предоставленный 8-страничный PDF CDI, 27 пунктов":"Предоставленный PDF Гребень (2007), 58 пунктов";
-  const guide='<article><h1>'+esc(d.id==="cdi-27"?"Опросник детской депрессии М. Ковач (CDI)":"Тест школьной тревожности Филлипса")+'</h1><p>'+esc(source)+'</p><h2>Цель</h2><p>'+esc(d.goal)+'</p><h2>Порядок проведения</h2><p>'+esc(d.instructions)+'</p><h2>Ключ</h2><p>'+esc(d.scoring)+'</p><h2>Интерпретация</h2><p>'+esc(d.interpret)+'</p></article>';
-  const opts=type(d)==="cdi"?"0 / 1 / 2":"Нет / Да";
-  const blank='<article class="newpage"><h1>Бланк регистрации ответов</h1><p>Участник: ____________________________  Дата: _______________</p><p>Проверенная редакция: '+esc(source)+'</p><table><thead><tr><th>№</th><th>Тема</th><th>Ответ ('+opts+')</th></tr></thead><tbody>'+subjects(d).map((s,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(s)+'</td><td>__________</td></tr>').join("")+'</tbody></table></article>';
-  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Материалы Метоларии</title><style>@page{size:A4;margin:14mm}body{font:11pt/1.5 Arial;color:#1e3e2e}h1{font-size:18pt}h2{font-size:13pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #8ba892;padding:6px;font-size:9pt;text-align:left}tr{break-inside:avoid}.newpage{break-before:page}</style></head><body>'+(mode==="blank"?blank:guide)+(mode==="combined"?blank:"")+'</body></html>';
+  const isCDI=type(d)==="cdi";
+  const source=isCDI?"Оригинальный 27-пунктный опросник CDI (полный текст предъявляется отдельно)":"Предоставленный PDF Гребень (2007), 58 вопросов";
+  const guide='<article><h1>'+esc(isCDI?"Опросник детской депрессии М. Ковач (CDI)":"Тест школьной тревожности Филлипса")+'</h1><p>'+esc(source)+'</p><h2>Цель</h2><p>'+esc(d.goal)+'</p><h2>Порядок проведения</h2><p>'+esc(d.instructions)+'</p><h2>Ключ</h2><p>'+esc(d.scoring)+'</p><h2>Интерпретация</h2><p>'+esc(d.interpret)+'</p></article>';
+  const note=isCDI?
+   'Прочитай каждую группу из трех утверждений в полном бланке. Отметь одно – первое, второе либо третье – которое лучше всего описывает твое самочувствие за последние две недели. Номера 1, 2, 3 НЕ означают баллы. Без полного текста опросника этот лист использовать нельзя.':
+   'Прочитай каждый вопрос в полном опроснике и отметь «Да» или «Нет». Без исходного текста этот лист использовать нельзя.';
+  const options=isCDI?["Первое","Второе","Третье"]:["Нет","Да"];
+  const blank='<article class="newpage"><h1>Лист ответов ученика</h1><p>Участник: ____________________________  Дата: _______________</p>'+
+   '<p><b>Инструкция:</b> '+esc(note)+'</p><table><thead><tr><th>№</th>'+options.map(o=>'<th>'+esc(o)+'</th>').join("")+'</tr></thead><tbody>'+
+   Array.from({length:size(d)},(_,i)=>'<tr><td>'+(i+1)+'</td>'+options.map(() =>'<td class="choice">○</td>').join("")+'</tr>').join("")+'</tbody></table></article>';
+  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Материалы Метоларии</title><style>@page{size:A4;margin:14mm}body{font:11pt/1.5 Arial;color:#1e3e2e}h1{font-size:18pt}h2{font-size:13pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #8ba892;padding:6px;font-size:9pt;text-align:center}tr{break-inside:avoid}.choice{font-size:14pt}.newpage{break-before:page}</style></head><body>'+(mode==="blank"?blank:guide)+(mode==="combined"?blank:"")+'</body></html>';
  }
  function report(d,rows,mode,index){
   const selected=mode==="class"?alpha(rows).filter(r=>r.name?.trim()||done(d,r.answers)):[rows[index]];
