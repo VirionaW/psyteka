@@ -10,23 +10,23 @@
  const SCALES=[
   {id:"general",name:"Общая тревожность в школе",q:[2,4,7,12,16,21,23,26,28,...Array.from({length:13},(_,i)=>i+46)]},
   {id:"social",name:"Переживание социального стресса",q:[5,10,15,20,24,30,33,36,39,42,44]},
-  {id:"achievement",name:"Фрустрация потребности в достижении успеха",q:[1,3,6,11,17,19,25,29,32,35,38,41,43]},
+  {id:"achievement",name:"Фрустрация потребности в достижении успеха",q:[3,6,11,17,19,25,29,32,35,38,41,43]},
   {id:"expression",name:"Страх самовыражения",q:[27,31,34,37,40,45]},
   {id:"testing",name:"Страх ситуации проверки знаний",q:[2,7,12,16,21,26]},
   {id:"expectations",name:"Страх несоответствия ожиданиям окружающих",q:[3,8,13,17,22]},
   {id:"physio",name:"Низкая физиологическая сопротивляемость стрессу",q:[9,14,18,23,28]},
   {id:"teachers",name:"Проблемы и страхи в отношениях с учителями",q:[2,6,11,32,35,41,44,47]}
  ];
- const NOTE="Использована опубликованная редакция ключа, в которой первый фактор включает вопрос № 4 (а не № 3). В других источниках встречается № 3. Не смешивайте результаты разных редакций; до использования проверьте соответствие списка факторов и полного текста опросника.";
+ const NOTE="Сверено с предоставленным PDF «Тест школьной тревожности Филлипса» (Н. Ф. Гребень, 2007). В факторе 3 перечислены 12 номеров, хотя в PDF рядом ошибочно напечатано 13. Расчет ведется по 12 перечисленным пунктам. Для разных редакций нельзя смешивать ключи и нормы.";
  const WARN="Текст 58 вопросов предоставлен в источнике по ссылке. Локальный бланк содержит только номера и варианты «Да»/«Нет» и предназначен для регистрации ответов при предъявлении полного опросника. Никаких диагнозов или автоматического направления к специалисту по порогам не формируется.";
  const LABELS=["Да","Нет"];
  const DATA={
   author:"Б. Н. Филлипс (B. N. Phillips); используемая русскоязычная публикация по Л. М. Костиной",
-  age:"Младший и средний школьный возраст; уточняйте возрастные ограничения применяемой версии",
+  age:"Младший и средний школьный возраст; ориентировочно 7-14 лет, в PDF точные границы не приведены", 
   kind:"Опросник самоотчета школьника, 58 вопросов, ответы «Да» / «Нет»",
   count:"58 вопросов; общий показатель и 8 факторов тревожности",
   goal:"Выявление тем школьного беспокойства в ситуациях учебы, оценивания, общения со сверстниками и учителями.",
-  instructions:"Предъявите полный текст опубликованного опросника из указанного источника и регистрационный лист А4. Ученик отвечает «Да» или «Нет» на все 58 вопросов. До обработки проверьте полноту и соответствие редакции ключа.",
+  instructions:"Инструкция из PDF: ответьте на 58 вопросов о переживаниях в школе, отмечая «Да» либо «Нет». Проведение возможно индивидуально или письменно. Проверьте полноту ответов и соответствие ключа источнику.",
   scoring:"Сравните каждый ответ с ключом: показатель тревожности = количество ответов, НЕ совпадающих с ключом. Общий результат 0–58, проценты = несовпадения / 58 × 100. Для каждого из 8 факторов рассчитайте число несовпадений и процент от количества пунктов этого фактора. Факторы пересекаются; их суммы нельзя складывать для получения общего балла.",
   interpret:"Чем больше несовпадений с ключом, тем более выражены признаки школьного беспокойства по данной версии. В распространенной схеме >50% означает повышенное, >75% — высокое значение, однако возрастные нормы и клиническая диагностическая валидность зависят от версии. Не используйте результаты как диагноз и не делайте выводов по одному опроснику.",
   warning:WARN+" "+NOTE,
@@ -36,7 +36,7 @@
   answerFile:"downloads/phillips_school_anxiety_student.html",
   calculator:true,workflow:"phillips58",
   scales:SCALES,
-  sourceDescription:"Л. М. Костина. Методы диагностики тревожности. СПб.: Речь, 2006 — указанная публикация полного текста и ключа; сопоставление со вторым общедоступным источником.",
+  sourceDescription:"Пользовательский PDF: Н. Ф. Гребень (сост.). Психологические тесты для профессионалов. Минск, 2007, с. 1-5 фрагмента. Ключ и факторы сверены с таблицей PDF.",
   license:"Печатный лист Метоларии является самостоятельным регистрационным листом. Для предъявления 58 вопросов используется полный текст по ссылке, а не тематическая реконструкция."
  };
  const D=window.PSY_FULL_METHODS||(window.PSY_FULL_METHODS={});
@@ -114,7 +114,7 @@
    html+='<div class="group-tools"><label>Ученик<select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+esc(x.name||"У-"+(i+1))+'</option>').join("")+'</select></label><label>Код ребенка<input id="participantName" maxlength="50" value="'+esc(r.name||"")+'" placeholder="У-01"></label><button class="btn" id="addParticipant">Добавить ученика</button></div>';
   }else html+='<label class="psy-ph-code">Код ученика<input id="phSingleCode" maxlength="50" value="'+esc(r.name||"")+'" placeholder="Например, У-01"></label>';
   html+='<h3>Ответы на 58 вопросов</h3><p>Расположение полностью соответствует номерам в источнике. Выберите «Да» или «Нет», оставьте пустым только при пропуске.</p>'+
-   '<div class="psy-ph-grid">'+Array.from({length:58},(_,i)=>'<label class="psy-ph-item"><span>Вопрос <b>'+String(i+1).padStart(2,"0")+'</b></span><select data-ph-answer="'+i+'" aria-label="Вопрос '+(i+1)+'"><option value="">— не отмечено —</option><option value="yes" '+(a[i]==="yes"?"selected":"")+'>Да</option><option value="no" '+(a[i]==="no"?"selected":"")+'>Нет</option></select></label>').join("")+'</div>'+
+   '<div class="psy-ph-grid">'+Array.from({length:58},(_,i)=>'<label class="psy-ph-item"><span>Вопрос <b>'+String(i+1).padStart(2,"0")+'</b></span><input type="text" inputmode="numeric" autocomplete="off" maxlength="1" pattern="[01]" placeholder="0/1" data-ph-answer="'+i+'" aria-label="Вопрос '+(i+1)+': 1 – Да, 0 – Нет" value="'+(a[i]==="yes"?"1":a[i]==="no"?"0":"")+'"></label>').join("")+'</div>'+
    '<div id="phResults">'+report(a,r)+'</div>'+
    '<div class="psy-ph-actions"><button class="btn" id="phClear">Очистить ответы</button><button class="btn primary" id="phDownloadReport">Скачать индивидуальный протокол</button></div>';
   if(ctx.calcMode==="class")html+='<h3>Результаты класса</h3><div id="phClassResults">'+table(rows)+'</div><div class="psy-ph-actions"><button class="btn" id="phLegacyNext" hidden>Следующий ребенок</button><button class="btn primary" id="phDownloadCsv">Скачать таблицу Excel / CSV</button></div>';
@@ -133,7 +133,7 @@
    const g=document.getElementById("phClassResults");if(g)g.innerHTML=table(rows);
   };
   document.getElementById("phSingleCode")?.addEventListener("input",e=>{r.name=e.target.value});
-  document.querySelectorAll("[data-ph-answer]").forEach(el=>el.addEventListener("change",()=>{r.answers[Number(el.dataset.phAnswer)]=el.value;refresh();}));
+  document.querySelectorAll("[data-ph-answer]").forEach(el=>el.addEventListener("change",()=>{const v=el.value.trim();r.answers[Number(el.dataset.phAnswer)]=v==="1"?"yes":v==="0"?"no":"";refresh();}));
   document.getElementById("phClear")?.addEventListener("click",()=>{
    if(!confirm("Удалить все 58 ответов для выбранного ученика?"))return;
    r.answers=[];document.querySelectorAll("[data-ph-answer]").forEach(el=>el.value="");refresh();
