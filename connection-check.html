@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Проверка подключения – Психотека</title>
+<title>Проверка подключения – Метолария</title>
 <style>
 html:not(.psy-gate-open) body > :not(#psy-preview-gate){display:none!important}
 :root{color-scheme:light;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -32,11 +32,11 @@ footer{margin:22px 0;font-size:12px;color:#607969}
 </head>
 <body>
 <main>
-<header><a href="index.html">← Главная Психотеки</a><a href="library.html">Библиотека</a></header>
+<header><a href="index.html">← Главная Метоларии</a><a href="library.html">Библиотека</a></header>
 <article>
 <span class="eyebrow">ДИАГНОСТИКА ДОСТУПНОСТИ</span>
 <h1>Проверка соединения</h1>
-<p>Сравните загрузку Психотеки <strong>без VPN</strong> и <strong>с VPN</strong>. Проверяется только доступ к техническим ресурсам. Мы не запрашиваем пароль, код из письма или личные сведения.</p>
+<p>Сравните загрузку Метоларии <strong>без VPN</strong> и <strong>с VPN</strong>. Проверяется только доступ к техническим ресурсам. Мы не запрашиваем пароль, код из письма или личные сведения.</p>
 <div class="buttons">
 <button class="primary" type="button" id="without">Проверить без VPN</button>
 <button type="button" id="with">Проверить с VPN</button>
@@ -109,7 +109,7 @@ footer{margin:22px 0;font-size:12px;color:#607969}
   $("copy").disabled=!reports.no&&!reports.yes;
  }
  function asText(){
-  return "Психотека. Диагностика соединения\n"+
+  return "Метолария. Диагностика соединения\n"+
    ["no","yes"].map(which=>{
     const r=reports[which];if(!r)return (which==="no"?"Без VPN":"С VPN")+": нет измерений";
     return (which==="no"?"Без VPN":"С VPN")+" · "+new Date(r.time).toLocaleString("ru-RU")+"\n"+

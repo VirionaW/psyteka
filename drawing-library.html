@@ -13,9 +13,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#285747">
-<meta name="description" content="Психотека – автономная библиотека элементов рисуночных методик и протокол наблюдения.">
+<meta name="description" content="Метолария – автономная библиотека элементов рисуночных методик и протокол наблюдения.">
 <link rel="icon" type="image/svg+xml" href="brand-favicon.svg"><script>try{if(localStorage.getItem("psyteka-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
-<title>Библиотека рисунков | Психотека</title>
+<title>Библиотека рисунков | Метолария</title>
 <style>
 :root{color-scheme:light;--ink:#243d34;--muted:#596e65;--green:#285747;--line:#d5e2d8;--paper:#f6f8f5;--white:#fff;--warm:#fff8e8;--warm-line:#e3c68a;--lav:#ede9f5}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink)}
@@ -281,7 +281,7 @@ html.dark .method-focus{background:#2b493b;color:#deefdf}
 </style>
 </head>
 <body>
-<header><div class="header-inner"><a class="brand" href="library.html"><span class="brand-art"><img class="logo-light" src="brand-mark.svg" alt=""><img class="logo-dark" src="brand-mark-dark.svg" alt=""></span><span>Психотека <span class="brand-crumb">/ Рисунки</span></span></a><nav class="header-nav"><a class="link-btn" href="library.html">Вернуться в библиотеку</a><button class="btn theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему" aria-pressed="false"><span id="themeIcon" aria-hidden="true">☾</span><span id="themeText">Темная тема</span></button></nav></div></header>
+<header><div class="header-inner"><a class="brand" href="library.html"><span class="brand-art"><img class="logo-light" src="brand-mark.svg" alt=""><img class="logo-dark" src="brand-mark-dark.svg" alt=""></span><span>Метолария <span class="brand-crumb">/ Рисунки</span></span></a><nav class="header-nav"><a class="link-btn" href="library.html">Вернуться в библиотеку</a><button class="btn theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему" aria-pressed="false"><span id="themeIcon" aria-hidden="true">☾</span><span id="themeText">Темная тема</span></button></nav></div></header>
 <main>
 <section class="intro"><div><p class="eyebrow">Рисуночные методики · справочник элементов</p><h1>Библиотека рисунков</h1><p>Выберите изображенный элемент, уточните цвет, расположение и детали. Интерпретации появятся справа, а нужные записи можно включить в протокол.</p></div><div class="status" id="connection" role="status">Автономный справочник</div></section>
 <div class="layout">
@@ -306,7 +306,7 @@ html.dark .method-focus{background:#2b493b;color:#deefdf}
 <p class="privacy">Данные не отправляются на сервер. Сохраните протокол в файл, чтобы продолжить позже. Не указывайте ФИО ребенка.</p></div>
 </div></section>
 <p class="library-caution">Интерпретации символов и расположения – справочные гипотезы, а не самостоятельный диагностический ключ. <a href="https://pubmed.ncbi.nlm.nih.gov/9631202/" target="_blank" rel="noopener noreferrer">Научный обзор</a>.</p>
-</main><footer>Психотека – автономный инструмент для специалиста. При первом онлайн-открытии страница сохраняется для повторных посещений без сети (пока кеш браузера не удален).</footer><div id="printSheet" aria-hidden="true"></div>
+</main><footer>Метолария – автономный инструмент для специалиста. При первом онлайн-открытии страница сохраняется для повторных посещений без сети (пока кеш браузера не удален).</footer><div id="printSheet" aria-hidden="true"></div>
 <script>
 (function(){
 "use strict";
@@ -1661,7 +1661,7 @@ Object.keys(EXPANSION).forEach(function(category){
   RAW.push([name,category,meaning,"",EXTRA_METHODS[category],parts[1]||""]);
  });
 });
-/* Психотека: дополнительная предметная библиотека. Только наблюдаемые сюжеты и ассоциации; не нормативный ключ.
+/* Метолария: дополнительная предметная библиотека. Только наблюдаемые сюжеты и ассоциации; не нормативный ключ.
    Дополнение строго в конце массива – существующие ID element-1 ... element-611 неизменны. */
 var SUPPLEMENTARY_GROUPS = {
  "Растения": "Магнолия; Камелия; Фрезия; Лютик; Подснежник; Крокус; Вереск; Шалфей; Розмарин; Тимьян|чабрец; Мята; Мелисса; Базилик; Укроп; Петрушка; Щавель; Фенхель; Сельдерей; Артишок; Аспарагус|спаржа; Томатное растение|помидорный куст; Ботва; Виноградная лоза|виноградник; Хмель; Жимолость; Вьюнок; Девичий виноград; Кувшинка белая; Ряска; Элодея; Эвкалипт; Секвойя; Бук; Граб; Ясень; Ольха; Акация; Фикус; Монстера; Драцена; Юкка; Кипарисовик; Туя; Можжевельник; Рододендрон; Азалия; Бегония; Петуния; Примула; Космея; Цинния; Мальва; Наперстянка; Дельфиниум|живокость; Анемона; Георгин; Календула|ноготки; Эхинацея; Тысячелистник; Горицвет; Вероника; Черемуха; Облепиха; Смородина; Крыжовник; Малина; Ежевика; Земляника; Клубника; Черника; Брусника; Клюква; Шиповник; Калина; Ореховое дерево; Каштан; Кофейное дерево; Банановое растение; Ананасовое растение; Картофельная ботва; Морская трава; Коралловый мох; Венерина мухоловка|хищное растение; Росянка; Бонсай; Плодовое дерево; Цветущий куст; Колос; Кочан капусты",
@@ -2459,7 +2459,7 @@ function reportBody(){
  return parts.join("");
 }
 function reportHTML(){
- return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Протокол рисунка – Психотека</title><style>body{max-width:900px;margin:25px auto;padding:12px 25px;font:15px/1.5 Arial,sans-serif;color:#243d34}h1{font-size:24px}h2{font-size:19px;margin-top:22px}.print-item{border-top:1px solid #cad8cb;padding:12px 0;break-inside:avoid}p{white-space:pre-wrap}hr{border:0;border-top:1px solid #aaa}@media print{body{margin:10mm;padding:0}}</style></head><body>'+reportBody()+'</body></html>';
+ return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Протокол рисунка – Метолария</title><style>body{max-width:900px;margin:25px auto;padding:12px 25px;font:15px/1.5 Arial,sans-serif;color:#243d34}h1{font-size:24px}h2{font-size:19px;margin-top:22px}.print-item{border-top:1px solid #cad8cb;padding:12px 0;break-inside:avoid}p{white-space:pre-wrap}hr{border:0;border-top:1px solid #aaa}@media print{body{margin:10mm;padding:0}}</style></head><body>'+reportBody()+'</body></html>';
 }
 function download(name,content,type){
  var blob=new Blob([content],{type:type+';charset=utf-8'});var u=URL.createObjectURL(blob),a=document.createElement("a");
@@ -2503,7 +2503,7 @@ async function importFile(e){
   state.sheetOpen=false;state.draft=draftEmpty();state.editKey=null;state.tab="position";state.category="Все";$("#search").value="";
   renderCategories();renderResults();renderDetails();renderRecords();
   $("#actionStatus").textContent="Протокол загружен: "+clean.length+" записей.";
- }catch(err){alert("Не удалось открыть файл. Нужен JSON-протокол Психотеки.")}
+ }catch(err){alert("Не удалось открыть файл. Нужен JSON-протокол Метоларии.")}
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();

@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Проверка загрузки – Психотека</title>
+<title>Проверка загрузки – Метолария</title>
 <link rel="stylesheet" href="psy-preview-gate.css?v=20261027">
 <style>
 html:not(.psy-gate-open) body>:not(#psy-preview-gate){display:none!important}
@@ -79,7 +79,7 @@ button:disabled{opacity:.55}.actions{display:flex;flex-wrap:wrap;gap:10px;margin
    state.className=good?"ok":"bad";state.textContent=status;
    results.push(t.label+": "+status+" ("+detail+")");
   }
-  report="Психотека. Проверка Timeweb: "+location.origin+"\n"+new Date().toLocaleString("ru-RU")+"\n"+results.join("\n");
+  report="Метолария. Проверка Timeweb: "+location.origin+"\n"+new Date().toLocaleString("ru-RU")+"\n"+results.join("\n");
   output.textContent=report;
   document.getElementById("summary").textContent="Проверка завершена. Если есть ошибки, скопируйте отчет или пришлите скриншот.";
   btn.disabled=false;copy.disabled=false;
