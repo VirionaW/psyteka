@@ -172,7 +172,7 @@
    const card=field.closest(".psy-mspss-item");card?.classList.toggle("is-complete",val!=="");card?.classList.toggle("is-missing",val==="");update();
   }
   inputs.forEach((field,i)=>{
-   field.addEventListener("input",()=>{const v=field.value.replace(/[^0-9]/g,"").slice(-1);if(v!==""&&Number(v)>max(d)){field.value="";return;}setInput(field,v);if(v!=="")next(i);});
+   field.addEventListener("input",()=>{const v=field.value.replace(/[^0-9]/g,"").slice(-1);if(v!==""&&Number(v)>max(d)){setInput(field,"");return;}setInput(field,v);if(v!=="")next(i);});
    field.addEventListener("keydown",e=>{
     if(e.key==="Backspace"&&!field.value&&i>0){e.preventDefault();inputs[i-1].focus();inputs[i-1].select();}
     else if(e.key==="ArrowRight"){e.preventDefault();next(i);}
