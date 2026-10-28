@@ -66,7 +66,7 @@
  for(const [name,spoken] of Object.entries(spokenIntros)){
   records[name]||(records[name]={});
   records[name].spoken=spoken;
-  records[name].spokenNote="Рабочая вводная реплика Психотеки. Она не заменяет неизмененный текст стандартизированного опросника, стимулы или авторскую инструкцию конкретной редакции.";
+  records[name].spokenNote="Рабочая вводная реплика Метоларии. Она не заменяет неизмененный текст стандартизированного опросника, стимулы или авторскую инструкцию конкретной редакции.";
  }
  const selected={};
  const escape=s=>String(s??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));

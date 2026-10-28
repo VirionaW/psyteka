@@ -112,7 +112,7 @@
    // Check access again immediately before insert. The database's unique
    // user_id and RLS policies enforce one-time activation, even across tabs.
    role=await fetchRole(user.id);
-   if(privileged.includes(role)){hideTrial();say("У команды Психотеки постоянный доступ. Пробный период не нужен.");return;}
+   if(privileged.includes(role)){hideTrial();say("У команды Метоларии постоянный доступ. Пробный период не нужен.");return;}
    const old=await fetchTrial(user.id);
    if(old){displayExisting(old);return;}
    if(!window.confirm("Активировать пробные 48 часов сейчас? Отсчет начнется сразу и продлить его нельзя.")){return;}
