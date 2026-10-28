@@ -24,3 +24,24 @@
 .psy-semester-footer .psy-bottom-processing{margin-left:auto!important}
 .psy-semester-footer .psy-semester-status{margin:0;font-size:.84rem;padding:6px 9px}
 @media(max-width:480px){.psy-semester-footer{justify-content:flex-end!important}.psy-semester-footer .psy-semester-status{margin-right:auto}}
+
+/* Быстрый ввод и список класса – общий стиль для пяти методик */
+.psy-entry-keyboard-hint{background:var(--surface,#eff7f1);color:var(--text,#25392e);border:1px solid var(--border,#b2c9b8);border-radius:12px;padding:12px 14px;line-height:1.6;margin:14px 0}
+.psy-entry-keyboard-hint kbd{display:inline-block;border:1px solid currentColor;border-radius:5px;padding:0 5px;min-width:20px;text-align:center;font:inherit;font-weight:700;opacity:.9}
+.psy-entry-roster{border:1px solid var(--border,#b4ccbd);border-radius:15px;padding:15px;margin:14px 0 18px;background:var(--surface,#f5faf6);color:var(--text,#263b30)}
+.psy-entry-roster-head{display:flex;flex-wrap:wrap;gap:8px 15px;align-items:baseline;justify-content:space-between}
+.psy-entry-roster-head span{font-size:.88rem;opacity:.85}
+.psy-entry-roster-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.psy-entry-roster-actions .btn{font-size:.9rem;min-height:38px}
+.psy-entry-presence,.psy-entry-absent-notice{font-size:.88rem;line-height:1.6;margin:6px 0;color:var(--text-muted,#4b6757)}
+.psy-entry-absent-notice{color:#925b26;font-weight:650}
+.psy-entry-bulk{border-top:1px solid var(--border,#b4ccbd);margin-top:11px;padding-top:10px}
+.psy-entry-bulk summary{cursor:pointer;font-weight:650;padding:5px 0}
+.psy-entry-bulk label{display:block;margin:7px 0;font-size:.9rem}
+.psy-entry-bulk textarea{display:block;box-sizing:border-box;width:100%;margin-top:6px;min-height:85px;padding:10px;border:1px solid var(--border,#b2c6b7);border-radius:9px;background:var(--card-bg,#fff);color:var(--text,#26382e);font:inherit;resize:vertical}
+.psy-entry-bulk p{font-size:.83rem;color:var(--text-muted,#52655a)}
+.psy-entry-roster-msg{min-height:1.1em;font-size:.86rem;margin-top:7px}
+.psy-entry-disabled{opacity:.63}
+.psy-semester-status.is-skipped{background:#efefed;border-color:#b7b8b4;color:#4c514e}
+.psy-ph-grid select:focus-visible,.psy-semester-grid select:focus-visible{outline:3px solid #d1a45e;outline-offset:3px}
+@media(max-width:720px){.psy-entry-roster{padding:11px}.psy-entry-roster-actions .btn{flex:1 1 145px}.psy-entry-roster-head{display:block}}
