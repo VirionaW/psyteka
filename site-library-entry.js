@@ -132,6 +132,22 @@
   // Keep the existing entitlement check, but give clear click feedback and
   // recover if the network or session API never answers.
   if(!authEnabled||!client){noSignup();show();checkStatus.hidden=true;opening=false;return}
+  // On a new hostname, open the email form without waiting for a remote
+  // session check when the browser has no stored Supabase session.
+  let hasCachedSession=true;
+  try{
+   const ref=new URL(conf.url).hostname.split(".")[0];
+   hasCachedSession=!!localStorage.getItem("sb-"+ref+"-auth-token");
+  }catch(_){}
+  if(!hasCachedSession){
+   currentUser=null;role="participant";trial=null;paid=null;
+   const pendingEmail=el("psyEntryCode").dataset.email;
+   if(pendingEmail&&requestAt&&Date.now()-requestAt<600000)step("psyEntryCode");
+   else step("psyEntryEmail");
+   show();checkStatus.hidden=true;opening=false;return;
+  }
+  // A cached session cannot authorize access: verify identity and rights online.
+  show();
   try{
    // An empty local session is enough to offer sign-in immediately. The
    // server-side account and entitlement checks remain mandatory for access.
@@ -199,7 +215,7 @@
     return;
    }
    show();
-  }catch(ex){step("psyEntryEmail");show();error(ex?.message||"Не удалось проверить вход. Попробуйте еще раз.")}
+  }catch(ex){step("psyEntryEmail");show();error("Не удалось связаться с сервисом авторизации или проверить доступ. Вход пока не подтвержден. Проверьте соединение и повторите попытку.")}
   finally{opening=false;checkStatus.hidden=true}
  }
  const badge=document.createElement("span");badge.id="psyHomeTrial";badge.className="psy-entry-pill";badge.hidden=true;
@@ -243,7 +259,7 @@
   }catch(ex){
    requestAt=0;
    step("psyEntryEmail");
-   error("Не удалось запросить код. "+String(ex?.message||"Проверьте соединение и повторите попытку."));
+   error("Не удалось отправить запрос на код. Проверьте подключение к сервису авторизации. "+(ex?.message&&/too many|rate limit|лимит/i.test(ex.message)?String(ex.message):"Если без VPN вход не работает, проблема может быть в связи с зарубежным сервером."));
   }finally{
    sendingEmail=false;emailButton.disabled=false;resendButton.disabled=false;
   }
