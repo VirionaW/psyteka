@@ -18,7 +18,7 @@ D[NAME]={
  interpret:"Оценивайте программирование и плавность переключений, инертность и повторение одного положения (персеверации), зеркальность, темп, помощь и двигательные возможности. Не ставьте диагноз по одной пробе; результаты надо рассматривать в контексте полноценного обследования.",
  source:"https://vprosvet.ru/biblioteka/praksis/",
  sourceScoring:"https://science-pedagogy.ru/article/view?id=2371",
- license:"Классическая проба по А. Р. Лурии. Печатный протокол, форма фиксации и описательные показатели созданы Психотекой; стандартизированные баллы и нормы не заявлены.",
+ license:"Классическая проба по А. Р. Лурии. Печатный протокол, форма фиксации и описательные показатели созданы Метоларией; стандартизированные баллы и нормы не заявлены.",
  workflow:"dynamicPraxisLuria",calculator:true,category:"neuro",
  guideFile:"downloads/luria_praxis_guide.html",guideWithBlankFile:"downloads/luria_praxis_guide_with_protocol.html",answerFile:"downloads/luria_praxis_protocol.html",protocolWordFile:"downloads/luria_praxis_protocol.docx",processingFile:"downloads/luria_praxis_scoring.html",stimulusFile:"downloads/luria_praxis_stimulus.html",
  indicators:["Усвоение трехкомпонентной программы","Правильные циклы отдельно правой и левой рукой","Перестановки, пропуски, персеверации","Нужда в дополнительном показе и самокоррекция"]
