@@ -9,10 +9,12 @@
  const authEnabled=conf.registrationEnabled===true;
  const valid=!!(/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(conf.url||"")&&
   /^sb_publishable_[A-Za-z0-9_-]+$/.test(conf.publishableKey||"")&&window.supabase?.createClient);
- const client=valid?window.supabase.createClient(conf.url,conf.publishableKey,{
+ // Reuse the identity client's auth session and browser lock rather than
+ // creating another competing Supabase client on the same landing page.
+ const client=valid?(window.PSY_IDENTITY?.client||window.supabase.createClient(conf.url,conf.publishableKey,{
   auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
- }):null;
- let destination="library.html",currentUser=null,role="participant",trial=null,paid=null,requestAt=0,timer=null,lastFocus=null,opening=false,ownerNeedsMfa=false;
+ })):null;
+ let destination="library.html",currentUser=null,role="participant",trial=null,paid=null,requestAt=0,timer=null,lastFocus=null,opening=false,ownerNeedsMfa=false,sendingEmail=false;
  const html=`<dialog id="psyEntryDialog" aria-labelledby="psyEntryTitle" aria-modal="true">
  <div class="psy-entry-inner">
   <div class="psy-entry-top"><div><p class="psy-entry-eyebrow">Психотека · личный доступ</p><h2 id="psyEntryTitle">Войти в Психотеку</h2></div>
@@ -27,12 +29,16 @@
    <p class="psy-entry-foot">Вход доступен новым и зарегистрированным участникам. Не вводите данные детей.</p>
   </div>
   <div class="psy-entry-step" id="psyEntryCode" hidden>
-   <p class="psy-entry-lead">Письмо отправлено. Введите одноразовый код из письма. Проверьте также папку «Спам».</p>
+   <p class="psy-entry-lead" id="psyEntryCodeMessage" role="status" aria-live="polite">Отправляем код...</p>
+   <p class="psy-entry-email" id="psyEntryCodeAddress"></p>
    <form class="psy-entry-form" id="psyEntryCodeForm">
     <label for="psyEntryToken">Код из письма</label><input id="psyEntryToken" type="text" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" maxlength="8">
     <button type="submit" class="psy-entry-btn" id="psyEntryVerify">Подтвердить код</button>
    </form>
-   <button type="button" class="psy-entry-btn light" id="psyEntryAgain">Изменить почту или запросить новый код</button>
+   <div class="psy-entry-code-actions">
+    <button type="button" class="psy-entry-btn light" id="psyEntryResend">Отправить код повторно</button>
+    <button type="button" class="psy-entry-btn light" id="psyEntryAgain">Изменить почту</button>
+   </div>
   </div>
   <div class="psy-entry-step" id="psyEntryPlans" hidden>
    <p class="psy-entry-lead" id="psyEntryWelcome">Почта подтверждена. Выберите, как начать работу с методиками.</p>
@@ -127,8 +133,16 @@
   // recover if the network or session API never answers.
   if(!authEnabled||!client){noSignup();show();checkStatus.hidden=true;opening=false;return}
   try{
-   const {data,error:authError}=await withTimeout(client.auth.getUser());
-   if(authError||!data?.user||data.user.is_anonymous){currentUser=null;step("psyEntryEmail");show();return;}
+   // An empty local session is enough to offer sign-in immediately. The
+   // server-side account and entitlement checks remain mandatory for access.
+   const {data:cached,error:sessionError}=await withTimeout(client.auth.getSession(),6500);
+   if(sessionError||!cached?.session?.user){
+    currentUser=null;step("psyEntryEmail");show();return;
+   }
+   const {data,error:authError}=await withTimeout(client.auth.getUser(),8500);
+   if(authError||!data?.user||data.user.is_anonymous){
+    currentUser=null;step("psyEntryEmail");show();return;
+   }
    currentUser=data.user;
    const [r,t,p]=await withTimeout(Promise.all([
     client.from("psy_account_roles").select("role").eq("user_id",currentUser.id).maybeSingle(),
@@ -187,31 +201,68 @@
   const to=validTarget(a.getAttribute("href"));if(!to)return;
   e.preventDefault();setDestination(to);load({direct:true});
  },true);
- el("psyEntryAgain").addEventListener("click",()=>{step("psyEntryEmail");error("")});
- el("psyEntryEmailForm").addEventListener("submit",async e=>{
-  e.preventDefault();if(!authEnabled||!client)return;
-  const field=el("psyEntryMail"),email=field.value.trim().toLowerCase();if(!field.checkValidity()){error("Укажите действующий адрес почты.");return}
-  if(Date.now()-requestAt<60000){error("Повторите запрос через минуту.");return}
-  const button=el("psyEntrySend");button.disabled=true;error("");
+ el("psyEntryAgain").addEventListener("click",()=>{
+  el("psyEntryMail").value=el("psyEntryCode").dataset.email||el("psyEntryMail").value;
+  step("psyEntryEmail");error("");el("psyEntryMail").focus();
+ });
+ const emailInput=el("psyEntryMail"),emailButton=el("psyEntrySend");
+ const codeInput=el("psyEntryToken"),verifyButton=el("psyEntryVerify");
+ const codeMessage=el("psyEntryCodeMessage"),codeAddress=el("psyEntryCodeAddress");
+ const resendButton=el("psyEntryResend");
+ async function sendEmailCode(email){
+  if(sendingEmail)return;
+  if(!authEnabled||!client){error("Сервис входа временно недоступен.");return;}
+  if(Date.now()-requestAt<60000){
+   error("Новый запрос можно отправить через "+Math.ceil((60000-(Date.now()-requestAt))/1000)+" сек.");
+   return;
+  }
+  sendingEmail=true;requestAt=Date.now();error("");
+  emailButton.disabled=true;resendButton.disabled=true;
+  el("psyEntryCode").dataset.email=email;
+  codeAddress.textContent=email;
+  codeMessage.textContent="Отправляем одноразовый код на почту...";
+  codeInput.value="";codeInput.disabled=true;verifyButton.disabled=true;
+  step("psyEntryCode");show();
   try{
-   const {error:mailError}=await client.auth.signInWithOtp({email,
-    options:{shouldCreateUser:true,emailRedirectTo:location.origin+"/index.html?home=1&entry=1"}});
+   const {error:mailError}=await withTimeout(client.auth.signInWithOtp({
+    email,options:{shouldCreateUser:true,emailRedirectTo:location.origin+"/index.html?home=1&entry=1"}
+   }),20000);
    if(mailError)throw mailError;
-   requestAt=Date.now();step("psyEntryCode");el("psyEntryCode").dataset.email=email;
-  }catch(ex){error("Не удалось отправить письмо. "+String(ex?.message||"Проверьте почтовую службу."))}
-  finally{button.disabled=false}
+   codeInput.disabled=false;verifyButton.disabled=false;
+   codeMessage.textContent="Запрос принят. Проверьте входящие и папку «Спам». Если письмо не появится, отправьте код повторно через минуту.";
+   codeInput.focus();
+  }catch(ex){
+   requestAt=0;
+   step("psyEntryEmail");
+   error("Не удалось запросить код. "+String(ex?.message||"Проверьте соединение и повторите попытку."));
+  }finally{
+   sendingEmail=false;emailButton.disabled=false;resendButton.disabled=false;
+  }
+ }
+ el("psyEntryEmailForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const email=emailInput.value.trim().toLowerCase();
+  if(!emailInput.checkValidity()){
+   error("Укажите действующий адрес почты.");
+   emailInput.focus();return;
+  }
+  void sendEmailCode(email);
+ });
+ resendButton.addEventListener("click",()=>{
+  const email=el("psyEntryCode").dataset.email||emailInput.value.trim().toLowerCase();
+  if(email)void sendEmailCode(email);
  });
  el("psyEntryCodeForm").addEventListener("submit",async e=>{
   e.preventDefault();if(!client)return;
   const email=el("psyEntryCode").dataset.email||el("psyEntryMail").value.trim();
   const token=el("psyEntryToken").value.trim();
   if(!/^\d{6,8}$/.test(token)){error("Введите числовой код из письма.");return}
-  const button=el("psyEntryVerify");button.disabled=true;
+  const button=el("psyEntryVerify");button.disabled=true;error("");
   try{
-   const {error:verifyError}=await client.auth.verifyOtp({email,token,type:"email"});
+   const {error:verifyError}=await withTimeout(client.auth.verifyOtp({email,token,type:"email"}),20000);
    if(verifyError)throw verifyError;
    await load();
-  }catch(_){error("Код не подошел или срок действия истек.")}
+  }catch(ex){error("Код не подошел, истек или проверка недоступна. "+String(ex?.message||"Повторите попытку."))}
   finally{button.disabled=false}
  });
  el("psyEntryStart").addEventListener("click",async()=>{
