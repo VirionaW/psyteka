@@ -1,0 +1,23 @@
+
+.psy-save-assessment-dialog{position:fixed;max-width:min(540px,calc(100vw - 28px));width:100%;border:1px solid #c2dccb;border-radius:18px;box-shadow:0 24px 80px #152e2547;padding:24px;background:var(--paper,#fff);color:var(--ink,#193b30)}
+.psy-save-assessment-dialog::backdrop{background:#132b2259;backdrop-filter:blur(3px)}
+.psy-save-assessment-dialog form{display:grid;gap:14px}
+.psy-save-assessment-dialog h3{margin:0;font-size:24px;color:var(--green,#267b57)}
+.psy-save-assessment-dialog p{font-size:14px;line-height:1.6;margin:0}
+.psy-save-assessment-dialog label{display:grid;gap:8px;font-weight:700}
+.psy-save-assessment-dialog input{height:48px;box-sizing:border-box;width:100%;padding:10px;border:1px solid #adc7b8;border-radius:11px;background:var(--paper,#fff);color:var(--ink,#193b30);font:inherit}
+.psy-save-assessment-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.psy-save-assessment-actions button{min-height:43px;border-radius:10px;padding:9px 16px;cursor:pointer}
+.psy-mspss-save{background:#e3f2e7!important;color:#1d6944!important;border:1px solid #a6cdb7!important}
+.psy-mspss-save.psy-is-saved{background:#d6ebdf!important;color:#18623d!important}
+.psy-results-list{display:grid;gap:12px;margin-top:16px}
+.psy-saved-entry{border:1px solid #d0e3d6;border-radius:12px;padding:15px;display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap;background:var(--paper,#fff)}
+.psy-saved-info{display:grid;gap:5px;min-width:190px;flex:1}
+.psy-saved-info strong{font-size:16px;line-height:1.4;overflow-wrap:anywhere}
+.psy-saved-info span{font-size:13px;color:var(--muted,#5b7164)}
+.psy-saved-actions{display:flex;align-items:center;gap:8px}
+.psy-saved-actions a,.psy-saved-actions button{font:inherit;text-decoration:none;cursor:pointer;padding:9px 13px;border-radius:10px;min-height:40px;display:inline-flex;align-items:center}
+.psy-saved-actions a{background:#2e8058;color:white}
+.psy-saved-delete{border:1px solid #e3b7bc;background:#fff3f3;color:#a32c3c}
+.psy-results-note{font-size:13px;line-height:1.6;color:var(--muted,#5b7164)}
+@media(max-width:700px){.psy-save-assessment-dialog{padding:15px}.psy-saved-entry{padding:12px}.psy-save-assessment-actions button{flex:1}}
