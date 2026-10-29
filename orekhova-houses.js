@@ -52,9 +52,18 @@
   if($("tabStatus"))$("tabStatus").className="status-dot "+(done?"ready":"pending");
   if(s){$("studentProgress").textContent=done?"Данные заполнены · результат рассчитан":(progress(s)+"/29 · данные заполнены частично");$("studentProgress").className="completion "+(done?"ready":"pending");}
  }
+ function renderInitialPreview(){
+  $("previewRectangles").innerHTML=Array.from({length:8},(_,i)=>
+   '<div class="overview-rect" aria-label="Прямоугольник '+(i+1)+'"><span>'+(i+1)+'</span></div>').join("");
+  for(const id of ["previewEmotions","previewSituations"]){
+   $(id).innerHTML=Array.from({length:10},(_,i)=>
+    '<div class="overview-house">'+houseSvg(i+1,null)+'<span>'+(i+1)+'</span></div>').join("");
+  }
+ }
  function renderPeople(){
   $("people").innerHTML=state.students.map((s,i)=>'<button class="person'+(i===state.selected?' selected':'')+(complete(s)&&validGroup()?' done':'')+'" data-person="'+i+'" type="button" aria-pressed="'+(i===state.selected)+'"><span class="mark"></span>'+esc(s.name)+(s.age?' · '+s.age+' лет':state.groupName.trim()?' · '+esc(state.groupName):'')+'</button>').join("");
   $("workArea").hidden=!current();
+  $("sheetPreview").hidden=!!current();
   $("groupReport").hidden=state.mode!=="group"||state.students.length===0||state.step!==4;
   status();
  }
@@ -232,6 +241,10 @@
   state.mode=b.dataset.mode;document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("active",x===b));setError("");render();
  }));
  $("groupName").addEventListener("input",e=>{state.groupName=e.target.value;status();renderGroup();if(current())renderWizard();});
+ $("startColoring").addEventListener("click",()=>{
+  $("newName").scrollIntoView({behavior:"smooth",block:"center"});
+  $("newName").focus({preventScroll:true});
+ });
  $("addStudent").addEventListener("click",addStudent);
  $("newName").addEventListener("keydown",e=>{if(e.key==="Enter")addStudent();});
  $("newAge").addEventListener("keydown",e=>{if(e.key==="Enter")addStudent();});
@@ -268,7 +281,7 @@
  try{if(localStorage.getItem(themeKey)==="dark")document.documentElement.classList.add("dark");}catch(_){}
  function themeText(){$("toggleTheme").textContent=document.documentElement.classList.contains("dark")?"Светлая тема":"Темная тема";}
  $("toggleTheme").addEventListener("click",()=>{document.documentElement.classList.toggle("dark");try{localStorage.setItem(themeKey,document.documentElement.classList.contains("dark")?"dark":"light");}catch(_){}themeText();});
- themeText();render();
+ themeText();renderInitialPreview();render();
  // Exact scoring fixtures: reference sequence CO=0, reverse sequence CO=32.
  const reference=emptyStudent("Проверка",7);reference.ranking=[...NORM];const reverse=emptyStudent("Проверка",7);reverse.ranking=[...NORM].reverse();
  if(calculate(reference).co!==0||calculate(reverse).co!==32)throw new Error("Неверный расчет СО");
