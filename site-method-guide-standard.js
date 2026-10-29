@@ -123,6 +123,7 @@
   // Specialized method tabs retain their original rich content. Provide required sections once in the
   // common standard header, rather than forcing changes to protected stimulus/calculator logic.
   const html=fields.map(([label,value],i)=>{
+   if(i===1&&!r.spoken)return ""; // internal QA notice, not for the psychologist
    if(i!==1&&seen(i===0?"Цель":i===2?"Ключ":"Интерпретация"))return "";
    const warn=!(i===1?r.spoken:hasData&&localD?.[["goal","instructions","scoring","interpret"][i]])||i===1&&!r.spoken;
    return '<section class="psy-guide-check'+(warn?' needs-source':'')+'"><h3>'+escape(label)+'</h3>'+
