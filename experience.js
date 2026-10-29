@@ -31,7 +31,7 @@ async function saveCurrentAssessment(){
    if(btn){btn.textContent="Сохранено ✓";btn.classList.add("psy-is-saved")}
   }catch(err){description.textContent="Сохранение не выполнено: "+err.message;submit.disabled=false;submit.textContent="Повторить";}
  };
- dialog.showModal();name.focus();name.select();
+ dialog.addEventListener("close",()=>dialog.remove(),{once:true});dialog.showModal();name.focus();name.select();
 }
 
 const categoryIcons={
