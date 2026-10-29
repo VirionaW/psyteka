@@ -686,3 +686,20 @@ html.dark .library-page #modal.psy-mspss-example .psy-cdi-lock-note{background:#
   justify-content:flex-end;
  }
 }
+
+.library-page #modal.psy-mspss-example .psy-cp-analytic-meta{
+ margin:12px 0 16px;padding:10px 12px;
+ border:1px solid var(--line,#ccd9ce);border-radius:10px;
+ background:var(--soft,#f4f7f1);color:var(--ink,#193e2c);
+}
+.library-page #modal.psy-mspss-example .psy-cp-analytic-meta summary{
+ font-weight:700;font-size:13px;cursor:pointer;line-height:1.45;
+}
+.library-page #modal.psy-mspss-example .psy-cp-analytic-meta label{
+ display:grid;gap:5px;margin-top:10px;font-size:13px;font-weight:600;
+}
+.library-page #modal.psy-mspss-example .psy-cp-analytic-meta input{
+ display:block;box-sizing:border-box;width:100%;min-width:0;
+ padding:9px 10px;border:1px solid var(--line);border-radius:9px;
+ background:var(--paper,#fff);color:var(--ink,#193e2c);font:inherit;
+}
