@@ -251,9 +251,10 @@ html.dark .choice[aria-pressed=true] small{color:#d8ecdd}
 .inline-sheet .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}
 .inline-sheet .feature-option{display:flex;flex-direction:column;gap:3px;min-height:64px;text-align:left}
 .inline-sheet .feature-option small{font-size:12px}
-.inline-sheet .quantity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:stretch}
-.inline-sheet .quantity-grid label{display:flex;flex-direction:column;gap:6px;min-width:0}
-.inline-sheet .quantity-grid input{display:block;box-sizing:border-box;width:100%;max-width:100%;margin-top:auto}
+.inline-sheet .quantity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:14px;align-items:start}
+.inline-sheet .quantity-grid .quantity-item{display:grid;grid-template-rows:minmax(2.8em,auto) 46px;align-content:start;gap:6px;min-width:0}
+.inline-sheet .quantity-grid .quantity-title{display:block;align-self:end;line-height:1.4;overflow-wrap:anywhere}
+.inline-sheet .quantity-grid .quantity-item input{display:block;box-sizing:border-box;width:100%;max-width:none;min-width:0;height:46px;min-height:46px;margin:0}
 .inline-sheet .sheet-note textarea{max-width:100%}
 .inline-sheet .sheet-help{font-size:14px;color:var(--muted);margin:10px 0}
 .inline-sheet .sheet-tabs{margin-top:15px}
@@ -2885,7 +2886,7 @@ function renderSheet(){
  }else if(state.tab==="count"){
   content='<div class="sheet-label">Количество элементов и частей</div><div class="quantity-grid">'+countFields(entry).map(function(t){
    var val=Object.prototype.hasOwnProperty.call(state.draft.counts,t[0])?String(state.draft.counts[t[0]]):"";
-   return '<label>'+esc(t[1])+'<input type="number" min="0" max="99" step="1" inputmode="numeric" data-draft-count="'+t[0]+'" value="'+esc(val)+'" placeholder="Не указано"></label>';
+   return '<label class="quantity-item"><span class="quantity-title">'+esc(t[1])+'</span><input type="number" min="0" max="99" step="1" inputmode="numeric" data-draft-count="'+t[0]+'" value="'+esc(val)+'" placeholder="Не указано"></label>';
   }).join("")+'</div><p class="sheet-help">Пустое поле – не учитывается. Ноль – элемент отсутствует.</p>';
  }else{
   content='<label class="sheet-note" for="draftNote">Дополнительное описание<textarea id="draftNote" maxlength="4000" placeholder="Например: короткий хвост, заметные полосы, необычная форма">'+esc(state.draft.note)+'</textarea></label>';
