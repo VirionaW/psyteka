@@ -437,6 +437,29 @@
   const run=(s,bold=false)=>'<w:r>'+(bold?'<w:rPr><w:b/></w:rPr>':'')+'<w:t xml:space="preserve">'+xmlEscape(s)+'</w:t></w:r>';
   const para=(s,kind="")=>'<w:p>'+(kind==="head"?'<w:pPr><w:pStyle w:val="Heading1"/></w:pPr>':kind==="sub"?'<w:pPr><w:pStyle w:val="Heading2"/></w:pPr>':'')+run(s,kind!=="")+'</w:p>';
   const cell=(s)=>'<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/></w:tcPr>'+para(s)+'</w:tc>';
+  /* Source CDI bands; the same nine thresholds control the Word cell colors and legend. */
+  const cdiLegend=[
+   {min:71,range:"Свыше 70",level:"Очень значительно превышает средний уровень (группа риска)",fill:"7F1D1D",ink:"FFFFFF"},
+   {min:66,range:"66-70",level:"Значительно выше среднего уровня (группа риска)",fill:"FEE2E2",ink:"991B1B"},
+   {min:61,range:"61-65",level:"Выше среднего уровня",fill:"FFDFB8",ink:"8A431A"},
+   {min:56,range:"56-60",level:"Чуть выше среднего уровня",fill:"FFF1C7",ink:"80571B"},
+   {min:45,range:"45-55",level:"Средний уровень",fill:"DFF2E5",ink:"1E653A"},
+   {min:40,range:"40-44",level:"Чуть ниже среднего уровня",fill:"EAF4EF",ink:"32614E"},
+   {min:35,range:"35-39",level:"Ниже среднего уровня",fill:"E5F5FA",ink:"236578"},
+   {min:30,range:"30-34",level:"Много ниже среднего уровня",fill:"E8F2FD",ink:"2A557D"},
+   {min:-Infinity,range:"Ниже 30",level:"Значительно ниже среднего уровня",fill:"E2ECFA",ink:"284768"}
+  ];
+  const cdiWordBand=t=>Number.isInteger(t)?cdiLegend.find(x=>t>=x.min):null;
+  const cdiWordCell=(s,header,left,width,band)=>{
+   const tcPr='<w:tcPr><w:tcW w:w="'+width+'" w:type="dxa"/><w:vAlign w:val="center"/>'+
+    (band?'<w:shd w:val="clear" w:color="auto" w:fill="'+band.fill+'"/>':"")+'</w:tcPr>';
+   const rPr='<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>'+
+    '<w:sz w:val="20"/><w:szCs w:val="20"/>'+(header||band?"<w:b/>":"")+
+    (band?'<w:color w:val="'+band.ink+'"/>':"")+'</w:rPr>';
+   return '<w:tc>'+tcPr+'<w:p><w:pPr><w:jc w:val="'+(left?"left":"center")+
+    '"/><w:spacing w:before="60" w:after="60"/></w:pPr><w:r>'+rPr+
+    '<w:t xml:space="preserve">'+xmlEscape(s)+'</w:t></w:r></w:p></w:tc>';
+  };
   // Separate Word formatting for Phillips only; CDI and individual reports are untouched.
   const phCell=(s,header,left,width,percent)=>{
    const fill=Number.isFinite(percent)?(percent>75?"FBE0E0":percent>50?"FFF0C9":"E2F3E8"):null;
@@ -448,14 +471,17 @@
     '<w:r>'+rPr+'<w:t xml:space="preserve">'+xmlEscape(s)+'</w:t></w:r></w:p></w:tc>';
   };
   const table=(head,body,format="",percentRows=[])=>{
-   const widths=!isCDI&&mode==="class"&&head.length===10?[550,2200,...Array(8).fill(1620)]:!isCDI&&mode==="class"&&head.length===4&&head[0]==="Показатель"?[5000,3450,3700,3450]:head.map(()=>1200);
+   const widths=format==="cdi"?[520,2500,1250,5930]:format==="cdi-legend"?[2100,8100]:!isCDI&&mode==="class"&&head.length===10?[550,2200,...Array(8).fill(1620)]:!isCDI&&mode==="class"&&head.length===4&&head[0]==="Показатель"?[5000,3450,3700,3450]:head.map(()=>1200);
    const all=[head,...body];return '<w:tbl><w:tblPr><w:tblW w:w="'+widths.reduce((a,b)=>a+b,0)+'" w:type="dxa"/>'+
     (format?'<w:tblLayout w:type="fixed"/>':"")+
     '<w:tblBorders><w:top w:val="single" w:sz="5"/><w:left w:val="single" w:sz="5"/><w:bottom w:val="single" w:sz="5"/><w:right w:val="single" w:sz="5"/><w:insideH w:val="single" w:sz="5"/><w:insideV w:val="single" w:sz="5"/></w:tblBorders></w:tblPr>'+
      '<w:tblGrid>'+widths.map(w=>'<w:gridCol w:w="'+w+'"/>').join("")+'</w:tblGrid>'+
      all.map((row,i)=>'<w:tr>'+(format&&i===0?'<w:trPr><w:tblHeader w:val="true"/></w:trPr>':"")+
-      row.map((text,j)=>format?phCell(text,i===0,format==="scores"?j===1:j===0,widths[j],
-       format==="scores"&&i>0&&j>=2?percentRows[i-1]?.[j-2]:null):cell(text)).join("")+'</w:tr>').join("")+'</w:tbl>';
+      row.map((text,j)=>format==="cdi"||format==="cdi-legend"?
+       cdiWordCell(text,i===0,format==="cdi"?j===1:j===1,widths[j],
+        i>0&&(format==="cdi"?j>=2:j>=0)?cdiWordBand(percentRows[i-1]):null):
+       format?phCell(text,i===0,format==="scores"?j===1:j===0,widths[j],
+        format==="scores"&&i>0&&j>=2?percentRows[i-1]?.[j-2]:null):cell(text)).join("")+'</w:tr>').join("")+'</w:tbl>';
   };
   const title=isCDI?"Опросник детской депрессии М. Ковач (CDI)":"Тест школьной тревожности Филлипса";
   const describe=r=>{
@@ -474,7 +500,14 @@
       [String(i+1),r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((s,j)=>z?Math.round(z.scales[j].percent):"")]:
       [...base,z?.raw??"–",z?z.percent.toFixed(1)+"%":"–"];
   });
-  body+=table(columns,summary,!isCDI&&mode==="class"?"scores":"",!isCDI&&mode==="class"?people.map(r=>scoring(d,r)?.scales.map(s=>s.percent)||[]):[]);
+  body+=table(columns,summary,isCDI?"cdi":mode==="class"?"scores":"",
+   isCDI?people.map(r=>{const z=scoring(d,r);const n=z?norms.norm(z.raw,r.ageYears,r.sex):null;return n?.status==="ok"?n.t:null;}):
+   mode==="class"?people.map(r=>scoring(d,r)?.scales.map(s=>s.percent)||[]):[]);
+  if(isCDI){
+   body+=para("Расшифровка Т-баллов","sub");
+   body+=table(["Т-балл","Интерпретация"],
+    cdiLegend.map(x=>[x.range,x.level]),"cdi-legend",cdiLegend.map(x=>x.min));
+  }
   if(mode==="class"&&!isCDI){
    const stats=phillipsStats(d,people);
    body+='<w:p><w:pPr><w:pageBreakBefore/></w:pPr>'+run("Справка по классу",true)+'</w:p>'+para("Полностью обработано: "+stats.total+" из "+people.length+". Число детей и доля от обработанных анкет.");
