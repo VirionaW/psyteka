@@ -684,11 +684,19 @@ function bindControls(){
    },
    onDeleteAll:()=>{rows.splice(0,rows.length,{name:"",answers:[]});go(0);},
    onNext:()=>{
+    if(d.workflow==="phillips58"){
+     for(let step=1;step<rows.length;step++){const i=(rowIndex+step)%rows.length;if(rows[i].attendance!=="absent"){go(i);return;}}
+     return;
+    }
     let next=rowIndex+1;
     while(next<rows.length&&rows[next].attendance==="absent")next++;
     if(next<rows.length)go(next);
    },
    onAbsentNext:()=>{
+    if(d.workflow==="phillips58"){
+     for(let step=1;step<rows.length;step++){const i=(rowIndex+step)%rows.length;if(rows[i].attendance!=="absent"){go(i);return;}}
+     setTab('score');return;
+    }
     let next=rowIndex+1;
     while(next<rows.length&&rows[next].attendance==="absent")next++;
     if(next<rows.length)go(next);else setTab('score');
