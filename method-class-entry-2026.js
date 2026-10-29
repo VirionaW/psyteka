@@ -305,6 +305,53 @@
  const classPercent=(count,total)=>total?Math.round(100*count/total)+"%":"0%";
  const phillipsColor=p=>p>75?"high":p>50?"raised":"ordinary";
  const countByLevel=(count,total)=>count+" ("+classPercent(count,total)+")";
+
+ // Group narrative from completed forms; omitted or absent forms do not count.
+ function analyticSummary(d,rows){
+  const roster=rows.filter(r=>r?.name?.trim()||done(d,r?.answers)).length;
+  const people=rows.filter(r=>!!scoring(d,r)),n=people.length;
+  if(!n)return null;
+  const grade=classGrade(rows),L=[
+   {kind:"title",text:"Аналитическая справка"},
+   {kind:"subtitle",text:"По методике "+(type(d)==="cdi"?"«Опросник детской депрессии (М. Ковач, CDI)»":"«Тест школьной тревожности Филлипса»")},
+   {kind:"meta",text:grade?grade+" класс":"Класс не указан"},
+   {kind:"meta",text:"Дата: "+new Date().toLocaleDateString("ru-RU")},
+   {kind:"body",text:"В обследовании приняли участие "+n+" из "+roster+" учащихся ("+classPercent(n,roster)+")."}
+  ];
+  if(type(d)==="cdi"){
+   const boys=people.filter(r=>r.sex==="m").length,girls=people.filter(r=>r.sex==="f").length;
+   if(boys+girls)L.push({kind:"body",text:"Из обследованных: "+boys+" мальчиков ("+classPercent(boys,n)+") и "+girls+" девочек ("+classPercent(girls,n)+")."+(boys+girls<n?" Пол указан у "+(boys+girls)+" участников.":"")});
+   const vals=people.map(r=>{const z=scoring(d,r),t=norms.norm(z.raw,r.ageYears,r.sex);return cdiUsable(t)?t.t:null}).filter(Number.isInteger);
+   if(vals.length<n)L.push({kind:"body",text:"В анализ по уровням включено "+vals.length+" из "+n+" завершенных анкет (для остальных нормативный показатель не рассчитан)."});
+   if(!vals.length)L.push({kind:"body",text:"Распределение по уровням не рассчитано: отсутствуют нормативные результаты."});
+   else{
+    L.push({kind:"body",text:"По общему показателю выраженности депрессивных симптомов:"});
+    const g=[
+     ["Низкий уровень (0-39)",vals.filter(v=>v<=39).length,"Показатель находится в нижнем диапазоне шкалы."],
+     ["Средний уровень (40-60)",vals.filter(v=>v>=40&&v<=60).length,"Показатель находится в среднем диапазоне шкалы."],
+     ["Высокий уровень (61 и выше)",vals.filter(v=>v>=61).length,"Выраженность симптомов повышена, рекомендуется уточнение эмоционального состояния в индивидуальной беседе."]
+    ];
+    g.forEach(x=>L.push({kind:"level",text:x[0]+" – "+x[1]+" чел. ("+classPercent(x[1],vals.length)+"). "+x[2]}));
+    L.push({kind:"body",text:"Вывод: высокий показатель выявлен у "+g[2][1]+" учащихся, средний – у "+g[1][1]+", низкий – у "+g[0][1]+". Результаты необходимо рассматривать вместе с беседой и наблюдением; они не являются диагнозом."});
+   }
+  }else{
+   const stats=phillipsStats(d,people),overall=stats.rows[0];
+   L.push({kind:"body",text:"По общей школьной тревожности: не превышает 50% – "+countByLevel(overall.ordinary,n)+"; повышенная (свыше 50% до 75%) – "+countByLevel(overall.raised,n)+"; высокая (свыше 75%) – "+countByLevel(overall.high,n)+"."});
+   const factors=stats.rows.slice(1).filter(x=>x.raised+x.high>0).sort((a,b)=>(b.raised+b.high)-(a.raised+a.high));
+   if(factors.length){
+    L.push({kind:"body",text:"Повышенные и высокие показатели по факторам:"});
+    factors.forEach(x=>L.push({kind:"factor",text:x.name+": повышенный – "+countByLevel(x.raised,n)+", высокий – "+countByLevel(x.high,n)+"."}));
+   }else L.push({kind:"body",text:"По восьми факторам повышенных и высоких показателей не выявлено."});
+   L.push({kind:"body",text:"Заключение: детям с повышенными и высокими показателями требуется дополнительное внимание. Факторы частично пересекаются по вопросам и не суммируются. Результат не является диагнозом."});
+  }
+  return {lines:L,n,roster};
+ }
+ function analyticPreview(d,rows){
+  const a=analyticSummary(d,rows);
+  return a?'<section class="psy-cp-analytic-preview"><h3>Аналитическая справка</h3>'+
+   a.lines.filter(x=>!["title","subtitle","meta"].includes(x.kind)).map(x=>'<p>'+esc(x.text)+'</p>').join("")+'</section>':"";
+ }
+
  function phillipsClassReference(d,rows){
   const stats=phillipsStats(d,rows);
   if(!stats.total)return '<section class="psy-ph-class-reference"><h3>Справка по классу</h3><p>Для сводки нужно заполнить хотя бы одну анкету полностью.</p></section>';
@@ -326,7 +373,7 @@
    }).join("");
    return '<section class="psy-mspss-group psy-cdi-class-results"><h3>Результаты класса</h3>'+
     '<div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th><th scope="col">Общий показатель депрессии</th>'+head+
-    '</tr></thead><tbody>'+body+'</tbody></table></div>'+cdiLegendHTML+'</section>';
+    '</tr></thead><tbody>'+body+'</tbody></table></div>'+cdiLegendHTML+analyticPreview(d,rows)+'</section>';
   }
   const head=phillips.scales.map(scale=>'<th scope="col">'+esc(scale.name+", %")+'</th>').join("");
   const body=ordered.map((r,i)=>{
@@ -338,7 +385,7 @@
      return '<td class="psy-ph-score"><span class="psy-ph-score-mark psy-ph-tone-'+phillipsColor(percent)+'">'+Math.round(percent)+'</span></td>';
     }).join("")+'</tr>';
   }).join("");
-  return '<section class="psy-mspss-group psy-ph-class-results"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div></section>'+phillipsClassReference(d,rows);
+  return '<section class="psy-mspss-group psy-ph-class-results"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div></section>'+analyticPreview(d,rows);
  }
  function calculator(d,ctx){
   const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],a=r.answers||[],n=done(d,a),total=size(d),canAnswer=cdiReady(d,r,rows,ctx.calcMode),hasRoster=cdiRoster(rows),cdiClass=type(d)==="cdi"&&ctx.calcMode==="class",allowDetails=!cdiClass||hasRoster,allowGender=allowDetails&&cdiContextReady(d,r,rows,ctx.calcMode);
@@ -434,6 +481,7 @@
   return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Бланк Метоларии</title><style>@page{size:A4;margin:13mm}body{font:10.2pt/1.4 Arial;color:#183b2d}h1{font-size:17pt}h2{font-size:13pt}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #a6bbaf;padding:6px;font-size:9.5pt;text-align:left;vertical-align:top}th:first-child,td:first-child{width:34px;text-align:center}th:last-child,td:last-child{width:90px;text-align:center}.statement p{margin:2px 0 5px}.blank{min-height:65px}tr{break-inside:avoid}.newpage{break-before:page}</style></head><body>'+(mode==="blank"?blank:guide)+(mode==="combined"?blank:"")+'</body></html>';
  }
  function report(d,rows,mode,index){
+  if(mode==="analysis")return !!analyticSummary(d,rows)&&wordDocument(d,rows,mode,index);
   if(mode!=="class"&&!scoring(d,rows[index]))return false;
   return wordDocument(d,rows,mode,index);
  }
@@ -442,7 +490,7 @@
  }
  /* Build a real offline OOXML .docx (ZIP stored entries), without CDN or remote upload. */
  function wordDocument(d,rows,mode,index){
-  const people=(mode==="class"?(type(d)==="cdi"?rows:rows.filter(r=>r.name?.trim()||done(d,r.answers))):[rows[index]]).filter(Boolean);
+  const people=((mode==="class"||mode==="analysis")?(type(d)==="cdi"?rows:rows.filter(r=>r.name?.trim()||done(d,r.answers))):[rows[index]]).filter(Boolean);
   const isCDI=type(d)==="cdi";
   if(!people.length)return false;
   const xmlEscape=s=>String(s??"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,"").replace(/[<>&"']/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;","'":"&apos;"}[c]));
@@ -497,7 +545,20 @@
    if(!z)return "Не завершено ("+done(d,r.answers)+" из "+size(d)+")";
    return "Обработан";
   };
-  let body=para(title,"head")+para("Метолария · "+(mode==="class"?"Отчет группы / класса":"Индивидуальный отчет")+" · "+new Date().toLocaleDateString("ru-RU"));
+  const analytical=mode==="analysis"?analyticSummary(d,rows):null;
+  const analysisPara=x=>{
+   const head=x.kind==="title"||x.kind==="subtitle",strong=x.kind==="level";
+   const fontSize=x.kind==="title"?32:x.kind==="subtitle"?27:x.kind==="meta"?24:28;
+   return '<w:p><w:pPr><w:jc w:val="'+(head?"center":x.kind==="meta"?"left":"both")+
+    '"/><w:spacing w:after="150" w:line="335" w:lineRule="auto"/>'+
+    (x.kind==="factor"?'<w:ind w:left="280"/>':"")+'</w:pPr><w:r><w:rPr>'+
+    '<w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>'+
+    '<w:sz w:val="'+fontSize+'"/><w:szCs w:val="'+fontSize+'"/>'+(head||strong?"<w:b/>":"")+
+    '</w:rPr><w:t xml:space="preserve">'+xmlEscape(x.text)+'</w:t></w:r></w:p>';
+  };
+  let body=analytical?analytical.lines.map(analysisPara).join(""):
+   para(title,"head")+para("Метолария · "+(mode==="class"?"Отчет группы / класса":"Индивидуальный отчет")+" · "+new Date().toLocaleDateString("ru-RU"));
+  if(!analytical){
   body+=para("Сводные результаты","sub");
   const columns=isCDI?["№","Участник","Общий показатель депрессии",...norms.scales.map(x=>x.name)]:mode==="class"?["№","Участник",...phillips.scales.map(s=>s.name+", %")]:["Участник","Статус","Общий / 58","Процент"];
   const summary=people.map((r,i)=>{
@@ -539,9 +600,10 @@
    }
   }
   if(!isCDI&&mode!=="class")body+=para("Результаты не являются диагнозом. Необследованные и отсутствующие дети не включены в сводный расчет.");
+  }
   const doc='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+
-   '<w:sectPr>'+((mode==="class"||isCDI)?'<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="550" w:bottom="550" w:left="550" w:right="550"/>':'<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:bottom="850" w:left="850" w:right="850"/>')+'</w:sectPr></w:body></w:document>';
+   '<w:sectPr>'+((mode==="class"||isCDI)&&!analytical?'<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="550" w:bottom="550" w:left="550" w:right="550"/>':'<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:bottom="850" w:left="850" w:right="850"/>')+'</w:sectPr></w:body></w:document>';
   const types='<?xml version="1.0" encoding="UTF-8"?>'+
    '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
   const rels='<?xml version="1.0" encoding="UTF-8"?>'+
@@ -564,7 +626,7 @@
   }
   const central=join(centers),end=new Uint8Array(22);u32(end,0x06054b50,0);u16(end,centers.length,8);u16(end,centers.length,10);u32(end,central.length,12);u32(end,offset,16);
   const zip=join([...locals,central,end]);
-  return save("Metolaria_"+(isCDI?"CDI":"Phillips")+(mode==="class"?"_class":"_participant")+"_results.docx",zip,"application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+  return save(mode==="analysis"?"Metolaria_"+(isCDI?"CDI":"Phillips")+"_analiticheskaya_spravka.docx":"Metolaria_"+(isCDI?"CDI":"Phillips")+(mode==="class"?"_class":"_participant")+"_results.docx",zip,"application/vnd.openxmlformats-officedocument.wordprocessingml.document");
  }
 
  function csv(d,rows){
@@ -599,6 +661,7 @@
    const groupEl=document.getElementById("cpGroup");if(groupEl)groupEl.innerHTML=group(d,rows);
    const active=document.querySelector(".psy-mspss-person.active small");if(active)active.textContent=r.attendance==="absent"?"Отсутствует":n+"/"+size(d);
    const btn=document.getElementById("cpReportBottom");if(btn){const eligible=ctx.calcMode==="class"?rows.some(x=>!!scoring(d,x)):!!scoring(d,r);btn.disabled=!eligible;btn.classList.toggle("psy-mspss-waiting",!eligible);}
+    const analyticBtn=document.getElementById("cpAnalyticBottom");if(analyticBtn){const eligible=!!analyticSummary(d,rows);analyticBtn.disabled=!eligible;analyticBtn.classList.toggle("psy-mspss-waiting",!eligible);}
   };
   document.getElementById("cpCurrentName")?.addEventListener("input",e=>{
    r.name=e.target.value;const active=document.querySelector(".psy-mspss-person.active span");if(active)active.textContent=r.name||"Участник";
