@@ -137,6 +137,10 @@
   if(span)return span[1]+"-"+span[2]+" "+(span[3].toLowerCase().startsWith("класс")?"классы":"лет");
   const start=text.match(/^(?:с|от)\s*(\d{1,2})\s*лет/i);
   if(start)return "С "+start[1]+" лет";
+  const adult=text.match(/^(\d{1,2})\s*(?:лет|года|год)\s*и\s*старше/i);
+  if(adult)return "С "+adult[1]+" лет";
+  const classRange=text.match(/^(\d{1,2})\s*[-–]\s*(\d{1,2})\s*класс/i);
+  if(classRange)return classRange[1]+"-"+classRange[2]+" классы";
   if(/^\d{1,2}\s*класс/i.test(text))return text;
   return "";
  };
