@@ -1,6 +1,6 @@
 /* Метолария: автономная библиотека рисунков и официальные логотипы. */
 "use strict";
-const CACHE = "psyteka-drawing-library-v2";
+const CACHE = "psyteka-drawing-library-v3";
 const fileUrl = name => new URL("./" + name, self.location.href).href;
 const PAGE = fileUrl("drawing-library.html");
 const ASSETS = [fileUrl("brand-mark.svg"), fileUrl("brand-mark-dark.svg"), fileUrl("brand-favicon.svg")];
@@ -24,7 +24,7 @@ self.addEventListener("fetch", event => {
       if (cachedAsset) return cachedAsset;
     }
     try {
-      const response = await fetch(event.request);
+      const response = await fetch(event.request, isPage ? {cache:"no-store"} : undefined);
       if (response.ok) await cache.put(event.request.url.split("?")[0], response.clone());
       return response;
     } catch (error) {
