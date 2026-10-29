@@ -120,23 +120,24 @@ function enhanceMethodView(tab,html){
 function bindAnswerCopyControls(){
  if(tabNow!=="score"||!methodNow)return;
  const d=DETAILS[methodNow.name];
- if(!window.PSY_MATCH_MSPSS?.supports(d))return;
+ if(!window.PSY_MATCH_MSPSS?.supports(d)||calcMode!=="class")return;
  const current=rows[rowIndex],entry=document.querySelector("#modal .psy-mspss-entry");
  if(!current||!entry)return;
  const key=d.id||d.workflow||methodNow.name,version=current.eysenckVersion||"default";
  const box=document.createElement("div");box.className="psy-answer-copy-toolbar";
  const copy=document.createElement("button"),paste=document.createElement("button"),info=document.createElement("span");
  copy.type="button";paste.type="button";copy.className="btn psy-answer-copy";paste.className="btn psy-answer-paste";
- copy.textContent="Копировать ответы";paste.textContent="Вставить ответы";
+ copy.textContent="Копировать";paste.textContent="Вставить";
  copy.title="Копировать ответы без имени, возраста и пола";
  paste.title="Вставить ранее скопированные ответы";
- copy.disabled=!(current.answers||[]).some(v=>v!==null&&v!==undefined&&v!=="");
+ copy.disabled=rows.length<2||!(current.answers||[]).some(v=>v!==null&&v!==undefined&&v!=="");
  paste.disabled=!copiedAssessmentAnswers||copiedAssessmentAnswers.key!==key||copiedAssessmentAnswers.version!==version||copiedAssessmentAnswers.sourceRow===current||!entry.querySelector("input[data-cp-answer]:not(:disabled)");
+ paste.hidden=!copiedAssessmentAnswers||copiedAssessmentAnswers.key!==key||copiedAssessmentAnswers.version!==version||copiedAssessmentAnswers.sourceRow===current;
  info.className="psy-copy-status";info.setAttribute("role","status");
- if(!paste.disabled)info.textContent="Источник: "+copiedAssessmentAnswers.source;
+ if(!paste.hidden)info.textContent="Из: "+copiedAssessmentAnswers.source;
  copy.onclick=()=>{
   copiedAssessmentAnswers={key,version,answers:(current.answers||[]).slice(),source:current.name||"участник "+(rowIndex+1),sourceRow:current};
-  paste.disabled=false;info.textContent="Ответы скопированы. Выберите другого ученика.";
+  paste.hidden=true;info.textContent="Ответы скопированы. Перейдите к другому участнику.";
  };
  paste.onclick=()=>{
   const buf=copiedAssessmentAnswers;
@@ -145,8 +146,9 @@ function bindAnswerCopyControls(){
   current.answers=buf.answers.slice();setTab("score");
  };
  box.append(copy,paste,info);
- const nameField=entry.querySelector(".psy-mspss-name-field");
- if(nameField)nameField.insertAdjacentElement("afterend",box);else entry.prepend(box);
+ const actions=entry.querySelector(".psy-cp-next-actions");
+ if(actions){const next=actions.querySelector("#cpNext");if(next)actions.insertBefore(box,next);else actions.append(box);}
+ else entry.querySelector(".psy-cp-grid")?.insertAdjacentElement("afterend",box);
 }
 function setTab(name){
  if((name==="score"||name==="processing")&&window.PSY_GUIDE_STANDARD?.selectionUnsupported(methodNow?.name))name="instruction";
@@ -731,12 +733,12 @@ function bindControls(){
      if(rows[j].attendance!=='absent'&&rows[j].name?.trim()&&!['m','f'].includes(rows[j].sex)){next=j;break;}
     }
     if(next>=0){
-     rows.genderNote="Пол для «"+currentName+"» сохранен. Теперь укажите пол: "+(rows[next].name||"участник "+(next+1))+".";
+     rows.genderNote="Пол сохранен: "+currentName+". Далее: "+(rows[next].name||"участник "+(next+1))+".";
      go(next);
     }else{
      let first=rows.findIndex(x=>x.attendance!=='absent'&&x.name?.trim());
      if(first<0)first=0;
-     rows.genderNote="Пол указан всем. Начинаем ввод ответов с первого: "+(rows[first].name||"участник 1")+".";
+     rows.genderNote="Пол указан всем. Начинаем с: "+(rows[first].name||"участник 1")+".";
      go(first);
     }
    },
