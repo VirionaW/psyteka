@@ -281,20 +281,13 @@
    return '<section class="psy-mspss-group psy-cdi-class-results"><h3>Результаты класса</h3>'+
     '<div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th><th>Баллы</th><th>Т-балл</th><th>Статус</th><th>Интерпретация</th></tr></thead><tbody>'+body+'</tbody></table></div></section>';
   }
-  const head=isCDI?'<th>Сырой / 54</th><th>Т-балл</th>':'<th>Общий / 58</th><th>%</th>'+phillips.scales.map((s,i)=>'<th title="'+esc(s.name)+'">Ф'+(i+1)+'</th>').join("");
+  const head=phillips.scales.map(scale=>'<th scope="col">'+esc(scale.name)+'</th>').join("");
   const body=ordered.map((r,i)=>{
-   const z=scoring(d,r),n=done(d,r.answers),t=isCDI&&z?norms.norm(z.raw,r.ageYears,r.sex):null;
-   const cols=isCDI?'<td>'+(z?z.raw:"–")+'</td><td>'+(t?.t??"–")+'</td>':
-    '<td>'+(z?z.raw:"–")+'</td><td>'+(z?z.percent.toFixed(1)+"%":"–")+'</td>'+phillips.scales.map((s,j)=>'<td>'+(z?z.scales[j].percent.toFixed(1)+"%":"–")+'</td>').join("");
-   return '<tr><td>'+esc(r.name||"У-"+(i+1))+'</td><td>'+(r.attendance==="absent"?"Отсутствовал":z?"Обработан":"Заполнено "+n+" / "+size(d))+'</td>'+cols+'</tr>';
+   const z=scoring(d,r);
+   return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td>'+
+    phillips.scales.map((scale,j)=>'<td>'+(z?z.scales[j].percent.toFixed(1).replace(".",",")+"%":"–")+'</td>').join("")+'</tr>';
   }).join("");
-  let extra="";
-  if(!isCDI){
-   const ok=ordered.map(r=>scoring(d,r)).filter(Boolean);
-   extra=ok.length?'<h3>Сводные показатели класса</h3><p>Полностью обработано '+ok.length+' анкет. Отсутствующие и неполные анкеты исключены.</p><div class="psy-mspss-scroll"><table><thead><tr><th>Фактор</th><th>Выше 50%</th><th>Выше 75%</th></tr></thead><tbody>'+phillips.scales.map((s,i)=>'<tr><td>'+esc(s.name)+'</td><td>'+ok.filter(z=>z.scales[i].percent>50).length+'</td><td>'+ok.filter(z=>z.scales[i].percent>75).length+'</td></tr>').join("")+'</tbody></table></div>':"";
-  }
-  return '<section class="psy-mspss-group"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>Ученик</th><th>Статус</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>'+
-   '<p class="psy-mspss-small">Отсутствующие и неполные результаты не используются в статистике класса.</p>'+extra+'</section>';
+  return '<section class="psy-mspss-group"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div></section>';
  }
  function calculator(d,ctx){
   const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],a=r.answers||[],n=done(d,a),total=size(d);
@@ -410,19 +403,17 @@
   };
   let body=para(title,"head")+para("Метолария · "+(mode==="class"?"Отчет группы / класса":"Индивидуальный отчет")+" · "+new Date().toLocaleDateString("ru-RU"));
   body+=para("Сводные результаты","sub");
-  const columns=isCDI?["№","Участник","Баллы","Т-балл","Статус","Интерпретация"]:["Участник","Статус","Общий / 58","Процент"];
+  const columns=isCDI?["№","Участник","Баллы","Т-балл","Статус","Интерпретация"]:mode==="class"?["№","Участник",...phillips.scales.map(s=>s.name)]:["Участник","Статус","Общий / 58","Процент"];
   const summary=people.map((r,i)=>{
    const z=scoring(d,r),n=isCDI&&z?norms.norm(z.raw,r.ageYears,r.sex):null;
    const base=[r.name||"У-"+String(i+1).padStart(2,"0"),describe(r)];
-   return isCDI?Object.values(cdiClassRow(d,r,i)).map(String):
+   return isCDI?Object.values(cdiClassRow(d,r,i)).map(String):mode==="class"?
+      [String(i+1),r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((s,j)=>z?z.scales[j].percent.toFixed(1).replace(".",",")+"%":"–")]:
       [...base,z?.raw??"–",z?z.percent.toFixed(1)+"%":"–"];
   });
   body+=table(columns,summary);
-  if(mode==="class"&&!isCDI){
-   const completed=people.filter(r=>!!scoring(d,r)).length,absent=people.filter(r=>r.attendance==="absent").length;
-   body+=para("Всего в списке: "+people.length+"; заполнено: "+completed+"; отсутствуют: "+absent+".");
-  }
-  if(!isCDI)for(let i=0;i<people.length;i++){
+  // В отчете класса Филлипса только таблица шкал без технической сводки.
+  if(!isCDI&&mode!=="class")for(let i=0;i<people.length;i++){
    const r=people[i],z=scoring(d,r),n=isCDI&&z?norms.norm(z.raw,r.ageYears,r.sex):null;
    if(i>0)body+='<w:p><w:pPr><w:pageBreakBefore/></w:pPr></w:p>';
    body+=para("Результат: "+(r.name||"У-"+(i+1)),"sub")+para("Статус: "+describe(r));
@@ -438,10 +429,10 @@
     if(z)body+=table(["Фактор","Число несовпадений","Процент"],z.scales.map(s=>[s.name,String(s.raw)+" из "+s.max,s.percent.toFixed(1)+"%"]));
    }
   }
-  if(!isCDI)body+=para("Результаты не являются диагнозом. Необследованные и отсутствующие дети не включены в сводный расчет.");
+  if(!isCDI&&mode!=="class")body+=para("Результаты не являются диагнозом. Необследованные и отсутствующие дети не включены в сводный расчет.");
   const doc='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+
-   '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:bottom="850" w:left="850" w:right="850"/></w:sectPr></w:body></w:document>';
+   '<w:sectPr>'+(mode==="class"&&!isCDI?'<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="550" w:bottom="550" w:left="550" w:right="550"/>':'<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:bottom="850" w:left="850" w:right="850"/>')+'</w:sectPr></w:body></w:document>';
   const types='<?xml version="1.0" encoding="UTF-8"?>'+
    '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
   const rels='<?xml version="1.0" encoding="UTF-8"?>'+
@@ -477,13 +468,13 @@
    const escapeCSV=x=>'"'+String(x??"").replace(/"/g,'""')+'"';
    return "\uFEFF"+[header,...data].map(row=>row.map(escapeCSV).join(";")).join("\r\n");
   }
-  const head=["Ученик","Статус",...(type(d)==="cdi"?["Возраст","Пол","Сырой балл","Т-балл"]:["Общий балл","%",...phillips.scales.map(x=>x.name)]),...Array.from({length:size(d)},(_,i)=>"Пункт "+(i+1))];
-  const records=[head,...alpha(rows).map((r,i)=>{const z=scoring(d,r),t=z&&type(d)==="cdi"?norms.norm(z.raw,r.ageYears,r.sex):null;
-   const extras=type(d)==="cdi"?[r.ageYears??"",r.sex||"",z?.raw??"",t?.t??""]:[z?.raw??"",z?.percent.toFixed(1)??"",...phillips.scales.map((s,j)=>z?.scales[j].percent.toFixed(1)??"")];
-   return [r.name||"У-"+(i+1),status(r),...extras,...Array.from({length:size(d)},(_,i)=>r.attendance==="absent"?"":value(d,r.answers?.[i]))];
-  })];
+  const head=["№","Участник",...phillips.scales.map(scale=>scale.name)];
+  const data=alpha(rows).filter(r=>r.name?.trim()||done(d,r.answers)).map((r,i)=>{
+   const z=scoring(d,r);
+   return [i+1,r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((scale,j)=>z?z.scales[j].percent.toFixed(1).replace(".",","):"")];
+  });
   const cell=v=>{let s=String(v??"");if(/^\s*[=+@-]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';};
-  return "\uFEFF"+records.map(row=>row.map(cell).join(";")).join("\r\n");
+  return "\uFEFF"+[head,...data].map(row=>row.map(cell).join(";")).join("\r\n");
  }
  function bind(d,ctx){
   document.querySelectorAll("[data-cp-print]").forEach(btn=>btn.addEventListener("click",()=>save("Metolaria_"+type(d)+"_"+btn.dataset.cpPrint+".html",printable(d,btn.dataset.cpPrint),"text/html;charset=utf-8")));
