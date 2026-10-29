@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#285f49">
+<title>Тесты Люшера – обработка результатов | Метолария</title>
+<meta name="description" content="Отдельное пространство для восьмицветного теста Люшера, анализа цветовых предпочтений и регистрации полного протокола.">
+<style>html:not(.psy-gate-open) body > :not(#psy-preview-gate){display:none!important}</style>
+<link rel="stylesheet" href="psy-preview-gate.css?v=20261029">
+<script src="psy-preview-gate.js?v=20261029" defer></script>
+<link rel="icon" type="image/svg+xml" href="brand-favicon.svg">
+<link rel="stylesheet" href="luscher-tests.css?v=20261029v1">
+<script src="luscher-tests.js?v=20261029v1" defer></script>
+</head>
+<body>
+<header class="topbar">
+ <a class="brand" href="library.html?area=school&method=%D0%A6%D0%B2%D0%B5%D1%82%D0%BE%D0%B2%D0%BE%D0%B9%20%D1%82%D0%B5%D1%81%D1%82%20%D0%9C.%20%D0%9B%D1%8E%D1%88%D0%B5%D1%80%D0%B0">
+ <img src="brand-mark.svg" width="42" height="42" alt=""><span><strong><span>Мето</span><em>лария</em></strong><small>/ Обработка результатов</small></span></a>
+ <nav class="top-actions"><a class="light-button" href="library.html?area=school&method=%D0%A6%D0%B2%D0%B5%D1%82%D0%BE%D0%B2%D0%BE%D0%B9%20%D1%82%D0%B5%D1%81%D1%82%20%D0%9C.%20%D0%9B%D1%8E%D1%88%D0%B5%D1%80%D0%B0">Вернуться к методике</a><button type="button" id="theme" class="light-button">Темная тема</button></nav>
+</header>
+<main>
+ <section class="intro"><p class="eyebrow">Цветовая психодиагностика · Макс Люшер</p><h1>Цветовой тест Люшера</h1><p>Выбери редакцию и способ обработки. Для каждой версии свой порядок предъявления и собственный протокол.</p></section>
+ <section id="versionScreen">
+  <div class="section-heading"><div><h2>Выбор варианта</h2><p>Все варианты доступны с этой страницы. Нажми на нужный, чтобы перейти к работе.</p></div></div>
+  <div class="versions">
+   <button type="button" class="version-card" data-version="eight"><span class="version-symbol eight-symbol"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><strong>Восьмицветовой тест Люшера</strong><span>8 цветов · два последовательных выбора · запись и позиционный анализ.</span><small>Интерактивный выбор</small></button>
+   <button type="button" class="version-card" data-version="single"><span class="version-symbol single-symbol"><i></i><i></i><i></i><i></i></span><strong>Цветовой тест – один выбор</strong><span>Быстрая запись одного восьмицветного ряда, если по задаче нужен только первый проход.</span><small>Однократный протокол</small></button>
+   <button type="button" class="version-card" data-version="conflict"><span class="version-symbol"><span class="compare-icon">↔</span></span><strong>Анализ конфликтов Люшера</strong><span>Два ряда из восьми цветов; сравнение перемещений, ведущих и отвергаемых цветов.</span><small>Позиционный анализ</small></button>
+   <button type="button" class="version-card" data-version="full"><span class="version-symbol"><span class="grid-icon">▦</span></span><strong>Полный цветовой тест</strong><span>Семь таблиц клинического варианта. Заполнение протокола по оригинальным карточкам.</span><small>Ручная регистрация</small></button>
+   <button type="button" class="version-card" data-version="figures"><span class="version-symbol"><span class="grid-icon">◇</span></span><strong>Тест фигур Люшера</strong><span>Отдельная запись двух понравившихся и двух отвергнутых фигур из оригинального набора.</span><small>Ручная регистрация</small></button>
+  </div>
+  <p class="source-note">Экранные цветовые поля – ориентировочная визуализация, а не эталон печатных карточек. Для стандартизированного предъявления используйте оригинальные стимулы соответствующей редакции.</p>
+ </section>
+ <section id="workspace" hidden>
+  <div class="workspace-top"><button type="button" id="backVersions" class="light-button">Выбрать другую версию</button><div><h2 id="versionTitle"></h2><p id="versionDescription"></p></div></div>
+  <section class="panel">
+   <div class="section-heading"><div><h2>Участники</h2><p>Сначала добавь участника, затем открывается обработка выбранного варианта.</p></div><div class="mode-switch"><button data-mode="one" type="button" class="active">Один участник</button><button data-mode="group" type="button">Группа / класс</button></div></div>
+   <div class="add-people"><label>Класс / группа<input id="groupName" maxlength="70" placeholder="Например, 1А"></label><label>Фамилия и имя<input id="personName" maxlength="90" placeholder="Фамилия Имя"></label><label>Возраст<input id="personAge" type="number" min="3" max="100" placeholder="Лет"></label><button type="button" id="addPerson" class="primary">Добавить</button></div>
+   <div id="peopleError" class="error" role="alert"></div><div id="people" class="people"></div>
+  </section>
+  <div id="workBody" hidden>
+   <section class="panel person-header"><div><span class="eyebrow">Текущий участник</span><h3 id="personTitle"></h3><span id="personStatus" class="muted"></span></div><button type="button" id="removePerson" class="light-button danger">Удалить участника</button></section>
+   <div class="stage-header"><h2 id="stageTitle"></h2><p id="stageHelp"></p></div>
+   <section class="panel" id="choiceStage">
+    <div class="choice-head"><div><h3 id="choiceTitle">Выбор цветов</h3><p id="choiceTip"></p></div><button type="button" id="resetChoice" class="light-button">Начать этот выбор заново</button></div>
+    <div id="chosenStrip" class="chosen-strip"></div>
+    <div class="color-grid" id="colorGrid" aria-label="Цветные карточки"></div>
+    <div class="choice-foot"><p id="choiceCount"></p><button type="button" id="goNext" class="primary" disabled>Следующий выбор</button></div>
+   </section>
+   <section id="manualStage" class="panel" hidden><h3 id="manualTitle"></h3><p class="muted" id="manualIntro"></p><div id="manualFields"></div><div class="action-row"><button type="button" id="saveManual" class="primary">Сформировать протокол</button></div></section>
+   <section id="reportStage" class="panel" hidden><div class="section-heading"><div><h2>Результаты</h2><p>Индивидуальный протокол выбранной редакции.</p></div><button type="button" id="editResponses" class="light-button">Изменить ответы</button></div><div id="reportContent"></div><div class="action-row"><button type="button" class="primary" id="word">Скачать Word</button><button type="button" class="light-button" id="print">Распечатать</button></div></section>
+  </div>
+  <section class="panel" id="groupSummary" hidden></section>
+ </section>
+</main>
+<footer>Метолария · Результаты этого окна хранятся только во вкладке браузера до ее закрытия.</footer>
+<div id="printRoot" hidden></div>
+</body>
+</html>
