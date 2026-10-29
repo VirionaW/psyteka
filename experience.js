@@ -1023,3 +1023,14 @@ window.addEventListener("psy-assessment-dirty",()=>{
  save.textContent=activeSavedAssessmentId?"Сохранить изменения":"Сохранить результат";
  save.classList.remove("psy-is-saved");
 });
+/* After any student answer or class detail changes, a previous cloud save is no longer current. */
+const markAssessmentEdited=()=>window.dispatchEvent(new Event("psy-assessment-dirty"));
+document.addEventListener("input",e=>{
+ if(e.target.closest?.("#modal .psy-mspss-calculator"))markAssessmentEdited();
+},true);
+document.addEventListener("change",e=>{
+ if(e.target.closest?.("#modal .psy-mspss-calculator"))markAssessmentEdited();
+},true);
+document.addEventListener("click",e=>{
+ if(e.target.closest?.("#modal [data-cp-sex],#modal #cpAbsent,#modal #cpAddNames,#modal #cpSort,#modal [data-cp-delete],#modal #cpDeleteAll"))markAssessmentEdited();
+},true);
