@@ -713,3 +713,32 @@ html.dark .library-page #modal.psy-mspss-example .psy-cdi-lock-note{background:#
 .library-page #modal.psy-mspss-example .psy-cp-analytic-preview .psy-cp-analytic-meta{
  text-align:left;font-size:12pt;
 }
+
+/* ANALYTICAL SIGNATURES 20261029 */
+.library-page #modal.psy-mspss-example .psy-cp-analytic-preview .psy-analytic-signatures{
+ margin-top:26px;padding-top:12px;
+ border-top:1px solid var(--line,#d0dcd1);
+ font-family:"Times New Roman",Times,serif;color:var(--ink,#213d31);
+}
+.library-page #modal.psy-mspss-example .psy-cp-analytic-preview .psy-analytic-signatures .psy-analytic-date{
+ margin:0 0 18px;text-align:left!important;font-size:14pt;
+}
+.library-page #modal.psy-mspss-example .psy-cp-analytic-preview .psy-analytic-signature{
+ display:flex;justify-content:space-between;align-items:baseline;
+ gap:24px;margin:12px 0;line-height:1.5;
+}
+.library-page #modal.psy-mspss-example .psy-cp-analytic-preview .psy-analytic-signature span:last-child{
+ text-align:right;min-width:140px;
+}
+.library-page #modal.psy-mspss-example .psy-cp-analytic-preview .psy-analytic-signatures .psy-analytic-confidentiality{
+ text-align:center!important;margin:25px auto 6px;
+ max-width:650px;font-size:13pt;line-height:1.4;
+}
+@media(max-width:590px){
+ .library-page #modal.psy-mspss-example .psy-cp-analytic-preview .psy-analytic-signature{
+  gap:8px;font-size:12pt;
+ }
+ .library-page #modal.psy-mspss-example .psy-cp-analytic-preview .psy-analytic-signature span:last-child{
+  min-width:95px;
+ }
+}
