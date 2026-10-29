@@ -103,13 +103,25 @@ function processing(d){const m=cfg(d);if(!m)return "";
 }
 function scaleTable(scales){return '<div class="psy-semester-table"><table><thead><tr><th>Шкала</th><th>Номера пунктов</th><th>Коэффициент</th></tr></thead><tbody>'+
  scales.map(s=>'<tr><td>'+esc(s.name)+'</td><td>'+s.q.join(", ")+'</td><td>'+(s.factor||1).toString().replace(".",",")+'</td></tr>').join("")+'</tbody></table></div>'}
+function scoreTone(m,s){
+ if(m.id!=="eysenck-40")return "is-neutral";
+ return s.raw<=7?"is-low":s.raw<=14?"is-medium":"is-high";
+}
+function scoreDescription(m,s){
+ if(m.id==="eysenck-40")return s.raw<=7?"Низкая выраженность":s.raw<=14?"Средняя выраженность":"Высокая выраженность";
+ if(m.id==="lazarus-wcq50")return "Доля максимума: "+Math.round(s.percent)+"% (не нормативный уровень)";
+ return "Факторный показатель, не категория риска";
+}
+function resultTable(m,z){
+ return '<div class="psy-semester-table psy-semester-result-table"><table><thead><tr><th>Шкала</th><th>Баллы</th><th>Интерпретация показателя</th></tr></thead><tbody>'+
+ z.scales.map(s=>'<tr><td><b>'+esc(s.name)+'</b></td><td><span class="psy-semester-score '+scoreTone(m,s)+'">'+(m.id==="razuvaeva-osr29"?s.adjusted.toFixed(2).replace(".",","):s.raw)+'</span><span class="psy-semester-denom">'+(m.id==="razuvaeva-osr29"?" (сырой: "+s.raw+" / "+s.max+")":" / "+s.max)+'</span></td><td>'+esc(scoreDescription(m,s))+'</td></tr>').join("")+'</tbody></table></div>';
+}
 function result(d,row){const m=cfg(d),n=count(m,row.answers),z=score(d,row.answers,row);
  if(row.attendance==="absent")return '<div class="psy-semester-status is-skipped">Отсутствовал – результаты не рассчитываются</div>';
  let html='<div class="psy-semester-status '+(z?"is-complete":"is-pending")+'">'+(z?"Заполнено – обработано":"Заполнено "+n+" из "+m.n+" – расчет не готов")+'</div>';
  if(!z)return html+'<p class="psy-semester-muted">Все '+m.n+' ответов обязательны. Пустое поле не равно нулю. После удаления ответа прежние итоги скрываются.</p>';
  if(m.id==="cdi-27")return html+'<div class="psy-semester-total">Сырой балл: <strong>'+z.raw+' / 54</strong></div><p>'+esc(m.interpret)+'</p>';
- return html+'<div class="psy-semester-table"><table><thead><tr><th>Шкала</th><th>Сырой балл</th>'+(m.id==="razuvaeva-osr29"?"<th>С коэффициентом</th>":"")+'</tr></thead><tbody>'+z.scales.map(s=>
- '<tr><td>'+esc(s.name)+'</td><td>'+s.raw+' / '+s.max+'</td>'+(m.id==="razuvaeva-osr29"?'<td>'+s.adjusted.toFixed(2).replace(".",",")+'</td>':"")+'</tr>').join("")+'</tbody></table></div><p class="psy-semester-muted">'+esc(m.interpret)+'</p>';
+ return html+resultTable(m,z)+'<p class="psy-semester-muted">'+esc(m.interpret)+'</p>';
 }
 function groupResult(d,rows){const m=cfg(d);
  return '<div class="psy-semester-table"><table><thead><tr><th>Код</th><th>Статус</th><th>Полнота</th><th>Результаты</th></tr></thead><tbody>'+
@@ -147,8 +159,7 @@ function bind(d,ctx){const m=cfg(d),r=ctx.rows?.[ctx.rowIndex];if(!m||!r)return;
    r.eysenckVersion=newVersion;r.answers=[];ctx.rerender?.();
  });
  document.getElementById("semesterClear")?.addEventListener("click",()=>{if(count(m,r.answers)&&!confirm("Очистить ответы текущего участника?"))return;r.answers=[];ctx.rerender?.()});
- document.getElementById("semesterExport")?.addEventListener("click",()=>{const z=score(d,r.answers,r);if(!z)return;const text=["Условный код: "+(r.name||"не указан"),"Методика: "+m.name,m.versions?"Редакция: "+getVersion(m,r).title:"","Заполнено: "+m.n+"/"+m.n,z.scales?z.scales.map(s=>s.name+": "+s.raw+"/"+s.max+(m.id==="razuvaeva-osr29"?"; с коэффициентом: "+s.adjusted:"")).join("\n"):"Сырой балл: "+z.raw+"/54",m.interpret,m.notice,"Источник: "+(getVersion(m,r)?.source||m.source)].filter(Boolean).join("\n");
-   const report='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Протокол</title><style>@page{size:A4;margin:16mm}body{font:12pt/1.5 Arial;color:#1b3329;white-space:pre-wrap;overflow-wrap:anywhere}</style></head><body>'+esc(text)+'</body></html>';
+ document.getElementById("semesterExport")?.addEventListener("click",()=>{const z=score(d,r.answers,r);if(!z)return;const report='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Протокол</title><style>@page{size:A4;margin:16mm}body{font:11pt/1.5 Arial;color:#1b3329}h1{font-size:17pt}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #9eb4a6;padding:9px;text-align:left}th{background:#e8f0eb}.psy-semester-score{font-weight:700;padding:5px 9px;display:inline-block;border-radius:7px;color:#26362c;border:1px solid #b2c4b8}.psy-semester-score.is-low{background:#dcefe3;color:#145632}.psy-semester-score.is-medium{background:#ffe8ba;color:#744408}.psy-semester-score.is-high{background:#8d2026;color:#fff}.psy-semester-score.is-neutral{background:#e8edf1;color:#223b4d}.psy-semester-denom{color:#43594d}tr{break-inside:avoid}p{overflow-wrap:anywhere}</style></head><body><h1>'+esc(m.name)+'</h1><p><b>Условный код:</b> '+esc(r.name||"не указан")+'</p>'+(m.versions?'<p><b>Редакция:</b> '+esc(getVersion(m,r).title)+'</p>':'')+'<p><b>Заполнено:</b> '+m.n+' / '+m.n+'</p>'+(z.scales?resultTable(m,z):'<p><b>Сырой балл:</b> '+z.raw+' / 54</p>')+'<h2>Интерпретация и ограничения</h2><p>'+esc(m.interpret)+'</p><p>'+esc(m.notice)+'</p><p><b>Источник:</b> '+esc(getVersion(m,r)?.source||m.source)+'</p></body></html>';
    save("Metolaria_"+m.id+"_protocol.html",report,"text/html;charset=utf-8");
  });
  document.getElementById("semesterCSV")?.addEventListener("click",()=>save("Metolaria_"+m.id+"_class.csv",csv(d,ctx.rows),"text/csv;charset=utf-8"));
