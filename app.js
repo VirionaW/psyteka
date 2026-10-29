@@ -68,4 +68,21 @@ information:['Информация','Справочные разделы, све
 special:['ОВЗ и особые образовательные потребности','Материалы сопровождения обучающихся с учетом индивидуальных особенностей и рекомендаций специалистов.',[['РАС','Визуальные опоры и социальное взаимодействие.'],['СДВГ','Организация среды и поддержка внимания.'],['ЗПР','Темп, инструкции и доступность заданий.'],['Индивидуальный маршрут','План сопровождения и оценка динамики.']]]
 };let [title,lead,cards]=content[view]||content.documents;$('#resourceTitle').textContent=title;$('#resourceLead').textContent=lead;$('#resourceCards').innerHTML=cards.map(([n,t])=>'<div class="resource-card"><h3>'+escapeHTML(n)+'</h3><p>'+escapeHTML(t)+'</p></div>').join('')}
 function openMethod(m){if(!m)return;$('#modalTitle').textContent=m.name;$('#modalAuthor').textContent=m.author;$('#modalBody').innerHTML='<h3>Назначение</h3><p>'+escapeHTML(m.goal)+'</p><h3>Возраст</h3><p>'+escapeHTML(m.age)+'</p><h3>Вид материала</h3><p>'+escapeHTML(m.format)+'</p><div class="notice">Это карточка публичного каталога, а не полный текст теста. Правила проведения, точные ключи и возрастные нормы следует сверять с конкретным изданием. Полные диагностические комплекты с ограничениями распространения здесь не публикуются.</div>';$('#sourceLink').hidden=!m.source;if(m.source)$('#sourceLink').href=m.source;$('#modal').hidden=false;$('#shade').hidden=false;$('#closeModal').focus()}
-function closeModal(){$('#modal').hidden=true;$('#shade').hidden=true}$('#closeModal').onclick=closeModal;$('#closeFooter').onclick=closeModal;$('#shade').onclick=closeModal;document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});$('#menuBtn').onclick=()=>$('#sidebar').classList.toggle('open');render();highlight();
+function closeModal(){
+ $('#modal').hidden=true;$('#shade').hidden=true;
+ // A closed portfolio is not a deep link. Leaving ?method / ?assessment
+ // causes the saved method to reopen on every page refresh.
+ try{
+  const url=new URL(location.href);
+  const hadMethod=url.searchParams.has('method')||url.searchParams.has('assessment');
+  if(hadMethod){
+   url.searchParams.delete('method');
+   url.searchParams.delete('assessment');
+   const area=document.body.dataset.area;
+   if(!url.searchParams.has('area')&&['school','preschool','adults','special','documents','spt','prevention','information','pmpk'].includes(area)){
+    url.searchParams.set('area',area);
+   }
+   history.replaceState(history.state,'',url.pathname+url.search+url.hash);
+  }
+ }catch(_){}
+}$('#closeModal').onclick=closeModal;$('#closeFooter').onclick=closeModal;$('#shade').onclick=closeModal;document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});$('#menuBtn').onclick=()=>$('#sidebar').classList.toggle('open');render();highlight();
