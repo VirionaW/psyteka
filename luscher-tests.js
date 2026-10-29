@@ -165,7 +165,7 @@ function buildInterpretation(p){
  else t+="Основные цвета преимущественно смещены во вторую половину ряда, тогда как ведущие позиции заняты дополнительными цветами.";
  paragraphs.push(["Дополнительные предпочтения",t]);
  t="На последних двух местах находятся "+name(penultimate).toLowerCase()+" и "+name(last).toLowerCase()+". Согласно позиционной схеме это зона наименьшего предпочтения. ";
- t+="В символическом прочтении "+COLOR_THEMES[penultimate].gen+" здесь может означать "+COLOR_THEMES[penultimate].back+", а "+COLOR_THEMES[last].gen+" – "+COLOR_THEMES[last].back+". ";
+ t+="В символическом прочтении отнесение "+COLOR_THEMES[penultimate].gen+" к последним позициям может означать "+COLOR_THEMES[penultimate].back+", а "+COLOR_THEMES[last].gen+" – "+COLOR_THEMES[last].back+". ";
  if(mainLast.length)t+="На позициях 6-8 также находятся основные цвета: "+mainLast.map(name).join(", ")+". При интерпретации это выделяет соответствующие потребности как менее актуальные или потенциально напряженные в конкретной ситуации выбора.";
  else t+="Все основные цвета находятся не ниже пятой позиции, поэтому в последних трех местах представлены только дополнительные цветовые темы.";
  paragraphs.push(["Наименее предпочитаемые цвета",t]);
@@ -210,34 +210,53 @@ function manualSummary(p){
 
 function analysisHTML(p){
  if(isManual()){
-  const defs=state.variant==="full"?FULL_TABLES:FIGURE_FIELDS;
-  return '<div class="analysis-block"><h3>Записанный протокол</h3><p>Редакция: '+escapeHTML(VERSIONS[state.variant].title)+'.</p></div>'+
-  defs.map(([title],i)=>'<div class="analysis-block"><h3>'+(i+1)+'. '+escapeHTML(title)+'</h3><p>'+(p.manual[i]?safeValue(p.manual[i]):"Не заполнено")+'</p></div>').join("")+
-  '<p class="report-note">Коды записаны по оригинальному бланку. Автоматическая интерпретация полного теста и фигур без ключей выбранной редакции не выполняется.</p>';
+  const a=manualSummary(p),defs=a.fields;
+  return '<section class="brief-results"><h3>Краткие результаты</h3><div class="brief-grid">'+
+    '<article class="brief-result"><span>Вариант</span><strong>'+escapeHTML(VERSIONS[state.variant].title)+'</strong></article>'+
+    '<article class="brief-result"><span>Заполнено разделов</span><strong>'+a.done.length+' из '+defs.length+'</strong></article>'+
+   '</div></section>'+
+   '<section class="individual-analysis"><h3>Анализ протокола</h3><p>'+escapeHTML(a.intro)+'</p></section>'+
+   '<details class="protocol-details"><summary>Показать все зарегистрированные ответы</summary><div class="protocol-inner">'+
+    defs.map(([title],i)=>'<div class="analysis-block"><h3>'+(i+1)+'. '+escapeHTML(title)+'</h3><p>'+(p.manual[i]?safeValue(p.manual[i]):"Не заполнено")+'</p></div>').join("")+
+   '</div></details>';
  }
- const a=analyze(p);
+ const a=analyze(p),report=buildInterpretation(p);
  const row=(items,title)=>'<div class="analysis-block"><h3>'+title+'</h3><div class="result-ordered">'+rankHTML(items)+'</div></div>';
- let h='<div class="analysis-block"><h3>Позиционное резюме</h3>'+a.texts.map(t=>'<p>'+escapeHTML(t)+'</p>').join("")+'</div>';
+ let h='<section class="brief-results"><h3>Краткие результаты</h3><div class="brief-grid">'+
+  report.summary.map(x=>'<article class="brief-result"><span>'+escapeHTML(x.label)+'</span><strong>'+escapeHTML(x.value)+'</strong><small>'+escapeHTML(x.detail)+'</small></article>').join("")+
+  '</div></section>';
+ h+='<section class="individual-analysis"><h3>Индивидуальный анализ</h3>'+
+  report.paragraphs.map(([heading,body])=>'<div class="analysis-paragraph"><h4>'+escapeHTML(heading)+'</h4><p>'+escapeHTML(body)+'</p></div>').join("")+
+  '</section>';
+ h+='<details class="protocol-details"><summary>Подробный протокол: все позиции и цветовые пары</summary><div class="protocol-inner">';
  if(p.first.length===8)h+=row(p.first,"Первый выбор");
  if(p.second.length===8)h+=row(p.second,"Повторный выбор");
  h+='<div class="analysis-block"><h3>Позиционные группы '+(p.second.length===8?"второго":"первого")+' выбора</h3><div class="analysis-grid">'+a.groups.map(g=>'<article class="analysis-tile"><strong>'+escapeHTML(g[0])+' · '+g[2]+'</strong><p>'+g[1].map(name).join(" – ")+'</p></article>').join("")+'</div></div>';
  if(a.shifts.length)h+='<div class="analysis-block"><h3>Изменения между двумя выборами</h3><table><thead><tr><th>Цвет</th><th>Первый</th><th>Второй</th><th>Изменение</th></tr></thead><tbody>'+a.shifts.map(x=>'<tr><td>'+x.name+'</td><td>'+x.from+'</td><td>'+x.to+'</td><td>'+ (x.delta===0?"0":(x.delta>0?"+":"")+x.delta)+'</td></tr>').join("")+'</tbody></table></div>';
- if(state.variant==="conflict")h+='<div class="analysis-block"><h3>Позиции, требующие внимания</h3><p>'+ (a.selected.slice(0,2).some(x=>["0","6","7"].includes(x))?"В ведущей паре встречаются серый, коричневый или черный – при использовании теоретической модели Люшера эта конфигурация требует отдельного анализа в контексте полного протокола.":"В ведущей паре нет серого, коричневого и черного.")+' '+(a.selected.slice(6).some(x=>["1","2","3","4"].includes(x))?"Один или несколько основных цветов находятся в зоне последних двух позиций.":"Основные цвета не оказались в последних двух позициях.")+'</p></div>';
- h+='<p class="report-note">Цветовые коды, пары и изменения позиций приведены как описание выборов. Официальные интерпретационные таблицы и клинические индексы здесь не воспроизводятся.</p>';
+ if(state.variant==="conflict")h+='<div class="analysis-block"><h3>Особенности позиционного распределения</h3><p>'+ (a.selected.slice(0,2).some(x=>["0","6","7"].includes(x))?"Среди двух ведущих цветов представлены серый, коричневый или черный.":"Серый, коричневый и черный не входят в ведущую пару.")+' '+(a.selected.slice(6).some(x=>["1","2","3","4"].includes(x))?"Один или несколько основных цветов находятся в последней паре.":"Основные цвета не попали в последнюю пару.")+'</p></div>';
+ h+='</div></details>';
  return h;
 }
 function printOrExport(){
- const p=person();if(!p)return "";
- const paras=[VERSIONS[state.variant].title,"Участник: "+p.name+(p.age?", "+p.age+" лет":"")+(state.group?", "+state.group:"")];
+ const p=person();if(!p)return [];
+ const lines=[VERSIONS[state.variant].title,"Участник: "+p.name+(p.age?", "+p.age+" лет":"")+(state.group?", "+state.group:"")];
  if(!isManual()){
-  if(p.first.length)paras.push("Первый выбор: "+p.first.map(name).join(", "));
-  if(p.second.length)paras.push("Второй выбор: "+p.second.map(name).join(", "));
-  paras.push(...analyze(p).texts);
-  const a=analyze(p);
-  a.groups.forEach(g=>paras.push(g[0]+" ("+g[2]+"): "+g[1].map(name).join(", ")));
-  if(a.shifts.length)paras.push(...a.shifts.map(x=>x.name+": "+x.from+" → "+x.to));
- }else{(state.variant==="full"?FULL_TABLES:FIGURE_FIELDS).forEach(([label],i)=>paras.push(label+": "+(p.manual[i]||"Не заполнено")));}
- return paras;
+  const report=buildInterpretation(p),a=analyze(p);
+  lines.push("КРАТКИЕ РЕЗУЛЬТАТЫ");
+  report.summary.forEach(x=>lines.push(x.label+" "+x.value+". "+x.detail));
+  lines.push("ИНДИВИДУАЛЬНЫЙ АНАЛИЗ");
+  report.paragraphs.forEach(([heading,body])=>lines.push(heading+": "+body));
+  lines.push("ПОЛНЫЙ ПРОТОКОЛ");
+  if(p.first.length)lines.push("Первый выбор: "+p.first.map(name).join(", "));
+  if(p.second.length)lines.push("Второй выбор: "+p.second.map(name).join(", "));
+  a.groups.forEach(g=>lines.push(g[0]+" ("+g[2]+"): "+g[1].map(name).join(", ")));
+  if(a.shifts.length)lines.push(...a.shifts.map(x=>x.name+": "+x.from+" → "+x.to));
+ }else{
+  const a=manualSummary(p);
+  lines.push("КРАТКИЕ РЕЗУЛЬТАТЫ","Заполнено разделов: "+a.done.length+" из "+a.fields.length,"АНАЛИЗ ПРОТОКОЛА",a.intro,"ЗАПИСАННЫЕ ОТВЕТЫ");
+  a.fields.forEach(([label],i)=>lines.push(label+": "+(p.manual[i]||"Не заполнено")));
+ }
+ return lines;
 }
 function showReport(){
  const p=person();if(!p||!completed(p))return;
