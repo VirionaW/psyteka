@@ -922,8 +922,17 @@ function bind(d,ctx){
   const label=document.querySelector(".psy-mspss-person.active small");if(label)label.textContent=r.attendance==="absent"?"Отсутствовал":present(d,r)+"/"+size(d);
  };
  window.PSY_ANALYTIC_SIGNATURES.bind(ctx.rows,()=>{const area=document.getElementById("school711Group");if(area)area.innerHTML=group(d,ctx.rows);});
- document.getElementById("school711Name")?.addEventListener("input",e=>{r.name=e.target.value;const x=document.querySelector(".psy-mspss-person.active span");if(x)x.textContent=r.name});
- document.getElementById("school711Grade")?.addEventListener("change",e=>{ctx.rows.forEach(x=>x.schoolGrade=e.target.value?Number(e.target.value):null);ctx.onRender?.()});
+ document.getElementById("school711Name")?.addEventListener("input",e=>{r.name=e.target.value;const x=document.querySelector(".psy-mspss-person.active span");if(x)x.textContent=r.name;});
+ document.getElementById("school711Name")?.addEventListener("change",()=>ctx.onRender?.());
+ document.getElementById("school711Grade")?.addEventListener("change",e=>{const grade=e.target.value?Number(e.target.value):null;(ctx.calcMode==="class"?ctx.rows:[r]).forEach(x=>{x.schoolGrade=grade;if(d.id==="lazarus-wcq50"&&grade&&(!Number(x.ageYears)||Number(x.ageYears)<14))x.ageYears=grade+6;});ctx.onRender?.()});
+ document.getElementById("school711Age")?.addEventListener("change",e=>{const v=Number(e.target.value);r.ageYears=Number.isInteger(v)&&v>=14&&v<=90?v:null;ctx.onRender?.()});
+ document.querySelectorAll("[data-711-sex]").forEach(btn=>btn.addEventListener("click",()=>{
+  if(!r.name?.trim()||!ageOk(d,r,ctx.rows,ctx.calcMode))return;
+  const initial=!["f","m"].includes(r.sex);
+  r.sex=btn.dataset["711Sex"];
+  if(ctx.calcMode==="class"&&initial&&ctx.onGenderAssigned){ctx.onGenderAssigned();return;}
+  ctx.onRender?.();
+ }));
  document.getElementById("school711Version")?.addEventListener("change",e=>{
   if((r.eysenckVersion||"interleaved")===e.target.value)return;
   if(present(d,r)&&!confirm("Редакции имеют другой порядок вопросов. Очистить ответы и сменить?")){e.target.value=r.eysenckVersion||"interleaved";return}
@@ -941,7 +950,7 @@ function bind(d,ctx){
  });
  const fields=[...document.querySelectorAll("input[data-711-answer]")];
  const next=i=>{if(fields[i+1])fields[i+1].focus();else document.getElementById("school711Next")?.focus()};
- const set=(input,value)=>{if(value!==""&&(!/^[0-9]$/.test(value)||+value>limit(d))){input.value=r.answers[+input.dataset["711Answer"]]??"";return false;}
+ const set=(input,value)=>{if(!ready(d,r,ctx.rows,ctx.calcMode))return false;if(value!==""&&(!/^[0-9]$/.test(value)||+value>limit(d))){input.value=r.answers[+input.dataset["711Answer"]]??"";return false;}
   const i=+input.dataset["711Answer"];r.answers[i]=value===""?null:+value;input.value=value;const card=input.closest(".psy-mspss-item");
   card?.classList.toggle("is-complete",value!=="");card?.classList.toggle("is-missing",value==="");update();return true};
  fields.forEach((x,i)=>{x.addEventListener("input",()=>{const value=x.value.replace(/[^0-9]/g,"").slice(-1);if(set(x,value)&&value!=="")next(i)});
