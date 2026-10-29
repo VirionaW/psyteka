@@ -113,3 +113,49 @@ html.dark{color-scheme:dark;--paper:#17251e;--surface:#25382d;--ink:#f0f8ee;--so
 .overview-line{height:1px;flex:1;border-bottom:1px solid var(--line)}
 @media(max-width:760px){.overview-sheet .section-top{flex-direction:column;align-items:stretch}.overview-sheet .section-top .primary{align-self:flex-start}.overview-house svg{max-width:70px}.overview-rect{height:46px}}
 @media(max-width:560px){.overview-sheet-group{padding:12px 0 16px}.overview-houses{grid-template-columns:repeat(5,minmax(0,1fr));row-gap:13px}.overview-house svg{max-width:88px}.overview-rect{height:38px}.overview-sheet-heading{margin-bottom:13px}.overview-last-house{margin-top:11px;font-size:12px}}
+
+/* Carefully structured explanations below each colored house. */
+.house-help{display:block;max-width:190px;font-size:11.5px;line-height:1.45;color:var(--soft);padding:1px 4px 7px;overflow-wrap:anywhere}
+.paint-house-wrap{justify-content:flex-start;min-width:0}
+.house-caption{min-height:32px}
+#report .analysis-intro{margin:18px 0 10px;padding:12px 16px;border:1px solid var(--line);background:var(--paper);border-radius:12px;color:var(--soft);font-size:14px}
+.analysis-section{padding:21px 0 24px;border-top:1px solid var(--line)}
+.analysis-section h3{margin:0 0 7px;font-size:19px}
+.analysis-section>h4{font-size:16px;margin:17px 0 10px}
+.analysis-section .muted{margin:5px 0 13px}
+.analysis-road{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;margin:16px 0 7px}
+.analysis-road-item{border:1px solid var(--line);border-radius:10px;padding:7px;background:var(--paper);min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px}
+.analysis-road-swatch{height:31px;width:100%;border-radius:6px;border:1px solid #7779}
+.analysis-road-item b{font-size:14px}
+.analysis-road-item small{font-size:11px;color:var(--soft);text-align:center;overflow-wrap:anywhere}
+.analysis-houses{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.analysis-house-card{display:flex;gap:11px;align-items:start;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:11px;min-width:0}
+.analysis-house-icon{width:72px;flex:0 0 72px}
+.analysis-house-icon svg{display:block;width:100%;height:auto}
+.analysis-house-content{flex:1;min-width:0}
+.analysis-house-card h4{font-size:13.5px;line-height:1.35;margin:0 0 5px;font-weight:780}
+.analysis-house-card p{font-size:12.5px;line-height:1.48;color:var(--soft);margin:5px 0 0}
+.analysis-house-card .analysis-attention{color:#9a4631;font-weight:650;background:color-mix(in srgb,#c57c37 9%,var(--surface));border-radius:7px;padding:7px}
+.analysis-color{display:inline-flex;vertical-align:middle;align-items:center;flex-wrap:wrap;gap:5px;font-size:12px;line-height:1.4;color:var(--soft)}
+.analysis-color strong{color:var(--ink)}
+.analysis-color-swatch{display:inline-block;width:17px;height:17px;border:1px solid #64756b80;border-radius:5px;flex:none}
+.analysis-pairs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.analysis-pair{background:var(--paper);border:1px solid var(--line);padding:14px;border-radius:13px}
+.analysis-pair h4{font-size:15px;margin:0 0 4px}
+.analysis-pair .analysis-domain{font-size:12px;font-weight:740;margin:0 0 9px;color:var(--soft)}
+.analysis-pair p{font-size:13px;margin:6px 0}
+.analysis-pair .analysis-interpretation{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:8px 10px;margin-top:9px;line-height:1.45}
+.analysis-chains{padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.analysis-chains li{border-radius:11px;background:var(--paper);border:1px solid var(--line);padding:10px 13px;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.analysis-chains li>div{margin-top:4px;color:var(--soft)}
+@media(max-width:1000px){.analysis-houses,.analysis-pairs,.analysis-chains{grid-template-columns:1fr}.house-help{max-width:210px;font-size:12px}}
+@media(max-width:640px){.analysis-road{grid-template-columns:repeat(4,minmax(0,1fr))}.analysis-house-card{padding:9px;gap:8px}.analysis-house-icon{width:57px;flex-basis:57px}.analysis-house-card h4{font-size:13px}.analysis-section h3{font-size:17px}.house-help{font-size:12px;max-width:215px}}
+@media print{
+ .analysis-houses,.analysis-pairs,.analysis-chains{display:block!important}
+ .analysis-house-card,.analysis-pair,.analysis-chains li{break-inside:avoid;page-break-inside:avoid;margin:0 0 8px;box-shadow:none}
+ .analysis-section{break-before:auto;page-break-before:auto}
+ .analysis-house-card{display:flex!important}
+ .analysis-road{grid-template-columns:repeat(8,1fr)}
+ .analysis-color{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .analysis-color-swatch,.analysis-road-swatch,.analysis-house-icon svg{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
