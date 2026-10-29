@@ -76,14 +76,16 @@
   return complete(s)&&validGroup();
  }
  function houseSvg(number,chosen){
-  // Roof with chimney, rectangular walls and a doorway, matching the provided answer form.
-  const c=color(chosen),fill=c?c.hex:"#ffffff";
-  const stroke="#34463d",doorStroke=c&&["black","brown","purple","blue","red","green"].includes(chosen)?"#ffffff":"#34463d";
-  return '<svg class="house-shape" viewBox="0 0 124 122" role="img" aria-label="Закрашиваемый домик '+number+'">'+
-   '<path d="M7 52L47 17L70 34V18H82V44L111 52H7Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="2.8" stroke-linejoin="round"/>'+
-   '<path d="M19 52H99V113H19Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="2.8"/>'+
-   '<path d="M46 80H71V113H46Z" fill="none" stroke="'+doorStroke+'" stroke-width="2.6"/>'+
-   '<circle cx="66" cy="98" r="2.2" fill="'+doorStroke+'"/></svg>';
+  // Two symmetric roof slopes with a chimney that interrupts the right slope.
+  // The body, roof and chimney share the chosen paint color.
+  const c=color(chosen),fill=c?c.hex:"#ffffff",outline="#34463d";
+  const dark=c&&["black","brown","purple","blue","red","green"].includes(chosen);
+  const door=dark?"#ffffff":"#34463d";
+  return '<svg class="house-shape" viewBox="0 0 124 122" role="img" aria-label="Домик '+number+'">'+
+   '<path d="M6 52 L62 8 L80 22 V8 H91 V31 L118 52 Z" fill="'+fill+'" stroke="'+outline+'" stroke-width="2.6" stroke-linejoin="round"/>'+
+   '<path d="M21 52 H103 V114 H21 Z" fill="'+fill+'" stroke="'+outline+'" stroke-width="2.6"/>'+
+   '<path d="M51 83 H73 V114 H51 Z" fill="none" stroke="'+door+'" stroke-width="2.4"/>'+
+   '<circle cx="67" cy="99" r="1.8" fill="'+door+'"/></svg>';
  }
  function renderRanking(){
   const s=current();if(!s)return;
