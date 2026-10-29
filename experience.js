@@ -332,7 +332,7 @@ function viewOverview(m){
  const d=DETAILS[m.name]||{},o=window.PSY_PORTFOLIO_EDITS?.[m.name]||{};
  const author=profileText(o.author||d.author||m.author||"");
  const verifiedAuthor=author&&!/сведения об авторе уточняются/i.test(author)?author:"Автор не установлен";
- const age=profileText(window.PSY_GUIDE_STANDARD?.age(m.name,DETAILS[m.name],m)||o.age||d.age||m.age||"");
+ const age=profileText(d.workflow==="orekhovaHouses8"?(d.age||m.age||""):window.PSY_GUIDE_STANDARD?.age(m.name,DETAILS[m.name],m)||o.age||d.age||m.age||"");
  const kind=profileText(o.kind||d.kind||m.format||"");
  const count=profileText(o.count||d.count||m.count||"");
  const name=profileText(m.name);
