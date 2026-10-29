@@ -445,28 +445,21 @@
   const run=(s,bold=false)=>'<w:r>'+(bold?'<w:rPr><w:b/></w:rPr>':'')+'<w:t xml:space="preserve">'+xmlEscape(s)+'</w:t></w:r>';
   const para=(s,kind="")=>'<w:p>'+(kind==="head"?'<w:pPr><w:pStyle w:val="Heading1"/></w:pPr>':kind==="sub"?'<w:pPr><w:pStyle w:val="Heading2"/></w:pPr>':'')+run(s,kind!=="")+'</w:p>';
   const cell=(s)=>'<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/></w:tcPr>'+para(s)+'</w:tc>';
-  /* Source CDI bands; the same nine thresholds control the Word cell colors and legend. */
+  /* CDI text-only highlighted score. No whole-cell color fill. */
   const cdiLegend=[
-   {min:71,range:"Свыше 70",level:"Очень значительно превышает средний уровень (группа риска)",fill:"7F1D1D",ink:"FFFFFF"},
-   {min:66,range:"66-70",level:"Значительно выше среднего уровня (группа риска)",fill:"FEE2E2",ink:"991B1B"},
-   {min:61,range:"61-65",level:"Выше среднего уровня",fill:"FFDFB8",ink:"8A431A"},
-   {min:56,range:"56-60",level:"Чуть выше среднего уровня",fill:"FFF1C7",ink:"80571B"},
-   {min:45,range:"45-55",level:"Средний уровень",fill:"DFF2E5",ink:"1E653A"},
-   {min:40,range:"40-44",level:"Чуть ниже среднего уровня",fill:"EAF4EF",ink:"32614E"},
-   {min:35,range:"35-39",level:"Ниже среднего уровня",fill:"E5F5FA",ink:"236578"},
-   {min:30,range:"30-34",level:"Много ниже среднего уровня",fill:"E8F2FD",ink:"2A557D"},
-   {min:-999,range:"Ниже 30",level:"Значительно ниже среднего уровня",fill:"E2ECFA",ink:"284768"}
+   {min:61,range:"61-100",level:"Высокий",fill:"FF6868"},
+   {min:40,range:"40-60",level:"Средний",fill:"FFF14D"},
+   {min:0,range:"0-39",level:"Низкий",fill:"4BE878"}
   ];
   const cdiWordBand=t=>Number.isInteger(t)?cdiLegend.find(x=>t>=x.min):null;
-  const cdiWordCell=(s,header,left,width,band)=>{
-   const tcPr='<w:tcPr><w:tcW w:w="'+width+'" w:type="dxa"/><w:vAlign w:val="center"/>'+
-    (band?'<w:shd w:val="clear" w:color="auto" w:fill="'+band.fill+'"/>':"")+'</w:tcPr>';
+  const cdiWordCell=(v,header,left,width,band)=>{
+   const tcPr='<w:tcPr><w:tcW w:w="'+width+'" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>';
    const rPr='<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>'+
     '<w:sz w:val="20"/><w:szCs w:val="20"/>'+(header||band?"<w:b/>":"")+
-    (band?'<w:color w:val="'+band.ink+'"/>':"")+'</w:rPr>';
+    (band?'<w:shd w:val="clear" w:color="auto" w:fill="'+band.fill+'"/><w:color w:val="111111"/>':"")+'</w:rPr>';
    return '<w:tc>'+tcPr+'<w:p><w:pPr><w:jc w:val="'+(left?"left":"center")+
     '"/><w:spacing w:before="60" w:after="60"/></w:pPr><w:r>'+rPr+
-    '<w:t xml:space="preserve">'+xmlEscape(s)+'</w:t></w:r></w:p></w:tc>';
+    '<w:t xml:space="preserve">'+xmlEscape(v)+'</w:t></w:r></w:p></w:tc>';
   };
   // Separate Word formatting for Phillips only; CDI and individual reports are untouched.
   const phCell=(s,header,left,width,percent)=>{
@@ -479,15 +472,15 @@
     '<w:r>'+rPr+'<w:t xml:space="preserve">'+xmlEscape(s)+'</w:t></w:r></w:p></w:tc>';
   };
   const table=(head,body,format="",percentRows=[])=>{
-   const widths=format==="cdi"?[520,1950,1020,...Array(5).fill(1700),3200]:format==="cdi-legend"?[2100,8100]:!isCDI&&mode==="class"&&head.length===10?[550,2200,...Array(8).fill(1620)]:!isCDI&&mode==="class"&&head.length===4&&head[0]==="Показатель"?[5000,3450,3700,3450]:head.map(()=>1200);
+   const widths=format==="cdi"?[520,2200,...Array(6).fill(1920)]:format==="cdi-legend"?[2100,8500]:!isCDI&&mode==="class"&&head.length===10?[550,2200,...Array(8).fill(1620)]:!isCDI&&mode==="class"&&head.length===4&&head[0]==="Показатель"?[5000,3450,3700,3450]:head.map(()=>1200);
    const all=[head,...body];return '<w:tbl><w:tblPr><w:tblW w:w="'+widths.reduce((a,b)=>a+b,0)+'" w:type="dxa"/>'+
     (format?'<w:tblLayout w:type="fixed"/>':"")+
     '<w:tblBorders><w:top w:val="single" w:sz="5"/><w:left w:val="single" w:sz="5"/><w:bottom w:val="single" w:sz="5"/><w:right w:val="single" w:sz="5"/><w:insideH w:val="single" w:sz="5"/><w:insideV w:val="single" w:sz="5"/></w:tblBorders></w:tblPr>'+
      '<w:tblGrid>'+widths.map(w=>'<w:gridCol w:w="'+w+'"/>').join("")+'</w:tblGrid>'+
      all.map((row,i)=>'<w:tr>'+(format&&i===0?'<w:trPr><w:tblHeader w:val="true"/></w:trPr>':"")+
       row.map((text,j)=>format==="cdi"||format==="cdi-legend"?
-       cdiWordCell(text,i===0,format==="cdi"?(j===1||j===8):j===1,widths[j],
-        i>0?(format==="cdi"&&j>=2&&j<=7?cdiWordBand(percentRows[i-1]?.[j-2]):format==="cdi-legend"?cdiWordBand(percentRows[i-1]):null):null):
+       cdiWordCell(text,i===0,format==="cdi"?j===1:j===1,widths[j],
+        i>0?(format==="cdi"&&j>=2&&j<=7?cdiWordBand(percentRows[i-1]?.[j-2]):format==="cdi-legend"&&j===0?cdiWordBand(percentRows[i-1]):null):null):
        format?phCell(text,i===0,format==="scores"?j===1:j===0,widths[j],
         format==="scores"&&i>0&&j>=2?percentRows[i-1]?.[j-2]:null):cell(text)).join("")+'</w:tr>').join("")+'</w:tbl>';
   };
@@ -500,11 +493,11 @@
   };
   let body=para(title,"head")+para("Метолария · "+(mode==="class"?"Отчет группы / класса":"Индивидуальный отчет")+" · "+new Date().toLocaleDateString("ru-RU"));
   body+=para("Сводные результаты","sub");
-  const columns=isCDI?["№","Участник","Общий Т-балл",...norms.scales.map(x=>x.name+" (Т)"),"Интерпретация"]:mode==="class"?["№","Участник",...phillips.scales.map(s=>s.name+", %")]:["Участник","Статус","Общий / 58","Процент"];
+  const columns=isCDI?["№","Участник","Общий показатель депрессии",...norms.scales.map(x=>x.name)]:mode==="class"?["№","Участник",...phillips.scales.map(s=>s.name+", %")]:["Участник","Статус","Общий / 58","Процент"];
   const summary=people.map((r,i)=>{
    const z=scoring(d,r),n=isCDI&&z?norms.norm(z.raw,r.ageYears,r.sex):null;
    const base=[r.name||"У-"+String(i+1).padStart(2,"0"),describe(r)];
-   return isCDI?(()=>{const x=cdiClassRow(d,r,i);return [String(x.no),x.name,x.t,...x.scaleTs,x.level]})():mode==="class"?
+   return isCDI?(()=>{const x=cdiClassRow(d,r,i);return [String(x.no),x.name,...x.values]})():mode==="class"?
       [String(i+1),r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((s,j)=>z?Math.round(z.scales[j].percent):"")]:
       [...base,z?.raw??"–",z?z.percent.toFixed(1)+"%":"–"];
   });
@@ -512,17 +505,9 @@
    isCDI?people.map(r=>{const z=scoring(d,r),n=z?norms.norm(z.raw,r.ageYears,r.sex):null;const values=z?norms.scaleScores(r.answers).map(x=>{const v=norms.scaleNorm(x.id,x.raw,r.ageYears,r.sex);return cdiUsable(v)?v.t:null}):norms.scales.map(()=>null);return [cdiUsable(n)?n.t:null,...values]}):
    mode==="class"?people.map(r=>scoring(d,r)?.scales.map(s=>s.percent)||[]):[]);
   if(isCDI){
-   body+=para("Знак ≈ – ориентировочный Т-балл по ближайшему опубликованному сырому значению, а не точная норма.");
-   for(const person of people){
-    const z=scoring(d,person);
-    if(!z)continue;
-    const overall=norms.norm(z.raw,person.ageYears,person.sex),factors=norms.scaleScores(person.answers)||[];
-    const estimated=[["Общий показатель",overall],...factors.map(x=>[x.name,norms.scaleNorm(x.id,x.raw,person.ageYears,person.sex)])].filter(x=>x[1]?.status==="approximate");
-    if(estimated.length)body+=para((person.name||"Участник")+": "+estimated.map(x=>x[0]+": "+x[1].message).join("; "));
-   }
-   body+=para("Расшифровка Т-баллов","sub");
-   body+=table(["Т-балл","Интерпретация"],
-    cdiLegend.map(x=>[x.range,x.level]),"cdi-legend",cdiLegend.map(x=>x.min));
+   body+=para("Расшифровка результатов","sub");
+   body+=table(["Баллы","Уровень"],cdiLegend.slice().reverse().map(x=>[x.range,x.level]),
+    "cdi-legend",cdiLegend.slice().reverse().map(x=>x.min));
   }
   if(mode==="class"&&!isCDI){
    const stats=phillipsStats(d,people);
@@ -578,10 +563,10 @@
 
  function csv(d,rows){
   if(type(d)==="cdi"){
-   const header=["№","Участник","Общий Т-балл",...norms.scales.map(x=>x.name+" (Т)"),"Интерпретация"];
+   const header=["№","Участник","Общий показатель депрессии",...norms.scales.map(x=>x.name)];
    const data=rows.filter(r=>r.name?.trim()||done(d,r.answers)).map((r,i)=>{
     const v=cdiClassRow(d,r,i);
-    return [v.no,v.name,v.t,...v.scaleTs,v.level];
+    return [v.no,v.name,...v.values];
    });
    const escapeCSV=x=>'"'+String(x??"").replace(/"/g,'""')+'"';
    return "\uFEFF"+[header,...data].map(row=>row.map(escapeCSV).join(";")).join("\r\n");
