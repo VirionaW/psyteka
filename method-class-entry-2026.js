@@ -148,10 +148,10 @@
  const d=window.PSY_FULL_METHODS?.["Опросник детской депрессии М. Ковач (CDI)"];
  if(d){
   d.age="7-17 лет (27-пунктная версия предоставленного PDF)";
-  d.indicators=[]; // CDI is scored as one total scale; do not invent subscales.
+  d.indicators=["Общий показатель депрессии",...norms.scales.map(scale=>scale.name)];
   d.sourceDescription="Предоставленный пользователем PDF «Опросник детской депрессии», 8 страниц. Нормативная таблица – страницы 6-8.";
-  d.scoring="Сумма закодированных ответов на 27 пунктов (0, 1 или 2), диапазон 0-54. Для Т-балла укажите пол и возраст 7-17 лет. Таблица в PDF имеет несогласованность для мальчиков 7-12 лет при сумме 27-28, поэтому результат не подменяется догадкой.";
-  d.interpret="Основной показатель – общий балл. Интервалы Т-баллов берутся из предоставленной таблицы и описывают отклонение от среднего, но не являются диагнозом.";
+  d.scoring="Общий сырой балл – сумма 27 ответов (0-54). Пять шкал рассчитываются по своим пунктам. Общий и шкальные сырые результаты переводятся в Т-баллы по таблицам возраста и пола; пустые клетки не экстраполируются.";
+  d.interpret="Основной показатель – общий Т-балл, дополнительно пять Т-баллов: негативное настроение, межличностные проблемы, неэффективность, ангедония, негативная самооценка. Интерпретация по полным нормативным интервалам, а не по сырым баллам. Не является диагнозом.";
  }
  const existing=orig.calculator, oldBind=orig.bind, oldInstructions=orig.instruction, oldProcessing=orig.processing, oldMaterials=orig.materials, oldCsv=orig.csv;
  const norm=(raw,r)=>norms.norm(raw,r.ageYears,r.sex);
@@ -255,12 +255,21 @@
   if(!z)return '<section class="psy-mspss-result"><h3>Заполнено '+n+' из '+total+'</h3>'+progress(n,total)+'<p>После ввода всех ответов появится автоматическая обработка. Пропуск не равен нулевому баллу.</p></section>';
   if(type(d)==="cdi"){
    const t=norms.norm(z.raw,r.ageYears,r.sex);
-   return '<section class="psy-mspss-result psy-cdi-single-result"><h3>Общий результат CDI</h3>'+
-    '<strong class="psy-mspss-mean">'+z.raw+' <small>/ 54</small></strong>'+
-    progress(z.raw,54)+
-    '<p class="psy-cdi-individual-interpretation '+(t.status==="ok"?cdiTone(t.t):"")+'"><b>Т-балл:</b> '+(t.status==="ok"?'<strong>'+t.t+'</strong> – '+esc(t.level):'не рассчитан – '+esc(t.message))+'</p>'+
-    '<p class="psy-mspss-small">Это одна суммарная шкала из 27 пунктов, отдельных баллов по «настроению», «самооценке» и другим областям здесь нет. Результат не является диагнозом.</p>'+
-    '<p class="psy-mspss-small">Пункт 9 нужно просматривать по оригинальному тексту отдельно: цифровой код сам по себе не подтверждает и не исключает суицидальные мысли. При их наличии необходима очная оценка безопасности.</p></section>';
+   const scales=norms.scaleScores(r.answers);
+   const scoreCards=scales.map(x=>{
+    const v=norms.scaleNorm(x.id,x.raw,r.ageYears,r.sex),ok=v.status==="ok";
+    return '<div class="psy-cdi-factor '+(ok?cdiTone(v.t):"")+'"><b>'+esc(x.name)+'</b>'+
+     '<strong>'+(ok?v.t:"Т-балл не рассчитан")+'</strong>'+
+     '<small>Сырой балл: '+x.raw+' из '+x.max+'</small>'+
+     '<small>'+esc(ok?v.level:v.message)+'</small></div>';
+   }).join("");
+   return '<section class="psy-mspss-result psy-cdi-single-result"><h3>Общий показатель депрессии</h3>'+
+    '<strong class="psy-cdi-total-t '+(t.status==="ok"?cdiTone(t.t):"")+'">'+(t.status==="ok"?t.t:"Т-балл не рассчитан")+'</strong>'+
+    '<p class="psy-cdi-individual-interpretation '+(t.status==="ok"?cdiTone(t.t):"")+'">'+
+     (t.status==="ok"?esc(t.level):esc(t.message))+'</p>'+
+    '<p class="psy-mspss-small">Сумма ответов: '+z.raw+' из 54 сырых баллов. Для интерпретации используется Т-балл по возрасту и полу.</p>'+
+    '<h4>Пять шкал Ковач</h4><div class="psy-cdi-factor-grid">'+scoreCards+'</div>'+
+    '<p class="psy-mspss-small">Пункт 9 нужно оценить по тексту выбранного утверждения отдельно. Числовой код не подтверждает и не исключает суицидальные мысли. При их наличии необходима очная оценка безопасности. Результат не является диагнозом.</p></section>';
   }
   const scaleHtml=z.scales.map((s,i)=>'<div class="'+palette(i)+'"><b>'+esc(s.name)+'</b><strong>'+s.raw+' / '+s.max+' · '+s.percent.toFixed(1)+'%</strong>'+
    progress(s.raw,s.max)+'<small>'+esc(interpretation(s.percent))+'</small></div>').join("");
@@ -274,13 +283,14 @@
  const gradeAge=g=>Number.isInteger(Number(g))&&Number(g)>=1&&Number(g)<=11?Number(g)+6:null;
  const classGrade=rows=>rows.find(r=>Number.isInteger(Number(r.schoolGrade))&&Number(r.schoolGrade)>=1&&Number(r.schoolGrade)<=11)?.schoolGrade||null;
  function cdiClassRow(d,r,i){
-  const z=scoring(d,r);
-  const t=z?norms.norm(z.raw,r.ageYears,r.sex):null;
+  const z=scoring(d,r),n=z?norms.norm(z.raw,r.ageYears,r.sex):null;
+  const scales=z?norms.scaleScores(r.answers):null;
   return {
    no:i+1,
    name:r.name||"У-"+String(i+1).padStart(2,"0"),
-   t:t?.status==="ok"?t.t:"–",
-   level:t?.status==="ok"?t.level:"–"
+   t:n?.status==="ok"?n.t:"",
+   scaleTs:scales?scales.map(x=>{const t=norms.scaleNorm(x.id,x.raw,r.ageYears,r.sex);return t.status==="ok"?t.t:"";}):norms.scales.map(()=>""),
+   level:n?.status==="ok"?n.level:""
   };
  }
  // Справка: проценты относятся к доле детей в группе, а не к индивидуальным баллам.
@@ -311,13 +321,17 @@
   const ordered=rows.filter(r=>r.name?.trim()||done(d,r.answers));
   const isCDI=type(d)==="cdi";
   if(isCDI){
+   const head=norms.scales.map(x=>'<th scope="col">'+esc(x.name+', Т')+'</th>').join("");
    const body=ordered.map((r,i)=>{
-    const x=cdiClassRow(d,r,i);
-    const tone=cdiTone(x.t);
-    return '<tr><td>'+x.no+'</td><td>'+esc(x.name)+'</td><td class="psy-cdi-tvalue '+tone+'">'+x.t+'</td><td class="psy-cdi-interpretation '+tone+'">'+esc(x.level)+'</td></tr>';
+    const x=cdiClassRow(d,r,i),tone=cdiTone(x.t);
+    return '<tr><td>'+(i+1)+'</td><td class="psy-cdi-name">'+esc(x.name)+'</td>'+
+     '<td class="psy-cdi-tvalue '+tone+'">'+x.t+'</td>'+
+     x.scaleTs.map(v=>'<td class="psy-cdi-tvalue '+cdiTone(v)+'">'+v+'</td>').join("")+
+     '<td class="psy-cdi-interpretation '+tone+'">'+esc(x.level)+'</td></tr>';
    }).join("");
-   return '<section class="psy-mspss-group psy-cdi-class-results"><h3>Результаты класса</h3>'+
-    '<div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th><th>Т-балл</th><th>Интерпретация</th></tr></thead><tbody>'+body+'</tbody></table></div></section>';
+   return '<section class="psy-mspss-group psy-cdi-class-results"><h3>Результаты класса – Т-баллы</h3>'+
+    '<div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th><th scope="col">Общий Т-балл</th>'+head+
+    '<th scope="col">Интерпретация общего показателя</th></tr></thead><tbody>'+body+'</tbody></table></div></section>';
   }
   const head=phillips.scales.map(scale=>'<th scope="col">'+esc(scale.name+", %")+'</th>').join("");
   const body=ordered.map((r,i)=>{
@@ -374,14 +388,14 @@
  function instruction(d){
   const isCDI=type(d)==="cdi";
   const intro=isCDI?"Опросник содержит 27 наборов из трех утверждений. Ребенок выбирает одно утверждение, соответствующее его состоянию за последние две недели. Порядок утверждений не всегда совпадает с порядком баллов.":"Опросник включает 58 вопросов о переживаниях в школе. На каждый вопрос нужно ответить «Да» или «Нет».";
-  const key=isCDI?"27 выбранных кодов 0-2 суммируются (0-54). Т-балл рассчитывается по возрастным и половым нормативным таблицам, если значение для такой суммы присутствует в нормах.":"За каждый ответ, не совпавший с ключом, начисляется 1 балл; максимум 58. Восемь факторов определяются по соответствующим номерам. В обработке выделяются восемь факторов школьной тревожности.";
+  const key=isCDI?"Сложите 27 выбранных баллов 0-2 (общий сырой балл 0-54) и отдельно суммы по пяти шкалам. Переведите каждый результат в Т-балл по таблице соответствующей шкалы с учетом пола и возраста (7-12 или 13-17 лет). Без экстраполяции.":"За каждый ответ, не совпавший с ключом, начисляется 1 балл; максимум 58. Восемь факторов определяются по соответствующим номерам. В обработке выделяются восемь факторов школьной тревожности.";
   const pupil=isCDI?"Прочитай по три утверждения в каждом пункте и отметь то, которое лучше всего описывает твое самочувствие за последние две недели. Здесь нет правильных и неправильных ответов.":"Прочитай вопросы о том, как ты чувствуешь себя в школе. Для каждого вопроса выбери «Да» или «Нет». Здесь нет правильных и неправильных ответов.";
   return '<section class="psy-mspss-section psy-mspss-manual"><div class="psy-mspss-manual-bar"><h3>Методика и руководство</h3><div class="psy-mspss-manual-actions"><button class="btn" type="button" data-cp-print="guide">Без бланка</button><button class="btn primary" type="button" data-cp-print="combined">С бланком</button></div></div>'+
    '<h3>Цель</h3><p>'+esc(d.goal)+'</p><h3>Описание методики</h3><p>'+esc(intro)+'</p>'+
    '<h3>Порядок проведения</h3><ol><li>Подготовьте бланк из проверенной версии и обеспечьте спокойную обстановку.</li><li>Прочитайте инструкцию участнику. Не подсказывайте ответы.</li><li>Перенесите ответы в обработку по тем же номерам, затем проверьте полноту и итог.</li></ol>'+
    '<h3>Инструкция для чтения ученику</h3><div class="psy-mspss-script">'+esc(pupil)+'</div>'+
    '<h3>Ключ и подсчет</h3><p>'+esc(key)+'</p>'+
-   (isCDI?'<h3>Интерпретация</h3><p>Основной показатель – общий сырой балл. Перевод в Т-балл доступен только для сочетаний возраста, пола и суммы, приведенных в нормативных таблицах. Пункт 9 требует отдельной оценки безопасности, если выбранное утверждение указывает на суицидальные мысли.</p>':
+   (isCDI?'<h3>Пять шкал CDI</h3><div class="psy-mspss-key-wrap"><table class="psy-mspss-key"><thead><tr><th>Шкала</th><th>Пункты</th><th>Максимальный сырой балл</th></tr></thead><tbody>'+norms.scales.map(x=>'<tr><td>'+esc(x.name)+'</td><td>'+x.q.join(", ")+'</td><td>'+(x.q.length*2)+'</td></tr>').join("")+'</tbody></table></div><h3>Интерпретация Т-баллов</h3><p>Т-баллы 45-55 – средний уровень, 56-60 – чуть выше среднего, 61-65 – выше среднего, 66-70 – значительно выше, свыше 70 – очень значительно выше среднего. Каждый фактор переводится по своей нормативной таблице с учетом возраста и пола. Пункт 9 требует отдельной оценки безопасности, если выбранное утверждение указывает на суицидальные мысли.</p>':
     '<h3>Восемь факторов</h3><div class="psy-mspss-key-wrap"><table class="psy-mspss-key"><thead><tr><th>Фактор</th><th>Пункты</th><th>Максимум</th></tr></thead><tbody>'+phillips.scales.map(s=>'<tr><td>'+esc(s.name)+'</td><td>'+s.q.join(", ")+'</td><td>'+s.q.length+'</td></tr>').join("")+'</tbody></table></div><h3>Интерпретация</h3><p>Свыше 50% несовпадений – повышенный, свыше 75% – высокий показатель по данной редакции. Это не диагноз.</p>')+
    '<p class="psy-mspss-small">Для проведения используйте инструкцию и бланк данной методики.</p></section>';
  }
