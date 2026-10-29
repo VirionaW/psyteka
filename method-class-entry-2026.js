@@ -727,12 +727,12 @@ function guide(d){
  '<div class="psy-mspss-manual-actions"><button type="button" class="btn" data-711-print="guide">Без бланка</button><button type="button" class="btn primary" data-711-print="combined">С бланком</button></div></section>';
 }
 function sheet(d){
- return '<section class="psy-mspss-student psy-711-student"><div class="psy-mspss-blank-head"><div><h3>Бланк ученика</h3><p>Формулировки утверждений и графа ответа</p></div><button type="button" class="btn primary" data-711-print="blank">Посмотреть и распечатать</button></div><p>'+esc(opts(d))+'</p>'+
+ return '<section class="psy-mspss-student psy-711-student"><div class="psy-mspss-blank-head"><div><h3>Бланк ученика</h3><p>'+(d.id==="eysenck-40"?"Редакция 2 – чередование шкал. Для версии 1 нужен отдельный бланк.":"Формулировки утверждений и графа ответа")+'</p></div><button type="button" class="btn primary" data-711-print="blank">Посмотреть и распечатать</button></div><p>'+esc(opts(d))+'</p>'+
  '<div class="psy-mspss-blank-scroll"><table class="psy-mspss-blank-table psy-711-sheet"><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+
  items[d.id].map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(q)+'</td><td></td></tr>').join("")+'</tbody></table></div></section>';
 }
 function printable(d,mode){
- const md=cfg(d),b='<section class="'+(mode==="combined"?"newpage":"")+'"><h1>'+esc(md.name)+'</h1><p>Участник: ________________________ Класс: ______ Дата: ____________</p>'+
+ const md=cfg(d),b='<section class="'+(mode==="combined"?"newpage":"")+'"><h1>'+esc(md.name)+'</h1>'+(d.id==="eysenck-40"?"<p>Бланк версии 2</p>":"")+ '<p>Участник: ________________________ Класс: ______ Дата: ____________</p>'+
  '<p>'+esc(opts(d))+'</p><table><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+
  items[d.id].map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(q)+'</td><td></td></tr>').join("")+'</tbody></table></section>';
  const g='<h1>'+esc(md.name)+'</h1><h2>Цель</h2><p>'+esc(md.goal)+'</p><h2>Инструкция</h2><p>'+esc(md.instruction)+'</p><h2>Подсчет</h2><p>'+esc(md.scoring)+'</p>';
@@ -768,7 +768,7 @@ function bind(d,ctx){
  });
  const fields=[...document.querySelectorAll("input[data-711-answer]")];
  const next=i=>{if(fields[i+1])fields[i+1].focus();else document.getElementById("school711Next")?.focus()};
- const set=(input,value)=>{if(value!==""&&(!/^[0-9]$/.test(value)||+value>limit(d)))return false;
+ const set=(input,value)=>{if(value!==""&&(!/^[0-9]$/.test(value)||+value>limit(d))){input.value=r.answers[+input.dataset["711Answer"]]??"";return false;}
   const i=+input.dataset["711Answer"];r.answers[i]=value===""?null:+value;input.value=value;const card=input.closest(".psy-mspss-item");
   card?.classList.toggle("is-complete",value!=="");card?.classList.toggle("is-missing",value==="");update();return true};
  fields.forEach((x,i)=>{x.addEventListener("input",()=>{const value=x.value.replace(/[^0-9]/g,"").slice(-1);if(set(x,value)&&value!=="")next(i)});
