@@ -617,3 +617,37 @@ html.dark .library-page #modal.psy-mspss-example .psy-cdi-lock-note{background:#
 [data-theme="dark"] .psy-semester-score.is-medium,.dark .psy-semester-score.is-medium{background:#603d12;color:#fff1ca;border-color:#a57b36}
 [data-theme="dark"] .psy-semester-score.is-high,.dark .psy-semester-score.is-high{background:#8d2026;color:#fff;border-color:#bf6b70}
 [data-theme="dark"] .psy-semester-score.is-neutral,.dark .psy-semester-score.is-neutral{background:#284150;color:#e6f2f8;border-color:#688390}
+
+/* CDI THREE LEVEL TEXT HIGHLIGHTS 20261029 */
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-cdi-tvalue{
+ background:transparent!important;color:var(--ink)!important;
+ font-weight:400!important;text-align:center!important;vertical-align:middle!important;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-score-mark{
+ display:inline-block!important;min-width:2ch;
+ padding:1px 3px!important;border:0!important;border-radius:0!important;
+ color:#141414!important;font-family:"Times New Roman",Times,serif!important;
+ font-weight:700!important;line-height:1.15!important;box-shadow:none!important;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-mark-low{background:#4BE878!important}
+.library-page #modal.psy-mspss-example .psy-cdi-mark-medium{background:#FFF14D!important}
+.library-page #modal.psy-mspss-example .psy-cdi-mark-high{background:#FF6868!important}
+.library-page #modal.psy-mspss-example .psy-cdi-legend{
+ margin:14px 0 10px;padding:12px 14px;border-radius:10px;
+ border:1px solid var(--line,#bdcfbf);color:var(--ink,#193e2c);
+ background:var(--paper,#fff);font-size:14px;line-height:1.7;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-legend h4{
+ margin:0 0 6px;font-size:15px;font-weight:700;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-legend>div{margin:2px 0}
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll th{
+ text-align:center!important;vertical-align:middle!important;font-weight:700!important;
+ white-space:normal!important;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll td.psy-cdi-name{
+ text-align:left!important;vertical-align:middle!important;
+}
+.library-page #modal.psy-mspss-example .psy-cp-sex-btn:disabled{
+ opacity:.45!important;cursor:not-allowed!important;box-shadow:none!important;
+}
