@@ -314,7 +314,7 @@ function viewOverview(m){
  const sourceHtml=/^https?:\/\/[^\s]+$/i.test(source)?'<h3>Первоисточник</h3><p class="psy-profile-source"><a href="'+escapeHTML(source)+'" target="_blank" rel="noopener noreferrer">Открыть первоисточник ↗</a></p>':"";
  const packLinks='';
  let scoringScale='';
- return '<section class="psy-portfolio-reference psy-portfolio-unified"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div>'+(d.id==='cdi-27'?goalHtml:d.workflow==='phillips58'?indicatorHtml+goalHtml:goalHtml+indicatorHtml+scoringScale)+sourceHtml+packLinks+'</section>';
+ return '<section class="psy-portfolio-reference psy-portfolio-unified"><h3>Общие сведения</h3><div class="psy-profile-lines">'+fieldHtml+'</div>'+(d.id==='cdi-27'||d.workflow==='phillips58'?indicatorHtml+goalHtml:goalHtml+indicatorHtml+scoringScale)+sourceHtml+packLinks+'</section>';
 }
 
 function viewInstruction(m){
