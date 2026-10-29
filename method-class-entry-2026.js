@@ -335,7 +335,7 @@
     phillips.scales.map((scale,j)=>{
      if(!z)return '<td class="psy-ph-score"></td>';
      const percent=z.scales[j].percent;
-     return '<td class="psy-ph-score psy-ph-tone-'+phillipsColor(percent)+'">'+Math.round(percent)+'</td>';
+     return '<td class="psy-ph-score"><span class="psy-ph-score-mark psy-ph-tone-'+phillipsColor(percent)+'">'+Math.round(percent)+'</span></td>';
     }).join("")+'</tr>';
   }).join("");
   return '<section class="psy-mspss-group psy-ph-class-results"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div></section>'+phillipsClassReference(d,rows);
@@ -467,11 +467,13 @@
   };
   // Separate Word formatting for Phillips only; CDI and individual reports are untouched.
   const phCell=(s,header,left,width,percent)=>{
-   const fill=Number.isFinite(percent)?(percent>75?"FBE0E0":percent>50?"FFF0C9":"E2F3E8"):null;
-   const tcPr='<w:tcPr><w:tcW w:w="'+width+'" w:type="dxa"/><w:vAlign w:val="center"/>'+
-    (fill?'<w:shd w:val="clear" w:color="auto" w:fill="'+fill+'"/>':"")+'</w:tcPr>';
+   // Highlight only the number's text run, never the entire table cell.
+   // Use the unrounded percentage to assign the level at 50/75 boundaries.
+   const fill=Number.isFinite(percent)&&s!==""?(percent>75?"FF6868":percent>50?"FFF14D":"4BE878"):null;
+   const tcPr='<w:tcPr><w:tcW w:w="'+width+'" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>';
    const rPr='<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>'+
-    '<w:sz w:val="22"/><w:szCs w:val="22"/>'+(header?"<w:b/>":"")+'</w:rPr>';
+    '<w:sz w:val="22"/><w:szCs w:val="22"/>'+(header||fill?"<w:b/>":"")+
+    (fill?'<w:shd w:val="clear" w:color="auto" w:fill="'+fill+'"/><w:color w:val="111111"/>':"")+'</w:rPr>';
    return '<w:tc>'+tcPr+'<w:p><w:pPr><w:jc w:val="'+(left?"left":"center")+'"/><w:spacing w:after="0"/></w:pPr>'+
     '<w:r>'+rPr+'<w:t xml:space="preserve">'+xmlEscape(s)+'</w:t></w:r></w:p></w:tc>';
   };
