@@ -280,3 +280,62 @@ html.dark .library-page #modal.psy-mspss-example .psy-cp-sex-btn.is-selected{
 .library-page #modal.psy-mspss-example .psy-ph-class-results .psy-mspss-scroll th:first-child {min-width:42px;width:42px;max-width:42px}
 .library-page #modal.psy-mspss-example .psy-ph-class-results .psy-mspss-scroll th:nth-child(2) {min-width:170px;max-width:240px}
 .library-page #modal.psy-mspss-example .psy-ph-class-results .psy-mspss-scroll td {font-variant-numeric:tabular-nums}
+
+
+/* CDI class intake – one grade, fast sex assignment, colored roster. */
+.library-page #modal.psy-mspss-example .psy-cp-class-label{
+ display:grid;gap:7px;margin:13px 0 16px;font-weight:750;color:var(--ink);
+}
+.library-page #modal.psy-mspss-example #cpSchoolGrade{
+ width:100%;min-height:48px;padding:10px 12px;background:var(--paper);
+ color:var(--ink);border:1px solid var(--line);border-radius:11px;font:inherit;
+}
+.library-page #modal.psy-mspss-example .psy-cp-class-label small{
+ color:var(--muted);font-size:12px;line-height:1.4;font-weight:400;
+}
+.library-page #modal.psy-mspss-example .psy-mspss-person-row.psy-cp-girl .psy-mspss-person{
+ background:#fff0f6!important;border:1.5px solid #e5aac9!important;color:#753a60!important;
+}
+.library-page #modal.psy-mspss-example .psy-mspss-person-row.psy-cp-boy .psy-mspss-person{
+ background:#e9f4ff!important;border:1.5px solid #aacbeb!important;color:#245c8c!important;
+}
+.library-page #modal.psy-mspss-example .psy-mspss-person-row.psy-cp-girl .psy-mspss-person.active{
+ background:#fbdce9!important;border:2px solid #cf649e!important;
+ box-shadow:0 0 0 3px rgba(219,112,170,.18),0 6px 15px rgba(176,81,135,.12)!important;
+}
+.library-page #modal.psy-mspss-example .psy-mspss-person-row.psy-cp-boy .psy-mspss-person.active{
+ background:#d9eaff!important;border:2px solid #5b9bd4!important;
+ box-shadow:0 0 0 3px rgba(82,155,220,.2),0 6px 15px rgba(56,127,184,.12)!important;
+}
+.library-page #modal.psy-mspss-example .psy-cp-sex-btn[data-cp-sex="f"].is-selected{
+ background:#fbdbe9!important;color:#793659!important;border:2px solid #cd6f9f!important;
+ box-shadow:0 0 0 3px rgba(220,115,170,.15)!important;
+}
+.library-page #modal.psy-mspss-example .psy-cp-sex-btn[data-cp-sex="m"].is-selected{
+ background:#d9ecff!important;color:#22598b!important;border:2px solid #659fdb!important;
+ box-shadow:0 0 0 3px rgba(101,159,219,.16)!important;
+}
+.library-page #modal.psy-mspss-example .psy-cp-current{
+ display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin:-1px 0 15px;
+ padding:9px 14px;border-radius:12px;background:var(--soft);color:var(--ink);
+ border:1px solid var(--line);font-size:14px;
+}
+.library-page #modal.psy-mspss-example .psy-cp-current>span{font-weight:750;font-variant-numeric:tabular-nums;opacity:.75}
+.library-page #modal.psy-mspss-example .psy-cp-current>b{font-size:16px}
+.library-page #modal.psy-mspss-example .psy-cp-current.psy-cp-girl{background:#fff0f6;border-color:#e5aac9;color:#753a60}
+.library-page #modal.psy-mspss-example .psy-cp-current.psy-cp-boy{background:#e9f4ff;border-color:#aacbeb;color:#245c8c}
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll table{min-width:570px}
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll th:first-child,
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll td:first-child{min-width:44px;width:50px;max-width:60px}
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll th:nth-child(2){min-width:150px}
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll th:nth-child(3){min-width:80px}
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll th:nth-child(4){min-width:220px}
+@media(max-width:700px){
+ .library-page #modal.psy-mspss-example .psy-cp-current{gap:8px;padding:9px}
+}
+html.dark .library-page #modal.psy-mspss-example .psy-cp-girl .psy-mspss-person,
+html.dark .library-page #modal.psy-mspss-example .psy-cp-current.psy-cp-girl{background:#442a3c!important;border-color:#a36b89!important;color:#ffe3f0!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cp-boy .psy-mspss-person,
+html.dark .library-page #modal.psy-mspss-example .psy-cp-current.psy-cp-boy{background:#243e58!important;border-color:#6899ca!important;color:#dfedff!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cp-sex-btn[data-cp-sex="f"].is-selected{background:#62304c!important;color:#ffe3f0!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cp-sex-btn[data-cp-sex="m"].is-selected{background:#24466d!important;color:#dfedff!important}
