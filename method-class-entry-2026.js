@@ -1,3 +1,39 @@
+/* Shared analytical signatures: optional author names are user-provided, never inferred. */
+(function(){
+ "use strict";
+ const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+ const xml=x=>String(x??"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F<>&"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]||""));
+ const date=rows=>String(rows.analyticDate||"").trim()||new Date().toLocaleDateString("ru-RU");
+ const names=rows=>[["Педагог-психолог",rows.analyticPsych1],["Педагог-психолог",rows.analyticPsych2],["Классный руководитель",rows.analyticClassTeacher]];
+ const label=(k,title,value,placeholder)=>'<label>'+title+'<input type="text" maxlength="200" autocomplete="off" data-analytic-field="'+k+'" value="'+esc(value||"")+'" placeholder="'+placeholder+'"></label>';
+ function fields(rows){return '<details class="psy-cp-analytic-meta"><summary>Данные для аналитической справки (необязательно)</summary>'+
+  label("analyticSchool","Учреждение",rows.analyticSchool,"Название учреждения")+
+  label("analyticClass","Обозначение класса",rows.analyticClass,"Например, 5.4")+
+  label("analyticDate","Дата справки",rows.analyticDate,"ДД.ММ.ГГГГ (по умолчанию сегодня)")+
+  label("analyticPsych1","Педагог-психолог 1",rows.analyticPsych1,"Фамилия И. О.")+
+  label("analyticPsych2","Педагог-психолог 2",rows.analyticPsych2,"Фамилия И. О.")+
+  label("analyticClassTeacher","Классный руководитель",rows.analyticClassTeacher,"Фамилия И. О.")+
+  '</details>';}
+ function html(rows){
+  return '<div class="psy-analytic-signatures"><p class="psy-analytic-date">'+esc(date(rows))+'</p>'+
+   names(rows).map(([role,name])=>'<div class="psy-analytic-signature"><span>'+esc(role)+'</span><span>'+esc(name||"________________")+'</span></div>').join("")+
+   '<p class="psy-analytic-confidentiality">С результатами диагностики ознакомлен(а). Обязуюсь сохранять конфиденциальность полученной информации.</p></div>';
+ }
+ const p=(s,align="left",tab=false)=>{
+  const ppr='<w:pPr><w:jc w:val="'+align+'"/><w:spacing w:before="100" w:after="180"/>'+
+   (tab?'<w:tabs><w:tab w:val="right" w:pos="9600"/></w:tabs>':"")+'</w:pPr>';
+  const run=v=>'<w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="28"/></w:rPr><w:t xml:space="preserve">'+xml(v)+'</w:t></w:r>';
+  return '<w:p>'+ppr+(tab&&Array.isArray(s)?run(s[0])+'<w:r><w:tab/></w:r>'+run(s[1]):run(s))+'</w:p>';
+ };
+ function word(rows){return p(date(rows))+names(rows).map(([role,name])=>p([role,name||"________________"],"left",true)).join("")+
+  p("С результатами диагностики ознакомлен(а). Обязуюсь сохранять конфиденциальность полученной информации.","center");}
+ function bind(rows,refresh){
+  document.querySelectorAll("[data-analytic-field]").forEach(input=>input.addEventListener("input",e=>{
+   rows[input.dataset.analyticField]=e.target.value;refresh?.();
+  }));
+ }
+ window.PSY_ANALYTIC_SIGNATURES={fields,html,word,bind,date};
+})();
 "use strict";
 (function(){
  const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -315,7 +351,6 @@
    {kind:"title",text:"Аналитическая справка"},
    {kind:"subtitle",text:"По методике "+(type(d)==="cdi"?"«Опросник детской депрессии (М. Ковач, CDI)»":"«Тест школьной тревожности Филлипса»")},
    {kind:"meta",text:classLabel?"Класс: "+classLabel:grade?"Класс: "+grade:"Класс не указан"},
-   {kind:"meta",text:"Дата: "+new Date().toLocaleDateString("ru-RU")},
    {kind:"body",text:"В обследовании приняли участие "+n+" из "+roster+" учащихся ("+classPercent(n,roster)+")."}
   ];
   if(institution)L.unshift({kind:"institution",text:institution});
@@ -333,7 +368,6 @@
      ["Высокий уровень (61 и выше)",vals.filter(v=>v>=61).length,"Повышенная выраженность симптомов может сопровождаться сниженным настроением и трудностями в общении; рекомендуется подробная индивидуальная оценка."]
     ];
     g.forEach(x=>L.push({kind:"level",text:x[0]+" – "+x[1]+" чел. ("+classPercent(x[1],vals.length)+"). "+x[2]}));
-    L.push({kind:"body",text:"Вывод: высокий показатель выявлен у "+g[2][1]+" учащихся, средний – у "+g[1][1]+", низкий – у "+g[0][1]+". Результаты необходимо рассматривать вместе с беседой и наблюдением; они не являются диагнозом."});
    }
   }else{
    const stats=phillipsStats(d,people),overall=stats.rows[0];
@@ -344,14 +378,13 @@
     factors.slice(0,3).forEach(x=>L.push({kind:"factor",text:x.name+": повышенный – "+countByLevel(x.raised,n)+", высокий – "+countByLevel(x.high,n)+"."}));
     if(factors.length>3)L.push({kind:"body",text:"Приведены три наиболее распространенных фактора; остальные показатели доступны в таблице результатов класса."});
    }else L.push({kind:"body",text:"По восьми факторам повышенных и высоких показателей не выявлено."});
-   L.push({kind:"body",text:"Заключение: детям с повышенными и высокими показателями требуется дополнительное внимание. Факторы частично пересекаются по вопросам и не суммируются. Результат не является диагнозом."});
   }
   return {lines:L,n,roster};
  }
  function analyticPreview(d,rows){
   const a=analyticSummary(d,rows);
   return a?'<section class="psy-cp-analytic-preview"><h3>Аналитическая справка</h3>'+
-   a.lines.filter(x=>x.kind!=="title").map(x=>'<p class="psy-cp-analytic-'+x.kind+'">'+esc(x.text)+'</p>').join("")+'</section>':"";
+   a.lines.filter(x=>x.kind!=="title").map(x=>'<p class="psy-cp-analytic-'+x.kind+'">'+esc(x.text)+'</p>').join("")+window.PSY_ANALYTIC_SIGNATURES.html(rows)+'</section>':"";
  }
 
  function phillipsClassReference(d,rows){
@@ -397,9 +430,7 @@
   if(ctx.calcMode==="class"){
    h+='<div class="psy-mspss-workspace"><aside class="psy-mspss-sidebar"><h3>Список учащихся</h3>'+
     (type(d)==="cdi"?'<label class="psy-cp-class-label" for="cpSchoolGrade">Класс<select id="cpSchoolGrade" '+(!allowDetails?"disabled":"")+'><option value="">Выбрать класс</option>'+Array.from({length:11},(_,i)=>i+1).map(g=>'<option value="'+g+'" '+(Number(classGrade(rows))===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select><small>Возраст подставится автоматически, его можно уточнить.</small></label>':'')+
-    '<details class="psy-cp-analytic-meta"><summary>Данные для аналитической справки (необязательно)</summary>'+
-    '<label>Учреждение<input id="cpAnalyticSchool" type="text" maxlength="200" autocomplete="off" value="'+esc(rows.analyticSchool||"")+'" placeholder="Название учреждения"></label>'+
-    '<label>Обозначение класса<input id="cpAnalyticClass" type="text" maxlength="30" autocomplete="off" value="'+esc(rows.analyticClass||"")+'" placeholder="Например, 5.4"></label></details>'+
+    window.PSY_ANALYTIC_SIGNATURES.fields(rows)+
     '<p>Добавьте учеников по одному с новой строки. Для конфиденциальности можно использовать условные коды.</p>'+
     '<label class="psy-mspss-label" for="cpBulkNames">Добавить участников</label><textarea id="cpBulkNames" rows="5" placeholder="Ученик 01&#10;Ученик 02"></textarea>'+
     '<button type="button" class="btn primary psy-mspss-add" id="cpAddNames">Добавить в список</button>'+
@@ -561,7 +592,7 @@
     '<w:sz w:val="'+fontSize+'"/><w:szCs w:val="'+fontSize+'"/>'+(head||strong?"<w:b/>":"")+
     '</w:rPr><w:t xml:space="preserve">'+xmlEscape(x.text)+'</w:t></w:r></w:p>';
   };
-  let body=analytical?analytical.lines.map(analysisPara).join(""):
+  let body=analytical?analytical.lines.map(analysisPara).join("")+window.PSY_ANALYTIC_SIGNATURES.word(rows):
    para(title,"head")+para("Метолария · "+(mode==="class"?"Отчет группы / класса":"Индивидуальный отчет")+" · "+new Date().toLocaleDateString("ru-RU"));
   if(!analytical){
   body+=para("Сводные результаты","sub");
@@ -668,8 +699,7 @@
    const btn=document.getElementById("cpReportBottom");if(btn){const eligible=ctx.calcMode==="class"?rows.some(x=>!!scoring(d,x)):!!scoring(d,r);btn.disabled=!eligible;btn.classList.toggle("psy-mspss-waiting",!eligible);}
     const analyticBtn=document.getElementById("cpAnalyticBottom");if(analyticBtn){const eligible=!!analyticSummary(d,rows);analyticBtn.disabled=!eligible;analyticBtn.classList.toggle("psy-mspss-waiting",!eligible);}
   };
-  document.getElementById("cpAnalyticSchool")?.addEventListener("input",e=>{rows.analyticSchool=e.target.value;const g=document.getElementById("cpGroup");if(g)g.innerHTML=group(d,rows);});
-  document.getElementById("cpAnalyticClass")?.addEventListener("input",e=>{rows.analyticClass=e.target.value;const g=document.getElementById("cpGroup");if(g)g.innerHTML=group(d,rows);});
+  window.PSY_ANALYTIC_SIGNATURES.bind(rows,()=>{const g=document.getElementById("cpGroup");if(g)g.innerHTML=group(d,rows);});
   document.getElementById("cpCurrentName")?.addEventListener("input",e=>{
    r.name=e.target.value;const active=document.querySelector(".psy-mspss-person.active span");if(active)active.textContent=r.name||"Участник";
    const option=document.querySelector('#cpBottomPerson option:checked');if(option)option.textContent=(ctx.rowIndex+1)+". "+(r.name||"Участник "+(ctx.rowIndex+1));
