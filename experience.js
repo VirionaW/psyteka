@@ -5,6 +5,7 @@ let methodNow=null, tabNow="overview", calcMode="one", rowIndex=0;
 let rows=[{name:"",answers:[]}];
 let modeSnapshots={one:[{name:"",answers:[]}],class:[{name:"",answers:[]}]};
 let modeIndices={one:0,class:0};
+let copiedAssessmentAnswers=null;
 const methodSessions={};
 
 let activeSavedAssessmentId=null,activeSavedAssessmentTitle="";
@@ -115,6 +116,38 @@ function enhanceMethodView(tab,html){
  }
  return html;
 }
+/* Copy only answer values, not student metadata. Clipboard stays in current browser session. */
+function bindAnswerCopyControls(){
+ if(tabNow!=="score"||!methodNow)return;
+ const d=DETAILS[methodNow.name];
+ if(!window.PSY_MATCH_MSPSS?.supports(d))return;
+ const current=rows[rowIndex],entry=document.querySelector("#modal .psy-mspss-entry");
+ if(!current||!entry)return;
+ const key=d.id||d.workflow||methodNow.name,version=current.eysenckVersion||"default";
+ const box=document.createElement("div");box.className="psy-answer-copy-toolbar";
+ const copy=document.createElement("button"),paste=document.createElement("button"),info=document.createElement("span");
+ copy.type="button";paste.type="button";copy.className="btn psy-answer-copy";paste.className="btn psy-answer-paste";
+ copy.textContent="Копировать ответы";paste.textContent="Вставить ответы";
+ copy.title="Копировать ответы без имени, возраста и пола";
+ paste.title="Вставить ранее скопированные ответы";
+ copy.disabled=!(current.answers||[]).some(v=>v!==null&&v!==undefined&&v!=="");
+ paste.disabled=!copiedAssessmentAnswers||copiedAssessmentAnswers.key!==key||copiedAssessmentAnswers.version!==version;
+ info.className="psy-copy-status";info.setAttribute("role","status");
+ if(!paste.disabled)info.textContent="Источник: "+copiedAssessmentAnswers.source;
+ copy.onclick=()=>{
+  copiedAssessmentAnswers={key,version,answers:(current.answers||[]).slice(),source:current.name||"участник "+(rowIndex+1),sourceRow:current};
+  paste.disabled=false;info.textContent="Ответы скопированы. Выберите другого ученика.";
+ };
+ paste.onclick=()=>{
+  const buf=copiedAssessmentAnswers;
+  if(!buf||buf.key!==key||buf.version!==version||buf.sourceRow===current)return;
+  if((current.answers||[]).some(v=>v!==null&&v!==undefined&&v!=="")&&!confirm("Заменить ответы у "+(current.name||"участника")+"?"))return;
+  current.answers=buf.answers.slice();setTab("score");
+ };
+ box.append(copy,paste,info);
+ const nameField=entry.querySelector(".psy-mspss-name-field");
+ if(nameField)nameField.insertAdjacentElement("afterend",box);else entry.prepend(box);
+}
 function setTab(name){
  if((name==="score"||name==="processing")&&window.PSY_GUIDE_STANDARD?.selectionUnsupported(methodNow?.name))name="instruction";
  tabNow=name;
@@ -198,6 +231,7 @@ function setTab(name){
  const quickEntryContext={tab:name,calcMode,rows,rowIndex,rerender:()=>setTab("score"),selectRow:i=>{rowIndex=i;modeIndices[calcMode]=i;setTab("score");const el=document.querySelector('.psy-semester-grid select:not(:disabled), .psy-ph-grid select:not(:disabled)');if(el)el.focus();}};
  if(!window.PSY_MATCH_MSPSS?.supports(DETAILS[methodNow.name]))window.PSY_CLASS_ENTRY_2026?.enhance(DETAILS[methodNow.name],quickEntryContext);
  bindControls();
+ bindAnswerCopyControls();
  if(!window.PSY_MATCH_MSPSS?.supports(DETAILS[methodNow.name]))window.PSY_CLASS_ENTRY_2026?.bind(DETAILS[methodNow.name],quickEntryContext);
  if(DETAILS[methodNow?.name]?.workflow==='semester2026')window.PSY_SEMESTER_2026.syncFooter(DETAILS[methodNow.name],rows,rowIndex);
  if(DETAILS[methodNow?.name]?.workflow==='preschoolSheet')window.PSY_PRESCHOOL.updateFooter(DETAILS[methodNow.name],mainTab);
@@ -689,17 +723,22 @@ function bindControls(){
    onRender:()=>setTab('score'),
    onSelect:go,
    onGenderAssigned:()=>{
-    if(d.id!=='cdi-27'||calcMode!=='class')return;
+    if(!['cdi-27','lazarus-wcq50'].includes(d.id)||calcMode!=='class')return;
+    const current=rows[rowIndex],currentName=current?.name||"Участник "+(rowIndex+1);
     let next=-1;
-    for(let step=1;step<=rows.length;step++){
+    for(let step=1;step<rows.length;step++){
      const j=(rowIndex+step)%rows.length;
-     if(j===rowIndex)continue;
-     if(rows[j].attendance!=='absent'&&(rows[j].name?.trim()||rows.length===1)&&!['m','f'].includes(rows[j].sex)){next=j;break;}
+     if(rows[j].attendance!=='absent'&&rows[j].name?.trim()&&!['m','f'].includes(rows[j].sex)){next=j;break;}
     }
-    // Move only to the next child without assigned sex. Once all are assigned,
-    // stay with the current child so their answers can be entered.
-    if(next>=0)go(next);
-    else setTab('score');
+    if(next>=0){
+     rows.genderNote="Пол для «"+currentName+"» сохранен. Теперь укажите пол: "+(rows[next].name||"участник "+(next+1))+".";
+     go(next);
+    }else{
+     let first=rows.findIndex(x=>x.attendance!=='absent'&&x.name?.trim());
+     if(first<0)first=0;
+     rows.genderNote="Пол указан всем. Начинаем ввод ответов с первого: "+(rows[first].name||"участник 1")+".";
+     go(first);
+    }
    },
    onBulkAdd:names=>{const first=addNames(names);go(first>=0?first:Math.min(rowIndex,rows.length-1));},
    onSort:names=>{
