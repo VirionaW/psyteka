@@ -1,10 +1,11 @@
 "use strict";
-/* Метолария: единое представление 100 карточек Школы. Возраст указан только по
+/* Метолария: единое представление карточек Школы. Возраст указан только по
    доступным редакциям/источникам. Отсутствующий возраст или объем не выдумываем.
    Этот слой НЕ меняет инструкции, ключи, нормы, возрастные формы и результаты. */
 (function(){
  const specific={
   "Школа зверей":{age:"6-8 лет",type:"Рисуночная методика",count:"1 рисунок и беседа"},
+  "Домики О. А. Ореховой":{age:"4-12 лет",type:"Проективная методика",count:"3 задания, 8 цветов",summary:"Цветовое исследование социально значимых эмоций, личных предпочтений и отношения к школьным ситуациям."},
   "Что мне нравится в школе":{age:"6-10 лет",type:"Рисуночная методика",count:"1 рисунок и беседа"},
   "Оценка школьной мотивации":{age:"7-10 лет",type:"Опросник",count:"10 вопросов"},
   "Дерево (Человечки на дереве)":{age:"1-5 классы",type:"Проективная методика",count:"1 рисунок, 2 выбора"},
@@ -231,13 +232,13 @@
    else if(/проба|тест|памят|праксис/i.test(preferred))type="Диагностическая проба";
   }
   const standardAge=standard?.records?.[m.name]?.age||"";
-  const age=item.age||normAge(standardAge)||normAge(d?.age)||normAge(profile?.age)||normAge(m.age)||"Возраст уточняется";
+  const age=item.ageStatus==="unresolved"?"Возраст уточняется":item.age||normAge(standardAge)||normAge(d?.age)||normAge(profile?.age)||normAge(m.age)||"Возраст уточняется";
   const qty=clean(item.count||d?.count||profile?.count||m.count||"");
   const quantity=qty&&!/не уточнено|не подтвержден|возможная|сведения уточняют|возраст зависит|по выбранной форме/i.test(qty)?clip(qty,74):isProgram?"Материалы программы":"Количество заданий уточняется";
   const preferredSummary=item.summary||schoolSummaries[m.name]||m.summary||d?.goal||profile?.goal||m.goal||"";
   const fallback=placeholder.test(preferredSummary)?[d?.goal,profile?.goal,m.summary].find(x=>x&&!placeholder.test(clean(x)))||"":preferredSummary;
   const summary=clip(fallback||(isProgram?"Цели, содержание и условия применения приведены в материалах программы.":"Описание и задачи приведены в руководстве выбранной версии."),150);
-  return {author,type:type||"Вид методики уточняется",age,quantity,summary,confirmedAge:age!=="Возраст уточняется",confirmedQuantity:quantity!=="Количество заданий уточняется",category:m.theme};
+  return {author,type:type||"Вид методики уточняется",age,quantity,summary,confirmedAge:item.ageStatus?["age","grade"].includes(item.ageStatus):/\d/.test(age),confirmedQuantity:quantity!=="Количество заданий уточняется",category:m.theme};
  }
  // Одна карточка – один основной способ предъявления, даже если
  // рисуночная или графическая методика одновременно относится к проективным.
