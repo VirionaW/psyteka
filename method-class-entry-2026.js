@@ -798,12 +798,13 @@ function report(d,rows,mode,index){
  for(let i=0;i<people.length;i++){
   const row=people[i],z=scored(d,row);
   rowsData.push([String(i+1),row.name||"У-"+(i+1),...scales.map((s,j)=>z?num(d,z.scales[j]):"–")]);
-  fill.push([null,null,...scales.map((s,j)=>{const factor=z?.scales?.[j];if(!factor)return null;const kind=tone(d,factor);return kind==="high"?"F9DDCA":kind==="middle"?"FFF0CF":kind==="low"?"E4F1FB":"EAF1F4"})]);
+  fill.push([null,null,...scales.map((s,j)=>{const factor=z?.scales?.[j];if(!factor)return null;const kind=tone(d,factor);return kind==="high"?(d.id==="eysenck-40"?"F9DEDC":"FFE4C6"):kind==="middle"?"FFF0CF":kind==="low"?"E4F1FB":"EAF1F4"})]);
  }
- let body=para(cfg(d).name)+para(mode==="class"?"Результаты класса":"Результат участника")+para("Дата: "+new Date().toLocaleDateString("ru-RU"));
+ const grade=people.find(r=>Number(r.schoolGrade)>=7&&Number(r.schoolGrade)<=11)?.schoolGrade;
+ let body=para(cfg(d).name)+para(mode==="class"?"Результаты "+(grade?grade+" класса":"класса"):"Результат участника")+para("Дата: "+new Date().toLocaleDateString("ru-RU"));
  body+=table([["№","Участник",...scales.map(s=>s.name)],...rowsData],fill);
- if(d.id==="eysenck-40")body+=para("Интервалы каждой шкалы:")+table([["Баллы","Уровень"],["0-7","Низкий"],["8-14","Средний"],["15-20","Высокий"]],[["E4F1FB","E4F1FB"],["FFF0CF","FFF0CF"],["F9DDCA","F9DDCA"]]);
- else if(d.id==="lazarus-wcq50")body+=para("Числа – сырые баллы по каждой копинг-стратегии, не клинические пороги.");
+ if(d.id==="eysenck-40")body+=para("Интервалы каждой шкалы:")+table([["Баллы","Уровень"],["0-7","Низкий"],["8-14","Средний"],["15-20","Высокий"]],[["E4F1FB","E4F1FB"],["FFF0CF","FFF0CF"],["F9DEDC","F9DEDC"]]);
+ else if(d.id==="lazarus-wcq50")body+=para("Числа – сырые баллы по каждой копинг-стратегии. Цвета показывают условную долю максимума: до 33%, 34-66%, свыше 66%. Это не клинические пороги и не возрастные нормативы.");
  else body+=para("Факторы представлены с коэффициентами. Это не расчет вероятности суицида; при необходимости нужна очная оценка безопасности.");
  const documentXml='<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+
  '<w:sectPr><w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="680" w:bottom="680" w:left="680" w:right="680"/></w:sectPr></w:body></w:document>';
