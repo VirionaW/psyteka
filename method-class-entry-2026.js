@@ -308,7 +308,7 @@
   const body=ordered.map((r,i)=>{
    const z=scoring(d,r);
    return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td>'+
-    phillips.scales.map((scale,j)=>'<td>'+(z?z.scales[j].raw:"–")+'</td>').join("")+'</tr>';
+    phillips.scales.map((scale,j)=>'<td>'+(z?z.scales[j].percent.toFixed(1).replace(".",",")+"%":"–")+'</td>').join("")+'</tr>';
   }).join("");
   return '<section class="psy-mspss-group psy-ph-class-results"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div></section>'+phillipsClassReference(d,rows);
  }
@@ -438,7 +438,7 @@
    const z=scoring(d,r),n=isCDI&&z?norms.norm(z.raw,r.ageYears,r.sex):null;
    const base=[r.name||"У-"+String(i+1).padStart(2,"0"),describe(r)];
    return isCDI?Object.values(cdiClassRow(d,r,i)).map(String):mode==="class"?
-      [String(i+1),r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((s,j)=>z?z.scales[j].raw:"–")]:
+      [String(i+1),r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((s,j)=>z?z.scales[j].percent.toFixed(1).replace(".",",")+"%":"–")]:
       [...base,z?.raw??"–",z?z.percent.toFixed(1)+"%":"–"];
   });
   body+=table(columns,summary);
@@ -507,7 +507,7 @@
   const head=["№","Участник",...phillips.scales.map(scale=>scale.name)];
   const data=rows.filter(r=>r.name?.trim()||done(d,r.answers)).map((r,i)=>{
    const z=scoring(d,r);
-   return [i+1,r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((scale,j)=>z?z.scales[j].raw:"")];
+   return [i+1,r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((scale,j)=>z?z.scales[j].percent.toFixed(1).replace(".",",")+"%":"")];
   });
   const cell=v=>{let s=String(v??"");if(/^\s*[=+@-]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';};
   return "\uFEFF"+[head,...data].map(row=>row.map(cell).join(";")).join("\r\n");
