@@ -159,3 +159,6 @@ html.dark{color-scheme:dark;--paper:#17251e;--surface:#25382d;--ink:#f0f8ee;--so
  .analysis-color{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  .analysis-color-swatch,.analysis-road-swatch,.analysis-house-icon svg{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+
+/* Respect the hidden state even when a button class defines display:inline-flex. */
+#nextStep[hidden],#prevStep[hidden],#workArea[hidden],#sheetPreview[hidden],#groupReport[hidden],#palettePanel[hidden]{display:none!important}
