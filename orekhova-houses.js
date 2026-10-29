@@ -10,7 +10,38 @@
  const NORM=["red","yellow","green","purple","blue","brown","gray","black"];
  const EMOTIONS=["Счастье","Горе","Справедливость","Обида","Дружба","Ссора","Доброта","Злоба","Скука","Восхищение"];
  const SITUATIONS=["Твоя душа","Настроение по дороге в школу","Настроение на уроке чтения","Настроение на уроке письма","Настроение на уроке математики","Настроение при разговоре с учителем","Настроение при общении с одноклассниками","Настроение дома","Настроение во время домашних заданий","Свободный домик – ситуация ребенка"];
- const PAIRS=[["Счастье – горе",0,1],["Справедливость – обида",2,3],["Дружба – ссора",4,5],["Доброта – злоба",6,7],["Скука – восхищение",8,9]];
+ const PAIRS=[
+  ["Счастье – горе",0,1,"Базовый комфорт"],
+  ["Справедливость – обида",2,3,"Личностный рост"],
+  ["Дружба – ссора",4,5,"Межличностное взаимодействие"],
+  ["Доброта – злоба",6,7,"Потенциальная агрессия"],
+  ["Скука – восхищение",8,9,"Познание"]
+ ];
+ const FEELING_HELP=[
+  "Когда весело, все получается и ребенок этим доволен.",
+  "Когда произошло что-то плохое, человек расстроен.",
+  "Когда все по правилам, поровну и по-честному.",
+  "Когда незаслуженно обидели, обманули или что-то забрали.",
+  "Когда друзья помогают, поддерживают и защищают.",
+  "Когда ругаются или перестают дружить.",
+  "Когда жалеют другого и делают ему хорошее.",
+  "Когда обижают или делают другим плохо.",
+  "Когда нечем заняться, ничего не интересно.",
+  "Когда испытывают радость от чего-то очень красивого."
+ ];
+ const SITUATION_HELP=[
+  "Эмоциональное отношение ребенка к себе, своему внутреннему состоянию.",
+  "Настрой по дороге в школу, ожидание школьного дня.",
+  "Переживания ребенка на уроке чтения.",
+  "Переживания ребенка на уроке письма.",
+  "Переживания ребенка на уроке математики.",
+  "Переживания в контакте и общении с учителем.",
+  "Эмоциональное отношение к общению с одноклассниками.",
+  "Настроение в домашней обстановке.",
+  "Переживания, связанные с выполнением домашних заданий.",
+  "Собственный образ и сюжет ребенка: важно дословное объяснение."
+ ];
+
  const $=id=>document.getElementById(id);
  const state={mode:"one",students:[],selected:0,groupName:"",clipboard:null,step:1,activeColor:"blue"};
  const esc=s=>String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
@@ -99,7 +130,7 @@
  function renderColorRows(){
   const s=current();if(!s)return;
   for(const [target,arr,labels,stage] of [["emotionRows",s.emotions,EMOTIONS,"emotions"],["situationRows",s.situations,SITUATIONS,"situations"]]){
-   $(target).innerHTML=labels.map((label,i)=>'<div class="paint-house-wrap"><button type="button" class="paint-house'+(arr[i]?' filled':'')+'" data-paint-stage="'+stage+'" data-index="'+i+'" aria-label="Домик '+(i+1)+': '+esc(label)+', '+colorName(arr[i])+'" title="'+esc(label)+'">'+houseSvg(i+1,arr[i])+'<span class="house-index">Домик '+(i+1)+'</span></button><span class="house-caption">'+esc(label)+'</span><span class="house-chosen">'+(arr[i]?esc(colorName(arr[i])):'Не закрашен')+'</span></div>').join("");
+   $(target).innerHTML=labels.map((label,i)=>'<div class="paint-house-wrap"><button type="button" class="paint-house'+(arr[i]?' filled':'')+'" data-paint-stage="'+stage+'" data-index="'+i+'" aria-label="Домик '+(i+1)+': '+esc(label)+', '+colorName(arr[i])+'" title="'+esc(label)+'">'+houseSvg(i+1,arr[i])+'<span class="house-index">Домик '+(i+1)+'</span></button><span class="house-caption">'+esc(label)+'</span><span class="house-chosen">'+(arr[i]?esc(colorName(arr[i])):'Не закрашен')+'</span><span class="house-help">'+esc(stage==="emotions"?FEELING_HELP[i]:SITUATION_HELP[i])+'</span></div>').join("");
   }
   $("tenDescription").value=s.description;
  }
