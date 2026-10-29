@@ -264,10 +264,8 @@
   return {
    no:i+1,
    name:r.name||"У-"+String(i+1).padStart(2,"0"),
-   raw:z?z.raw:"–",
    t:t?.status==="ok"?t.t:"–",
-   status:r.attendance==="absent"?"Отсутствовал":z?"Обработан":"Не заполнен",
-   level:t?.status==="ok"?t.level:z?"Не определена":"–"
+   level:t?.status==="ok"?t.level:"–"
   };
  }
  function group(d,rows){
@@ -276,10 +274,10 @@
   if(isCDI){
    const body=ordered.map((r,i)=>{
     const x=cdiClassRow(d,r,i);
-    return '<tr><td>'+x.no+'</td><td>'+esc(x.name)+'</td><td>'+x.raw+'</td><td>'+x.t+'</td><td>'+esc(x.status)+'</td><td>'+esc(x.level)+'</td></tr>';
+    return '<tr><td>'+x.no+'</td><td>'+esc(x.name)+'</td><td>'+x.t+'</td><td>'+esc(x.level)+'</td></tr>';
    }).join("");
    return '<section class="psy-mspss-group psy-cdi-class-results"><h3>Результаты класса</h3>'+
-    '<div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th><th>Баллы</th><th>Т-балл</th><th>Статус</th><th>Интерпретация</th></tr></thead><tbody>'+body+'</tbody></table></div></section>';
+    '<div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th><th>Т-балл</th><th>Интерпретация</th></tr></thead><tbody>'+body+'</tbody></table></div></section>';
   }
   const head=phillips.scales.map(scale=>'<th scope="col">'+esc(scale.name)+'</th>').join("");
   const body=ordered.map((r,i)=>{
@@ -403,7 +401,7 @@
   };
   let body=para(title,"head")+para("Метолария · "+(mode==="class"?"Отчет группы / класса":"Индивидуальный отчет")+" · "+new Date().toLocaleDateString("ru-RU"));
   body+=para("Сводные результаты","sub");
-  const columns=isCDI?["№","Участник","Баллы","Т-балл","Статус","Интерпретация"]:mode==="class"?["№","Участник",...phillips.scales.map(s=>s.name)]:["Участник","Статус","Общий / 58","Процент"];
+  const columns=isCDI?["№","Участник","Т-балл","Интерпретация"]:mode==="class"?["№","Участник",...phillips.scales.map(s=>s.name)]:["Участник","Статус","Общий / 58","Процент"];
   const summary=people.map((r,i)=>{
    const z=scoring(d,r),n=isCDI&&z?norms.norm(z.raw,r.ageYears,r.sex):null;
    const base=[r.name||"У-"+String(i+1).padStart(2,"0"),describe(r)];
@@ -460,7 +458,7 @@
 
  function csv(d,rows){
   if(type(d)==="cdi"){
-   const header=["№","Участник","Баллы","Т-балл","Статус","Интерпретация"];
+   const header=["№","Участник","Т-балл","Интерпретация"];
    const data=rows.filter(r=>r.name?.trim()||done(d,r.answers)).map((r,i)=>{
     const v=cdiClassRow(d,r,i);
     return [v.no,v.name,v.raw,v.t,v.status,v.level];
