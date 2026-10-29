@@ -412,28 +412,35 @@ html.dark .library-page #modal.psy-mspss-example .psy-cp-sex-btn[data-cp-sex="m"
  font-weight:400;
  white-space:normal;
 }
-.library-page #modal.psy-mspss-example .psy-ph-class-results td.psy-ph-tone-ordinary{
- background:#e2f3e8!important;color:#174c30!important;
+/* Phillips: normal uncolored cells, level color behind the number only. */
+.library-page #modal.psy-mspss-example .psy-ph-class-results td.psy-ph-score{
+ background:transparent!important;
+ color:var(--ink,#193e2c)!important;
+ text-align:center!important;
+ vertical-align:middle!important;
 }
-.library-page #modal.psy-mspss-example .psy-ph-class-results td.psy-ph-tone-raised{
- background:#fff0c9!important;color:#715017!important;
+.library-page #modal.psy-mspss-example .psy-ph-class-results .psy-ph-score-mark{
+ display:inline-block!important;
+ padding:1px 3px!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ color:#141414!important;
+ font:700 11pt/1.15 "Times New Roman",Times,serif!important;
+ font-variant-numeric:tabular-nums;
 }
-.library-page #modal.psy-mspss-example .psy-ph-class-results td.psy-ph-tone-high{
- background:#fbe0e0!important;color:#8b2730!important;
+.library-page #modal.psy-mspss-example .psy-ph-class-results .psy-ph-score-mark.psy-ph-tone-ordinary{
+ background:#4BE878!important;
 }
-.library-page #modal.psy-mspss-example .psy-ph-class-results td.psy-ph-score:not(.psy-ph-tone-ordinary):not(.psy-ph-tone-raised):not(.psy-ph-tone-high){
- background:var(--paper,#fff);color:var(--ink,#193e2c);
+.library-page #modal.psy-mspss-example .psy-ph-class-results .psy-ph-score-mark.psy-ph-tone-raised{
+ background:#FFF14D!important;
 }
-html.dark .library-page #modal.psy-mspss-example .psy-ph-class-results td.psy-ph-tone-ordinary{
- background:#214833!important;color:#d4f8e3!important;
+.library-page #modal.psy-mspss-example .psy-ph-class-results .psy-ph-score-mark.psy-ph-tone-high{
+ background:#FF6868!important;
 }
-html.dark .library-page #modal.psy-mspss-example .psy-ph-class-results td.psy-ph-tone-raised{
- background:#574322!important;color:#fff0b6!important;
+html.dark .library-page #modal.psy-mspss-example .psy-ph-class-results .psy-ph-score-mark{
+ color:#141414!important;
 }
-html.dark .library-page #modal.psy-mspss-example .psy-ph-class-results td.psy-ph-tone-high{
- background:#61333c!important;color:#ffe0e0!important;
-}
-
 
 /* Nine source CDI T-score intervals. High-risk cells are RED, not pink. */
 .library-page #modal.psy-mspss-example .psy-cdi-class-results td.psy-cdi-tvalue{font-weight:750;font-variant-numeric:tabular-nums;text-align:center}
