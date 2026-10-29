@@ -856,7 +856,7 @@ function group(d,rows){
  const keys=(cfg(d).versions?.[0]?.scales||cfg(d).scales);
  return '<section class="psy-mspss-group psy-711-group psy-711-'+d.id+'"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th>'+keys.map(s=>'<th>'+esc(s.name)+'</th>').join("")+'</tr></thead><tbody>'+
  rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+'</td>'+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="psy-711-score-cell">'+(v?'<span class="psy-711-number psy-711-'+tone(d,v)+'">'+num(d,v)+'</span>':"")+'</td>'}).join("")+'</tr>'}).join("")+
- '</tbody></table></div>'+(d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Категория суицидального риска автоматически не присваивается.</p>':"")+analytical711Preview(d,rows)+'</section>';
+ '</tbody></table></div>'+(d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Цвет чисел обозначает только долю максимума соответствующего фактора (до 33%, 34-66%, свыше 66%), но не уровень суицидального риска. Категория риска автоматически не присваивается.</p>':d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">Цвета чисел показывают долю максимума шкалы, не клиническую норму.</p>':"")+analytical711Preview(d,rows)+'</section>';
 }
 function calculator(d,ctx){
  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],answers=r.answers||[],grade=gradeOf(rows),hasRoster=roster(rows),locked=!ready(d,r,rows,ctx.calcMode);
