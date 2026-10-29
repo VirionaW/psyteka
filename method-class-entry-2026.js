@@ -236,6 +236,19 @@
  function interpretation(p){return p>75?"Высокий показатель":p>50?"Повышенный показатель":"Не превышает 50%";}
  function progress(n,total){return '<div class="psy-mspss-track"><span style="width:'+Math.max(0,Math.min(100,n/total*100))+'%"></span></div>';}
  function palette(i){return ["psy-cp-purple","psy-cp-green","psy-cp-blue"][i%3];}
+ /* One-to-one color mapping for all nine source T-score interpretation intervals. */
+ function cdiTone(t){
+  if(!Number.isInteger(t))return "";
+  if(t>70)return "psy-cdi-tone-over70";
+  if(t>=66)return "psy-cdi-tone-66-70";
+  if(t>=61)return "psy-cdi-tone-61-65";
+  if(t>=56)return "psy-cdi-tone-56-60";
+  if(t>=45)return "psy-cdi-tone-45-55";
+  if(t>=40)return "psy-cdi-tone-40-44";
+  if(t>=35)return "psy-cdi-tone-35-39";
+  if(t>=30)return "psy-cdi-tone-30-34";
+  return "psy-cdi-tone-below30";
+ }
  function result(d,r){
   const n=done(d,r?.answers||[]),total=size(d),z=scoring(d,r);
   if(r?.attendance==="absent")return '<section class="psy-mspss-result psy-cp-absent"><h3>Ученик отсутствовал</h3><p>Ответы сохранены, но результаты не рассчитываются и не входят в сводку класса.</p></section>';
@@ -245,7 +258,7 @@
    return '<section class="psy-mspss-result psy-cdi-single-result"><h3>Общий результат CDI</h3>'+
     '<strong class="psy-mspss-mean">'+z.raw+' <small>/ 54</small></strong>'+
     progress(z.raw,54)+
-    '<p><b>Т-балл:</b> '+(t.status==="ok"?'<strong>'+t.t+'</strong> – '+esc(t.level):'не рассчитан – '+esc(t.message))+'</p>'+
+    '<p class="psy-cdi-individual-interpretation '+(t.status==="ok"?cdiTone(t.t):"")+'"><b>Т-балл:</b> '+(t.status==="ok"?'<strong>'+t.t+'</strong> – '+esc(t.level):'не рассчитан – '+esc(t.message))+'</p>'+
     '<p class="psy-mspss-small">Это одна суммарная шкала из 27 пунктов, отдельных баллов по «настроению», «самооценке» и другим областям здесь нет. Результат не является диагнозом.</p>'+
     '<p class="psy-mspss-small">Пункт 9 нужно просматривать по оригинальному тексту отдельно: цифровой код сам по себе не подтверждает и не исключает суицидальные мысли. При их наличии необходима очная оценка безопасности.</p></section>';
   }
@@ -300,7 +313,7 @@
   if(isCDI){
    const body=ordered.map((r,i)=>{
     const x=cdiClassRow(d,r,i);
-    const tone=x.t==="–"?"":x.t>=66?"psy-cdi-tone-high":x.t>=56?"psy-cdi-tone-raised":x.t>=45?"psy-cdi-tone-average":"psy-cdi-tone-low";
+    const tone=cdiTone(x.t);
     return '<tr><td>'+x.no+'</td><td>'+esc(x.name)+'</td><td class="psy-cdi-tvalue '+tone+'">'+x.t+'</td><td class="psy-cdi-interpretation '+tone+'">'+esc(x.level)+'</td></tr>';
    }).join("");
    return '<section class="psy-mspss-group psy-cdi-class-results"><h3>Результаты класса</h3>'+
