@@ -287,7 +287,7 @@
    return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td>'+
     phillips.scales.map((scale,j)=>'<td>'+(z?z.scales[j].percent.toFixed(1).replace(".",",")+"%":"–")+'</td>').join("")+'</tr>';
   }).join("");
-  return '<section class="psy-mspss-group"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div></section>';
+  return '<section class="psy-mspss-group psy-ph-class-results"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div></section>';
  }
  function calculator(d,ctx){
   const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],a=r.answers||[],n=done(d,a),total=size(d);
