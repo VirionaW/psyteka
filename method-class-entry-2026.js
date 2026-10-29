@@ -727,13 +727,13 @@ function guide(d){
  '<div class="psy-mspss-manual-actions"><button type="button" class="btn" data-711-print="guide">Без бланка</button><button type="button" class="btn primary" data-711-print="combined">С бланком</button></div></section>';
 }
 function sheet(d){
- return '<section class="psy-mspss-student psy-711-student"><div class="psy-mspss-blank-head"><div><h3>Бланк ученика</h3><p>'+(d.id==="eysenck-40"?"Редакция 2 – чередование шкал. Для версии 1 нужен отдельный бланк.":"Формулировки утверждений и графа ответа")+'</p></div><button type="button" class="btn primary" data-711-print="blank">Посмотреть и распечатать</button></div><p>'+esc(opts(d))+'</p>'+
+ return '<section class="psy-mspss-student psy-711-student"><div class="psy-mspss-blank-head"><div><h3>Бланк ученика</h3><p>'+(d.id==="eysenck-40"?"Редакция 2 – чередование шкал. Для версии 1 нужен отдельный бланк.":"Формулировки утверждений и графа ответа")+'</p></div><button type="button" class="btn primary" data-711-print="blank">Посмотреть и распечатать</button></div>'+(d.id==="lazarus-wcq50"?"<p><b>Оказавшись в трудной ситуации, я...</b></p>":"")+'<p>'+esc(opts(d))+'</p>'+
  '<div class="psy-mspss-blank-scroll"><table class="psy-mspss-blank-table psy-711-sheet"><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+
  items[d.id].map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(q)+'</td><td></td></tr>').join("")+'</tbody></table></div></section>';
 }
 function printable(d,mode){
  const md=cfg(d),b='<section class="'+(mode==="combined"?"newpage":"")+'"><h1>'+esc(md.name)+'</h1>'+(d.id==="eysenck-40"?"<p>Бланк версии 2</p>":"")+ '<p>Участник: ________________________ Класс: ______ Дата: ____________</p>'+
- '<p>'+esc(opts(d))+'</p><table><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+
+ '<p>'+(d.id==="lazarus-wcq50"?"Оказавшись в трудной ситуации, я...":"")+'</p><p>'+esc(opts(d))+'</p><table><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+
  items[d.id].map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(q)+'</td><td></td></tr>').join("")+'</tbody></table></section>';
  const g='<h1>'+esc(md.name)+'</h1><h2>Цель</h2><p>'+esc(md.goal)+'</p><h2>Инструкция</h2><p>'+esc(md.instruction)+'</p><h2>Подсчет</h2><p>'+esc(md.scoring)+'</p>';
  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>'+esc(md.name)+'</title><style>@page{size:A4;margin:14mm}body{font:10pt/1.4 Arial}table{width:100%;border-collapse:collapse}td,th{border:1px solid #9bb2a5;padding:5px;vertical-align:top}td:first-child{width:35px}td:last-child{width:70px}tr{break-inside:avoid}.newpage{break-before:page}</style></head><body>'+(mode==="blank"?b:g)+(mode==="combined"?b:"")+'</body></html>';
