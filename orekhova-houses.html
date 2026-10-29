@@ -2,79 +2,75 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#275e49">
-<meta name="description" content="Метолария. Методика «Домики» О. А. Ореховой: проведение, регистрация цветов, расчет показателей и протокол.">
-<title>Домики О. А. Ореховой | Метолария</title>
+<meta name="description" content="Метолария. Обработка методики «Домики» О. А. Ореховой: закрашивание прямоугольников и домиков, подсчет ВК и СО, Word.">
+<title>Обработка результатов «Домики» Ореховой | Метолария</title>
 <style>html:not(.psy-gate-open) body > :not(#psy-preview-gate){display:none!important}</style>
 <link rel="stylesheet" href="psy-preview-gate.css?v=20261029">
 <script defer src="psy-preview-gate.js?v=20261029"></script>
 <link rel="icon" type="image/svg+xml" href="brand-favicon.svg">
-<link rel="stylesheet" href="orekhova-houses.css?v=20261029b">
-<script src="orekhova-houses.js?v=20261029a" defer></script>
+<link rel="stylesheet" href="orekhova-houses.css?v=20261029flow2">
+<script src="orekhova-houses.js?v=20261029flow2" defer></script>
 </head>
 <body>
 <header class="topbar">
- <a class="brand" href="library.html"><img src="brand-mark.svg" alt="" width="42" height="42"><span><strong><span>Мето</span><em>лария</em></strong><small> / Домики Ореховой</small></span></a>
- <nav class="header-actions"><a class="light-button" href="library.html?area=school">Вернуться в библиотеку</a><button id="toggleTheme" type="button" class="light-button">Темная тема</button></nav>
+ <a class="brand" href="library.html?area=school&method=%D0%94%D0%BE%D0%BC%D0%B8%D0%BA%D0%B8%20%D0%9E.%20%D0%90.%20%D0%9E%D1%80%D0%B5%D1%85%D0%BE%D0%B2%D0%BE%D0%B9"><img src="brand-mark.svg" alt="" width="42" height="42"><span><strong><span>Мето</span><em>лария</em></strong><small>/ Обработка результатов</small></span></a>
+ <nav class="header-actions">
+ <a class="light-button" href="library.html?area=school&method=%D0%94%D0%BE%D0%BC%D0%B8%D0%BA%D0%B8%20%D0%9E.%20%D0%90.%20%D0%9E%D1%80%D0%B5%D1%85%D0%BE%D0%B2%D0%BE%D0%B9">Вернуться к методике</a>
+ <button id="toggleTheme" class="light-button" type="button">Темная тема</button>
+ </nav>
 </header>
 <main>
  <div class="intro">
-  <div><p class="eyebrow">Диагностика эмоциональной сферы · 8 цветов</p><h1>Методика «Домики» О. А. Ореховой</h1><p>Отдельное рабочее пространство для трех заданий: цветовая дорожка, чувства и школьные ситуации. Результаты рассчитываются после заполнения обязательных данных.</p></div>
-  <span class="age-pill">5-12 лет · около 20 минут</span>
+  <div><p class="eyebrow">Методика О. А. Ореховой · 8 цветов</p><h1>Домики – обработка результатов</h1><p>Перенеси цвета с бумажного бланка: сначала раскрась восемь прямоугольников, затем домики чувств и школьных ситуаций. Последним шагом запиши, кто живет в десятом домике.</p></div>
  </div>
- <nav class="tabs" aria-label="Разделы методики">
-  <button type="button" class="tab current" data-tab="portfolio" aria-selected="true">Портфолио</button>
-  <button type="button" class="tab" data-tab="guide" aria-selected="false">Методика / руководство</button>
-  <button type="button" class="tab" data-tab="blank" aria-selected="false">Бланк</button>
-  <button type="button" class="tab tab-score" data-tab="scoring" aria-selected="false">Обработка результатов <span id="tabStatus" class="status-dot pending"></span></button>
- </nav>
- <section class="page active" id="portfolio" aria-labelledby="portfolioTitle"><div class="panel">
-  <h2 id="portfolioTitle">Портфолио методики</h2>
-  <div class="profile-grid">
-   <div><span class="field-label">Автор</span><strong>О. А. Орехова</strong></div>
-   <div><span class="field-label">Редакция</span><strong>Восьмицветный школьный вариант</strong></div>
-   <div><span class="field-label">Возраст</span><strong>5-12 лет</strong></div>
-   <div><span class="field-label">Время</span><strong>Около 20 минут</strong></div>
-   <div><span class="field-label">Форма</span><strong>Индивидуальная или малая группа</strong></div>
-   <div><span class="field-label">Материалы</span><strong>Лист с тремя заданиями и 8 цветных карандашей</strong></div>
+ <section class="panel workspace-meta">
+  <div class="section-top"><div><h2>Участники</h2><p class="muted">Добавь хотя бы одного ребенка, чтобы начать обработку.</p></div><div class="mode-switch" aria-label="Режим обработки"><button type="button" class="active" data-mode="one">Один участник</button><button type="button" data-mode="group">Группа / класс</button></div></div>
+  <div class="participants-setup">
+   <label>Класс / группа (если обрабатываешь группу)<input id="groupName" maxlength="80" placeholder="Например, 1А"></label>
+   <div class="add-student"><label>Фамилия и имя ребенка<input id="newName" maxlength="100" placeholder="Фамилия Имя"></label><label>Возраст<input id="newAge" type="number" min="5" max="12" inputmode="numeric" placeholder="5-12"></label><button class="primary" id="addStudent" type="button">Добавить</button></div>
   </div>
-  <h3>Цель</h3><p>Изучение эмоционального состояния ребенка, дифференциации социальных эмоций и эмоционального отношения к школьным ситуациям.</p>
-  <h3>Что анализируется</h3><p>Порядок цветовых предпочтений; вегетативный коэффициент (ВК); суммарное отклонение от аутогенной нормы (СО); ассоциации для пяти пар социальных эмоций и отношение к себе, школе, учителю, одноклассникам и занятиям.</p>
-  <p class="muted">Результаты проективной методики интерпретирует специалист с учетом беседы и других данных. Цвет сам по себе не является диагнозом.</p>
- </div><div class="footer-action"><button class="primary" data-tab="scoring" type="button">Обработка результатов</button></div></section>
- <section class="page" id="guide"><div class="panel">
-  <div class="section-top"><h2>Методика / руководство</h2><div class="action-row"><button type="button" data-print="guide" class="light-button">Без бланка</button><button type="button" data-print="combined" class="light-button">С бланком</button></div></div>
-  <h3>Подготовка</h3><p>Подготовьте бланк и восемь одинаковых по форме карандашей: синий, зеленый, красный, желтый, фиолетовый, коричневый, серый и черный. Выполняйте все три задания в указанном порядке. Оставляйте ребенку свободу выбора.</p>
-  <h3>Задание 1. Цветовая дорожка</h3><p>Предложите раскрасить восемь прямоугольников: сначала наиболее приятным цветом, затем наиболее приятным из оставшихся и так далее. Использованный карандаш каждый раз откладывается. Повторять цвета нельзя.</p>
-  <h3>Задание 2. Домики чувств</h3><p>Читайте названия чувств по порядку: счастье, горе, справедливость, обида, дружба, ссора, доброта, злоба, скука, восхищение. Ребенок выбирает подходящий цвет для каждого домика. Здесь цвета могут повторяться.</p>
-  <h3>Задание 3. Домики ситуаций</h3><p>Читайте названия ситуаций в том порядке, который указан в рабочем интерфейсе. Десятый домик ребенок придумывает сам; запишите его ответ. Цвета могут повторяться.</p>
-  <h3>Обработка</h3><p><strong>ВК</strong> = (18 - место красного - место синего) / (18 - место синего - место зеленого). Места считаются от 1 до 8.</p>
-  <p><strong>СО</strong> = сумма модулей разностей между местами восьми цветов у ребенка и в аутогенной последовательности: красный, желтый, зеленый, фиолетовый, синий, коричневый, серый, черный. Возможны четные значения от 0 до 32.</p>
-  <div class="ranges"><p><strong>ВК:</strong> 0-0,50 – признаки выраженной усталости; 0,51-0,91 – компенсируемая усталость; 0,92-2,00 – оптимальная работоспособность. Значения выше 2,00 не имеют категории в выбранном источнике.</p><p><strong>СО:</strong> меньше 10 – преобладание положительных эмоций; 10-18 – обычный эмоциональный фон; больше 20 – преобладание отрицательных эмоций. Для значения 20 в использованном описании категория не задана.</p></div>
-  <h3>Качественный анализ</h3><p>Сопоставьте пары счастье/горе, справедливость/обида, дружба/ссора, доброта/злоба, скука/восхищение. Затем сравните цвета школьных ситуаций с цветами эмоций и местами этих цветов в дорожке. Совпадения и контрасты – повод для уточняющей беседы, а не автоматического заключения.</p>
-  <p class="source">Методический источник для выбранной редакции: <a href="https://elib.kspu.ru/get/174453" target="_blank" rel="noopener noreferrer">материал КГПУ, приложение В, с. 46-50</a>.</p>
- </div><div class="footer-action"><button class="primary" data-tab="scoring" type="button">Обработка результатов</button></div></section>
- <section class="page" id="blank"><div class="panel">
-  <div class="section-top"><div><h2>Бланк ребенка</h2><p class="muted">Только номера и контуры. На бланке не печатаются интерпретации и названия чувств.</p></div><button type="button" data-print="blank" class="primary">Распечатать А4</button></div>
-  <div id="blankPreview" class="blank-preview"></div>
- </div><div class="footer-action"><button class="primary" data-tab="scoring" type="button">Обработка результатов</button></div></section>
- <section class="page" id="scoring">
-  <div class="panel workspace-meta"><div class="section-top"><div><h2>Обработка результатов</h2><p class="muted">Сначала добавьте участника. Пустые ответы не считаются нулем.</p></div><div class="mode-switch"><button type="button" data-mode="one" class="active">Один участник</button><button type="button" data-mode="group">Группа / класс</button></div></div>
-   <div class="participants-setup"><label>Класс / группа (для группового режима)<input id="groupName" placeholder="Например, 1А" maxlength="80"></label><div class="add-student"><label>Фамилия и имя ребенка<input id="newName" maxlength="100" placeholder="Фамилия Имя"></label><label>Возраст, лет<input id="newAge" type="number" min="5" max="12" inputmode="numeric" placeholder="5-12"></label><button class="primary" id="addStudent" type="button">Добавить</button></div></div>
-   <p class="form-error" id="formError" role="alert"></p><div id="people" class="people" aria-label="Участники"></div>
-  </div>
-  <div id="workArea" hidden>
-   <div class="panel student-bar"><div><span class="field-label">Сейчас заполняется</span><h2 id="currentName"></h2><span id="studentProgress" class="completion pending"></span></div><div class="action-row"><button class="light-button" id="copyAnswers" type="button">Копировать ответы</button><button class="light-button" id="pasteAnswers" type="button">Вставить ответы</button><button class="light-button danger" id="removeStudent" type="button">Удалить участника</button></div></div>
-   <div class="panel"><div class="section-top"><div><h2>1. Цветовая дорожка</h2><p class="muted">Нажимайте цвета в порядке предпочтения (один цвет – один раз).</p></div><button class="light-button" id="resetRanking" type="button">Сбросить дорожку</button></div><div id="ranking" class="ranking"></div><div class="palette" id="rankPalette"></div></div>
-   <div class="panel"><h2>2. Домики чувств</h2><p class="muted">Повторять цвет можно. Выберите цвет для каждого чувства.</p><div id="emotionRows" class="color-rows"></div></div>
-   <div class="panel"><h2>3. Домики ситуаций</h2><p class="muted">Нажмите цвет напротив каждой ситуации. Для десятого домика запишите объяснение ребенка.</p><div id="situationRows" class="color-rows"></div><label class="extra-label">Описание десятого домика<input id="tenDescription" maxlength="240" placeholder="Что придумал ребенок"></label></div>
-   <div class="panel report" id="report" aria-live="polite"></div>
-  </div>
-  <div id="groupReport" class="panel group-report" hidden></div>
+  <p class="form-error" id="formError" role="alert"></p><div id="people" class="people" aria-label="Участники"></div>
  </section>
+ <div id="workArea" hidden>
+  <section class="panel student-bar">
+   <div><span class="field-label">Текущий участник</span><h2 id="currentName"></h2><span id="studentProgress" class="completion pending"></span></div>
+   <div class="action-row"><button type="button" class="light-button" id="copyAnswers">Копировать ответы</button><button type="button" class="light-button" id="pasteAnswers">Вставить ответы</button><button type="button" class="light-button danger" id="removeStudent">Удалить участника</button></div>
+  </section>
+  <nav class="wizard-steps" aria-label="Этапы обработки">
+   <button type="button" class="wizard-step current" data-workstep="1"><span>1</span>Цветовая дорожка</button>
+   <button type="button" class="wizard-step" data-workstep="2"><span>2</span>Домики чувств</button>
+   <button type="button" class="wizard-step" data-workstep="3"><span>3</span>Домики ситуаций</button>
+   <button type="button" class="wizard-step" data-workstep="4"><span>4</span>Результаты</button>
+  </nav>
+  <section class="panel paint-tools" id="palettePanel">
+    <div class="section-top"><div><h2>Выбери цвет</h2><p class="muted">Нажми на карандаш, затем на прямоугольник или домик. Фигура закрасится целиком. Цвет можно поменять.</p></div><div class="active-color" id="activeColorText"></div></div>
+    <div class="palette" id="rankPalette" role="group" aria-label="Палитра восьми цветов"></div>
+  </section>
+  <section class="panel worksheet-step current" data-step="1" id="step1">
+    <div class="section-top"><div><p class="step-kicker">Задание 1 из 3</p><h2>Цветовая дорожка</h2><p class="muted">Восемь прямоугольников – от самого приятного цвета до наименее приятного. Каждый цвет используется один раз. Нажимай на прямоугольники, чтобы закрасить их.</p></div><button class="light-button" id="resetRanking" type="button">Очистить дорожку</button></div>
+    <div id="ranking" class="ranking painting-rectangles" aria-label="Восемь прямоугольников цветовой дорожки"></div>
+  </section>
+  <section class="panel worksheet-step" data-step="2" id="step2">
+   <p class="step-kicker">Задание 2 из 3</p><h2>Домики чувств</h2><p class="muted">Закрась 10 домиков. В отличие от дорожки, здесь один цвет может встречаться в нескольких домиках.</p><div id="emotionRows" class="painting-houses"></div>
+  </section>
+  <section class="panel worksheet-step" data-step="3" id="step3">
+   <p class="step-kicker">Задание 3 из 3</p><h2>Домики ситуаций</h2><p class="muted">Закрась домики школьных ситуаций теми цветами, которые выбрал ребенок. Повторы разрешены.</p><div id="situationRows" class="painting-houses"></div>
+   <div class="last-house"><label for="tenDescription">Что ребенок придумал для последнего домика?</label><p class="muted">Запиши его объяснение: кто живет в домике № 10 и что там происходит.</p><textarea id="tenDescription" rows="3" maxlength="1000" placeholder="В последнем домике живет…"></textarea></div>
+  </section>
+  <section class="worksheet-step" data-step="4" id="step4">
+   <div class="panel report" id="report" aria-live="polite"></div>
+   <div class="panel group-report" id="groupReport" hidden></div>
+  </section>
+  <div class="wizard-nav">
+   <button id="prevStep" class="light-button" type="button">Назад</button>
+   <span id="stepHint" role="status" aria-live="polite"></span>
+   <button id="nextStep" class="primary" type="button">Следующий этап</button>
+  </div>
+ </div>
 </main>
-<footer><span>Метолария · Рабочие данные не передаются на сервер этой страницы.</span><a href="library.html">Библиотека</a></footer>
+<footer><span>Метолария · Обработка на этом устройстве. Не используйте общедоступный компьютер для хранения персональных данных.</span><a href="library.html?area=school">Библиотека</a></footer>
 <div id="printRoot" hidden></div>
 </body>
 </html>
