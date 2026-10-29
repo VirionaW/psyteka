@@ -791,7 +791,7 @@ function report(d,rows,mode,index){
  if(mode!=="class"&&!scored(d,people[0]))return false;
  const x=s=>String(s??"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F<>&"']/g,ch=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;","'":"&apos;"}[ch]||""));
  const para=s=>'<w:p><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">'+x(s)+'</w:t></w:r></w:p>';
- const cel=(s,color,head)=>'<w:tc><w:tcPr><w:tcW w:w="auto" w:type="auto"/>'+(color?'<w:shd w:val="clear" w:color="auto" w:fill="'+color+'"/>':"")+'</w:tcPr><w:p><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="18"/>'+(head?"<w:b/>":"")+'</w:rPr><w:t xml:space="preserve">'+x(s)+'</w:t></w:r></w:p></w:tc>';
+ const cel=(s,color,head)=>'<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/>'+(color?'<w:shd w:val="clear" w:color="auto" w:fill="'+color+'"/>':"")+'</w:tcPr><w:p><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="18"/>'+(head?"<w:b/>":"")+'</w:rPr><w:t xml:space="preserve">'+x(s)+'</w:t></w:r></w:p></w:tc>';
  const table=(matrix,fill=[])=>'<w:tbl><w:tblPr><w:tblBorders>'+["top","bottom","left","right","insideH","insideV"].map(k=>'<w:'+k+' w:val="single" w:sz="4"/>').join("")+'</w:tblBorders></w:tblPr>'+
  matrix.map((row,i)=>'<w:tr>'+row.map((v,j)=>cel(v,fill[i-1]?.[j],i===0)).join("")+'</w:tr>').join("")+'</w:tbl>';
  const scales=cfg(d).scales||cfg(d).versions?.[0]?.scales||[],rowsData=[],fill=[];
