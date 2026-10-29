@@ -468,6 +468,15 @@
  }
 
  function csv(d,rows){
+  if(type(d)==="cdi"){
+   const header=["№","Участник","Баллы","Т-балл","Статус","Интерпретация"];
+   const data=rows.filter(r=>r.name?.trim()||done(d,r.answers)).map((r,i)=>{
+    const v=cdiClassRow(d,r,i);
+    return [v.no,v.name,v.raw,v.t,v.status,v.level];
+   });
+   const escapeCSV=x=>'"'+String(x??"").replace(/"/g,'""')+'"';
+   return "\uFEFF"+[header,...data].map(row=>row.map(escapeCSV).join(";")).join("\r\n");
+  }
   const head=["Ученик","Статус",...(type(d)==="cdi"?["Возраст","Пол","Сырой балл","Т-балл"]:["Общий балл","%",...phillips.scales.map(x=>x.name)]),...Array.from({length:size(d)},(_,i)=>"Пункт "+(i+1))];
   const records=[head,...alpha(rows).map((r,i)=>{const z=scoring(d,r),t=z&&type(d)==="cdi"?norms.norm(z.raw,r.ageYears,r.sex):null;
    const extras=type(d)==="cdi"?[r.ageYears??"",r.sex||"",z?.raw??"",t?.t??""]:[z?.raw??"",z?.percent.toFixed(1)??"",...phillips.scales.map((s,j)=>z?.scales[j].percent.toFixed(1)??"")];
