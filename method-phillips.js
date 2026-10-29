@@ -101,13 +101,17 @@
   return html;
  }
  function table(rows){
-  const head=SCALES.map(scale=>'<th scope="col">'+esc(scale.name)+'</th>').join("");
+  const head=SCALES.map(scale=>'<th scope="col">'+esc(scale.name+", %")+'</th>').join("");
   const body=rows.filter(r=>r.name?.trim()||count(r.answers)).map((r,i)=>{
    const z=r.attendance==="absent"?null:score(DATA,r.answers);
-   return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td>'+
-    SCALES.map((scale,k)=>'<td>'+(z?fmt(z.scales[k].percent)+"%":"–")+'</td>').join("")+'</tr>';
+   return '<tr><td class="psy-ph-number">'+(i+1)+'</td><td class="psy-ph-name">'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td>'+
+    SCALES.map((scale,k)=>{
+     if(!z)return '<td class="psy-ph-score"></td>';
+     const p=z.scales[k].percent;
+     return '<td class="psy-ph-score psy-ph-tone-'+(p>75?"high":p>50?"raised":"ordinary")+'">'+Math.round(p)+'</td>';
+    }).join("")+'</tr>';
   }).join("");
-  return '<div class="psy-ph-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>';
+  return '<div class="psy-ph-scroll psy-ph-class-results"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>';
  }
  function calculator(d,ctx){
   const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0];
@@ -152,11 +156,11 @@
    save("Phillips_58_protocol.html",'<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Филлипс · протокол</title><style>@page{size:A4;margin:15mm}body{font:14px/1.55 Arial;color:#24382e;max-width:780px;margin:20px auto}h1{font-size:22px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #9cb5a5;padding:8px;text-align:left}.small{font-size:12px;color:#5f7265}</style></head><body>'+body+'</body></html>',"text/html;charset=utf-8");
   });
   document.getElementById("phDownloadCsv")?.addEventListener("click",()=>{
-   const head=["№","Участник",...SCALES.map(scale=>scale.name)];
+   const head=["№","Участник",...SCALES.map(scale=>scale.name+", %")];
    const out=[head];
    rows.filter(r=>r.name?.trim()||count(r.answers)).forEach((x,i)=>{
     const z=x.attendance==="absent"?null:score(d,x.answers);
-    out.push([i+1,x.name||"У-"+String(i+1).padStart(2,"0"),...SCALES.map((s,k)=>z?fmt(z.scales[k].percent)+"%":"")]);
+    out.push([i+1,x.name||"У-"+String(i+1).padStart(2,"0"),...SCALES.map((s,k)=>z?Math.round(z.scales[k].percent):"")]);
    });
    save("Phillips_school_anxiety_class.csv",csv(out),"text/csv;charset=utf-8");
   });
