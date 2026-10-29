@@ -300,7 +300,8 @@
   if(isCDI){
    const body=ordered.map((r,i)=>{
     const x=cdiClassRow(d,r,i);
-    return '<tr><td>'+x.no+'</td><td>'+esc(x.name)+'</td><td>'+x.t+'</td><td>'+esc(x.level)+'</td></tr>';
+    const tone=x.t==="–"?"":x.t>=66?"psy-cdi-tone-high":x.t>=56?"psy-cdi-tone-raised":x.t>=45?"psy-cdi-tone-average":"psy-cdi-tone-low";
+    return '<tr><td>'+x.no+'</td><td>'+esc(x.name)+'</td><td class="psy-cdi-tvalue '+tone+'">'+x.t+'</td><td class="psy-cdi-interpretation '+tone+'">'+esc(x.level)+'</td></tr>';
    }).join("");
    return '<section class="psy-mspss-group psy-cdi-class-results"><h3>Результаты класса</h3>'+
     '<div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th><th>Т-балл</th><th>Интерпретация</th></tr></thead><tbody>'+body+'</tbody></table></div></section>';
