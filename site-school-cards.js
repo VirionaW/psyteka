@@ -272,6 +272,6 @@
   if(/проб|тест|интеллект|табличн|нейропсих/.test(type))return "test";
   return "other";
  }
- specific["Домики О. А. Ореховой"]={type:"Проективная методика",age:"Старший дошкольный и младший школьный возраст",count:"3 задания, 8 цветов"};
+ specific["Домики О. А. Ореховой"]={...specific["Домики О. А. Ореховой"],age:"4-12 лет",ageStatus:"age",ageSource:"https://imaton.com/catalog/metodika_domiki_orehovoj_o_a/",ageEvidence:"Издатель методики указывает возраст 4-12 лет; для 4-5 и 5-12 лет предусмотрены разные бланки."};
  window.PSY_SCHOOL_CARDS={compose,specific,names:Object.keys(specific),classify,kindOptions};
 })();
