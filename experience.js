@@ -9,6 +9,7 @@ let copiedAssessmentAnswers=null;
 const methodSessions={};
 
 let activeSavedAssessmentId=null,activeSavedAssessmentTitle="";
+let savedModeRecords={one:{id:null,title:"",baseline:null},class:{id:null,title:"",baseline:null}};
 async function saveCurrentAssessment(){
  const cloud=window.PSY_CLOUD;
  if(!methodNow||!cloud){alert("Войдите в аккаунт для облачного сохранения.");return}
@@ -27,7 +28,9 @@ async function saveCurrentAssessment(){
     id:activeSavedAssessmentId,title,methodName:methodNow.name,
     snapshot:{calcMode,rowIndex,rows:rows.map(r=>({...r,answers:Array.isArray(r.answers)?r.answers.slice():[]}))}
    });
-   activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=title;close();
+   activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=title;
+   savedModeRecords[calcMode]={id:data.id,title,baseline:JSON.stringify(rows)};
+   close();
    window.dispatchEvent(new CustomEvent("psy-assessment-saved",{detail:{id:data.id,methodName:methodNow.name,calcMode}}));
    const btn=document.getElementById("cpSaveBottom")||document.getElementById("mspssSaveBottom");
    if(btn){btn.textContent="Сохранено ✓";btn.classList.add("psy-is-saved")}
@@ -870,8 +873,12 @@ function bindControls(){
  document.querySelectorAll('[data-cmode]').forEach(b=>b.onclick=()=>{
  modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
  const nextMode=b.dataset.cmode;
- if(nextMode!==calcMode){activeSavedAssessmentId=null;activeSavedAssessmentTitle="";}
- calcMode=nextMode;rows=modeSnapshots[calcMode];rowIndex=modeIndices[calcMode]||0;setTab("score");
+ if(nextMode===calcMode)return;
+ savedModeRecords[calcMode]={...savedModeRecords[calcMode],id:activeSavedAssessmentId,title:activeSavedAssessmentTitle};
+ calcMode=nextMode;rows=modeSnapshots[calcMode];rowIndex=modeIndices[calcMode]||0;
+ activeSavedAssessmentId=savedModeRecords[calcMode]?.id||null;
+ activeSavedAssessmentTitle=savedModeRecords[calcMode]?.title||"";
+ setTab("score");
 });
  $("#participantSelect")?.addEventListener('change',e=>{rowIndex=+e.target.value;setTab("score")});
  $("#participantName")?.addEventListener('input',e=>{rows[rowIndex].name=e.target.value;const sel=$("#participantSelect");sel.options[rowIndex].text=(rowIndex+1)+'. '+(e.target.value||'Участник '+(rowIndex+1))});
@@ -958,13 +965,16 @@ function openMethod(m){
  if(window.PSY_PMPK_OBJECT56?.catalog?.some(x=>x.title===m.name)){const item=window.PSY_PMPK_OBJECT56.catalog.find(x=>x.title===m.name);window.PSY_PMPK_OBJECT56.open(item.object56Id);return;}
  if(window.PSY_PMPK_IVANOVA?.has?.(m.name)){window.PSY_PMPK_IVANOVA.open();return;}
  if(window.PSY_PMPK_PROVERBS?.has?.(m.name)){window.PSY_PMPK_PROVERBS.open();return;}
- if(methodNow?.name){methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex}};
+ if(methodNow?.name){methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords}};
  methodNow=m;tabNow='overview';activeSavedAssessmentId=null;activeSavedAssessmentTitle='';
  const saved=methodSessions[m.name];
  calcMode=saved?.calcMode||'one';
  modeSnapshots=saved?.modeSnapshots||{one:[{name:"",answers:[]}],class:[{name:"",answers:[]}]};
  modeIndices=saved?.modeIndices||{one:0,class:0};
  rows=saved?.rows||modeSnapshots[calcMode];rowIndex=saved?.rowIndex||0;
+ savedModeRecords=saved?.savedModeRecords||{one:{id:null,title:"",baseline:null},class:{id:null,title:"",baseline:null}};
+ activeSavedAssessmentId=savedModeRecords[calcMode]?.id||null;
+ activeSavedAssessmentTitle=savedModeRecords[calcMode]?.title||"";
  const d=DETAILS[m.name];$('#modalTitle').textContent=m.name;$('#modalAuthor').textContent='Сведения о методике';
  $('#modalBody').innerHTML='';
  const header=$('#modal').querySelector('.modalhead');
@@ -1045,16 +1055,19 @@ window.PSY_PROCESSING_NOTEBOOK={
   const data=await window.PSY_CLOUD.getAssessment(id);
   if(data.method_name!==methodNow.name)throw Error("Сохраненный результат относится к другой методике.");
   if(data.snapshot.calcMode!==calcMode)throw Error("Режим сохранения не соответствует выбранному режиму обработки.");
-  if(activeSavedAssessmentId!==id&&rows.some(r=>r.name?.trim()||(r.answers||[]).some(v=>v!==""&&v!==null&&v!==undefined))){
+  const baseline=savedModeRecords[calcMode]?.baseline;
+  const edited=baseline!==null&&baseline!==undefined?JSON.stringify(rows)!==baseline:rows.some(r=>r.name?.trim()||(r.answers||[]).some(v=>v!==""&&v!==null&&v!==undefined));
+  if(activeSavedAssessmentId!==id&&edited){
    if(!confirm("Открыть сохраненный результат? Несохраненные изменения текущей обработки будут потеряны."))return false;
   }
   modeSnapshots[calcMode]=rows;
   modeIndices[calcMode]=rowIndex;
   activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=data.title;
   rows=data.snapshot.rows.length?data.snapshot.rows:[{name:"",answers:[]}];
+  savedModeRecords[calcMode]={id:data.id,title:data.title,baseline:JSON.stringify(rows)};
   rowIndex=Math.max(0,Math.min(rows.length-1,data.snapshot.rowIndex||0));
   modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
-  methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex};
+  methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords};
   setTab("score");
   return true;
  }
@@ -1085,9 +1098,10 @@ async function openRequestedLibraryMethod(){
   if(!data||data.method_name!==found.name)throw Error("Методика не совпадает с сохраненной");
   activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=data.title;
   calcMode=data.snapshot.calcMode;rows=data.snapshot.rows.length?data.snapshot.rows:[{name:"",answers:[]}];
+  savedModeRecords[calcMode]={id:data.id,title:data.title,baseline:JSON.stringify(rows)};
   rowIndex=Math.max(0,Math.min(rows.length-1,data.snapshot.rowIndex));
   modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
-  methodSessions[found.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex};
+  methodSessions[found.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords};
   setTab("score");
  }catch(e){alert("Не удалось открыть сохраненное обследование: "+e.message)}
 }
