@@ -284,7 +284,7 @@
  const alpha=rows=>rows.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||"","ru",{sensitivity:"base"}));
  const gradeAge=g=>Number.isInteger(Number(g))&&Number(g)>=1&&Number(g)<=11?Number(g)+6:null;
  const classGrade=rows=>rows.find(r=>Number.isInteger(Number(r.schoolGrade))&&Number(r.schoolGrade)>=1&&Number(r.schoolGrade)<=11)?.schoolGrade||null;
- const cdiReady=(d,r,rows,mode)=>type(d)!=="cdi"||!!(gradeAge(mode==="class"?classGrade(rows):r?.schoolGrade)&&["m","f"].includes(r?.sex)&&r?.attendance!=="absent");
+ const cdiReady=(d,r,rows,mode)=>r?.attendance!=="absent"&&(type(d)!=="cdi"||!!(gradeAge(mode==="class"?classGrade(rows):r?.schoolGrade)&&["m","f"].includes(r?.sex)));
  function cdiClassRow(d,r,i){
   const z=scoring(d,r),n=z?norms.norm(z.raw,r.ageYears,r.sex):null;
   const scales=z?norms.scaleScores(r.answers):null;
@@ -395,7 +395,7 @@
  function instruction(d){
   const isCDI=type(d)==="cdi";
   const intro=isCDI?"Опросник содержит 27 наборов из трех утверждений. Ребенок выбирает одно утверждение, соответствующее его состоянию за последние две недели. Порядок утверждений не всегда совпадает с порядком баллов.":"Опросник включает 58 вопросов о переживаниях в школе. На каждый вопрос нужно ответить «Да» или «Нет».";
-  const key=isCDI?"Сложите 27 выбранных баллов 0-2 (общий сырой балл 0-54) и отдельно суммы по пяти шкалам. Переведите каждый результат в Т-балл по таблице соответствующей шкалы с учетом пола и возраста (7-12 или 13-17 лет). Без экстраполяции.":"За каждый ответ, не совпавший с ключом, начисляется 1 балл; максимум 58. Восемь факторов определяются по соответствующим номерам. В обработке выделяются восемь факторов школьной тревожности.";
+  const key=isCDI?"Сложите 27 выбранных баллов 0-2 (общий сырой балл 0-54) и отдельно суммы по пяти шкалам. Переведите каждый результат в Т-балл по таблице соответствующей шкалы с учетом пола и возраста (7-12 или 13-17 лет). При отсутствии точного значения Т-балл определяется ориентировочно по ближайшему сырому значению, со знаком ≈.":"За каждый ответ, не совпавший с ключом, начисляется 1 балл; максимум 58. Восемь факторов определяются по соответствующим номерам. В обработке выделяются восемь факторов школьной тревожности.";
   const pupil=isCDI?"Прочитай по три утверждения в каждом пункте и отметь то, которое лучше всего описывает твое самочувствие за последние две недели. Здесь нет правильных и неправильных ответов.":"Прочитай вопросы о том, как ты чувствуешь себя в школе. Для каждого вопроса выбери «Да» или «Нет». Здесь нет правильных и неправильных ответов.";
   return '<section class="psy-mspss-section psy-mspss-manual"><div class="psy-mspss-manual-bar"><h3>Методика и руководство</h3><div class="psy-mspss-manual-actions"><button class="btn" type="button" data-cp-print="guide">Без бланка</button><button class="btn primary" type="button" data-cp-print="combined">С бланком</button></div></div>'+
    '<h3>Цель</h3><p>'+esc(d.goal)+'</p><h3>Описание методики</h3><p>'+esc(intro)+'</p>'+
@@ -522,9 +522,17 @@
       [...base,z?.raw??"–",z?z.percent.toFixed(1)+"%":"–"];
   });
   body+=table(columns,summary,isCDI?"cdi":mode==="class"?"scores":"",
-   isCDI?people.map(r=>{const z=scoring(d,r),n=z?norms.norm(z.raw,r.ageYears,r.sex):null;const values=z?norms.scaleScores(r.answers).map(x=>{const v=norms.scaleNorm(x.id,x.raw,r.ageYears,r.sex);return v.status==="ok"?v.t:null}):norms.scales.map(()=>null);return [n?.status==="ok"?n.t:null,...values]}):
+   isCDI?people.map(r=>{const z=scoring(d,r),n=z?norms.norm(z.raw,r.ageYears,r.sex):null;const values=z?norms.scaleScores(r.answers).map(x=>{const v=norms.scaleNorm(x.id,x.raw,r.ageYears,r.sex);return cdiUsable(v)?v.t:null}):norms.scales.map(()=>null);return [cdiUsable(n)?n.t:null,...values]}):
    mode==="class"?people.map(r=>scoring(d,r)?.scales.map(s=>s.percent)||[]):[]);
   if(isCDI){
+   body+=para("Знак ≈ – ориентировочный Т-балл по ближайшему опубликованному сырому значению, а не точная норма.");
+   for(const person of people){
+    const z=scoring(d,person);
+    if(!z)continue;
+    const overall=norms.norm(z.raw,person.ageYears,person.sex),factors=norms.scaleScores(person.answers)||[];
+    const estimated=[["Общий показатель",overall],...factors.map(x=>[x.name,norms.scaleNorm(x.id,x.raw,person.ageYears,person.sex)])].filter(x=>x[1]?.status==="approximate");
+    if(estimated.length)body+=para((person.name||"Участник")+": "+estimated.map(x=>x[0]+": "+x[1].message).join("; "));
+   }
    body+=para("Расшифровка Т-баллов","sub");
    body+=table(["Т-балл","Интерпретация"],
     cdiLegend.map(x=>[x.range,x.level]),"cdi-legend",cdiLegend.map(x=>x.min));
