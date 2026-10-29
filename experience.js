@@ -171,7 +171,7 @@ function setTab(name){
    body.innerHTML='<div class="notice">Для выбранной возрастной версии в Метоларии нет проверенного бланка или стимулов. Не используйте материалы другой редакции. Откройте вкладку «Методика / руководство» и перейдите к опубликованному источнику.</div>';
  }
  if(name==='instruction'&&window.PSY_GUIDE_STANDARD){
-   if(!['phillips58','semester2026','mspss'].includes(DETAILS[methodNow.name]?.workflow))body.innerHTML=window.PSY_GUIDE_STANDARD.supplement(methodNow.name,DETAILS[methodNow.name],methodNow,body.innerHTML);
+   if(!['phillips58','semester2026','mspss','orekhovaHouses8'].includes(DETAILS[methodNow.name]?.workflow))body.innerHTML=window.PSY_GUIDE_STANDARD.supplement(methodNow.name,DETAILS[methodNow.name],methodNow,body.innerHTML);
    window.PSY_GUIDE_STANDARD.bind(()=>setTab('instruction'));
  }
  body.scrollTop=0;
@@ -360,6 +360,7 @@ function viewOverview(m){
 }
 
 function viewInstruction(m){
+ if(DETAILS[m.name]?.workflow==='orekhovaHouses8')return window.PSY_OREKHOVA_PORTFOLIO.guide();
  if(DETAILS[m.name]?.workflow==='semester2026')return window.PSY_SEMESTER_2026.instruction(DETAILS[m.name]);
   if(DETAILS[m.name]?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.instruction(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialToolkit')return window.PSY_SPECIAL_TOOLKIT.instruction(DETAILS[m.name]);
@@ -497,6 +498,7 @@ function materials(m,blank){
  return '<ul>'+d.questions.map(q=>'<li>'+escapeHTML(q)+'</li>').join('')+'</ul>';
 }
 function viewMaterials(m){
+ if(DETAILS[m.name]?.workflow==='orekhovaHouses8')return window.PSY_OREKHOVA_PORTFOLIO.materials();
  if(DETAILS[m.name]?.workflow==='semester2026')return window.PSY_SEMESTER_2026.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='verifiedSix')return window.PSY_REQUESTED_SIX.materials(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialToolkit')return window.PSY_SPECIAL_TOOLKIT.materials(DETAILS[m.name]);
@@ -927,6 +929,7 @@ function makePrintPage(d,blank,combined=false){
  return head+(blank?blankHtml:guide)+(combined?blankHtml:'')+'</body></html>';
 }
 function printMaterial(blank){
+ if(DETAILS[methodNow?.name]?.workflow==='orekhovaHouses8'){window.PSY_OREKHOVA_PORTFOLIO.print(blank);return;}
  if(DETAILS[methodNow?.name]?.workflow==='specialToolkit'){window.PSY_SPECIAL_TOOLKIT.print(DETAILS[methodNow.name],blank);return;}
  if(DETAILS[methodNow?.name]?.workflow==='specialSheet'){window.PSY_SPECIAL.print(DETAILS[methodNow.name],blank);return;}
  if(DETAILS[methodNow?.name]?.workflow==='preschoolSheet'){window.PSY_PRESCHOOL.print(DETAILS[methodNow.name],blank);return;}
@@ -946,7 +949,6 @@ function saveMethodHTML(){
 }
 function openMethod(m){
  if(!m)return;
- if(m.id==="orekhova-houses-eight"){window.location.href="orekhova-houses.html";return;}
  if(window.PSY_PMPK_SOURCED?.has?.(m.name)){window.PSY_PMPK_SOURCED.open(m.name);return;}
  if(window.PSY_PMPK_PIERON?.has?.(m.name)){window.PSY_PMPK_PIERON.open();return;}
  if(window.PSY_PMPK_OBJECT56?.catalog?.some(x=>x.title===m.name)){const item=window.PSY_PMPK_OBJECT56.catalog.find(x=>x.title===m.name);window.PSY_PMPK_OBJECT56.open(item.object56Id);return;}
@@ -1005,7 +1007,7 @@ function openMethod(m){
  }
  if(d?.guideFile&&d?.answerFile&&d?.processingFile){const buttons=footer.querySelector('#methodButtons');if(buttons)buttons.insertAdjacentHTML('afterbegin','<a class="btn" href="'+escapeHTML(d.guideFile)+'" target="_blank" rel="noopener noreferrer">Руководство А4</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк А4</a><a class="btn" href="'+escapeHTML(d.processingFile)+'" target="_blank" rel="noopener noreferrer">Обработка А4</a>'+(d.stimulusFile?'<a class="btn" href="'+escapeHTML(d.stimulusFile)+'" target="_blank" rel="noopener noreferrer">Стимулы А4</a>':''));}
  if(d?.workflow==='storycards'||d?.workflow==='ladder7'||d?.workflow==='schulte5'||d?.workflow==='familySocio110'||d?.workflow==='luria10x5'){const link=[...footer.querySelectorAll('a')].find(a=>a.textContent.includes('Первоисточник'));if(link||d?.workflow==='kfdBurns72'){link.href=d.source;link.textContent=d.workflow==='ladder7'?'Опубликованное руководство PDF ↗':'Методическое описание ↗';}}
- if(d)$('#bottomProcessing').onclick=()=>setTab(tabNow==='score'||tabNow==='processing'?'overview':d.calculator?'score':'processing');
+ if(d)$('#bottomProcessing').onclick=()=>d.workflow==='orekhovaHouses8'?window.location.assign('orekhova-houses.html'):setTab(tabNow==='score'||tabNow==='processing'?'overview':d.calculator?'score':'processing');
  if(analogyPilot){$('#anaBack').onclick=()=>setTab('overview');}
  if(luriaPilot){
   $('#luriaBack').onclick=()=>setTab('overview');
