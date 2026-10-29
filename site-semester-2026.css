@@ -474,3 +474,45 @@ html.dark .library-page #modal.psy-mspss-example .psy-cdi-individual-interpretat
 .library-page #modal.psy-mspss-example .psy-cdi-individual-interpretation.psy-cdi-tone-over70{background:#7f1d1d!important;color:#ffffff!important}
 html.dark .library-page #modal.psy-mspss-example .psy-cdi-class-results td.psy-cdi-tone-over70,
 html.dark .library-page #modal.psy-mspss-example .psy-cdi-individual-interpretation.psy-cdi-tone-over70{background:#651414!important;color:#ffffff!important}
+
+
+/* School 7-11 unified assessment visual style */
+.library-page #modal.psy-mspss-example .psy-711-calculator{width:100%}
+.library-page #modal.psy-mspss-example .psy-711-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.library-page #modal.psy-mspss-example .psy-711-grid .psy-mspss-item{min-height:124px;padding:15px;gap:12px}
+.library-page #modal.psy-mspss-example .psy-711-grid .psy-mspss-item>span{font-size:15px;line-height:1.55;overflow-wrap:anywhere}
+.library-page #modal.psy-mspss-example .psy-711-input{max-width:138px!important;width:138px;height:58px!important;font-size:23px!important;font-weight:750}
+.library-page #modal.psy-mspss-example .psy-711-answer-key{font-weight:650;color:var(--muted);margin:14px 0 8px}
+.library-page #modal.psy-mspss-example .psy-711-version{display:grid;gap:8px;font-weight:700;max-width:630px;margin:10px 0 16px}
+.library-page #modal.psy-mspss-example .psy-711-version select,.library-page #modal.psy-mspss-example #school711Grade{padding:11px 12px;min-height:46px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:inherit}
+.library-page #modal.psy-mspss-example .psy-711-advance{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:16px}
+.library-page #modal.psy-mspss-example .psy-711-result{padding:22px 20px;margin-top:20px;border:1px solid var(--line);border-radius:15px;background:var(--paper);line-height:1.6}
+.library-page #modal.psy-mspss-example .psy-711-result h3{margin:0 0 17px}
+.library-page #modal.psy-mspss-example .psy-711-scale-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:15px 0}
+.library-page #modal.psy-mspss-example .psy-711-scale{display:flex;flex-direction:column;gap:8px;padding:15px;border-radius:13px;border:1px solid var(--line);background:var(--soft);min-width:0}
+.library-page #modal.psy-mspss-example .psy-711-scale b{line-height:1.4;font-size:14px}
+.library-page #modal.psy-mspss-example .psy-711-scale strong{font-size:23px;font-variant-numeric:tabular-nums}
+.library-page #modal.psy-mspss-example .psy-711-scale span{font-size:12px}
+.library-page #modal.psy-mspss-example .psy-711-track{height:8px;overflow:hidden;background:#dce8df;border-radius:8px;margin-top:auto}
+.library-page #modal.psy-mspss-example .psy-711-track span{height:100%;display:block;background:#668fba;border-radius:8px}
+.library-page #modal.psy-mspss-example .psy-711-scale.psy-711-low{background:#e6f1fd;border-color:#bfdaef;color:#215c87}
+.library-page #modal.psy-mspss-example .psy-711-scale.psy-711-middle{background:#fff2d5;border-color:#eed3a0;color:#85551b}
+.library-page #modal.psy-mspss-example .psy-711-scale.psy-711-high{background:#ffdfca;border-color:#efba9e;color:#95471e}
+.library-page #modal.psy-mspss-example .psy-711-eysenck-40 .psy-711-scale.psy-711-high{background:#f9dedc;border-color:#efb7ad;color:#9c2828}
+.library-page #modal.psy-mspss-example .psy-711-scale.psy-711-neutral{background:#eaf1f4;border-color:#c2d3dc;color:#35576b}
+.library-page #modal.psy-mspss-example .psy-711-group table{min-width:960px}
+.library-page #modal.psy-mspss-example .psy-711-group td:not(:nth-child(-n+2)){text-align:center;font-weight:750;font-variant-numeric:tabular-nums}
+.library-page #modal.psy-mspss-example .psy-711-group td.psy-711-low{background:#e6f1fd;color:#215c87}
+.library-page #modal.psy-mspss-example .psy-711-group td.psy-711-middle{background:#fff2d5;color:#85551b}
+.library-page #modal.psy-mspss-example .psy-711-group td.psy-711-high{background:#ffdfca;color:#95471e}
+.library-page #modal.psy-mspss-example .psy-711-group.psy-711-eysenck-40 td.psy-711-high{background:#f9dedc;color:#9c2828}
+.library-page #modal.psy-mspss-example .psy-711-group td.psy-711-neutral{background:#eaf1f4;color:#35576b}
+.library-page #modal.psy-mspss-example .psy-711-safety{margin-top:16px;padding:13px 15px;border:1px solid var(--line);border-radius:10px;background:var(--soft);font-weight:650;color:var(--ink)}
+.library-page #modal.psy-mspss-example .psy-711-sheet td:last-child{width:85px}
+.library-page #modal.psy-mspss-example .psy-711-manual .psy-mspss-manual-actions{display:flex;justify-content:flex-end;gap:12px;margin:20px 0}
+@media(max-width:900px){.library-page #modal.psy-mspss-example .psy-711-scale-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:670px){.library-page #modal.psy-mspss-example .psy-711-grid,.library-page #modal.psy-mspss-example .psy-711-scale-grid{grid-template-columns:1fr}.library-page #modal.psy-mspss-example .psy-711-grid .psy-mspss-item{min-height:105px}}
+html.dark .library-page #modal.psy-mspss-example .psy-711-scale.psy-711-low,html.dark .library-page #modal.psy-mspss-example .psy-711-group td.psy-711-low{background:#23435a;color:#d4eaff}
+html.dark .library-page #modal.psy-mspss-example .psy-711-scale.psy-711-middle,html.dark .library-page #modal.psy-mspss-example .psy-711-group td.psy-711-middle{background:#59451d;color:#ffe7b0}
+html.dark .library-page #modal.psy-mspss-example .psy-711-scale.psy-711-high,html.dark .library-page #modal.psy-mspss-example .psy-711-group td.psy-711-high{background:#603b26;color:#ffdec0}
+html.dark .library-page #modal.psy-mspss-example .psy-711-scale.psy-711-neutral,html.dark .library-page #modal.psy-mspss-example .psy-711-group td.psy-711-neutral{background:#304553;color:#e0f1ff}
