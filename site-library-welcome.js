@@ -59,12 +59,14 @@
    url.searchParams.set('area',area);
    history.replaceState(history.state,'',url.pathname+url.search+url.hash);
    if(area==='school'){
+    const tree=document.getElementById('schoolTree');if(tree)tree.hidden=false;
+    button.setAttribute('aria-expanded','true');
     // Let the existing view handlers finish and cards finish rendering.
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
      const target=document.querySelector('#schoolView .filters')||document.getElementById('schoolView');
      if(target&&!target.hidden){
       const y=target.getBoundingClientRect().top+window.scrollY-20;
-      window.scrollTo({top:Math.max(0,y),behavior:'instant'});
+      window.scrollTo({top:Math.max(0,y),behavior:'auto'});
       const main=document.querySelector('main.main');
       if(main&&main.scrollHeight>main.clientHeight+20)main.scrollTo({top:Math.max(0,target.offsetTop-20),behavior:'instant'});
      }
