@@ -237,6 +237,8 @@
  function progress(n,total){return '<div class="psy-mspss-track"><span style="width:'+Math.max(0,Math.min(100,n/total*100))+'%"></span></div>';}
  function palette(i){return ["psy-cp-purple","psy-cp-green","psy-cp-blue"][i%3];}
  /* One-to-one color mapping for all nine source T-score interpretation intervals. */
+ const cdiUsable=v=>v&&(v.status==="ok"||v.status==="approximate")&&Number.isInteger(v.t);
+ const cdiNumber=v=>cdiUsable(v)?(v.status==="approximate"?"≈":"")+v.t:"";
  function cdiTone(t){
   if(!Number.isInteger(t))return "";
   if(t>70)return "psy-cdi-tone-over70";
@@ -257,16 +259,16 @@
    const t=norms.norm(z.raw,r.ageYears,r.sex);
    const scales=norms.scaleScores(r.answers);
    const scoreCards=scales.map(x=>{
-    const v=norms.scaleNorm(x.id,x.raw,r.ageYears,r.sex),ok=v.status==="ok";
+    const v=norms.scaleNorm(x.id,x.raw,r.ageYears,r.sex),ok=cdiUsable(v);
     return '<div class="psy-cdi-factor '+(ok?cdiTone(v.t):"")+'"><b>'+esc(x.name)+'</b>'+
-     '<strong>'+(ok?v.t:"Т-балл не рассчитан")+'</strong>'+
+     '<strong>'+(ok?cdiNumber(v):"Т-балл не рассчитан")+'</strong>'+
      '<small>Сырой балл: '+x.raw+' из '+x.max+'</small>'+
-     '<small>'+esc(ok?v.level:v.message)+'</small></div>';
+     '<small>'+esc(ok?v.level:v.message)+'</small>'+(v.status==="approximate"?'<small class="psy-cdi-estimate">'+esc(v.message)+'</small>':"")+'</div>';
    }).join("");
    return '<section class="psy-mspss-result psy-cdi-single-result"><h3>Общий показатель депрессии</h3>'+
-    '<strong class="psy-cdi-total-t '+(t.status==="ok"?cdiTone(t.t):"")+'">'+(t.status==="ok"?t.t:"Т-балл не рассчитан")+'</strong>'+
-    '<p class="psy-cdi-individual-interpretation '+(t.status==="ok"?cdiTone(t.t):"")+'">'+
-     (t.status==="ok"?esc(t.level):esc(t.message))+'</p>'+
+    '<strong class="psy-cdi-total-t '+(cdiUsable(t)?cdiTone(t.t):"")+'">'+(cdiUsable(t)?cdiNumber(t):"Т-балл не рассчитан")+'</strong>'+
+    '<p class="psy-cdi-individual-interpretation '+(cdiUsable(t)?cdiTone(t.t):"")+'">'+
+     (cdiUsable(t)?esc(t.level):esc(t.message))+'</p>'+(t.status==="approximate"?'<p class="psy-cdi-estimate">'+esc(t.message)+'</p>':"")+
     '<p class="psy-mspss-small">Сумма ответов: '+z.raw+' из 54 сырых баллов. Для интерпретации используется Т-балл по возрасту и полу.</p>'+
     '<h4>Пять шкал Ковач</h4><div class="psy-cdi-factor-grid">'+scoreCards+'</div>'+
     '<p class="psy-mspss-small">Пункт 9 нужно оценить по тексту выбранного утверждения отдельно. Числовой код не подтверждает и не исключает суицидальные мысли. При их наличии необходима очная оценка безопасности. Результат не является диагнозом.</p></section>';
@@ -288,9 +290,11 @@
   return {
    no:i+1,
    name:r.name||"У-"+String(i+1).padStart(2,"0"),
-   t:n?.status==="ok"?n.t:"",
-   scaleTs:scales?scales.map(x=>{const t=norms.scaleNorm(x.id,x.raw,r.ageYears,r.sex);return t.status==="ok"?t.t:"";}):norms.scales.map(()=>""),
-   level:n?.status==="ok"?n.level:""
+   t:cdiNumber(n),
+   tExact:cdiUsable(n)?n.t:null,
+   scaleNorms:scales?scales.map(x=>norms.scaleNorm(x.id,x.raw,r.ageYears,r.sex)):norms.scales.map(()=>null),
+   scaleTs:scales?scales.map(x=>cdiNumber(norms.scaleNorm(x.id,x.raw,r.ageYears,r.sex))):norms.scales.map(()=>""),
+   level:cdiUsable(n)?(n.status==="approximate"?"Ориентировочно: ":"")+n.level:""
   };
  }
  // Справка: проценты относятся к доле детей в группе, а не к индивидуальным баллам.
@@ -323,15 +327,15 @@
   if(isCDI){
    const head=norms.scales.map(x=>'<th scope="col">'+esc(x.name+', Т')+'</th>').join("");
    const body=ordered.map((r,i)=>{
-    const x=cdiClassRow(d,r,i),tone=cdiTone(x.t);
+    const x=cdiClassRow(d,r,i),tone=cdiTone(x.tExact);
     return '<tr><td>'+(i+1)+'</td><td class="psy-cdi-name">'+esc(x.name)+'</td>'+
-     '<td class="psy-cdi-tvalue '+tone+'">'+x.t+'</td>'+
-     x.scaleTs.map(v=>'<td class="psy-cdi-tvalue '+cdiTone(v)+'">'+v+'</td>').join("")+
+     '<td class="psy-cdi-tvalue '+tone+'">'+esc(x.t)+'</td>'+
+     x.scaleNorms.map(v=>'<td class="psy-cdi-tvalue '+cdiTone(cdiUsable(v)?v.t:null)+'" title="'+esc(v?.message||"")+'">'+esc(cdiNumber(v))+'</td>').join("")+
      '<td class="psy-cdi-interpretation '+tone+'">'+esc(x.level)+'</td></tr>';
    }).join("");
    return '<section class="psy-mspss-group psy-cdi-class-results"><h3>Результаты класса – Т-баллы</h3>'+
     '<div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th><th scope="col">Общий Т-балл</th>'+head+
-    '<th scope="col">Интерпретация общего показателя</th></tr></thead><tbody>'+body+'</tbody></table></div></section>';
+    '<th scope="col">Интерпретация общего показателя</th></tr></thead><tbody>'+body+'</tbody></table></div><p class="psy-mspss-small">Знак ≈ – ориентировочный Т-балл по ближайшему опубликованному сырому значению. При равном расстоянии выбран меньший сырой балл. Не является точным нормативным результатом.</p></section>';
   }
   const head=phillips.scales.map(scale=>'<th scope="col">'+esc(scale.name+", %")+'</th>').join("");
   const body=ordered.map((r,i)=>{
