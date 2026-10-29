@@ -91,6 +91,7 @@
   padding:0!important;text-align:center!important;line-height:1!important;text-indent:0!important;
  }
  .modalhead>#closeModal,.modalhead>button.close{font-size:22px!important}
+ .psy-folder-dialog-x,.psy-entry-x,.psy-folder-dialog .psy-folder-dialog-x,.psy-star-remove,.psy-favorite-remove,[class*="remove-favorite"],[class*="favorite-remove"]{display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:0!important;line-height:1!important;text-align:center!important;}
  `;
  document.head.appendChild(style);
 })();
