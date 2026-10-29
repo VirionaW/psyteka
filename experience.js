@@ -146,6 +146,10 @@ function bindAnswerCopyControls(){
   current.answers=buf.answers.slice();setTab("score");
  };
  box.append(copy,paste,info);
+ entry.addEventListener("input",event=>{
+  if(!event.target.matches?.("input[data-cp-answer]"))return;
+  copy.disabled=rows.length<2||!(current.answers||[]).some(v=>v!==null&&v!==undefined&&v!=="");
+ });
  const actions=entry.querySelector(".psy-cp-next-actions");
  if(actions){const next=actions.querySelector("#cpNext");if(next)actions.insertBefore(box,next);else actions.append(box);}
  else entry.querySelector(".psy-cp-grid")?.insertAdjacentElement("afterend",box);
