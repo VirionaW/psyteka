@@ -101,14 +101,13 @@
   return html;
  }
  function table(rows){
-  const th=SCALES.map((s,i)=>'<th title="'+esc(s.name)+'">Ф'+(i+1)+'</th>').join("");
-  const body=rows.map((r,i)=>{const z=r.attendance==="absent"?null:score(DATA,r.answers);return '<tr><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td><td>'+(r.attendance==="absent"?"Отсутствовал":z?z.raw+' / 58':'Заполнено '+count(r.answers)+'/58')+'</td><td>'+(z?fmt(z.percent)+'%':'—')+'</td>'+
-   SCALES.map((s,k)=>'<td>'+(z?fmt(z.scales[k].percent)+'%':'—')+'</td>').join("")+'</tr>'}).join("");
-  const validRows=rows.filter(r=>r.attendance!=="absent").map(r=>score(DATA,r.answers)).filter(Boolean);
-  const counts=SCALES.map((s,i)=>({name:s.name,raised:validRows.filter(z=>z.scales[i].percent>50).length,high:validRows.filter(z=>z.scales[i].percent>75).length}));
-  const groupSummary=validRows.length?'<h3>Сводка по классу</h3><p>Обработано '+validRows.length+' полных анкет; отсутствующие и незаполненные анкеты исключены.</p><div class="psy-ph-scroll"><table><thead><tr><th>Фактор</th><th>Выше 50%</th><th>Выше 75%</th></tr></thead><tbody>'+counts.map(x=>'<tr><td>'+esc(x.name)+'</td><td>'+x.raised+'</td><td>'+x.high+'</td></tr>').join("")+'</tbody></table></div>':'';
-  return '<div class="psy-ph-scroll"><table><thead><tr><th>Код</th><th>Общий балл</th><th>%</th>'+th+'</tr></thead><tbody>'+body+'</tbody></table></div>'+groupSummary+
-  '<p class="psy-ph-small">Ф1–Ф8 — восемь факторов в том же порядке, что в разделе «Обработка». Для неполных форм числовые результаты не рассчитываются.</p>';
+  const head=SCALES.map(scale=>'<th scope="col">'+esc(scale.name)+'</th>').join("");
+  const body=rows.filter(r=>r.name?.trim()||count(r.answers)).map((r,i)=>{
+   const z=r.attendance==="absent"?null:score(DATA,r.answers);
+   return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td>'+
+    SCALES.map((scale,k)=>'<td>'+(z?fmt(z.scales[k].percent)+"%":"–")+'</td>').join("")+'</tr>';
+  }).join("");
+  return '<div class="psy-ph-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>';
  }
  function calculator(d,ctx){
   const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0];
@@ -153,9 +152,12 @@
    save("Phillips_58_protocol.html",'<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Филлипс · протокол</title><style>@page{size:A4;margin:15mm}body{font:14px/1.55 Arial;color:#24382e;max-width:780px;margin:20px auto}h1{font-size:22px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #9cb5a5;padding:8px;text-align:left}.small{font-size:12px;color:#5f7265}</style></head><body>'+body+'</body></html>',"text/html;charset=utf-8");
   });
   document.getElementById("phDownloadCsv")?.addEventListener("click",()=>{
-   const head=["Код","Редакция","Статус","Заполнено из 58","Всего несовпадений","Всего, %",...SCALES.flatMap((s,i)=>["Ф"+(i+1)+": "+s.name+" (балл)","Ф"+(i+1)+": %"]),...Array.from({length:58},(_,i)=>"Ответ "+(i+1))];
+   const head=["№","Участник",...SCALES.map(scale=>scale.name)];
    const out=[head];
-   rows.forEach((x,i)=>{const absent=x.attendance==="absent",z=absent?null:score(d,x.answers);out.push([x.name||"У-"+(i+1),"Филлипс, фактор 3: 13 пунктов (с № 1)",absent?"Отсутствовал":z?"Обработан":"Нет полного результата",absent?"":count(x.answers),z?.raw??"",z?fmt(z.percent):"",...SCALES.flatMap((s,k)=>z?[z.scales[k].raw,fmt(z.scales[k].percent)]:["",""]),...Array.from({length:58},(_,k)=>!absent&&valid(x.answers?.[k])?x.answers[k]==="yes"?"Да":"Нет":"")])});
+   rows.filter(r=>r.name?.trim()||count(r.answers)).forEach((x,i)=>{
+    const z=x.attendance==="absent"?null:score(d,x.answers);
+    out.push([i+1,x.name||"У-"+String(i+1).padStart(2,"0"),...SCALES.map((s,k)=>z?fmt(z.scales[k].percent):"")]);
+   });
    save("Phillips_school_anxiety_class.csv",csv(out),"text/csv;charset=utf-8");
   });
  }
