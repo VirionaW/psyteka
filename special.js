@@ -15,7 +15,7 @@
    id:sourceScared.id,title:"SCARED",author:scared.author,
    group:"Диагностика и наблюдение",topic:"Тревожность",
    ages:["Школьники"],ageLabel:"8-18 лет · детская и родительская версии",
-   format:"Скрининговый опросник",goal:scared.goal
+   format:"Скрининговый опросник",count:"41 вопрос",goal:scared.goal
   });
  }
  const byId=new Map(data.map(m=>[m.id,m]));
