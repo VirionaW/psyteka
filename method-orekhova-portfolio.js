@@ -1,7 +1,7 @@
 "use strict";
 (() => {
  const name="Домики О. А. Ореховой";
- Object.assign(window.PSY_FULL_METHODS[name]||{},{
+ window.PSY_FULL_METHODS[name]=Object.assign(window.PSY_FULL_METHODS[name]||{},{
    id:"orekhova-houses-eight",workflow:"orekhovaHouses8",
    author:"О. А. Орехова",age:"Старший дошкольный и младший школьный возраст",
    kind:"Проективная методика",count:"3 задания: 8 прямоугольников и 20 домиков",
