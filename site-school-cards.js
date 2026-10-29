@@ -264,5 +264,6 @@
   if(/проб|тест|интеллект|табличн|нейропсих/.test(type))return "test";
   return "other";
  }
+ specific["Домики О. А. Ореховой"]={type:"Проективная методика",age:"Старший дошкольный и младший школьный возраст",count:"3 задания, 8 цветов"};
  window.PSY_SCHOOL_CARDS={compose,specific,names:Object.keys(specific),classify,kindOptions};
 })();
