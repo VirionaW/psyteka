@@ -258,8 +258,8 @@
    '<p class="psy-mspss-small">Восемь факторов пересекаются по пунктам; суммы факторов не складывают. Третий фактор включает 13 вопросов, в том числе № 1.</p></section>';
  }
  const alpha=rows=>rows.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||"","ru",{sensitivity:"base"}));
- function cdiClassRow(r,i){
-  const z=scoring({id:"cdi-27"},r);
+ function cdiClassRow(d,r,i){
+  const z=scoring(d,r);
   const t=z?norms.norm(z.raw,r.ageYears,r.sex):null;
   return {
    no:i+1,
@@ -275,7 +275,7 @@
   const isCDI=type(d)==="cdi";
   if(isCDI){
    const body=ordered.map((r,i)=>{
-    const x=cdiClassRow(r,i);
+    const x=cdiClassRow(d,r,i);
     return '<tr><td>'+x.no+'</td><td>'+esc(x.name)+'</td><td>'+x.raw+'</td><td>'+x.t+'</td><td>'+esc(x.status)+'</td><td>'+esc(x.level)+'</td></tr>';
    }).join("");
    return '<section class="psy-mspss-group psy-cdi-class-results"><h3>Результаты класса</h3>'+
@@ -389,7 +389,7 @@
  }
  /* Build a real offline OOXML .docx (ZIP stored entries), without CDN or remote upload. */
  function wordDocument(d,rows,mode,index){
-  const people=(mode==="class"?alpha(rows):[rows[index]]).filter(Boolean);
+  const people=(mode==="class"?(type(d)==="cdi"?rows:alpha(rows)):[rows[index]]).filter(Boolean);
   const isCDI=type(d)==="cdi";
   if(!people.length)return false;
   const xmlEscape=s=>String(s??"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,"").replace(/[<>&"']/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;","'":"&apos;"}[c]));
@@ -410,19 +410,19 @@
   };
   let body=para(title,"head")+para("Метолария · "+(mode==="class"?"Отчет группы / класса":"Индивидуальный отчет")+" · "+new Date().toLocaleDateString("ru-RU"));
   body+=para("Сводные результаты","sub");
-  const columns=isCDI?["Участник","Статус","Возраст","Пол","Сырой / 54","Т-балл"]:["Участник","Статус","Общий / 58","Процент"];
+  const columns=isCDI?["№","Участник","Баллы","Т-балл","Статус","Интерпретация"]:["Участник","Статус","Общий / 58","Процент"];
   const summary=people.map((r,i)=>{
    const z=scoring(d,r),n=isCDI&&z?norms.norm(z.raw,r.ageYears,r.sex):null;
    const base=[r.name||"У-"+String(i+1).padStart(2,"0"),describe(r)];
-   return isCDI?[...base,r.ageYears??"–",r.sex==="f"?"Девочка":r.sex==="m"?"Мальчик":"Не указан",z?.raw??"–",n?.t??"–"]:
+   return isCDI?Object.values(cdiClassRow(d,r,i)).map(String):
       [...base,z?.raw??"–",z?z.percent.toFixed(1)+"%":"–"];
   });
   body+=table(columns,summary);
-  if(mode==="class"){
+  if(mode==="class"&&!isCDI){
    const completed=people.filter(r=>!!scoring(d,r)).length,absent=people.filter(r=>r.attendance==="absent").length;
    body+=para("Всего в списке: "+people.length+"; заполнено: "+completed+"; отсутствуют: "+absent+".");
   }
-  for(let i=0;i<people.length;i++){
+  if(!isCDI)for(let i=0;i<people.length;i++){
    const r=people[i],z=scoring(d,r),n=isCDI&&z?norms.norm(z.raw,r.ageYears,r.sex):null;
    if(i>0)body+='<w:p><w:pPr><w:pageBreakBefore/></w:pPr></w:p>';
    body+=para("Результат: "+(r.name||"У-"+(i+1)),"sub")+para("Статус: "+describe(r));
@@ -438,7 +438,7 @@
     if(z)body+=table(["Фактор","Число несовпадений","Процент"],z.scales.map(s=>[s.name,String(s.raw)+" из "+s.max,s.percent.toFixed(1)+"%"]));
    }
   }
-  body+=para("Результаты не являются диагнозом. Необследованные и отсутствующие дети не включены в сводный расчет.");
+  if(!isCDI)body+=para("Результаты не являются диагнозом. Необследованные и отсутствующие дети не включены в сводный расчет.");
   const doc='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+
    '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:bottom="850" w:left="850" w:right="850"/></w:sectPr></w:body></w:document>';
