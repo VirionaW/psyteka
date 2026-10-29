@@ -95,3 +95,30 @@
  `;
  document.head.appendChild(style);
 })();
+
+/* Center glyph geometrically, independent of font baseline or inherited line-height. */
+(function(){
+ const css=document.createElement('style');
+ css.textContent=`
+ button#closeModal,button.psy-folder-dialog-x,button.psy-entry-x,
+ button.psy-folder-close,button.psy-modal-close,button.modal-close,
+ button.psy-star-remove,button.psy-favorite-remove,
+ button[class*="favorite-remove"],button[class*="remove-favorite"]{
+  position:relative!important;display:inline-grid!important;place-items:center!important;
+  padding:0!important;line-height:1!important;text-align:center!important;
+ }
+ button#closeModal,button.psy-folder-dialog-x,button.psy-entry-x,
+ button.psy-folder-close,button.psy-modal-close,button.modal-close{
+  font-size:0!important;
+ }
+ button#closeModal::after,button.psy-folder-dialog-x::after,button.psy-entry-x::after,
+ button.psy-folder-close::after,button.psy-modal-close::after,button.modal-close::after{
+  content:""!important;position:absolute!important;top:50%!important;left:50%!important;
+  width:12px!important;height:12px!important;transform:translate(-50%,-50%)!important;
+  background:linear-gradient(currentColor,currentColor) center/1.6px 12px no-repeat,
+             linear-gradient(currentColor,currentColor) center/12px 1.6px no-repeat!important;
+  rotate:45deg;pointer-events:none!important;
+ }
+ `;
+ document.head.append(css);
+})();
