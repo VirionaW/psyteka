@@ -447,7 +447,7 @@
    {min:40,range:"40-44",level:"Чуть ниже среднего уровня",fill:"EAF4EF",ink:"32614E"},
    {min:35,range:"35-39",level:"Ниже среднего уровня",fill:"E5F5FA",ink:"236578"},
    {min:30,range:"30-34",level:"Много ниже среднего уровня",fill:"E8F2FD",ink:"2A557D"},
-   {min:-Infinity,range:"Ниже 30",level:"Значительно ниже среднего уровня",fill:"E2ECFA",ink:"284768"}
+   {min:-999,range:"Ниже 30",level:"Значительно ниже среднего уровня",fill:"E2ECFA",ink:"284768"}
   ];
   const cdiWordBand=t=>Number.isInteger(t)?cdiLegend.find(x=>t>=x.min):null;
   const cdiWordCell=(s,header,left,width,band)=>{
