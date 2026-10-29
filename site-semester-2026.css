@@ -703,3 +703,13 @@ html.dark .library-page #modal.psy-mspss-example .psy-cdi-lock-note{background:#
  padding:9px 10px;border:1px solid var(--line);border-radius:9px;
  background:var(--paper,#fff);color:var(--ink,#193e2c);font:inherit;
 }
+
+.library-page #modal.psy-mspss-example .psy-cp-analytic-preview .psy-cp-analytic-subtitle{
+ text-align:center;font-weight:700;margin:4px 0 12px;
+}
+.library-page #modal.psy-mspss-example .psy-cp-analytic-preview .psy-cp-analytic-institution{
+ text-align:center;font-weight:700;margin:6px 0;
+}
+.library-page #modal.psy-mspss-example .psy-cp-analytic-preview .psy-cp-analytic-meta{
+ text-align:left;font-size:12pt;
+}
