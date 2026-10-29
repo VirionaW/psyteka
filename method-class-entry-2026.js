@@ -478,7 +478,7 @@
      '<w:tblGrid>'+widths.map(w=>'<w:gridCol w:w="'+w+'"/>').join("")+'</w:tblGrid>'+
      all.map((row,i)=>'<w:tr>'+(format&&i===0?'<w:trPr><w:tblHeader w:val="true"/></w:trPr>':"")+
       row.map((text,j)=>format==="cdi"||format==="cdi-legend"?
-       cdiWordCell(text,i===0,format==="cdi"?j===1:j===1,widths[j],
+       cdiWordCell(text,i===0,format==="cdi"?(j===1||j===3):j===1,widths[j],
         i>0&&(format==="cdi"?j>=2:j>=0)?cdiWordBand(percentRows[i-1]):null):
        format?phCell(text,i===0,format==="scores"?j===1:j===0,widths[j],
         format==="scores"&&i>0&&j>=2?percentRows[i-1]?.[j-2]:null):cell(text)).join("")+'</w:tr>').join("")+'</w:tbl>';
