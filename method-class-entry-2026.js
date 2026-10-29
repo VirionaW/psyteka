@@ -403,11 +403,7 @@
   return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Бланк Метоларии</title><style>@page{size:A4;margin:13mm}body{font:10.2pt/1.4 Arial;color:#183b2d}h1{font-size:17pt}h2{font-size:13pt}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #a6bbaf;padding:6px;font-size:9.5pt;text-align:left;vertical-align:top}th:first-child,td:first-child{width:34px;text-align:center}th:last-child,td:last-child{width:90px;text-align:center}.statement p{margin:2px 0 5px}.blank{min-height:65px}tr{break-inside:avoid}.newpage{break-before:page}</style></head><body>'+(mode==="blank"?blank:guide)+(mode==="combined"?blank:"")+'</body></html>';
  }
  function report(d,rows,mode,index){
-  const selected=mode==="class"?alpha(rows).filter(r=>r.name?.trim()||done(d,r.answers)):[rows[index]];
-  if(mode!=="class"&&!scoring(d,selected[0]))return false;
-  const head=type(d)==="cdi"?"<th>Сырой / 54</th><th>Т-балл</th>":"<th>Общий / 58</th><th>Процент</th>"+phillips.scales.map((s,i)=>"<th>Ф"+(i+1)+"</th>").join("");
-  const entries=selected.map((r,i)=>{const z=scoring(d,r),t=z&&type(d)==="cdi"?norms.norm(z.raw,r.ageYears,r.sex):null;return '<tr><td>'+esc(r.name||"У-"+(i+1))+'</td><td>'+(r.attendance==="absent"?"Отсутствовал":z?"Обработан":"Неполная анкета")+'</td>'+(type(d)==="cdi"?'<td>'+(z?z.raw:"–")+'</td><td>'+(t?.t??"–")+'</td>':'<td>'+(z?z.raw:"–")+'</td><td>'+(z?z.percent.toFixed(1)+"%":"–")+'</td>'+phillips.scales.map((s,j)=>'<td>'+(z?z.scales[j].percent.toFixed(1)+"%":"–")+'</td>').join(""))+'</tr>'}).join("");
-  const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Отчет Метоларии</title><style>@page{size:A4 landscape;margin:13mm}body{font:11pt Arial;color:#1c392b}h1{font-size:18pt}table{border-collapse:collapse;width:100%;font-size:9pt}td,th{border:1px solid #abc1b4;padding:7px;text-align:left}thead{background:#e8f3ec}p{line-height:1.5}</style></head><body><h1>'+esc(type(d)==="cdi"?"Опросник детской депрессии М. Ковач (CDI)":"Тест школьной тревожности Филлипса")+'</h1><p>Дата: '+new Date().toLocaleDateString("ru-RU")+' · '+(mode==="class"?"Отчет класса":"Индивидуальный отчет")+'</p><table><thead><tr><th>Ученик</th><th>Статус</th>'+head+'</tr></thead><tbody>'+entries+'</tbody></table><p>Результаты не являются диагнозом. Отсутствующие и неполные анкеты исключены из подсчета.</p></body></html>';
+  if(mode!=="class"&&!scoring(d,rows[index]))return false;
   return wordDocument(d,rows,mode,index);
  }
  function save(name,body,mime){
@@ -415,7 +411,7 @@
  }
  /* Build a real offline OOXML .docx (ZIP stored entries), without CDN or remote upload. */
  function wordDocument(d,rows,mode,index){
-  const people=(mode==="class"?rows:[rows[index]]).filter(Boolean);
+  const people=(mode==="class"?(type(d)==="cdi"?rows:rows.filter(r=>r.name?.trim()||done(d,r.answers))):[rows[index]]).filter(Boolean);
   const isCDI=type(d)==="cdi";
   if(!people.length)return false;
   const xmlEscape=s=>String(s??"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,"").replace(/[<>&"']/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;","'":"&apos;"}[c]));
@@ -423,8 +419,9 @@
   const para=(s,kind="")=>'<w:p>'+(kind==="head"?'<w:pPr><w:pStyle w:val="Heading1"/></w:pPr>':kind==="sub"?'<w:pPr><w:pStyle w:val="Heading2"/></w:pPr>':'')+run(s,kind!=="")+'</w:p>';
   const cell=(s)=>'<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/></w:tcPr>'+para(s)+'</w:tc>';
   const table=(head,body)=>{
-   const all=[head,...body];return '<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders><w:top w:val="single" w:sz="5"/><w:left w:val="single" w:sz="5"/><w:bottom w:val="single" w:sz="5"/><w:right w:val="single" w:sz="5"/><w:insideH w:val="single" w:sz="5"/><w:insideV w:val="single" w:sz="5"/></w:tblBorders></w:tblPr>'+
-     '<w:tblGrid>'+head.map(()=>'<w:gridCol w:w="1200"/>').join("")+'</w:tblGrid>'+
+   const widths=!isCDI&&mode==="class"&&head.length===10?[550,2200,...Array(8).fill(1620)]:head.map(()=>1200);
+   const all=[head,...body];return '<w:tbl><w:tblPr><w:tblW w:w="'+widths.reduce((a,b)=>a+b,0)+'" w:type="dxa"/><w:tblBorders><w:top w:val="single" w:sz="5"/><w:left w:val="single" w:sz="5"/><w:bottom w:val="single" w:sz="5"/><w:right w:val="single" w:sz="5"/><w:insideH w:val="single" w:sz="5"/><w:insideV w:val="single" w:sz="5"/></w:tblBorders></w:tblPr>'+
+     '<w:tblGrid>'+widths.map(w=>'<w:gridCol w:w="'+w+'"/>').join("")+'</w:tblGrid>'+
      all.map(row=>'<w:tr>'+row.map(cell).join("")+'</w:tr>').join("")+'</w:tbl>';
   };
   const title=isCDI?"Опросник детской депрессии М. Ковач (CDI)":"Тест школьной тревожности Филлипса";
