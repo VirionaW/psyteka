@@ -995,7 +995,7 @@ async function openRequestedLibraryMethod(){
   if(search){search.value=name;state.query=name;render()}
   return;
  }
- if(!requestedMethodOpened){openMethod(found);requestedMethodOpened=true;}
+ if(!requestedMethodOpened||document.querySelector("#modal")?.hidden){openMethod(found);requestedMethodOpened=true;}
  if(!assessment)return;
  try{
   const cloud=window.PSY_CLOUD;
