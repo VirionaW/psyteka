@@ -97,10 +97,18 @@
   if(error)throw error;
   return data;
  }
- async function listAssessments(){
+ async function listAssessments(options){
   await ready;if(!client||!user)throw Error("Войдите в аккаунт");
-  const {data,error}=await client.from("psy_saved_assessments").select("id,title,method_name,updated_at,created_at").eq("user_id",user.id).order("updated_at",{ascending:false}).limit(150);
-  if(error)throw error;return data||[];
+  const methodName=typeof options?.methodName==="string"?options.methodName.trim().slice(0,220):"";
+  let q=client.from("psy_saved_assessments")
+   .select(methodName?"id,title,method_name,updated_at,created_at,snapshot":"id,title,method_name,updated_at,created_at")
+   .eq("user_id",user.id);
+  if(methodName)q=q.eq("method_name",methodName);
+  const {data,error}=await q.order("updated_at",{ascending:false}).limit(methodName?150:150);
+  if(error)throw error;
+  // Notebook needs the mode only. Never put pupils' answers in the list.
+  return methodName?(data||[]).map(x=>({id:x.id,title:x.title,method_name:x.method_name,
+   updated_at:x.updated_at,created_at:x.created_at,calcMode:x.snapshot?.calcMode==="class"?"class":"one"})):data||[];
  }
  async function getAssessment(id){
   await ready;if(!client||!user)throw Error("Войдите в аккаунт");
