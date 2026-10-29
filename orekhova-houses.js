@@ -228,6 +228,133 @@
    '<p><strong>О десятом домике ребенок сказал:</strong> '+esc(s.description)+'</p>'+
    '<p class="muted">Отношение к школе по этой методике может описываться как положительное, амбивалентное или отрицательное, но итоговую категорию определяет психолог по целому протоколу и беседе. Для комплексной оценки адаптации нужны также данные учителя, родителей и другие наблюдения.</p></section>';
  }
+
+ // Narrative decisions use the color order and cross-task associations documented by Orekhova.
+ // The provided manual DOES NOT define distinct personality traits for all 56 ordered color pairs.
+ // Every ordered pair is supported without attributing undocumented symbolic meaning to colors.
+ function narrativeReport(s){
+  if(!s||!calculate(s)||!s.emotions.every(Boolean)||!s.situations.every(Boolean))return [];
+  const score=calculate(s);
+  const positions=Object.fromEntries(s.ranking.map((id,i)=>[id,i+1]));
+  const main=new Set(["blue","green","red","yellow"]);
+  const negative=new Set(["brown","black"]);
+  const f=s.emotions;
+  const sit=s.situations;
+  const plus=[0,2,4,6,9],minus=[1,3,5,7,8];
+  const feelingsBy=id=>EMOTIONS.filter((x,i)=>f[i]===id);
+  const situationsBy=id=>SITUATIONS.filter((x,i)=>sit[i]===id);
+  const chooseList=arr=>arr.length===1?arr[0]:arr.length===2?arr.join(" и "):arr.slice(0,-1).join(", ")+" и "+arr[arr.length-1];
+  const colorAcc=id=>({red:"красного",yellow:"желтого",green:"зеленого",blue:"синего",purple:"фиолетового",brown:"коричневого",gray:"серого",black:"черного"})[id];
+  const inColor=id=>({red:"красным",yellow:"желтым",green:"зеленым",blue:"синим",purple:"фиолетовым",brown:"коричневым",gray:"серым",black:"черным"})[id];
+  const descFirst={red:"красный",yellow:"желтый",green:"зеленый",blue:"синий",purple:"фиолетовый",brown:"коричневый",gray:"серый",black:"черный"};
+  const first=s.ranking[0],second=s.ranking[1],third=s.ranking[2],last=s.ranking[7];
+  const p={};
+  p.header="Психологический вывод по методике «Домики» О. А. Ореховой";
+  const lead="На первом месте в цветовой дорожке расположен "+descFirst[first]+", на втором – "+descFirst[second]+", на третьем – "+descFirst[third]+". Последним выбран "+descFirst[last]+" цвет.";
+  let pair;
+  if(main.has(first)&&main.has(second))
+   pair="Оба ведущих цвета относятся к основным. Их соседство в начале дорожки показывает, что именно эта пара является наиболее предпочтительной в индивидуальном порядке ребенка.";
+  else if(!main.has(first)&&!main.has(second))
+   pair="Первые два места заняли неосновные цвета. При дальнейшем анализе особенно важно проверить, каким цветам ребенок сопоставил положительные и отрицательные чувства и какие основные цвета оказались ближе к концу дорожки.";
+  else if(main.has(first))
+   pair="Основной цвет стоит первым, а неосновной – сразу за ним. Такой порядок показывает сочетание разных групп цветов среди наиболее предпочитаемых; его значение уточняется через домики чувств и школьных ситуаций.";
+  else
+   pair="Неосновной цвет стоит первым, а основной – сразу за ним. Для оценки эмоциональной направленности здесь особенно значимы последующие ассоциации с конкретными чувствами и школьными ситуациями.";
+  const topAssoc=[first,second].map((id,index)=>{
+   const emo=feelingsBy(id),school=situationsBy(id);
+   const part=[];
+   if(emo.length)part.push("в домиках чувств «"+chooseList(emo)+"»");
+   if(school.length)part.push("в ситуациях «"+chooseList(school)+"»");
+   return part.length?"Цвет, занявший "+(index===0?"первое":"второе")+" место ("+descFirst[id]+"), ребенок также использовал "+chooseList(part)+".":"Цвет, занявший "+(index===0?"первое":"второе")+" место ("+descFirst[id]+"), в домиках чувств и ситуаций повторно не использован.";
+  }).join(" ");
+  const mainAtEnd=s.ranking.slice(4).filter(x=>main.has(x));
+  const inversion=mainAtEnd.length>=3?"Три или четыре основных цвета находятся во второй половине дорожки: "+chooseList(mainAtEnd.map(x=>descFirst[x]))+". В руководстве такая инверсия рассматривается вместе с особенностями различения социальных эмоций.":mainAtEnd.length===2?"Во второй половине дорожки оказались два основных цвета; при сопоставлении с домиками важно учитывать не только цвет, но и его место.":"Большинство основных цветов находится в первой половине дорожки.";
+  p.ranking=lead+" "+pair+" "+topAssoc+" "+inversion;
+  const vk=classifyVK(score.vk),co=classifyCO(score.co);
+  const vkMean=vk.level==="green"?"По ВК отмечается оптимальный уровень работоспособности: энергозатраты в рамках описанного руководством диапазона.":vk.text==="Перевозбуждение"?"ВК указывает на перевозбуждение и возможное напряжение энергетических ресурсов.":vk.text.startsWith("Компенсируемое")?"ВК соответствует компенсируемой усталости: поддержание деятельности может требовать периодического снижения нагрузки.":vk.level==="red"?"ВК относится к зоне выраженного переутомления и снижения работоспособности.":"Данное значение ВК находится на границе диапазонов, для которой в предоставленном руководстве нет отдельного уровня.";
+  const coMean=co.level==="green"?"Низкое суммарное отклонение соответствует преобладанию положительного эмоционального фона.":co.level==="yellow"?"Суммарное отклонение находится в диапазоне обычного эмоционального фона: возможны и положительные, и отрицательные переживания.":co.level==="red"?"Высокое суммарное отклонение соответствует преобладанию отрицательных эмоций и неблагоприятных переживаний.":"Значение СО = 20 не отнесено к отдельному уровню в предоставленном руководстве; необходимо рассматривать полный профиль ответов.";
+  p.indices="Вегетативный коэффициент составляет "+score.vk.toFixed(2).replace(".",",")+", суммарное отклонение от аутогенной нормы – "+score.co+". "+vkMean+" "+coMean;
+  const blocks=PAIRS.map(([name,a,b,domain])=>{
+   const same=f[a]===f[b],d=Math.abs(positions[f[a]]-positions[f[b]]);
+   let sentence="В сфере «"+domain.toLowerCase()+"» («"+name+"») ребенок выбрал "+inColor(f[a])+" для «"+EMOTIONS[a].toLowerCase()+"» и "+inColor(f[b])+" для «"+EMOTIONS[b].toLowerCase()+"». ";
+   if(same)sentence+="Противоположные чувства объединены одним цветом; это указывает на слабую цветовую дифференциацию именно данной пары.";
+   else if(d>=4)sentence+="Цвета находятся далеко друг от друга в дорожке (разница "+d+" позиций); противопоставление чувств выражено в системе его собственных цветовых предпочтений.";
+   else if(d===1)sentence+="Хотя использованы разные цвета, в дорожке они расположены рядом. Различение по цвету есть, но контраст предпочтений невелик.";
+   else sentence+="Чувства обозначены разными цветами, расстояние между ними в дорожке – "+d+" позиции. Различение этой пары прослеживается.";
+   return {domain,name,same,d,text:sentence};
+  });
+  const sameBlocks=blocks.filter(x=>x.same);
+  const weak=blocks.filter(x=>x.same||x.d===1);
+  const moreMainPositive=plus.filter(i=>main.has(f[i])).length;
+  const darkNegative=minus.filter(i=>negative.has(f[i])).length;
+  const nonstandard=plus.filter(i=>negative.has(f[i])).map(i=>EMOTIONS[i]);
+  p.emotions="В задании социальных эмоций "+(sameBlocks.length?
+   "одинаковый цвет встречается в "+sameBlocks.length+" из пяти пар противоположных чувств: "+chooseList(sameBlocks.map(x=>"«"+x.name+"»"))+". Такое совпадение показывает, какие смысловые противопоставления ребенок выделил недостаточно четко.":
+   "все пять пар противоположных чувств обозначены разными цветами. Это показывает наличие цветового различения положительных и отрицательных переживаний по всем исследованным блокам.")+
+   " Основные цвета использованы для "+moreMainPositive+" из пяти положительных чувств, а коричневый или черный – для "+darkNegative+" из пяти отрицательных. "+
+   (nonstandard.length?"Коричневый или черный также связан с положительными чувствами: "+chooseList(nonstandard)+". Это делает распределение эмоций менее однозначным.":"Коричневый и черный не используются для пяти положительных чувств.")+
+   (weak.length&&!sameBlocks.length?" Наиболее близко друг к другу в дорожке расположены цвета в парах "+chooseList(weak.map(x=>"«"+x.name+"»"))+".":"");
+  p.emotionBlocks=blocks;
+  const indexMatches=i=>{
+   const id=sit[i];
+   const positive=plus.filter(j=>f[j]===id).map(j=>EMOTIONS[j]);
+   const adverse=minus.filter(j=>f[j]===id).map(j=>EMOTIONS[j]);
+   const rank=positions[id];
+   const parts=[];
+   if(positive.length&&!adverse.length)parts.push("совпадает с положительными чувствами («"+chooseList(positive)+"»)");
+   else if(adverse.length&&!positive.length)parts.push("совпадает с отрицательными чувствами («"+chooseList(adverse)+"»)");
+   else if(positive.length&&adverse.length)parts.push("связан как с положительными («"+chooseList(positive)+"»), так и с отрицательными («"+chooseList(adverse)+"») чувствами");
+   else parts.push("не повторяет цвета, выбранные для перечисленных чувств");
+   if(negative.has(id))parts.push("использован коричневый или черный цвет");
+   parts.push("в дорожке этот цвет занимает "+rank+" место");
+   return {id,index:i,name:SITUATIONS[i],positive,adverse,rank,dark:negative.has(id),text:"Домик «"+SITUATIONS[i]+"» закрашен "+inColor(id)+": "+parts.join("; ")+". "};
+  };
+  const mapped=SITUATIONS.map((_,i)=>indexMatches(i));
+  const schoolIndices=[1,2,3,4,5,6,8];
+  const school=schoolIndices.map(i=>mapped[i]);
+  const exclusivePositive=school.filter(x=>x.positive.length&&!x.adverse.length);
+  const exclusiveAdverse=school.filter(x=>x.adverse.length&&!x.positive.length);
+  const mixed=school.filter(x=>x.positive.length&&x.adverse.length);
+  const darkSchool=school.filter(x=>x.dark);
+  const schoolLead=exclusivePositive.length>=4&&exclusiveAdverse.length<=1&&darkSchool.length<=1?
+   "В школьных ситуациях заметно преобладание связей с положительными чувствами.":
+   (exclusiveAdverse.length>=3||darkSchool.length>=3)?
+   "В школьных ситуациях отчетливо представлены связи с неприятными переживаниями и/или коричневым и черным цветами.":
+   "Эмоциональная картина школьной жизни неоднородна: рядом встречаются нейтральные, приятные и потенциально напряженные цветовые связи.";
+  const examples=[];
+  if(exclusivePositive.length)examples.push("положительные совпадения отмечены для "+chooseList(exclusivePositive.map(x=>"«"+x.name+"»")));
+  if(exclusiveAdverse.length)examples.push("с отрицательными чувствами связаны "+chooseList(exclusiveAdverse.map(x=>"«"+x.name+"»")));
+  if(mixed.length)examples.push("смешанные связи обнаружены для "+chooseList(mixed.map(x=>"«"+x.name+"»")));
+  if(darkSchool.length)examples.push("коричневый и черный использованы в "+chooseList(darkSchool.map(x=>"«"+x.name+"»")));
+  p.school=schoolLead+" Среди семи школьных ситуаций "+exclusivePositive.length+" совпали только с положительными чувствами, "+exclusiveAdverse.length+" – только с отрицательными, "+mixed.length+" – с обеими группами. "+(examples.length?"В частности, "+examples.join("; ")+".":"Явных повторов цветов между школьными ситуациями и домиками чувств не обнаружено.");
+  const specific=[0,5,6,7,8].map(i=>mapped[i]);
+  p.relationships=specific.map(x=>x.text).join(" ");
+  p.schoolBlocks=school.map(x=>x.text);
+  p.free="Собственный сюжет десятого домика: «"+s.description.trim()+"». Для анализа он рассматривается вместе с выбранным "+inColor(sit[9])+" цветом и его "+positions[sit[9]]+" местом в дорожке.";
+  let synthesis;
+  if(co.level==="red"&&(exclusiveAdverse.length+darkSchool.length>=3))
+   synthesis="Повышенный показатель СО сочетается с заметными признаками эмоциональной напряженности в школьных ассоциациях. В первую очередь стоит уточнить переживания, обозначенные темными цветами или совпавшие с неприятными чувствами.";
+  else if(co.level==="green"&&exclusivePositive.length>=3&&darkSchool.length===0)
+   synthesis="Положительный общий эмоциональный фон согласуется с преобладанием приятных связей в школьных домиках. Наиболее благоприятно обозначены те ситуации, для которых выбран цвет положительных чувств.";
+  else if(co.level==="yellow"&&mixed.length+exclusiveAdverse.length>0)
+   synthesis="При обычном общем эмоциональном фоне есть отдельные ситуации, вызывающие разнонаправленные ассоциации. Наиболее информативны конкретные различия между домиками учителя, одноклассников и учебных занятий.";
+  else
+   synthesis="Общий показатель эмоционального фона и цвета отдельных школьных ситуаций дают "+(co.level==="green"?"в целом более благоприятную":co.level==="red"?"более напряженную":"смешанную")+" картину, которую следует уточнять по содержанию совпадений чувств и школьных домиков.";
+  const priority=[...school].filter(x=>x.dark||x.adverse.length).sort((a,b)=>(+b.dark+ b.adverse.length)-(+a.dark+a.adverse.length)).slice(0,3);
+  if(priority.length)synthesis+=" Для дальнейшего обсуждения особенно важны "+chooseList(priority.map(x=>"«"+x.name+"»"))+".";
+  else synthesis+=" При уточнении полезно сопоставить отношение ребенка к себе, учителю, одноклассникам и учебным действиям.";
+  p.synthesis=synthesis;
+  p.paragraphs=[
+    ["Цветовая дорожка",p.ranking],
+    ["Энергетический и эмоциональный показатели",p.indices],
+    ["Социальные эмоции",p.emotions],
+    ["Отношение к школе",p.school],
+    ["Личностные и отдельные школьные отношения",p.relationships],
+    ["Десятый домик",p.free],
+    ["Итоговый анализ",p.synthesis]
+  ];
+  return p;
+ }
  function resultHtml(s){
   const c=calculate(s);
   if(!complete(s)||!validGroup()||!c)return '<h2>Результаты</h2><div class="report-empty">Заполните восемь цветов дорожки, все 10 чувств, 10 ситуаций и описание десятого домика. Для группового режима укажите класс или группу.</div>';
