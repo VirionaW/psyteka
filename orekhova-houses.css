@@ -162,3 +162,15 @@ html.dark{color-scheme:dark;--paper:#17251e;--surface:#25382d;--ink:#f0f8ee;--so
 
 /* Respect the hidden state even when a button class defines display:inline-flex. */
 #nextStep[hidden],#prevStep[hidden],#workArea[hidden],#sheetPreview[hidden],#groupReport[hidden],#palettePanel[hidden]{display:none!important}
+
+/* The overview keeps the source's 10-house street; interactive work cards are larger
+   so the psychologist can actually read each explanation. */
+.painting-houses{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:12px 14px}
+.paint-house-wrap{padding:12px 8px 14px;border:1px solid var(--line);border-radius:13px;background:var(--paper)}
+.paint-house{min-height:135px}
+.paint-house .house-shape{max-width:143px}
+.paint-house-wrap .house-caption{font-size:14px;min-height:0;margin-top:4px}
+.paint-house-wrap .house-chosen{font-size:12px}
+.paint-house-wrap .house-help{font-size:12px;line-height:1.5;max-width:205px;min-height:52px}
+@media(max-width:980px){.painting-houses{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:590px){.painting-houses{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}.paint-house-wrap{padding:9px 5px 11px}.paint-house{min-height:115px}.paint-house-wrap .house-help{font-size:11px;min-height:0}}
