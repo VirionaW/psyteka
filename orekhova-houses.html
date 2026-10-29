@@ -25,12 +25,20 @@
  <div class="intro">
   <div><p class="eyebrow">Проективная методика О. А. Ореховой · 8 цветов</p><h1>Домики – обработка результатов</h1><p>Интерактивный бланк: выбери карандаш, закрась восемь прямоугольников, а затем домики чувств и школьных ситуаций. В конце запиши, кто живет в последнем домике.</p></div>
  </div>
+ <section class="panel workspace-meta">
+  <div class="section-top"><div><h2>Участники</h2><p class="muted">Добавь хотя бы одного ребенка: укажи имя и возраст или класс / группу.</p></div><div class="mode-switch" aria-label="Режим обработки"><button type="button" class="active" data-mode="one">Один участник</button><button type="button" data-mode="group">Группа / класс</button></div></div>
+  <div class="participants-setup">
+   <label>Класс / группа<input id="groupName" maxlength="80" placeholder="Например, 1А"></label>
+   <div class="add-student"><label>Фамилия и имя ребенка<input id="newName" maxlength="100" placeholder="Фамилия Имя"></label><label>Возраст (если известен)<input id="newAge" type="number" min="3" max="18" inputmode="numeric" placeholder="Лет"></label><button class="primary" id="addStudent" type="button">Добавить</button></div>
+  </div>
+  <p class="form-error" id="formError" role="alert"></p><div id="people" class="people" aria-label="Участники"></div>
+ </section>
  <section class="panel overview-sheet" id="sheetPreview" aria-labelledby="sheetPreviewTitle">
   <div class="section-top">
    <div>
     <p class="step-kicker">Бланк методики</p>
     <h2 id="sheetPreviewTitle">Вот прямоугольники и домики</h2>
-    <p class="muted">Все 28 фигур сразу перед тобой, как на бумажном бланке. Для раскрашивания добавь участника ниже.</p>
+    <p class="muted">Все 28 фигур сразу перед тобой, как на бумажном бланке. Для раскрашивания добавь участника в блоке выше.</p>
    </div>
    <button type="button" class="primary" id="startColoring">Начать раскрашивать</button>
   </div>
@@ -47,14 +55,6 @@
    <div class="overview-houses" id="previewSituations" aria-label="Десять домиков ситуаций"></div>
    <div class="overview-last-house">В последнем домике живет <span class="overview-line"></span></div>
   </div>
- </section>
- <section class="panel workspace-meta">
-  <div class="section-top"><div><h2>Участники</h2><p class="muted">Добавь хотя бы одного ребенка: укажи имя и возраст или класс / группу.</p></div><div class="mode-switch" aria-label="Режим обработки"><button type="button" class="active" data-mode="one">Один участник</button><button type="button" data-mode="group">Группа / класс</button></div></div>
-  <div class="participants-setup">
-   <label>Класс / группа<input id="groupName" maxlength="80" placeholder="Например, 1А"></label>
-   <div class="add-student"><label>Фамилия и имя ребенка<input id="newName" maxlength="100" placeholder="Фамилия Имя"></label><label>Возраст (если известен)<input id="newAge" type="number" min="3" max="18" inputmode="numeric" placeholder="Лет"></label><button class="primary" id="addStudent" type="button">Добавить</button></div>
-  </div>
-  <p class="form-error" id="formError" role="alert"></p><div id="people" class="people" aria-label="Участники"></div>
  </section>
  <div id="workArea" hidden>
   <section class="panel student-bar">
