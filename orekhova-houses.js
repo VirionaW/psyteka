@@ -21,7 +21,7 @@
  const blank=()=>'<div class="blank-preview"><div class="blank-head">Фамилия, имя _________________________________________ &nbsp; Класс __________ &nbsp; Дата __________</div><h3>Задание 1</h3><div class="blank-ranks">'+Array.from({length:8},(_,i)=>'<div>'+(i+1)+'</div>').join("")+'</div><h3>Задание 2</h3><div class="houses-grid">'+Array.from({length:10},(_,i)=>house(i+1)).join("")+'</div><h3>Задание 3</h3><div class="houses-grid">'+Array.from({length:10},(_,i)=>house(i+1)).join("")+'</div><p>Домик 10: _______________________________________________________________________</p></div>';
  const current=()=>state.students[state.selected]||null;
  const emptyStudent=(name,age)=>({name,age,ranking:Array(8).fill(null),emotions:Array(10).fill(null),situations:Array(10).fill(null),description:""});
- const complete=s=>!!s&&s.name.trim().length>0&&Number.isInteger(s.age)&&s.age>=5&&s.age<=12&&s.ranking.length===8&&s.ranking.every(Boolean)&&new Set(s.ranking).size===8&&s.emotions.every(Boolean)&&s.situations.every(Boolean)&&s.description.trim().length>0;
+ const complete=s=>!!s&&s.name.trim().length>0&&((Number.isInteger(s.age)&&s.age>=3&&s.age<=18)||!!state.groupName.trim())&&s.ranking.length===8&&s.ranking.every(Boolean)&&new Set(s.ranking).size===8&&s.emotions.every(Boolean)&&s.situations.every(Boolean)&&s.description.trim().length>0;
  const validGroup=()=>state.mode!=="group"||state.groupName.trim().length>0;
  function calculate(s){
   if(!s||s.ranking.length!==8||!s.ranking.every(Boolean)||new Set(s.ranking).size!==8)return null;
@@ -53,7 +53,7 @@
   if(s){$("studentProgress").textContent=done?"Данные заполнены · результат рассчитан":(progress(s)+"/29 · данные заполнены частично");$("studentProgress").className="completion "+(done?"ready":"pending");}
  }
  function renderPeople(){
-  $("people").innerHTML=state.students.map((s,i)=>'<button class="person'+(i===state.selected?' selected':'')+(complete(s)&&validGroup()?' done':'')+'" data-person="'+i+'" type="button" aria-pressed="'+(i===state.selected)+'"><span class="mark"></span>'+esc(s.name)+' · '+s.age+' лет</button>').join("");
+  $("people").innerHTML=state.students.map((s,i)=>'<button class="person'+(i===state.selected?' selected':'')+(complete(s)&&validGroup()?' done':'')+'" data-person="'+i+'" type="button" aria-pressed="'+(i===state.selected)+'"><span class="mark"></span>'+esc(s.name)+(s.age?' · '+s.age+' лет':state.groupName.trim()?' · '+esc(state.groupName):'')+'</button>').join("");
   $("workArea").hidden=!current();
   $("groupReport").hidden=state.mode!=="group"||state.students.length===0||state.step!==4;
   status();
@@ -148,15 +148,16 @@
  function render(){
   const s=current();
   renderPeople();
-  if(s){$("currentName").textContent=s.name+" · "+s.age+" лет";renderRanking();renderColorRows();$("report").innerHTML=resultHtml(s);}
+  if(s){$("currentName").textContent=s.name+(s.age?" · "+s.age+" лет":state.groupName.trim()?" · "+state.groupName:"");renderRanking();renderColorRows();$("report").innerHTML=resultHtml(s);}
   renderGroup();
   if(s)renderWizard();
  }
  function addStudent(){
   const name=$("newName").value.trim().replace(/\s+/g," ");
-  const age=Number($("newAge").value);
+  const age=$("newAge").value.trim()?Number($("newAge").value):null;
   if(!name){setError("Введите фамилию и имя ребенка.");$("newName").focus();return;}
-  if(!$("newAge").value||!Number.isInteger(age)||age<5||age>12){setError("Укажите возраст от 5 до 12 лет.");$("newAge").focus();return;}
+  if(age!==null&&(!Number.isInteger(age)||age<3||age>18)){setError("Укажите возраст в полных годах.");$("newAge").focus();return;}
+  if(age===null&&!state.groupName.trim()){setError("Укажите возраст или класс / группу.");$("newAge").focus();return;}
   if(state.mode==="group"&&!state.groupName.trim()){setError("Для группового режима укажите класс или группу.");$("groupName").focus();return;}
   state.students.push(emptyStudent(name,age));state.selected=state.students.length-1;state.step=1;
   $("newName").value="";$("newAge").value="";setError("");render();
@@ -188,7 +189,7 @@
    return b+'</w:tbl>'+wp("Проценты и выводы требуют профессиональной интерпретации. Незаполненные протоколы не учитываются.");
   }
   const s=current(),c=calculate(s),v=classifyVK(c.vk),co=classifyCO(c.co);
-  let b=wp("Метолария. Методика «Домики» О. А. Ореховой")+wp("Участник: "+s.name+" · "+s.age+" лет")+
+  let b=wp("Метолария. Методика «Домики» О. А. Ореховой")+wp("Участник: "+s.name+(s.age?" · "+s.age+" лет":" · класс / группа: "+state.groupName))+
   wp("ВК: "+c.vk.toFixed(2).replace(".",",")+" – "+v.text,colorHex(v.level))+wp("СО: "+c.co+" – "+co.text,colorHex(co.level))+
   wp("Задание 1. Дорожка: "+s.ranking.map(colorName).join(", "))+wp("Задание 2. Домики чувств");
   EMOTIONS.forEach((x,i)=>b+=wp((i+1)+". "+x+": "+colorName(s.emotions[i])));
