@@ -1,0 +1,10 @@
+/* Бланк Ореховой внутри стандартного портфолио Метоларии. */
+#modal .or-portfolio-preview{max-width:720px;margin:18px auto 4px;border:1px solid #d4e2d7;background:#fff;color:#233c30;border-radius:12px;padding:20px;overflow:hidden}
+#modal .or-print-form{font:14px/1.45 Arial,sans-serif}
+#modal .or-print-form p{margin:10px 0 14px;overflow-wrap:anywhere}
+#modal .or-print-section h3{font-size:15px;margin:16px 0 10px;color:#234331}
+#modal .or-print-rectangles{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
+#modal .or-print-rectangles>div{border:1.5px solid #56675a;min-height:41px;text-align:center;padding:2px;font-size:11px}
+#modal .or-print-houses{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px 6px;justify-items:center}
+#modal .or-print-houses svg{width:min(100%,78px);height:auto}
+@media(max-width:640px){#modal .or-portfolio-preview{padding:11px}#modal .or-print-houses{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px 3px}#modal .or-print-rectangles{gap:3px}#modal .or-print-rectangles>div{min-height:30px}#modal .or-print-houses svg{width:min(100%,57px)}}
