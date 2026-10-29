@@ -940,6 +940,7 @@ function saveMethodHTML(){
 }
 function openMethod(m){
  if(!m)return;
+ if(m.id==="orekhova-houses-eight"){window.location.href="orekhova-houses.html";return;}
  if(window.PSY_PMPK_SOURCED?.has?.(m.name)){window.PSY_PMPK_SOURCED.open(m.name);return;}
  if(window.PSY_PMPK_PIERON?.has?.(m.name)){window.PSY_PMPK_PIERON.open();return;}
  if(window.PSY_PMPK_OBJECT56?.catalog?.some(x=>x.title===m.name)){const item=window.PSY_PMPK_OBJECT56.catalog.find(x=>x.title===m.name);window.PSY_PMPK_OBJECT56.open(item.object56Id);return;}
