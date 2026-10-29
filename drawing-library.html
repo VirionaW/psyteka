@@ -251,8 +251,9 @@ html.dark .choice[aria-pressed=true] small{color:#d8ecdd}
 .inline-sheet .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}
 .inline-sheet .feature-option{display:flex;flex-direction:column;gap:3px;min-height:64px;text-align:left}
 .inline-sheet .feature-option small{font-size:12px}
-.inline-sheet .quantity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
-.inline-sheet .quantity-grid input{width:100%;max-width:140px}
+.inline-sheet .quantity-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:stretch}
+.inline-sheet .quantity-grid label{display:flex;flex-direction:column;gap:6px;min-width:0}
+.inline-sheet .quantity-grid input{display:block;box-sizing:border-box;width:100%;max-width:100%;margin-top:auto}
 .inline-sheet .sheet-note textarea{max-width:100%}
 .inline-sheet .sheet-help{font-size:14px;color:var(--muted);margin:10px 0}
 .inline-sheet .sheet-tabs{margin-top:15px}
