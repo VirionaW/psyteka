@@ -118,3 +118,64 @@ function bind(d,ctx){
  });
  update();
 }
+
+function csv(d,rows){
+ const head=["№","Участник",...(cfg(d).scales||cfg(d).versions?.[0]?.scales||[]).map(s=>s.name)];
+ const cell=v=>{let x=String(v??"");if(/^\s*[=+@-]/.test(x))x="'"+x;return '"'+x.replace(/"/g,'""')+'"'};
+ const lines=[head,...rows.map((r,i)=>[i+1,r.name||"У-"+(i+1),...(scored(d,r)?.scales||head.slice(2).map(()=>null)).map(s=>s?num(d,s):"")])];
+ return "\uFEFF"+lines.map(row=>row.map(cell).join(";")).join("\r\n");
+}
+/* Create a real OOXML Word file without remote services. */
+function report(d,rows,mode,index){
+ const people=(mode==="class"?rows:[rows[index]]).filter(Boolean);if(!people.length)return false;
+ if(mode!=="class"&&!scored(d,people[0]))return false;
+ const x=s=>String(s??"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F<>&"']/g,ch=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;","'":"&apos;"}[ch]||""));
+ const para=s=>'<w:p><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">'+x(s)+'</w:t></w:r></w:p>';
+ const cel=(s,color,head)=>'<w:tc><w:tcPr><w:tcW w:w="auto" w:type="auto"/>'+(color?'<w:shd w:val="clear" w:color="auto" w:fill="'+color+'"/>':"")+'</w:tcPr><w:p><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="18"/>'+(head?"<w:b/>":"")+'</w:rPr><w:t xml:space="preserve">'+x(s)+'</w:t></w:r></w:p></w:tc>';
+ const table=(matrix,fill=[])=>'<w:tbl><w:tblPr><w:tblBorders>'+["top","bottom","left","right","insideH","insideV"].map(k=>'<w:'+k+' w:val="single" w:sz="4"/>').join("")+'</w:tblBorders></w:tblPr>'+
+ matrix.map((row,i)=>'<w:tr>'+row.map((v,j)=>cel(v,fill[i-1]?.[j],i===0)).join("")+'</w:tr>').join("")+'</w:tbl>';
+ const scales=cfg(d).scales||cfg(d).versions?.[0]?.scales||[],rowsData=[],fill=[];
+ for(let i=0;i<people.length;i++){
+  const row=people[i],z=scored(d,row);
+  rowsData.push([String(i+1),row.name||"У-"+(i+1),...scales.map((s,j)=>z?num(d,z.scales[j]):"–")]);
+  fill.push([null,null,...scales.map((s,j)=>{const factor=z?.scales?.[j];if(!factor)return null;const kind=tone(d,factor);return kind==="high"?"F9DDCA":kind==="middle"?"FFF0CF":kind==="low"?"E4F1FB":"EAF1F4"})]);
+ }
+ let body=para(cfg(d).name)+para(mode==="class"?"Результаты класса":"Результат участника")+para("Дата: "+new Date().toLocaleDateString("ru-RU"));
+ body+=table([["№","Участник",...scales.map(s=>s.name)],...rowsData],fill);
+ if(d.id==="eysenck-40")body+=para("Интервалы каждой шкалы:")+table([["Баллы","Уровень"],["0-7","Низкий"],["8-14","Средний"],["15-20","Высокий"]],[["E4F1FB","E4F1FB"],["FFF0CF","FFF0CF"],["F9DDCA","F9DDCA"]]);
+ else if(d.id==="lazarus-wcq50")body+=para("Числа – сырые баллы по каждой копинг-стратегии, не клинические пороги.");
+ else body+=para("Факторы представлены с коэффициентами. Это не расчет вероятности суицида; при необходимости нужна очная оценка безопасности.");
+ const documentXml='<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+
+ '<w:sectPr><w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="680" w:bottom="680" w:left="680" w:right="680"/></w:sectPr></w:body></w:document>';
+ const contentTypes='<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
+ const rel='<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
+ const encoder=new TextEncoder(),tab=new Uint32Array(256);
+ for(let i=0;i<256;i++){let z=i;for(let j=0;j<8;j++)z=z&1?0xedb88320^(z>>>1):z>>>1;tab[i]=z>>>0}
+ const crc=bytes=>{let z=0xffffffff;for(const b of bytes)z=tab[(z^b)&255]^(z>>>8);return(z^0xffffffff)>>>0};
+ const u16=(b,i,v)=>{b[i]=v&255;b[i+1]=v>>>8&255},u32=(b,i,v)=>{u16(b,i,v);u16(b,i+2,v>>>16)};
+ const join=arr=>{const b=new Uint8Array(arr.reduce((n,x)=>n+x.length,0));let i=0;for(const x of arr){b.set(x,i);i+=x.length}return b};
+ const local=[],central=[];let offset=0;
+ for(const [name,xml] of [["[Content_Types].xml",contentTypes],["_rels/.rels",rel],["word/document.xml",documentXml]]){
+  const nameBytes=encoder.encode(name),bytes=encoder.encode(xml),hash=crc(bytes),header=new Uint8Array(30+nameBytes.length),dir=new Uint8Array(46+nameBytes.length);
+  u32(header,0,0x04034b50);u16(header,4,20);u32(header,14,hash);u32(header,18,bytes.length);u32(header,22,bytes.length);u16(header,26,nameBytes.length);header.set(nameBytes,30);
+  u32(dir,0,0x02014b50);u16(dir,4,20);u16(dir,6,20);u32(dir,16,hash);u32(dir,20,bytes.length);u32(dir,24,bytes.length);u16(dir,28,nameBytes.length);u32(dir,42,offset);dir.set(nameBytes,46);
+  local.push(header,bytes);central.push(dir);offset+=header.length+bytes.length;
+ }
+ const directory=join(central),end=new Uint8Array(22);u32(end,0,0x06054b50);u16(end,8,central.length);u16(end,10,central.length);u32(end,12,directory.length);u32(end,16,offset);
+ const archive=join([...local,directory,end]),url=URL.createObjectURL(new Blob([archive],{type:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"}));
+ const a=document.createElement("a");a.href=url;a.download="Metolaria_"+d.id+(mode==="class"?"_class":"_participant")+"_results.docx";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);return true;
+}
+const old={supports:base.supports,scoring:base.scoring,done:base.done,bind:base.bind,group:base.group,report:base.report,csv:base.csv,calculator:m.calculator,instruction:m.instruction,materials:m.materials,printPage:m.printPage};
+base.supports=d=>supports(d)||old.supports(d);
+base.scoring=(d,r)=>supports(d)?scored(d,r):old.scoring(d,r);
+base.done=(d,a)=>supports(d)?present(d,{answers:a}):old.done(d,a);
+base.bind=(d,ctx)=>supports(d)?bind(d,ctx):old.bind(d,ctx);
+base.group=(d,rows)=>supports(d)?group(d,rows):old.group(d,rows);
+base.report=(d,rows,mode,index)=>supports(d)?report(d,rows,mode,index):old.report(d,rows,mode,index);
+base.csv=(d,rows)=>supports(d)?csv(d,rows):old.csv(d,rows);
+m.calculator=(d,ctx)=>supports(d)?calculator(d,ctx):old.calculator(d,ctx);
+m.instruction=d=>supports(d)?guide(d):old.instruction(d);
+m.materials=d=>supports(d)?sheet(d):old.materials(d);
+m.printPage=(d,blank,combined)=>supports(d)?printable(d,combined?"combined":blank?"blank":"guide"):old.printPage(d,blank,combined);
+window.PSY_SCHOOL_711_UI={supports,scored,present,result,group,calculator,guide,sheet,printable,csv,report};
+})();
