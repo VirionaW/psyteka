@@ -131,6 +131,7 @@
    const realAuthor=m.existing?(window.PSY_CATALOG||[]).find(x=>x.name===m.existing)?.author||"":"";
    const displayedAuthor=m.verified?m.author:realAuthor;
    const credit='<p class="method-card-author">'+esc(displayedAuthor&&!/сведения об авторе уточняются/i.test(displayedAuthor)?displayedAuthor:'Автор версии не установлен')+'</p>';
+   const count=m.count||(m.verifiedKey==='mittens'?'5 критериев':m.verified?'3 выбора':Array.isArray(m.items)?m.items.length+' пунктов':'');
    return '<article class="method preschool-method" data-kind="'+(m.verifiedKey==="mittens"?"drawing":m.existing?"graphic":"other")+'"><div class="head"><div class="glyph">'+picture(m)+'</div><div><h3>'+esc(m.title)+'</h3>'+credit+'</div></div><div class="tags"><span class="tag">'+esc(m.format)+'</span><span class="tag">'+esc(m.age)+' лет</span></div><p class="method-card-summary">'+esc(m.goal)+'</p><div class="actions"><button class="btn primary" type="button" data-preschool-open="'+esc(m.id)+'">Открыть методику</button></div></article>';
   }).join("")||'<p class="preschool-empty">По выбранным параметрам материалов нет. Попробуйте другое направление или возраст.</p>';
   tree.querySelectorAll("[data-preschool-topic]").forEach(b=>b.classList.toggle("active",!!topic&&b.dataset.preschoolTopic===topic&&b.dataset.preschoolGroup===group));
