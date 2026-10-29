@@ -2817,7 +2817,7 @@ function init(){
  $("#methodBadge").textContent=methodName(state.method);renderMethodFocus();
  $("#connection").textContent=entries.length+" элементов · автономный справочник";
  renderCategories();renderResults();renderDetails();renderRecords();
- if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register("./drawing-library-sw.js").catch(function(){});
+ if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register("./drawing-library-sw.js",{updateViaCache:"none"}).catch(function(){});
 }
 function normalizeColors(colors,legacy){
  var arr=Array.isArray(colors)?colors.slice():(legacy?[legacy]:[]);
