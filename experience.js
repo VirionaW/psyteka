@@ -6,6 +6,34 @@ let rows=[{name:"",answers:[]}];
 let modeSnapshots={one:[{name:"",answers:[]}],class:[{name:"",answers:[]}]};
 let modeIndices={one:0,class:0};
 const methodSessions={};
+
+let activeSavedAssessmentId=null,activeSavedAssessmentTitle="";
+async function saveCurrentAssessment(){
+ const cloud=window.PSY_CLOUD;
+ if(!methodNow||!cloud){alert("Войдите в аккаунт для облачного сохранения.");return}
+ const dialog=document.createElement("dialog");dialog.className="psy-save-assessment-dialog";
+ const form=document.createElement("form"),h=document.createElement("h3"),description=document.createElement("p"),label=document.createElement("label"),name=document.createElement("input"),actions=document.createElement("div"),cancel=document.createElement("button"),submit=document.createElement("button");
+ h.textContent="Сохранить результат";description.textContent="Результат появится в вашем профиле. Рекомендуем использовать условные коды вместо ФИО детей.";
+ label.textContent="Название";name.type="text";name.required=true;name.maxLength=120;name.value=activeSavedAssessmentTitle||((calcMode==="class"?"Класс – ":"Участник – ")+methodNow.name);
+ cancel.type="button";cancel.textContent="Отмена";submit.type="submit";submit.textContent="Сохранить в профиль";submit.className="btn primary";actions.className="psy-save-assessment-actions";
+ label.append(name);actions.append(cancel,submit);form.append(h,description,label,actions);dialog.append(form);document.body.append(dialog);
+ const close=()=>{dialog.close();dialog.remove()};cancel.onclick=close;
+ form.onsubmit=async e=>{
+  e.preventDefault();if(!name.value.trim())return;
+  submit.disabled=true;submit.textContent="Сохранение…";
+  try{
+   const title=name.value.trim(),data=await cloud.saveAssessment({
+    id:activeSavedAssessmentId,title,methodName:methodNow.name,
+    snapshot:{calcMode,rowIndex,rows:rows.map(r=>({...r,answers:Array.isArray(r.answers)?r.answers.slice():[]}))}
+   });
+   activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=title;close();
+   const btn=document.getElementById("cpSaveBottom")||document.getElementById("mspssSaveBottom");
+   if(btn){btn.textContent="Сохранено ✓";btn.classList.add("psy-is-saved")}
+  }catch(err){description.textContent="Сохранение не выполнено: "+err.message;submit.disabled=false;submit.textContent="Повторить";}
+ };
+ dialog.showModal();name.focus();name.select();
+}
+
 const categoryIcons={
 "Тревожность":'<path d="M8 18c-2-6 3-10 8-9 5-5 13 0 12 5 9 1 11 16-1 17H11C1 31 0 21 8 18z"/><path d="M13 22h3m3 0h3"/>',
 "Адаптация":'<path d="M6 20 20 8l14 12v15H6z"/><path d="M16 35V24h8v11"/>',
@@ -114,7 +142,7 @@ function setTab(name){
   bottom.textContent=insideProcessing?"← Вернуться к портфолио":"Обработка результатов →";
   bottom.classList.toggle("primary",!insideProcessing||methodNow&&['mspss','simpleAnalogies12','pairedAssoc20'].includes(DETAILS[methodNow.name]?.workflow));
   const right=document.querySelector('#modal .psy-mspss-footer-right');if(right)right.hidden=!insideProcessing;
-  const reset=document.getElementById('mspssResetBottom');if(reset)reset.hidden=!insideProcessing;
+  const reset=document.getElementById('mspssResetBottom');if(reset)reset.hidden=!insideProcessing;const save=document.getElementById('mspssSaveBottom');if(save)save.hidden=!insideProcessing;
    const back=document.getElementById('mspssBack');if(back)back.hidden=!insideProcessing;
    const report=document.getElementById('mspssReportBottom');if(report){
     report.hidden=!insideProcessing;
@@ -138,7 +166,7 @@ function setTab(name){
      report.disabled=!eligible;report.classList.toggle("psy-mspss-waiting",!eligible);
      report.textContent=calcMode==="class"?"Скачать отчет класса · Word":"Скачать отчет участника · Word";
     }
-    const reset=document.getElementById("cpResetBottom");if(reset)reset.hidden=!insideProcessing;
+    const reset=document.getElementById("cpResetBottom");if(reset)reset.hidden=!insideProcessing;const save=document.getElementById("cpSaveBottom");if(save)save.hidden=!insideProcessing;
    }
    if(methodNow&&DETAILS[methodNow.name]?.workflow==='simpleAnalogies12'){
      bottom.hidden=insideProcessing;
@@ -875,7 +903,7 @@ function openMethod(m){
  if(window.PSY_PMPK_IVANOVA?.has?.(m.name)){window.PSY_PMPK_IVANOVA.open();return;}
  if(window.PSY_PMPK_PROVERBS?.has?.(m.name)){window.PSY_PMPK_PROVERBS.open();return;}
  if(methodNow?.name){methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex}};
- methodNow=m;tabNow='overview';
+ methodNow=m;tabNow='overview';activeSavedAssessmentId=null;activeSavedAssessmentTitle='';
  const saved=methodSessions[m.name];
  calcMode=saved?.calcMode||'one';
  modeSnapshots=saved?.modeSnapshots||{one:[{name:"",answers:[]}],class:[{name:"",answers:[]}]};
@@ -905,7 +933,7 @@ function openMethod(m){
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
  footer.hidden=!d;
- footer.innerHTML=specialPilot?'<div class="psy-special-shared-footer"><span id="specialFooterStatus" class="psy-special-footer-state pending">Требуется заполнение</span><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button></div>':preschoolPilot?'<div class="psy-preschool-shared-footer"><span id="preschoolFooterStatus" class="psy-preschool-footer-state pending">Требуется заполнение</span><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button></div>':luriaPilot?'<div class="psy-luria-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button><button type="button" class="btn" id="luriaBack" hidden>Вернуться к портфолио</button><div class="psy-luria-footer-right"><span class="psy-luria-status is-waiting" id="luriaFooterStatus" hidden>Требуется заполнение</span><button type="button" class="btn" id="luriaReportBottom" disabled hidden>Скачать отчет участника</button><button type="button" class="btn" id="luriaResetBottom" hidden>Очистить ответы</button></div></div>':analogyPilot?'<div class="psy-analogies-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button><button type="button" class="btn psy-analogies-back" id="anaBack" hidden>Вернуться к портфолио</button><div class="psy-analogies-footer-right"><button type="button" class="btn psy-analogies-report" id="anaReportBottom" disabled hidden>Скачать отчет участника</button><button type="button" class="btn psy-analogies-reset" id="anaResetBottom" hidden>Очистить ответы</button></div></div>':schultePilot?'<div class="psy-schulte-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button type="button" class="btn psy-schulte-back" id="schulteBack" hidden>← Вернуться к портфолио</button><div class="psy-schulte-footer-right"><button type="button" class="btn psy-schulte-report" id="schulteReportBottom" disabled hidden>Скачать отчёт участника</button><button type="button" class="btn psy-schulte-reset" id="schulteResetBottom" hidden>Очистить ответы</button></div></div>':cpPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="cpBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="cpReportBottom" disabled hidden>Скачать отчет · Word</button><button class="btn psy-mspss-reset" id="cpResetBottom" hidden>Очистить ответы</button></div></div>':matchMSPSS?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button></div>':mspssPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="mspssBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="mspssReportBottom" disabled hidden>Скачать отчет участника</button><button class="btn psy-mspss-reset" id="mspssResetBottom" hidden>Очистить ответы</button></div></div>':'<div class="psy-standard-footer">'+(d?'<button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button>':'')+'</div>';
+ footer.innerHTML=specialPilot?'<div class="psy-special-shared-footer"><span id="specialFooterStatus" class="psy-special-footer-state pending">Требуется заполнение</span><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button></div>':preschoolPilot?'<div class="psy-preschool-shared-footer"><span id="preschoolFooterStatus" class="psy-preschool-footer-state pending">Требуется заполнение</span><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button></div>':luriaPilot?'<div class="psy-luria-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button><button type="button" class="btn" id="luriaBack" hidden>Вернуться к портфолио</button><div class="psy-luria-footer-right"><span class="psy-luria-status is-waiting" id="luriaFooterStatus" hidden>Требуется заполнение</span><button type="button" class="btn" id="luriaReportBottom" disabled hidden>Скачать отчет участника</button><button type="button" class="btn" id="luriaResetBottom" hidden>Очистить ответы</button></div></div>':analogyPilot?'<div class="psy-analogies-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button><button type="button" class="btn psy-analogies-back" id="anaBack" hidden>Вернуться к портфолио</button><div class="psy-analogies-footer-right"><button type="button" class="btn psy-analogies-report" id="anaReportBottom" disabled hidden>Скачать отчет участника</button><button type="button" class="btn psy-analogies-reset" id="anaResetBottom" hidden>Очистить ответы</button></div></div>':schultePilot?'<div class="psy-schulte-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button type="button" class="btn psy-schulte-back" id="schulteBack" hidden>← Вернуться к портфолио</button><div class="psy-schulte-footer-right"><button type="button" class="btn psy-schulte-report" id="schulteReportBottom" disabled hidden>Скачать отчёт участника</button><button type="button" class="btn psy-schulte-reset" id="schulteResetBottom" hidden>Очистить ответы</button></div></div>':cpPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="cpBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="cpReportBottom" disabled hidden>Скачать отчет · Word</button><button class="btn psy-mspss-save" id="cpSaveBottom" hidden>Сохранить результат</button><button class="btn psy-mspss-reset" id="cpResetBottom" hidden>Очистить ответы</button></div></div>':matchMSPSS?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button></div>':mspssPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="mspssBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="mspssReportBottom" disabled hidden>Скачать отчет участника</button><button class="btn psy-mspss-save" id="mspssSaveBottom" hidden>Сохранить результат</button><button class="btn psy-mspss-reset" id="mspssResetBottom" hidden>Очистить ответы</button></div></div>':'<div class="psy-standard-footer">'+(d?'<button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button>':'')+'</div>';
  // Schulte has exactly one primary action in the overview.
  // Anchor it to the right edge of the modal footer, independently of flex/grid
  // styles that may have been introduced by shared modal themes.
@@ -941,10 +969,11 @@ function openMethod(m){
  }
  if(cpPilot){
   $('#cpBack').onclick=()=>setTab('overview');
-  $('#cpReportBottom').onclick=()=>window.PSY_MATCH_MSPSS.report(d,rows,calcMode,rowIndex);
+  $('#cpReportBottom').onclick=()=>window.PSY_MATCH_MSPSS.report(d,rows,calcMode,rowIndex);$('#cpSaveBottom').onclick=saveCurrentAssessment;
   $('#cpResetBottom').onclick=()=>{if(!confirm('Очистить ответы выбранного участника?'))return;rows[rowIndex].answers=[];setTab('score');};
  }
- if(mspssPilot){$('#mspssBack').onclick=()=>setTab('overview');$('#mspssReportBottom').onclick=()=>calcMode==='class'?window.PSY_MSPSS.openClassReport(rows):window.PSY_MSPSS.openReport(rows[rowIndex]);$('#mspssResetBottom').onclick=()=>{if(!confirm('Очистить ответы выбранного участника?'))return;rows[rowIndex].answers=[];setTab('score');document.querySelector('input[data-mspss]')?.focus();};}
+ if(mspssPilot){$('#mspssSaveBottom').onclick=saveCurrentAssessment;}
+  if(mspssPilot){$('#mspssBack').onclick=()=>setTab('overview');$('#mspssReportBottom').onclick=()=>calcMode==='class'?window.PSY_MSPSS.openClassReport(rows):window.PSY_MSPSS.openReport(rows[rowIndex]);$('#mspssResetBottom').onclick=()=>{if(!confirm('Очистить ответы выбранного участника?'))return;rows[rowIndex].answers=[];setTab('score');document.querySelector('input[data-mspss]')?.focus();};}
 
  $('#modal').hidden=false;$('#shade').hidden=false;setTab('overview');
 }
