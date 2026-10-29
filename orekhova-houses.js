@@ -63,7 +63,7 @@
   if(!s)return false;
   if(n===1)return rankReady(s);
   if(n===2)return s.emotions.every(Boolean);
-  if(n===3)return s.situations.every(Boolean)&&!!s.description.trim();
+  if(n===3)return s.situations.every(Boolean)&&!!s.description.trim()&&validGroup();
   return complete(s)&&validGroup();
  }
  function houseSvg(number,chosen){
@@ -228,7 +228,7 @@
  document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{
   state.mode=b.dataset.mode;document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("active",x===b));setError("");render();
  }));
- $("groupName").addEventListener("input",e=>{state.groupName=e.target.value;status();renderGroup();});
+ $("groupName").addEventListener("input",e=>{state.groupName=e.target.value;status();renderGroup();if(current())renderWizard();});
  $("addStudent").addEventListener("click",addStudent);
  $("newName").addEventListener("keydown",e=>{if(e.key==="Enter")addStudent();});
  $("newAge").addEventListener("keydown",e=>{if(e.key==="Enter")addStudent();});
