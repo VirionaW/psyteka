@@ -2,7 +2,7 @@
 /* Account-scoped sync. Never put pupil assessments in localStorage. */
 (function(){
  const identity=window.PSY_IDENTITY;
- let user=null,client=null,queue=Promise.resolve(),loading=true;
+ let user=null,client=null,queue=Promise.resolve(),loading=true,dirtyPending=false;
  const blank=()=>({favorites:[],folders:[]});
  const key=()=>user?"psy-collections-v1:"+user.id:null;
  const normalize=d=>({
@@ -27,7 +27,7 @@
   if(!user||!client){loading=false;return false}
   const {data,error}=await client.from("psy_user_collections").select("data").eq("user_id",user.id).maybeSingle();
   if(error){message("Избранное не синхронизировано: "+error.message);loading=false;return false}
-  if(data?.data){putLocal(data.data)}else{
+  if(data?.data){if(!dirtyPending)putLocal(data.data)}else{
    const local=readLocal();
    if(local.favorites.length||local.folders.length){
     const write=await client.from("psy_user_collections").upsert({user_id:user.id,data:local,updated_at:new Date().toISOString()});
@@ -40,12 +40,13 @@
  }).catch(e=>{loading=false;message("Ошибка облачного подключения: "+e.message);return false});
  const saveCollections=d=>{
   const copy=normalize(d);
-  putLocal(copy);
+  dirtyPending=true;putLocal(copy);
   queue=queue.catch(()=>{}).then(async()=>{
    await ready;
    if(!client||!user)throw Error("Для синхронизации нужен вход в аккаунт");
    const {error}=await client.from("psy_user_collections").upsert({user_id:user.id,data:copy,updated_at:new Date().toISOString()});
    if(error)throw error;
+   dirtyPending=false;putLocal(copy);
    window.dispatchEvent(new CustomEvent("psy-collections-synced"));
   }).catch(e=>{message("Папки сохранены на этом устройстве, но облачная синхронизация не удалась: "+e.message);throw e});
   return queue;
