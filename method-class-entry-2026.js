@@ -258,9 +258,29 @@
    '<p class="psy-mspss-small">Восемь факторов пересекаются по пунктам; суммы факторов не складывают. Третий фактор включает 13 вопросов, в том числе № 1.</p></section>';
  }
  const alpha=rows=>rows.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||"","ru",{sensitivity:"base"}));
+ function cdiClassRow(r,i){
+  const z=scoring({id:"cdi-27"},r);
+  const t=z?norms.norm(z.raw,r.ageYears,r.sex):null;
+  return {
+   no:i+1,
+   name:r.name||"У-"+String(i+1).padStart(2,"0"),
+   raw:z?z.raw:"–",
+   t:t?.status==="ok"?t.t:"–",
+   status:r.attendance==="absent"?"Отсутствовал":z?"Обработан":"Не заполнен",
+   level:t?.status==="ok"?t.level:z?"Не определена":"–"
+  };
+ }
  function group(d,rows){
-  const ordered=alpha(rows).filter(r=>r.name?.trim()||done(d,r.answers));
+  const ordered=(type(d)==="cdi"?rows:alpha(rows)).filter(r=>r.name?.trim()||done(d,r.answers));
   const isCDI=type(d)==="cdi";
+  if(isCDI){
+   const body=ordered.map((r,i)=>{
+    const x=cdiClassRow(r,i);
+    return '<tr><td>'+x.no+'</td><td>'+esc(x.name)+'</td><td>'+x.raw+'</td><td>'+x.t+'</td><td>'+esc(x.status)+'</td><td>'+esc(x.level)+'</td></tr>';
+   }).join("");
+   return '<section class="psy-mspss-group psy-cdi-class-results"><h3>Результаты класса</h3>'+
+    '<div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th><th>Баллы</th><th>Т-балл</th><th>Статус</th><th>Интерпретация</th></tr></thead><tbody>'+body+'</tbody></table></div></section>';
+  }
   const head=isCDI?'<th>Сырой / 54</th><th>Т-балл</th>':'<th>Общий / 58</th><th>%</th>'+phillips.scales.map((s,i)=>'<th title="'+esc(s.name)+'">Ф'+(i+1)+'</th>').join("");
   const body=ordered.map((r,i)=>{
    const z=scoring(d,r),n=done(d,r.answers),t=isCDI&&z?norms.norm(z.raw,r.ageYears,r.sex):null;
