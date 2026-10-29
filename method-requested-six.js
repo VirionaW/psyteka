@@ -36,7 +36,7 @@ function materials(d){
  const hasSheet=Boolean(count&&max);
  const half=Math.ceil(count/2);
  const legend=hasSheet?'<p class="psy-six-scale-legend">'+Array.from({length:max},(_,i)=>'<span><strong>'+(i+1)+'</strong> '+escape(d.answerLabels?.[i]||"Вариант "+(i+1))+'</span>').join(" · ")+'</p>':"";
- const grid=hasSheet?'<div class="psy-six-sheet"><h3>Лист регистрации ответов · А4</h3><p>Код участника: __________________　Дата: _______________</p><p>Перенос ответов выполняйте из оригинального бланка без изменения номера пункта. Этот регистрационный лист не заменяет текст методики.</p>'+legend+
+ const grid=hasSheet?'<div class="psy-six-sheet"><h3>Бланк регистрации ответов · А4</h3><p>Код участника: __________________　Дата: _______________</p><p>Фамилия и имя: _______________________________ Класс / группа: __________</p><p>Ответы отмечайте строго по номерам в оригинальном опроснике. Регистрационный бланк не заменяет авторские формулировки вопросов.</p>'+legend+
  '<table class="questions-table"><thead><tr><th>№</th><th>Ответ ('+min+'-'+max+')</th><th>№</th><th>Ответ ('+min+'-'+max+')</th></tr></thead><tbody>'+Array.from({length:half},(_,i)=>'<tr><td>'+(i+1)+'</td><td class="blank-cell"></td><td>'+(i+half<count?i+half+1:"")+'</td><td class="blank-cell"></td></tr>').join("")+'</tbody></table></div>':
  '<p>Для выполнения используйте исходный бланк конкретной возрастной или авторской версии. Печатный лист другой редакции не заменяет оригинал.</p>';
  return '<section class="psy-six-materials"><p>Сведения о выбранной форме: '+a(d.forms[0].url,"Перейти к материалам по методике")+'</p>'+grid+variants(d)+'</section>';
@@ -103,7 +103,7 @@ function calculator(d,ctx){
 }
 function save(filename,contents,mime){const url=URL.createObjectURL(new Blob([contents],{type:mime})),node=document.createElement("a");node.href=url;node.download=filename;document.body.appendChild(node);node.click();node.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
 function printable(d,r){
- const res=results(d,r.answers,r.sixVersion),selected=d.forms[Number(r.sixVersion)]||d.forms[0];
+ const res=String(r.name||"").trim()?results(d,r.answers,r.sixVersion):null,selected=d.forms[Number(r.sixVersion)]||d.forms[0];
  const rows=res?res.map(x=>'<tr><td>'+escape(x.title)+'</td><td>'+coloredScore(x)+'</td><td>'+(x.band?escape(x.band):"Без нормативной категории")+'</td></tr>').join(""):"";
  const score=res?'<h2>Обработка</h2><table><thead><tr><th>Шкала</th><th>Баллы</th><th>Уровень</th></tr></thead><tbody>'+rows+'</tbody></table>':'<h2>Обработка</h2><p>Количественный результат не вычислялся по данной редакции.</p>';
   const isSsp=d.id==="morosanova-ssp-family"&&String(r.sixVersion)==="3";
