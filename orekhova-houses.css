@@ -174,3 +174,25 @@ html.dark{color-scheme:dark;--paper:#17251e;--surface:#25382d;--ink:#f0f8ee;--so
 .paint-house-wrap .house-help{font-size:12px;line-height:1.5;max-width:205px;min-height:52px}
 @media(max-width:980px){.painting-houses{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 @media(max-width:590px){.painting-houses{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}.paint-house-wrap{padding:9px 5px 11px}.paint-house{min-height:115px}.paint-house-wrap .house-help{font-size:11px;min-height:0}}
+
+/* Source-grounded individualized narrative conclusion – primary result. */
+.narrative-conclusion{margin-top:22px;border-top:1px solid var(--line);padding-top:18px}
+.narrative-conclusion>h3{font-size:21px;line-height:1.25;margin:0 0 15px;color:var(--ink)}
+.narrative-text{display:grid;gap:0}
+.narrative-paragraph{padding:12px 0;border-bottom:1px solid var(--line);break-inside:avoid}
+.narrative-paragraph:last-child{border-bottom:0}
+.narrative-paragraph h4{font-size:15px;font-weight:800;margin:0 0 6px;color:var(--ink)}
+.narrative-paragraph p{font-size:15px;line-height:1.72;margin:0;max-width:103ch;color:var(--ink);overflow-wrap:break-word;white-space:normal}
+.narrative-paragraph:last-child{background:var(--paper);border:1px solid var(--line);padding:16px 18px;margin-top:15px;border-radius:12px}
+.report-expanded{border:1px solid var(--line);border-radius:12px;margin:22px 0 16px}
+.report-expanded summary{list-style:auto;cursor:pointer;padding:13px 16px;font-weight:750;color:var(--ink);line-height:1.4}
+.report-expanded summary:hover{background:var(--paper)}
+.report-expanded-inner{padding:6px 17px 14px;border-top:1px solid var(--line)}
+@media(max-width:650px){.narrative-conclusion>h3{font-size:19px}.narrative-paragraph p{font-size:14px;line-height:1.65}.narrative-paragraph:last-child{padding:12px}}
+@media print{
+ .report-expanded{display:block!important}
+ .report-expanded-inner{display:block!important}
+ .report-expanded summary{display:none!important}
+ .narrative-paragraph{page-break-inside:avoid}
+ .narrative-paragraph:last-child{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
