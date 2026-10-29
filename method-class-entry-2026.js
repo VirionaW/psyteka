@@ -311,13 +311,14 @@
   const roster=rows.filter(r=>r?.name?.trim()||done(d,r?.answers)).length;
   const people=rows.filter(r=>!!scoring(d,r)),n=people.length;
   if(!n)return null;
-  const grade=classGrade(rows),L=[
+  const grade=classGrade(rows),institution=String(rows.analyticSchool||"").trim(),classLabel=String(rows.analyticClass||"").trim(),L=[
    {kind:"title",text:"Аналитическая справка"},
    {kind:"subtitle",text:"По методике "+(type(d)==="cdi"?"«Опросник детской депрессии (М. Ковач, CDI)»":"«Тест школьной тревожности Филлипса»")},
-   {kind:"meta",text:grade?grade+" класс":"Класс не указан"},
+   {kind:"meta",text:classLabel?"Класс: "+classLabel:grade?"Класс: "+grade:"Класс не указан"},
    {kind:"meta",text:"Дата: "+new Date().toLocaleDateString("ru-RU")},
    {kind:"body",text:"В обследовании приняли участие "+n+" из "+roster+" учащихся ("+classPercent(n,roster)+")."}
   ];
+  if(institution)L.unshift({kind:"institution",text:institution});
   if(type(d)==="cdi"){
    const boys=people.filter(r=>r.sex==="m").length,girls=people.filter(r=>r.sex==="f").length;
    if(boys+girls)L.push({kind:"body",text:"Из обследованных: "+boys+" мальчиков ("+classPercent(boys,n)+") и "+girls+" девочек ("+classPercent(girls,n)+")."+(boys+girls<n?" Пол указан у "+(boys+girls)+" участников.":"")});
@@ -327,9 +328,9 @@
    else{
     L.push({kind:"body",text:"По общему показателю выраженности депрессивных симптомов:"});
     const g=[
-     ["Низкий уровень (0-39)",vals.filter(v=>v<=39).length,"Показатель находится в нижнем диапазоне шкалы."],
-     ["Средний уровень (40-60)",vals.filter(v=>v>=40&&v<=60).length,"Показатель находится в среднем диапазоне шкалы."],
-     ["Высокий уровень (61 и выше)",vals.filter(v=>v>=61).length,"Выраженность симптомов повышена, рекомендуется уточнение эмоционального состояния в индивидуальной беседе."]
+     ["Низкий уровень (0-39)",vals.filter(v=>v<=39).length,"По суммарному показателю выраженные признаки депрессивного состояния не выявлены; учитываются индивидуальные особенности ребенка."],
+     ["Средний уровень (40-60)",vals.filter(v=>v>=40&&v<=60).length,"Показатель находится в среднем диапазоне; эмоциональное состояние может зависеть от ситуации и текущих трудностей."],
+     ["Высокий уровень (61 и выше)",vals.filter(v=>v>=61).length,"Повышенная выраженность симптомов может сопровождаться сниженным настроением и трудностями в общении; рекомендуется подробная индивидуальная оценка."]
     ];
     g.forEach(x=>L.push({kind:"level",text:x[0]+" – "+x[1]+" чел. ("+classPercent(x[1],vals.length)+"). "+x[2]}));
     L.push({kind:"body",text:"Вывод: высокий показатель выявлен у "+g[2][1]+" учащихся, средний – у "+g[1][1]+", низкий – у "+g[0][1]+". Результаты необходимо рассматривать вместе с беседой и наблюдением; они не являются диагнозом."});
@@ -340,7 +341,8 @@
    const factors=stats.rows.slice(1).filter(x=>x.raised+x.high>0).sort((a,b)=>(b.raised+b.high)-(a.raised+a.high));
    if(factors.length){
     L.push({kind:"body",text:"Повышенные и высокие показатели по факторам:"});
-    factors.forEach(x=>L.push({kind:"factor",text:x.name+": повышенный – "+countByLevel(x.raised,n)+", высокий – "+countByLevel(x.high,n)+"."}));
+    factors.slice(0,3).forEach(x=>L.push({kind:"factor",text:x.name+": повышенный – "+countByLevel(x.raised,n)+", высокий – "+countByLevel(x.high,n)+"."}));
+    if(factors.length>3)L.push({kind:"body",text:"Приведены три наиболее распространенных фактора; остальные показатели доступны в таблице результатов класса."});
    }else L.push({kind:"body",text:"По восьми факторам повышенных и высоких показателей не выявлено."});
    L.push({kind:"body",text:"Заключение: детям с повышенными и высокими показателями требуется дополнительное внимание. Факторы частично пересекаются по вопросам и не суммируются. Результат не является диагнозом."});
   }
@@ -395,6 +397,9 @@
   if(ctx.calcMode==="class"){
    h+='<div class="psy-mspss-workspace"><aside class="psy-mspss-sidebar"><h3>Список учащихся</h3>'+
     (type(d)==="cdi"?'<label class="psy-cp-class-label" for="cpSchoolGrade">Класс<select id="cpSchoolGrade" '+(!allowDetails?"disabled":"")+'><option value="">Выбрать класс</option>'+Array.from({length:11},(_,i)=>i+1).map(g=>'<option value="'+g+'" '+(Number(classGrade(rows))===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select><small>Возраст подставится автоматически, его можно уточнить.</small></label>':'')+
+    '<details class="psy-cp-analytic-meta"><summary>Данные для аналитической справки (необязательно)</summary>'+
+    '<label>Учреждение<input id="cpAnalyticSchool" type="text" maxlength="200" autocomplete="off" value="'+esc(rows.analyticSchool||"")+'" placeholder="Название учреждения"></label>'+
+    '<label>Обозначение класса<input id="cpAnalyticClass" type="text" maxlength="30" autocomplete="off" value="'+esc(rows.analyticClass||"")+'" placeholder="Например, 5.4"></label></details>'+
     '<p>Добавьте учеников по одному с новой строки. Для конфиденциальности можно использовать условные коды.</p>'+
     '<label class="psy-mspss-label" for="cpBulkNames">Добавить участников</label><textarea id="cpBulkNames" rows="5" placeholder="Ученик 01&#10;Ученик 02"></textarea>'+
     '<button type="button" class="btn primary psy-mspss-add" id="cpAddNames">Добавить в список</button>'+
@@ -547,8 +552,8 @@
   };
   const analytical=mode==="analysis"?analyticSummary(d,rows):null;
   const analysisPara=x=>{
-   const head=x.kind==="title"||x.kind==="subtitle",strong=x.kind==="level";
-   const fontSize=x.kind==="title"?32:x.kind==="subtitle"?27:x.kind==="meta"?24:28;
+   const head=x.kind==="title"||x.kind==="subtitle"||x.kind==="institution",strong=x.kind==="level";
+   const fontSize=x.kind==="title"?32:x.kind==="subtitle"?27:x.kind==="institution"?26:x.kind==="meta"?24:28;
    return '<w:p><w:pPr><w:jc w:val="'+(head?"center":x.kind==="meta"?"left":"both")+
     '"/><w:spacing w:after="150" w:line="335" w:lineRule="auto"/>'+
     (x.kind==="factor"?'<w:ind w:left="280"/>':"")+'</w:pPr><w:r><w:rPr>'+
@@ -663,6 +668,8 @@
    const btn=document.getElementById("cpReportBottom");if(btn){const eligible=ctx.calcMode==="class"?rows.some(x=>!!scoring(d,x)):!!scoring(d,r);btn.disabled=!eligible;btn.classList.toggle("psy-mspss-waiting",!eligible);}
     const analyticBtn=document.getElementById("cpAnalyticBottom");if(analyticBtn){const eligible=!!analyticSummary(d,rows);analyticBtn.disabled=!eligible;analyticBtn.classList.toggle("psy-mspss-waiting",!eligible);}
   };
+  document.getElementById("cpAnalyticSchool")?.addEventListener("input",e=>{rows.analyticSchool=e.target.value;const g=document.getElementById("cpGroup");if(g)g.innerHTML=group(d,rows);});
+  document.getElementById("cpAnalyticClass")?.addEventListener("input",e=>{rows.analyticClass=e.target.value;const g=document.getElementById("cpGroup");if(g)g.innerHTML=group(d,rows);});
   document.getElementById("cpCurrentName")?.addEventListener("input",e=>{
    r.name=e.target.value;const active=document.querySelector(".psy-mspss-person.active span");if(active)active.textContent=r.name||"Участник";
    const option=document.querySelector('#cpBottomPerson option:checked');if(option)option.textContent=(ctx.rowIndex+1)+". "+(r.name||"Участник "+(ctx.rowIndex+1));
