@@ -391,31 +391,30 @@ html.dark .site-landing #siteHome .psy-text-link{color:#c5e5c8}
 }
 
 
-/* METOLARIA MISSION ART – natural image proportions, no oversized blank frame. */
+/* Mission artwork: a true square with the approved wide image cropped to its subjects. */
 .site-landing #siteHome #about .psy-mission-art{
- position:relative!important;
- display:flex!important;flex-direction:column!important;
- align-items:stretch!important;align-self:center!important;
- width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;
- aspect-ratio:auto!important;margin:0!important;padding:0!important;
- background:transparent!important;border:0!important;
- box-shadow:none!important;overflow:visible!important;isolation:isolate;
+ position:relative!important;display:block!important;align-self:center!important;
+ width:100%!important;max-width:550px!important;
+ height:auto!important;min-height:0!important;max-height:none!important;
+ aspect-ratio:1/1!important;margin:0!important;padding:0!important;
+ border:0!important;border-radius:27px!important;
+ background:transparent!important;overflow:hidden!important;
+ box-shadow:0 16px 36px rgba(36,73,54,.12)!important;isolation:isolate;
 }
 .site-landing #siteHome #about .psy-mission-art>img{
- position:static!important;inset:auto!important;
- display:block!important;width:100%!important;height:auto!important;min-height:0!important;
- max-width:100%!important;max-height:none!important;
- aspect-ratio:auto!important;object-fit:contain!important;object-position:center!important;
- border-radius:23px!important;opacity:1!important;visibility:visible!important;
- filter:none!important;box-shadow:0 16px 36px rgba(36,73,54,.12);
+ position:absolute!important;inset:0!important;
+ display:block!important;width:100%!important;height:100%!important;
+ max-width:none!important;max-height:none!important;min-height:0!important;
+ aspect-ratio:auto!important;object-fit:cover!important;
+ object-position:90% center!important;border-radius:0!important;
+ opacity:1!important;visibility:visible!important;filter:none!important;box-shadow:none!important;
 }
 .site-landing #siteHome #about .psy-mission-art:before{display:none!important}
 .site-landing #siteHome #about .psy-mission-note{
- position:relative!important;inset:auto!important;
- left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
- margin:13px 0 0!important;max-width:100%!important;width:max-content;
- z-index:2!important;
+ position:absolute!important;z-index:2!important;
+ left:16px!important;bottom:16px!important;right:auto!important;top:auto!important;
+ margin:0!important;max-width:calc(100% - 32px)!important;width:max-content;
 }
 @media(max-width:820px){
- .site-landing #siteHome #about .psy-mission-art{width:min(100%,570px)!important}
+ .site-landing #siteHome #about .psy-mission-art{width:100%!important}
 }
