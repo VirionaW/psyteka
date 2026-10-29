@@ -788,7 +788,7 @@ const scored=(d,r)=>r?.attendance!=="absent"&&present(d,r)===size(d)?m.score(d,r
 const topic=(d,i,r)=>d.id==="eysenck-40"&&r?.eysenckVersion==="block"?"Вопрос "+(i+1):items[d.id][i];
 const opts=d=>d.id==="eysenck-40"?"0 – не подходит · 1 – бывает иногда · 2 – бывает часто":d.id==="lazarus-wcq50"?"0 – никогда · 1 – редко · 2 – иногда · 3 – часто":"0 – Нет · 1 – Да";
 const childOpts=d=>d.id==="razuvaeva-osr29"?"Для каждого утверждения отметь «Да» или «Нет».":opts(d);
-const tone=(d,s)=>d.id==="razuvaeva-osr29"?"neutral":d.id==="eysenck-40"?(s.raw<=7?"low":s.raw<=14?"middle":"high"):(s.percent<=33?"low":s.percent<=66?"middle":"high");
+const tone=(d,s)=>d.id==="eysenck-40"?(s.raw<=7?"low":s.raw<=14?"middle":"high"):(s.percent<=33?"low":s.percent<=66?"middle":"high");
 const label=(d,s)=>d.id==="razuvaeva-osr29"?"Без автоматического диагностического уровня":d.id==="eysenck-40"?(s.raw<=7?"Низкий уровень":s.raw<=14?"Средний уровень":"Высокий уровень"):(s.percent<=33?"До 33% максимума":s.percent<=66?"34-66% максимума":"Свыше 66% максимума");
 const num=(d,s)=>d.id==="razuvaeva-osr29"?s.adjusted.toFixed(1).replace(".",","):String(s.raw);
 const maximum=(d,s)=>d.id==="razuvaeva-osr29"?(s.max*s.factor).toFixed(1).replace(".",","):String(s.max);
@@ -822,7 +822,7 @@ function analytical711(d,rows){
   names.forEach((factor,i)=>{
    const vals=scores.map(x=>x.scales[i].raw);
    const low=vals.filter(v=>v<=7).length,mid=vals.filter(v=>v>=8&&v<=14).length,high=vals.filter(v=>v>=15).length;
-   lines.push({kind:"factor",text:factor.name+": низкий (0-7) – "+share(low)+", средний (8-14) – "+share(mid)+", высокий (15-20) – "+share(high)+"."});
+   lines.push({kind:"factor",text:factor.name+": низкий – "+share(low)+", средний – "+share(mid)+", высокий – "+share(high)+"."});
   });
   lines.push({kind:"body",text:"Уровни отражают выраженность соответствующих состояний по используемым границам методики и не являются диагнозом."});
  }else{
@@ -846,7 +846,7 @@ function analytical711Preview(d,rows){
 function group(d,rows){
  const keys=(cfg(d).versions?.[0]?.scales||cfg(d).scales);
  return '<section class="psy-mspss-group psy-711-group psy-711-'+d.id+'"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th>'+keys.map(s=>'<th>'+esc(s.name)+'</th>').join("")+'</tr></thead><tbody>'+
- rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+'</td>'+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="'+(v?"psy-711-"+tone(d,v):"")+'">'+(v?num(d,v):"–")+'</td>'}).join("")+'</tr>'}).join("")+
+ rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+'</td>'+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="psy-711-score-cell">'+(v?'<span class="psy-711-number psy-711-'+tone(d,v)+'">'+num(d,v)+'</span>':"")+'</td>'}).join("")+'</tr>'}).join("")+
  '</tbody></table></div>'+(d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Категория суицидального риска автоматически не присваивается.</p>':"")+analytical711Preview(d,rows)+'</section>';
 }
 function calculator(d,ctx){
@@ -952,14 +952,14 @@ function report(d,rows,mode,index){
  else if(mode!=="class"&&!scored(d,people[0]))return false;
  const x=s=>String(s??"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F<>&"']/g,ch=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;","'":"&apos;"}[ch]||""));
  const para=s=>'<w:p><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">'+x(s)+'</w:t></w:r></w:p>';
- const cel=(s,color,head)=>'<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/>'+(color?'<w:shd w:val="clear" w:color="auto" w:fill="'+color+'"/>':"")+'</w:tcPr><w:p><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="18"/>'+(head?"<w:b/>":"")+'</w:rPr><w:t xml:space="preserve">'+x(s)+'</w:t></w:r></w:p></w:tc>';
+ const cel=(v,color,head)=>'<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/><w:vAlign w:val="center"/></w:tcPr><w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="20"/>'+(head||color?"<w:b/>":"")+(color?'<w:shd w:val="clear" w:color="auto" w:fill="'+color+'"/><w:color w:val="111111"/>':"")+'</w:rPr><w:t xml:space="preserve">'+x(v)+'</w:t></w:r></w:p></w:tc>';
  const table=(matrix,fill=[])=>'<w:tbl><w:tblPr><w:tblBorders>'+["top","bottom","left","right","insideH","insideV"].map(k=>'<w:'+k+' w:val="single" w:sz="4"/>').join("")+'</w:tblBorders></w:tblPr>'+
  matrix.map((row,i)=>'<w:tr>'+row.map((v,j)=>cel(v,fill[i-1]?.[j],i===0)).join("")+'</w:tr>').join("")+'</w:tbl>';
  const scales=cfg(d).scales||cfg(d).versions?.[0]?.scales||[],rowsData=[],fill=[];
  for(let i=0;i<people.length;i++){
   const row=people[i],z=scored(d,row);
-  rowsData.push([String(i+1),row.name||"У-"+(i+1),...scales.map((s,j)=>z?num(d,z.scales[j]):"–")]);
-  fill.push([null,null,...scales.map((s,j)=>{const factor=z?.scales?.[j];if(!factor)return null;const kind=tone(d,factor);return kind==="high"?(d.id==="eysenck-40"?"F9DEDC":"FFE4C6"):kind==="middle"?"FFF0CF":kind==="low"?"E4F1FB":"EAF1F4"})]);
+  rowsData.push([String(i+1),row.name||"У-"+(i+1),...scales.map((s,j)=>z?num(d,z.scales[j]):"")]);
+  fill.push([null,null,...scales.map((s,j)=>{const factor=z?.scales?.[j];if(!factor)return null;const kind=tone(d,factor);return kind==="high"?"FF6868":kind==="middle"?"FFF14D":"4BE878"})]);
  }
  const grade=people.find(r=>Number(r.schoolGrade)>=7&&Number(r.schoolGrade)<=11)?.schoolGrade;
  const analytic=mode==="analysis"?analytical711(d,rows):null;
