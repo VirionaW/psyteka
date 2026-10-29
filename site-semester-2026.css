@@ -516,3 +516,82 @@ html.dark .library-page #modal.psy-mspss-example .psy-711-scale.psy-711-low,html
 html.dark .library-page #modal.psy-mspss-example .psy-711-scale.psy-711-middle,html.dark .library-page #modal.psy-mspss-example .psy-711-group td.psy-711-middle{background:#59451d;color:#ffe7b0}
 html.dark .library-page #modal.psy-mspss-example .psy-711-scale.psy-711-high,html.dark .library-page #modal.psy-mspss-example .psy-711-group td.psy-711-high{background:#603b26;color:#ffdec0}
 html.dark .library-page #modal.psy-mspss-example .psy-711-scale.psy-711-neutral,html.dark .library-page #modal.psy-mspss-example .psy-711-group td.psy-711-neutral{background:#304553;color:#e0f1ff}
+
+
+/* CDI FIVE FACTOR RESULTS 20261029 */
+.library-page #modal.psy-mspss-example .psy-cdi-single-result .psy-cdi-total-t{
+ display:inline-block;min-width:90px;padding:13px 22px;border:1px solid var(--line);
+ border-radius:15px;background:var(--soft);color:var(--ink);font-size:clamp(26px,3vw,40px);
+ font-weight:850;line-height:1.15;margin:13px 0 5px;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-single-result h4{
+ margin:24px 0 12px;font-size:18px;color:var(--ink);
+}
+.library-page #modal.psy-mspss-example .psy-cdi-factor-grid{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:12px 0 22px;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-factor{
+ display:flex;flex-direction:column;gap:8px;min-width:0;min-height:138px;
+ padding:16px 17px;border:1px solid var(--line);border-radius:15px;
+ background:var(--soft);color:var(--ink);
+}
+.library-page #modal.psy-mspss-example .psy-cdi-factor>b{font-size:15px;line-height:1.35}
+.library-page #modal.psy-mspss-example .psy-cdi-factor>strong{font-size:27px;line-height:1.2}
+.library-page #modal.psy-mspss-example .psy-cdi-factor>small{font-size:12px;line-height:1.4}
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll table{
+ min-width:1280px;font-family:"Times New Roman",Times,serif;font-size:11pt;
+ border-collapse:collapse;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll th{
+ text-align:center!important;vertical-align:middle!important;font-weight:700!important;
+ padding:10px 8px!important;white-space:normal;min-width:136px;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll td{
+ vertical-align:middle!important;text-align:center!important;padding:9px 7px!important;
+ font-variant-numeric:tabular-nums;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll td.psy-cdi-name{
+ text-align:left!important;min-width:180px;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll th:first-child{
+ width:48px!important;min-width:48px!important;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-class-results .psy-mspss-scroll th:last-child{
+ min-width:220px!important;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-below30,
+.library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-below30{background:#E2ECFA!important;color:#284768!important;border-color:#E2ECFA!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-below30,
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-below30{background:#1E3551!important;color:#DCEAFF!important;border-color:#1E3551!important}
+.library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-30-34,
+.library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-30-34{background:#E8F2FD!important;color:#2A557D!important;border-color:#E8F2FD!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-30-34,
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-30-34{background:#284667!important;color:#D5E8FA!important;border-color:#284667!important}
+.library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-35-39,
+.library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-35-39{background:#E5F5FA!important;color:#236578!important;border-color:#E5F5FA!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-35-39,
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-35-39{background:#1E4654!important;color:#D0F4FF!important;border-color:#1E4654!important}
+.library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-40-44,
+.library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-40-44{background:#EAF4EF!important;color:#32614E!important;border-color:#EAF4EF!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-40-44,
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-40-44{background:#304E3E!important;color:#DFF3E7!important;border-color:#304E3E!important}
+.library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-45-55,
+.library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-45-55{background:#DFF2E5!important;color:#1E653A!important;border-color:#DFF2E5!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-45-55,
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-45-55{background:#1C4931!important;color:#D5F5DF!important;border-color:#1C4931!important}
+.library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-56-60,
+.library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-56-60{background:#FFF1C7!important;color:#80571B!important;border-color:#FFF1C7!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-56-60,
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-56-60{background:#5B481F!important;color:#FFE5A0!important;border-color:#5B481F!important}
+.library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-61-65,
+.library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-61-65{background:#FFDFB8!important;color:#8A431A!important;border-color:#FFDFB8!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-61-65,
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-61-65{background:#644325!important;color:#FFE8C7!important;border-color:#644325!important}
+.library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-66-70,
+.library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-66-70{background:#FEE2E2!important;color:#991B1B!important;border-color:#FEE2E2!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-66-70,
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-66-70{background:#63363A!important;color:#FFE2E2!important;border-color:#63363A!important}
+.library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-over70,
+.library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-over70{background:#7F1D1D!important;color:#FFFFFF!important;border-color:#7F1D1D!important}
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-factor.psy-cdi-tone-over70,
+html.dark .library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-over70{background:#71262F!important;color:#FFFFFF!important;border-color:#71262F!important}
