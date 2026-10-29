@@ -8,3 +8,23 @@
 #modal .or-print-houses{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px 6px;justify-items:center}
 #modal .or-print-houses svg{width:min(100%,78px);height:auto}
 @media(max-width:640px){#modal .or-portfolio-preview{padding:11px}#modal .or-print-houses{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px 3px}#modal .or-print-rectangles{gap:3px}#modal .or-print-rectangles>div{min-height:30px}#modal .or-print-houses svg{width:min(100%,57px)}}
+
+/* Preview of the 1:1 printable three-task Orekhova response sheet */
+#modal .or-print-form>h3{text-align:center;font-size:14px;margin-bottom:14px}
+#modal .or-print-section{margin:27px 0 38px}
+#modal .or-print-section h3{text-align:center;margin:0 0 20px}
+#modal .or-print-rectangles{gap:0;margin-bottom:32px}
+#modal .or-print-rectangles>div{position:relative;min-height:48px;border-right:0}
+#modal .or-print-rectangles>div:last-child{border-right:1.5px solid #56675a}
+#modal .or-print-rectangles>div span{position:absolute;bottom:-24px;left:0;right:0;font-size:13px;font-weight:700}
+#modal .or-print-houses{grid-template-columns:repeat(10,minmax(0,1fr));gap:0}
+#modal .or-house{width:100%;min-width:0;text-align:center}
+#modal .or-house svg{width:100%;max-width:78px;display:block;margin:auto}
+#modal .or-house span{font-size:12px;color:#253629;font-weight:700}
+#modal .or-last-house-line{margin-top:32px}
+@media(max-width:640px){
+ #modal .or-print-rectangles>div{min-height:32px}
+ #modal .or-house span{font-size:9px}
+ #modal .or-print-section{margin:22px 0 30px}
+ #modal .or-print-form>h3{font-size:13px}
+}
