@@ -739,7 +739,7 @@ function printable(d,mode){
  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>'+esc(md.name)+'</title><style>@page{size:A4;margin:14mm}body{font:10pt/1.4 Arial}table{width:100%;border-collapse:collapse}td,th{border:1px solid #9bb2a5;padding:5px;vertical-align:top}td:first-child{width:35px}td:last-child{width:70px}tr{break-inside:avoid}.newpage{break-before:page}</style></head><body>'+(mode==="blank"?b:g)+(mode==="combined"?b:"")+'</body></html>';
 }
 function bind(d,ctx){
- document.querySelectorAll("[data-711-print]").forEach(el=>el.addEventListener("click",()=>{const output=printable(d,el.dataset["711Print"]),url=URL.createObjectURL(new Blob([output],{type:"text/html;charset=utf-8"})),a=document.createElement("a");a.href=url;a.download="Metolaria_"+d.id+"_blank.html";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}));
+ document.querySelectorAll("[data-711-print]").forEach(el=>el.addEventListener("click",()=>{const output=printable(d,el.dataset["711Print"]),url=URL.createObjectURL(new Blob([output],{type:"text/html;charset=utf-8"})),tab=window.open(url,"_blank");if(!tab){const a=document.createElement("a");a.href=url;a.download="Metolaria_"+d.id+"_blank.html";a.click()}setTimeout(()=>URL.revokeObjectURL(url),60000)}));
  if(ctx.tab!=="score")return;
  const r=ctx.rows[ctx.rowIndex];if(!r)return;r.answers ||= [];
  const update=()=>{
