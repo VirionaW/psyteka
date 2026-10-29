@@ -399,7 +399,7 @@ html.dark .site-landing #siteHome .psy-text-link{color:#c5e5c8}
  position:absolute!important;inset:0!important;
  display:block!important;width:100%!important;height:100%!important;
  max-width:none!important;max-height:none!important;
- border-radius:26px!important;object-fit:cover!important;object-position:center center!important;
+ border-radius:26px!important;object-fit:contain!important;object-position:center center!important;
  opacity:1!important;visibility:visible!important;
  filter:saturate(1.08) contrast(1.04)!important;
 }
