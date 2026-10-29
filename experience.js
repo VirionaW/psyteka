@@ -28,6 +28,7 @@ async function saveCurrentAssessment(){
     snapshot:{calcMode,rowIndex,rows:rows.map(r=>({...r,answers:Array.isArray(r.answers)?r.answers.slice():[]}))}
    });
    activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=title;close();
+   window.dispatchEvent(new CustomEvent("psy-assessment-saved",{detail:{id:data.id,methodName:methodNow.name,calcMode}}));
    const btn=document.getElementById("cpSaveBottom")||document.getElementById("mspssSaveBottom");
    if(btn){btn.textContent="Сохранено ✓";btn.classList.add("psy-is-saved")}
   }catch(err){description.textContent="Сохранение не выполнено: "+err.message;submit.disabled=false;submit.textContent="Повторить";}
@@ -253,6 +254,7 @@ function setTab(name){
   const input=inputs.find(x=>x.value==='')||inputs[0];if(input)input.focus({preventScroll:true});
  }
  updateLuriaFooter();
+ window.dispatchEvent(new CustomEvent("psy-processing-view-change",{detail:{methodName:methodNow.name,tab:tabNow,mode:calcMode}}));
 }
 
 function updateLuriaFooter(){
@@ -867,7 +869,9 @@ function bindControls(){
 
  document.querySelectorAll('[data-cmode]').forEach(b=>b.onclick=()=>{
  modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
- calcMode=b.dataset.cmode;rows=modeSnapshots[calcMode];rowIndex=modeIndices[calcMode]||0;setTab("score");
+ const nextMode=b.dataset.cmode;
+ if(nextMode!==calcMode){activeSavedAssessmentId=null;activeSavedAssessmentTitle="";}
+ calcMode=nextMode;rows=modeSnapshots[calcMode];rowIndex=modeIndices[calcMode]||0;setTab("score");
 });
  $("#participantSelect")?.addEventListener('change',e=>{rowIndex=+e.target.value;setTab("score")});
  $("#participantName")?.addEventListener('input',e=>{rows[rowIndex].name=e.target.value;const sel=$("#participantSelect");sel.options[rowIndex].text=(rowIndex+1)+'. '+(e.target.value||'Участник '+(rowIndex+1))});
@@ -1030,6 +1034,31 @@ function openMethod(m){
  $('#modal').hidden=false;$('#shade').hidden=false;setTab('overview');
 }
 window.openMethod=openMethod;
+window.PSY_PROCESSING_NOTEBOOK={
+ getState:()=>({
+  methodName:methodNow?.name||"",tab:tabNow,mode:calcMode,
+  assessmentId:activeSavedAssessmentId,assessmentTitle:activeSavedAssessmentTitle,
+  visible:!!methodNow&&!document.getElementById("modal")?.hidden
+ }),
+ openSaved:async(id)=>{
+  if(!methodNow||!window.PSY_CLOUD)throw Error("Выберите методику и войдите в профиль.");
+  const data=await window.PSY_CLOUD.getAssessment(id);
+  if(data.method_name!==methodNow.name)throw Error("Сохраненный результат относится к другой методике.");
+  if(data.snapshot.calcMode!==calcMode)throw Error("Режим сохранения не соответствует выбранному режиму обработки.");
+  if(activeSavedAssessmentId!==id&&rows.some(r=>r.name?.trim()||(r.answers||[]).some(v=>v!==""&&v!==null&&v!==undefined))){
+   if(!confirm("Открыть сохраненный результат? Несохраненные изменения текущей обработки будут потеряны."))return false;
+  }
+  modeSnapshots[calcMode]=rows;
+  modeIndices[calcMode]=rowIndex;
+  activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=data.title;
+  rows=data.snapshot.rows.length?data.snapshot.rows:[{name:"",answers:[]}];
+  rowIndex=Math.max(0,Math.min(rows.length-1,data.snapshot.rowIndex||0));
+  modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
+  methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex};
+  setTab("score");
+  return true;
+ }
+};
 render();
 /* Direct links from favorites, folders and saved assessments must open a method, not only the library. */
 let requestedMethodOpened=false;
