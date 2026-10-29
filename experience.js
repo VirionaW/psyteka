@@ -669,7 +669,7 @@ function bindControls(){
   const go=i=>{rowIndex=i;modeIndices.class=i;setTab('score');};
   const addNames=names=>{
    if(!names?.length)return;
-   const grade=d.id==='cdi-27'?rows.find(x=>Number(x.schoolGrade)>=1&&Number(x.schoolGrade)<=11)?.schoolGrade:null;
+   const grade=(d.id==='cdi-27'||window.PSY_SCHOOL_711_UI?.supports(d))?rows.find(x=>Number(x.schoolGrade)>=1&&Number(x.schoolGrade)<=11)?.schoolGrade:null;
    if(rows.length===1&&!rows[0].name?.trim()&&!window.PSY_MATCH_MSPSS.done(d,rows[0].answers))rows.splice(0,1);
    let first=-1;
    for(const name of names){
@@ -709,7 +709,7 @@ function bindControls(){
    },
    onDeleteAll:()=>{rows.splice(0,rows.length,{name:"",answers:[]});go(0);},
    onNext:()=>{
-    if(d.workflow==="phillips58"){
+    if(d.workflow==="phillips58"||window.PSY_SCHOOL_711_UI?.supports(d)){
      for(let step=1;step<rows.length;step++){const i=(rowIndex+step)%rows.length;if(rows[i].attendance!=="absent"){go(i);return;}}
      return;
     }
@@ -718,7 +718,7 @@ function bindControls(){
     if(next<rows.length)go(next);
    },
    onAbsentNext:()=>{
-    if(d.workflow==="phillips58"){
+    if(d.workflow==="phillips58"||window.PSY_SCHOOL_711_UI?.supports(d)){
      for(let step=1;step<rows.length;step++){const i=(rowIndex+step)%rows.length;if(rows[i].attendance!=="absent"){go(i);return;}}
      setTab('score');return;
     }
