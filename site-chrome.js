@@ -63,3 +63,34 @@
   if(id&&(e.key===id.avatarKey()||e.key===id.profileKey()))avatar();
  });
 })();
+
+/* Shared footer feedback and true-centered round close controls. */
+(function(){
+ function mount(){
+  const footer=document.querySelector('footer.psy-account-footer, footer.site-footer, footer.footer, footer');
+  if(footer&&!footer.querySelector('.psy-footer-feedback')){
+   const block=document.createElement('div');
+   block.className='psy-footer-feedback';
+   const link=document.createElement('a');
+   link.href='suggest-method.html';
+   link.textContent='Предложить методику / Сообщить об ошибке';
+   block.appendChild(link);
+   footer.appendChild(block);
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);
+ else mount();
+ const style=document.createElement('style');
+ style.textContent=`
+ .psy-footer-feedback{width:100%;margin-top:12px;padding-top:17px;border-top:1px solid currentColor;text-align:left}
+ .psy-footer-feedback a{display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:10px 15px;border:1px solid currentColor;border-radius:12px;color:inherit;font-weight:700;text-decoration:none;font-size:14px;line-height:1.35}
+ .psy-footer-feedback a:hover{text-decoration:underline}
+ body[data-account] .site-header a.psy-nav-library-highlight{background:#245b46!important;border-color:#245b46!important;color:#fff!important;box-shadow:0 3px 11px rgba(20,57,39,.16)}
+ .modalhead>#closeModal,.modalhead>button.close,.psy-folder-dialog .psy-folder-dialog-close,.psy-folder-close,button[aria-label="Закрыть"][class*="round"],button[aria-label="Закрыть"][class*="close"],.psy-modal-close,.modal-close{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;place-items:center!important;
+  padding:0!important;text-align:center!important;line-height:1!important;text-indent:0!important;
+ }
+ .modalhead>#closeModal,.modalhead>button.close{font-size:22px!important}
+ `;
+ document.head.appendChild(style);
+})();
