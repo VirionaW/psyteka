@@ -493,13 +493,27 @@
   document.getElementById("cpCurrentName")?.addEventListener("input",e=>{
    r.name=e.target.value;const active=document.querySelector(".psy-mspss-person.active span");if(active)active.textContent=r.name||"Участник";
   });
-  document.getElementById("cpAge")?.addEventListener("change",e=>{r.ageYears=e.target.value?Number(e.target.value):null;update()});
+  document.getElementById("cpAge")?.addEventListener("change",e=>{
+   r.ageManual=!!e.target.value;
+   r.ageYears=e.target.value?Number(e.target.value):gradeAge(classGrade(rows));
+   update();
+  });
+  document.getElementById("cpSchoolGrade")?.addEventListener("change",e=>{
+   const grade=e.target.value?Number(e.target.value):null;
+   const age=gradeAge(grade);
+   rows.forEach(person=>{
+    person.schoolGrade=grade;
+    if(!person.ageManual)person.ageYears=age;
+   });
+   ctx.onRender?.();
+  });
   document.querySelectorAll("[data-cp-sex]").forEach(btn=>btn.addEventListener("click",()=>{
    r.sex=btn.dataset.cpSex;
    document.querySelectorAll("[data-cp-sex]").forEach(b=>{
     const active=b.dataset.cpSex===r.sex;b.classList.toggle("is-selected",active);b.setAttribute("aria-pressed",String(active));
    });
    update();
+   if(ctx.calcMode==="class"&&type(d)==="cdi")ctx.onGenderAssigned?.();
   }));
   document.querySelectorAll("[data-cp-person]").forEach(btn=>btn.addEventListener("click",()=>ctx.onSelect?.(Number(btn.dataset.cpPerson))));
   document.getElementById("cpAddNames")?.addEventListener("click",()=>{const t=document.getElementById("cpBulkNames"),names=(t?.value||"").split(/[\r\n]+/).map(x=>x.trim()).filter(Boolean);if(names.length)ctx.onBulkAdd?.(names);else t?.focus();});
