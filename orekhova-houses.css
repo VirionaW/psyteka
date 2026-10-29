@@ -90,3 +90,26 @@ html.dark{color-scheme:dark;--paper:#17251e;--surface:#25382d;--ink:#f0f8ee;--so
 @media(max-width:1050px){.painting-houses{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:11px}.house-caption{min-height:30px;font-size:13px}.painting-rectangles{max-width:100%}}
 @media(max-width:630px){.painting-houses{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px 8px}.paint-house{min-height:120px}.house-shape{max-width:130px}.house-caption{font-size:14px;min-height:0}.painting-rectangles{margin-bottom:67px!important}.paint-rect{height:68px;min-height:68px!important}.paint-rect .rect-position{font-size:12px;bottom:-23px}.paint-rect .rect-color-name{font-size:9px;bottom:-41px}.paint-tools{position:sticky;top:8px;z-index:10;box-shadow:0 10px 32px #182e1f24}.paint-tools .section-top h2{font-size:17px}.paint-tools .section-top p{font-size:12px}.paint-tools .color-option{min-height:37px;font-size:12px;padding:5px 7px}.paint-tools .color-option .swatch{height:23px;width:23px}}
 @media(prefers-reduced-motion:reduce){.paint-rect,.paint-house{transition:none}}
+
+/* Blank appears before participant creation: original 8 rectangles and 2 × 10 houses. */
+.overview-sheet{background:var(--surface);margin-top:8px}
+.overview-sheet h2{font-size:clamp(21px,2vw,27px);margin:2px 0 5px}
+.overview-sheet .section-top{align-items:center;margin-bottom:14px}
+.overview-sheet .section-top .muted{max-width:660px;margin-bottom:0}
+.overview-sheet-group{padding:14px 0 18px}
+.overview-sheet-group+.overview-sheet-group{border-top:1px solid var(--line)}
+.overview-sheet-heading{display:flex;justify-content:center;align-items:baseline;gap:10px;margin:0 0 16px;text-align:center}
+.overview-sheet-heading strong{font-size:15px}
+.overview-sheet-heading span{font-size:13px;color:var(--soft)}
+.overview-rectangles{width:min(100%,960px);display:grid;grid-template-columns:repeat(8,minmax(0,1fr));margin:8px auto 22px}
+.overview-rect{height:55px;position:relative;border:2px solid #596b60;border-right:0;background:#fff}
+.overview-rect:last-child{border-right:2px solid #596b60}
+.overview-rect span{position:absolute;top:calc(100% + 5px);left:0;right:0;text-align:center;color:var(--ink);font-size:12px;font-weight:750}
+.overview-houses{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));max-width:1080px;margin:auto;gap:4px}
+.overview-house{text-align:center;display:flex;flex-direction:column;align-items:center;gap:0;min-width:0}
+.overview-house svg{width:100%;max-width:90px;height:auto;aspect-ratio:124/122;display:block}
+.overview-house span{display:block;font-weight:750;font-size:12px;line-height:1.1;color:var(--ink)}
+.overview-last-house{display:flex;gap:8px;align-items:baseline;font-size:13px;color:var(--soft);margin-top:19px}
+.overview-line{height:1px;flex:1;border-bottom:1px solid var(--line)}
+@media(max-width:760px){.overview-sheet .section-top{flex-direction:column;align-items:stretch}.overview-sheet .section-top .primary{align-self:flex-start}.overview-house svg{max-width:70px}.overview-rect{height:46px}}
+@media(max-width:560px){.overview-sheet-group{padding:12px 0 16px}.overview-houses{grid-template-columns:repeat(5,minmax(0,1fr));row-gap:13px}.overview-house svg{max-width:88px}.overview-rect{height:38px}.overview-sheet-heading{margin-bottom:13px}.overview-last-house{margin-top:11px;font-size:12px}}
