@@ -116,3 +116,60 @@ html.dark .psy-payment-steps h3{color:#d2edda}
 html.dark .psy-payment-steps p{color:#c1d4c7}
 html.dark .psy-payment-step-number{background:#355b42;border-color:#5f8568;color:#d9f0dc}
 html.dark .psy-payment-status{background:#2e4a38;border-color:#56775c;color:#d6eeda}
+
+
+/* SUBSCRIPTION HEADER AND ACCESSIBILITY FIX 20261029 */
+.psy-subscription-page .site-header button.site-theme-btn.theme-switch{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:9px!important;min-height:44px!important;max-width:100%;
+ padding:9px 14px!important;border:1px solid #cddfcf!important;
+ border-radius:999px!important;background:#fff!important;color:#1d4838!important;
+ font:700 13px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif!important;
+ letter-spacing:0!important;text-transform:none!important;
+ box-shadow:none!important;cursor:pointer!important;white-space:nowrap;
+}
+.psy-subscription-page .site-header button.site-theme-btn.theme-switch svg.site-theme-icon{
+ display:block!important;width:20px!important;height:20px!important;flex:none;
+ stroke:currentColor!important;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none!important;
+}
+.psy-subscription-page .site-header button.site-theme-btn.theme-switch .site-theme-label{
+ display:inline!important;font-weight:700;
+}
+.psy-subscription-page .site-header button.site-theme-btn.theme-switch:hover{
+ background:#eaf4ec!important;border-color:#9fc4ac!important;
+}
+.psy-subscription-page .site-header button.site-theme-btn.theme-switch:focus-visible{
+ outline:3px solid #d7ae69!important;outline-offset:2px;
+}
+html.dark .psy-subscription-page .site-header button.site-theme-btn.theme-switch{
+ background:#2a483b!important;border-color:#749481!important;color:#f1f9f2!important;
+}
+html.dark .psy-subscription-page .site-header button.site-theme-btn.theme-switch:hover{
+ background:#375a48!important;
+}
+/* On dark surfaces, the subscription eyebrow must never inherit the pale-logo-on-cream mismatch. */
+html.dark .psy-subscription-page .psy-subs-kicker{
+ background:#29483b!important;border-color:#628371!important;color:#f4e8ce!important;
+}
+html.dark .psy-subscription-page .psy-subs-kicker .psy-brand-name-first{
+ color:#f6fff8!important;
+}
+html.dark .psy-subscription-page .psy-subs-kicker .psy-brand-name-last{
+ color:#e6cba7!important;
+}
+.psy-subscription-page .psy-subs-footer{padding:30px clamp(20px,5vw,70px);text-align:left}
+.psy-subscription-page .psy-subs-footer-inner{
+ max-width:1230px;margin-inline:auto;display:flex;justify-content:space-between;
+ align-items:start;flex-wrap:wrap;gap:24px 45px;
+}
+.psy-subscription-page .psy-subs-footer-inner>div{max-width:520px;min-width:230px}
+.psy-subscription-page .psy-subs-footer-inner strong{color:#f2f9f2;font-size:15px}
+.psy-subscription-page .psy-subs-footer-inner p{margin:5px 0;font-size:13px;color:#d5e9dd}
+.psy-subscription-page .psy-subs-footer-inner a{
+ color:#fff4d6!important;text-decoration:underline;text-underline-offset:3px;
+}
+@media(max-width:620px){
+ .psy-subscription-page .site-header nav{gap:9px}
+ .psy-subscription-page .site-header button.site-theme-btn.theme-switch{padding:8px 11px!important}
+ .psy-subscription-page .psy-subs-footer{padding:27px 20px}
+}
