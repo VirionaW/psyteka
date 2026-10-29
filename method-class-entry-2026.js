@@ -518,7 +518,7 @@
    const header=["№","Участник","Т-балл","Интерпретация"];
    const data=rows.filter(r=>r.name?.trim()||done(d,r.answers)).map((r,i)=>{
     const v=cdiClassRow(d,r,i);
-    return [v.no,v.name,v.raw,v.t,v.status,v.level];
+    return [v.no,v.name,v.t,v.level];
    });
    const escapeCSV=x=>'"'+String(x??"").replace(/"/g,'""')+'"';
    return "\uFEFF"+[header,...data].map(row=>row.map(escapeCSV).join(";")).join("\r\n");
