@@ -10,8 +10,8 @@
 <link rel="stylesheet" href="psy-preview-gate.css?v=20261029">
 <script defer src="psy-preview-gate.js?v=20261029"></script>
 <link rel="icon" type="image/svg+xml" href="brand-favicon.svg">
-<link rel="stylesheet" href="orekhova-houses.css?v=20261029paper4">
-<script src="orekhova-houses.js?v=20261029paper4" defer></script>
+<link rel="stylesheet" href="orekhova-houses.css?v=20261029visible6">
+<script src="orekhova-houses.js?v=20261029visible6" defer></script>
 </head>
 <body>
 <header class="topbar">
@@ -25,6 +25,29 @@
  <div class="intro">
   <div><p class="eyebrow">Проективная методика О. А. Ореховой · 8 цветов</p><h1>Домики – обработка результатов</h1><p>Интерактивный бланк: выбери карандаш, закрась восемь прямоугольников, а затем домики чувств и школьных ситуаций. В конце запиши, кто живет в последнем домике.</p></div>
  </div>
+ <section class="panel overview-sheet" id="sheetPreview" aria-labelledby="sheetPreviewTitle">
+  <div class="section-top">
+   <div>
+    <p class="step-kicker">Бланк методики</p>
+    <h2 id="sheetPreviewTitle">Вот прямоугольники и домики</h2>
+    <p class="muted">Все 28 фигур сразу перед тобой, как на бумажном бланке. Для раскрашивания добавь участника ниже.</p>
+   </div>
+   <button type="button" class="primary" id="startColoring">Начать раскрашивать</button>
+  </div>
+  <div class="overview-sheet-group">
+   <div class="overview-sheet-heading"><strong>1 задание</strong><span>8 прямоугольников</span></div>
+   <div class="overview-rectangles" id="previewRectangles" aria-label="Восемь прямоугольников"></div>
+  </div>
+  <div class="overview-sheet-group">
+   <div class="overview-sheet-heading"><strong>2 задание</strong><span>10 домиков чувств</span></div>
+   <div class="overview-houses" id="previewEmotions" aria-label="Десять домиков чувств"></div>
+  </div>
+  <div class="overview-sheet-group">
+   <div class="overview-sheet-heading"><strong>3 задание</strong><span>10 домиков ситуаций</span></div>
+   <div class="overview-houses" id="previewSituations" aria-label="Десять домиков ситуаций"></div>
+   <div class="overview-last-house">В последнем домике живет <span class="overview-line"></span></div>
+  </div>
+ </section>
  <section class="panel workspace-meta">
   <div class="section-top"><div><h2>Участники</h2><p class="muted">Добавь хотя бы одного ребенка: укажи имя и возраст или класс / группу.</p></div><div class="mode-switch" aria-label="Режим обработки"><button type="button" class="active" data-mode="one">Один участник</button><button type="button" data-mode="group">Группа / класс</button></div></div>
   <div class="participants-setup">
