@@ -485,15 +485,15 @@
     '<w:r>'+rPr+'<w:t xml:space="preserve">'+xmlEscape(s)+'</w:t></w:r></w:p></w:tc>';
   };
   const table=(head,body,format="",percentRows=[])=>{
-   const widths=format==="cdi"?[520,2500,1250,5930]:format==="cdi-legend"?[2100,8100]:!isCDI&&mode==="class"&&head.length===10?[550,2200,...Array(8).fill(1620)]:!isCDI&&mode==="class"&&head.length===4&&head[0]==="Показатель"?[5000,3450,3700,3450]:head.map(()=>1200);
+   const widths=format==="cdi"?[520,1950,1020,...Array(5).fill(1700),3200]:format==="cdi-legend"?[2100,8100]:!isCDI&&mode==="class"&&head.length===10?[550,2200,...Array(8).fill(1620)]:!isCDI&&mode==="class"&&head.length===4&&head[0]==="Показатель"?[5000,3450,3700,3450]:head.map(()=>1200);
    const all=[head,...body];return '<w:tbl><w:tblPr><w:tblW w:w="'+widths.reduce((a,b)=>a+b,0)+'" w:type="dxa"/>'+
     (format?'<w:tblLayout w:type="fixed"/>':"")+
     '<w:tblBorders><w:top w:val="single" w:sz="5"/><w:left w:val="single" w:sz="5"/><w:bottom w:val="single" w:sz="5"/><w:right w:val="single" w:sz="5"/><w:insideH w:val="single" w:sz="5"/><w:insideV w:val="single" w:sz="5"/></w:tblBorders></w:tblPr>'+
      '<w:tblGrid>'+widths.map(w=>'<w:gridCol w:w="'+w+'"/>').join("")+'</w:tblGrid>'+
      all.map((row,i)=>'<w:tr>'+(format&&i===0?'<w:trPr><w:tblHeader w:val="true"/></w:trPr>':"")+
       row.map((text,j)=>format==="cdi"||format==="cdi-legend"?
-       cdiWordCell(text,i===0,format==="cdi"?(j===1||j===3):j===1,widths[j],
-        i>0&&(format==="cdi"?j>=2:j>=0)?cdiWordBand(percentRows[i-1]):null):
+       cdiWordCell(text,i===0,format==="cdi"?(j===1||j===8):j===1,widths[j],
+        i>0?(format==="cdi"&&j>=2&&j<=7?cdiWordBand(percentRows[i-1]?.[j-2]):format==="cdi-legend"?cdiWordBand(percentRows[i-1]):null):null):
        format?phCell(text,i===0,format==="scores"?j===1:j===0,widths[j],
         format==="scores"&&i>0&&j>=2?percentRows[i-1]?.[j-2]:null):cell(text)).join("")+'</w:tr>').join("")+'</w:tbl>';
   };
@@ -506,16 +506,16 @@
   };
   let body=para(title,"head")+para("Метолария · "+(mode==="class"?"Отчет группы / класса":"Индивидуальный отчет")+" · "+new Date().toLocaleDateString("ru-RU"));
   body+=para("Сводные результаты","sub");
-  const columns=isCDI?["№","Участник","Т-балл","Интерпретация"]:mode==="class"?["№","Участник",...phillips.scales.map(s=>s.name+", %")]:["Участник","Статус","Общий / 58","Процент"];
+  const columns=isCDI?["№","Участник","Общий Т-балл",...norms.scales.map(x=>x.name+" (Т)"),"Интерпретация"]:mode==="class"?["№","Участник",...phillips.scales.map(s=>s.name+", %")]:["Участник","Статус","Общий / 58","Процент"];
   const summary=people.map((r,i)=>{
    const z=scoring(d,r),n=isCDI&&z?norms.norm(z.raw,r.ageYears,r.sex):null;
    const base=[r.name||"У-"+String(i+1).padStart(2,"0"),describe(r)];
-   return isCDI?Object.values(cdiClassRow(d,r,i)).map(String):mode==="class"?
+   return isCDI?(()=>{const x=cdiClassRow(d,r,i);return [String(x.no),x.name,x.t,...x.scaleTs,x.level]})():mode==="class"?
       [String(i+1),r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((s,j)=>z?Math.round(z.scales[j].percent):"")]:
       [...base,z?.raw??"–",z?z.percent.toFixed(1)+"%":"–"];
   });
   body+=table(columns,summary,isCDI?"cdi":mode==="class"?"scores":"",
-   isCDI?people.map(r=>{const z=scoring(d,r);const n=z?norms.norm(z.raw,r.ageYears,r.sex):null;return n?.status==="ok"?n.t:null;}):
+   isCDI?people.map(r=>{const z=scoring(d,r),n=z?norms.norm(z.raw,r.ageYears,r.sex):null;const values=z?norms.scaleScores(r.answers).map(x=>{const v=norms.scaleNorm(x.id,x.raw,r.ageYears,r.sex);return v.status==="ok"?v.t:null}):norms.scales.map(()=>null);return [n?.status==="ok"?n.t:null,...values]}):
    mode==="class"?people.map(r=>scoring(d,r)?.scales.map(s=>s.percent)||[]):[]);
   if(isCDI){
    body+=para("Расшифровка Т-баллов","sub");
@@ -548,7 +548,7 @@
   if(!isCDI&&mode!=="class")body+=para("Результаты не являются диагнозом. Необследованные и отсутствующие дети не включены в сводный расчет.");
   const doc='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+
-   '<w:sectPr>'+(mode==="class"&&!isCDI?'<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="550" w:bottom="550" w:left="550" w:right="550"/>':'<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:bottom="850" w:left="850" w:right="850"/>')+'</w:sectPr></w:body></w:document>';
+   '<w:sectPr>'+((mode==="class"||isCDI)?'<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="550" w:bottom="550" w:left="550" w:right="550"/>':'<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:bottom="850" w:left="850" w:right="850"/>')+'</w:sectPr></w:body></w:document>';
   const types='<?xml version="1.0" encoding="UTF-8"?>'+
    '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
   const rels='<?xml version="1.0" encoding="UTF-8"?>'+
@@ -576,10 +576,10 @@
 
  function csv(d,rows){
   if(type(d)==="cdi"){
-   const header=["№","Участник","Т-балл","Интерпретация"];
+   const header=["№","Участник","Общий Т-балл",...norms.scales.map(x=>x.name+" (Т)"),"Интерпретация"];
    const data=rows.filter(r=>r.name?.trim()||done(d,r.answers)).map((r,i)=>{
     const v=cdiClassRow(d,r,i);
-    return [v.no,v.name,v.t,v.level];
+    return [v.no,v.name,v.t,...v.scaleTs,v.level];
    });
    const escapeCSV=x=>'"'+String(x??"").replace(/"/g,'""')+'"';
    return "\uFEFF"+[header,...data].map(row=>row.map(escapeCSV).join(";")).join("\r\n");
