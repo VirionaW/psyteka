@@ -358,12 +358,13 @@
  function resultHtml(s){
   const c=calculate(s);
   if(!complete(s)||!validGroup()||!c)return '<h2>Результаты</h2><div class="report-empty">Заполните восемь цветов дорожки, все 10 чувств, 10 ситуаций и описание десятого домика. Для группового режима укажите класс или группу.</div>';
-  const v=classifyVK(c.vk),co=classifyCO(c.co);
+  const v=classifyVK(c.vk),co=classifyCO(c.co),story=narrativeReport(s);
   return '<h2>Результаты: '+esc(s.name)+'</h2><div class="report-grid">'+
    '<div class="metric"><div class="metric-title">Вегетативный коэффициент (ВК)</div><strong class="metric-number number-'+v.level+'">'+c.vk.toFixed(2).replace(".",",")+'</strong><p>'+esc(v.text)+'</p><p class="muted">Показатель энергетического баланса. Сопоставляется с наблюдениями и режимом деятельности.</p></div>'+
    '<div class="metric"><div class="metric-title">Суммарное отклонение (СО)</div><strong class="metric-number number-'+co.level+'">'+c.co+'</strong><p>'+esc(co.text)+'</p><p class="muted">Показатель общего эмоционального фона относительно аутогенной нормы.</p></div></div>'+
-   '<p class="analysis-intro">Ниже – подробный протокол всех цветов и домиков. Сначала факты выбора ребенка, затем пояснения и направления для беседы. Это описание не является автоматическим психологическим заключением.</p>'+
-   renderDetailReport(s)+
+   '<section class="narrative-conclusion"><h3>Индивидуальный психологический вывод</h3>'+
+   '<div class="narrative-text">'+story.paragraphs.map(([heading,body])=>'<div class="narrative-paragraph"><h4>'+esc(heading)+'</h4><p>'+esc(body)+'</p></div>').join("")+'</div></section>'+
+   '<details class="report-expanded"><summary>Подробный протокол: все 20 домиков, пары чувств и цветовые совпадения</summary><div class="report-expanded-inner">'+renderDetailReport(s)+'</div></details>'+
    '<div class="report-actions"><button type="button" class="primary" id="downloadOne">Скачать Word</button><button type="button" class="light-button" id="printOne">Распечатать результаты</button></div>';
  }
  function renderGroup(){
@@ -422,8 +423,12 @@
    return b+'</w:tbl>'+wp("Проценты и выводы требуют профессиональной интерпретации. Незаполненные протоколы не учитываются.");
   }
   const s=current(),c=calculate(s),v=classifyVK(c.vk),co=classifyCO(c.co);
+  const narrative=narrativeReport(s);
   let b=wp("Метолария. Методика «Домики» О. А. Ореховой")+wp("Участник: "+s.name+(s.age?" · "+s.age+" лет":" · класс / группа: "+state.groupName))+
   wp("ВК: "+c.vk.toFixed(2).replace(".",",")+" – "+v.text,colorHex(v.level))+wp("СО: "+c.co+" – "+co.text,colorHex(co.level))+
+  wp("ИНДИВИДУАЛЬНЫЙ ПСИХОЛОГИЧЕСКИЙ ВЫВОД");
+  narrative.paragraphs.forEach(([heading,body])=>{b+=wp(heading)+wp(body);});
+  b+=wp("ПОЛНЫЙ ПРОТОКОЛ И ЦВЕТОВЫЕ АССОЦИАЦИИ")+
   wp("Задание 1. Дорожка: "+s.ranking.map(colorName).join(", "))+wp("Задание 2. Домики чувств");
   EMOTIONS.forEach((x,i)=>b+=wp((i+1)+". "+x+": "+colorName(s.emotions[i])));
   b+=wp("Задание 3. Домики ситуаций");
@@ -442,7 +447,7 @@
   detailed.chains.forEach(x=>b+=wp(x.name+" (место "+x.rank+"): чувства – "+(x.em.join(", ")||"нет")+"; ситуации – "+(x.sit.join(", ")||"нет")+"."));
   b+=wp("Качественные наблюдения");
   const notes=observations(s);notes.forEach(n=>b+=wp("• "+n));
-  return b+wp("Методика проективная. Отношение к школе определяется психологом в контексте беседы, данных учителя и родителей. Цвет сам по себе не является диагнозом.");
+  return b+wp("Методика: «Домики» О. А. Ореховой. Показатели и качественные связи анализируются в контексте условий обследования и доступных сведений о школьной адаптации.");
  }
  // Simple ZIP writer (stored files) for a real, offline-generated DOCX.
  function crc32(data){let crc=0xFFFFFFFF;for(const byte of data){crc^=byte;for(let i=0;i<8;i++)crc=(crc>>>1)^((crc&1)?0xEDB88320:0);}return (crc^0xFFFFFFFF)>>>0;}
