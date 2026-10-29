@@ -694,8 +694,10 @@ function bindControls(){
      if(j===rowIndex)continue;
      if(rows[j].attendance!=='absent'&&(rows[j].name?.trim()||rows.length===1)&&!['m','f'].includes(rows[j].sex)){next=j;break;}
     }
-    if(next<0)next=rows.findIndex(x=>x.attendance!=='absent'&&(x.name?.trim()||rows.length===1));
-    go(next<0?0:next);
+    // Move only to the next child without assigned sex. Once all are assigned,
+    // stay with the current child so their answers can be entered.
+    if(next>=0)go(next);
+    else setTab('score');
    },
    onBulkAdd:names=>{const first=addNames(names);go(first>=0?first:Math.min(rowIndex,rows.length-1));},
    onSort:names=>{
