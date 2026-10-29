@@ -402,5 +402,28 @@ const statements=[
   ]
  ]
 ];
-window.PSY_CDI_NORMS_2026={tables,items,norm,statements};
+
+/* CDI (27 items), five validated original Kovacs factors.
+   Item assignment: Kovacs (1992) as reproduced at
+   https://multiurok.ru/files/oprosnik-detskoi-depressii-kovacha.html .
+   T conversion: numeric cells of the published Russian age/sex/factor table,
+   cross-checked against https://psytests.org/result?v=deqKmWEdk .
+   Null cells are NOT interpolated, extrapolated or replaced with guesses. */
+const scales=[{"id":"A","name":"Негативное настроение","q":[1,6,8,10,11,13]},{"id":"B","name":"Межличностные проблемы","q":[5,12,26,27]},{"id":"C","name":"Неэффективность","q":[3,15,23,24]},{"id":"D","name":"Ангедония","q":[4,16,17,18,19,20,21,22]},{"id":"E","name":"Негативная самооценка","q":[2,7,9,14,25]}];
+const scaleTByRaw={"A":{"m7":[38,44,49,54,59,64,70,75,80,85,91,96,100],"f7":[40,45,50,54,59,64,69,74,79,84,89,94,99],"m13":[39,44,48,53,57,62,66,71,76,80,85,89,94],"f13":[37,43,48,54,59,64,70,75,81,86,92,97,100]},"B":{"m7":[42,49,57,64,71,78,85,92,99],"f7":[45,56,67,78,89,100,null,null,null],"m13":[44,50,56,63,69,75,82,89,95],"f13":[43,54,64,74,84,95,100,null,null]},"C":{"m7":[39,44,49,54,59,64,70,75,80],"f7":[41,47,52,58,64,70,75,81,87],"m13":[38,42,48,53,58,64,69,74,80],"f13":[38,45,52,59,66,74,81,88,95]},"D":{"m7":[37,41,45,48,52,56,60,64,67,71,75,79,83,86,90,94,99],"f7":[38,42,46,50,54,58,61,65,69,73,77,81,84,88,92,97,100],"m13":[37,41,44,48,51,55,58,62,66,69,73,76,80,83,87,90,94],"f13":[38,41,45,49,52,56,60,63,67,71,74,78,82,85,89,93,97]},"E":{"m7":[40,46,51,56,62,67,72,78,83,88,94],"f7":[40,46,51,57,62,68,73,79,84,90,95],"m13":[40,45,50,55,60,65,71,76,81,86,91],"f13":[39,45,52,58,64,70,76,83,89,95,100]}};
+function scaleScores(answers){
+ if(!Array.isArray(answers)||Array.from({length:27},(_,i)=>answers[i]).some(v=>![0,1,2,"0","1","2"].includes(v)))return null;
+ return scales.map(scale=>({id:scale.id,name:scale.name,max:scale.q.length*2,raw:scale.q.reduce((n,q)=>n+Number(answers[q-1]),0)}));
+}
+function scaleNorm(id,raw,age,sex){
+ const a=Number(age),group=(sex==="m"||sex==="f")?(sex+(Number.isInteger(a)&&a>=7&&a<=12?"7":Number.isInteger(a)&&a>=13&&a<=17?"13":"")):"";
+ if(!scaleTByRaw[id]||!scaleTByRaw[id][group])return {status:"missing-details",t:null,message:"Для Т-балла укажите возраст 7-17 лет и пол ребенка."};
+ const groupTable=scaleTByRaw[id][group];
+ if(!Number.isInteger(raw)||raw<0||raw>=groupTable.length)return {status:"invalid-raw",t:null,message:"Недопустимый сырой балл шкалы."};
+ const t=groupTable[raw];
+ if(!Number.isInteger(t))return {status:"out-of-table",t:null,message:"В опубликованной таблице для этого результата точный Т-балл отсутствует."};
+ return {status:"ok",t,level:levels(t),message:"Т-балл по опубликованной таблице шкалы, возрастной группе и полу."};
+}
+
+window.PSY_CDI_NORMS_2026={tables,items,norm,statements,scales,scaleTByRaw,scaleScores,scaleNorm};
 })();
