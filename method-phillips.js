@@ -105,7 +105,7 @@
   const body=rows.filter(r=>r.name?.trim()||count(r.answers)).map((r,i)=>{
    const z=r.attendance==="absent"?null:score(DATA,r.answers);
    return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td>'+
-    SCALES.map((scale,k)=>'<td>'+(z?fmt(z.scales[k].percent)+"%":"–")+'</td>').join("")+'</tr>';
+    SCALES.map((scale,k)=>'<td>'+(z?z.scales[k].raw:"–")+'</td>').join("")+'</tr>';
   }).join("");
   return '<div class="psy-ph-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>';
  }
@@ -156,7 +156,7 @@
    const out=[head];
    rows.filter(r=>r.name?.trim()||count(r.answers)).forEach((x,i)=>{
     const z=x.attendance==="absent"?null:score(d,x.answers);
-    out.push([i+1,x.name||"У-"+String(i+1).padStart(2,"0"),...SCALES.map((s,k)=>z?fmt(z.scales[k].percent):"")]);
+    out.push([i+1,x.name||"У-"+String(i+1).padStart(2,"0"),...SCALES.map((s,k)=>z?z.scales[k].raw:"")]);
    });
    save("Phillips_school_anxiety_class.csv",csv(out),"text/csv;charset=utf-8");
   });
