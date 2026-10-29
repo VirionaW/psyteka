@@ -117,7 +117,7 @@
  document.head.appendChild(stylesheet);
  const polish=document.createElement("link");
  polish.rel="stylesheet";
- polish.href="site-home-polish.css?v=20261029missionnatural3";
+ polish.href="site-home-polish.css?v=20261029squarecrop4";
  document.head.appendChild(polish);
  const finalSkin=document.createElement("link");
  finalSkin.rel="stylesheet";
