@@ -165,7 +165,7 @@
   const standardAge=standard?.records?.[m.name]?.age||"";
   const age=item.age||normAge(standardAge)||normAge(d?.age)||normAge(profile?.age)||normAge(m.age)||"Возраст уточняется";
   const qty=clean(item.count||d?.count||profile?.count||m.count||"");
-  const quantity=qty&&!/не уточнено|не подтвержден|возможная|сведения уточняют/i.test(qty)?clip(qty,74):isProgram?"Материалы программы":"Количество заданий уточняется";
+  const quantity=qty&&!/не уточнено|не подтвержден|возможная|сведения уточняют|возраст зависит|по выбранной форме/i.test(qty)?clip(qty,74):isProgram?"Материалы программы":"Количество заданий уточняется";
   const preferredSummary=item.summary||m.summary||d?.goal||profile?.goal||m.goal||"";
   const fallback=placeholder.test(preferredSummary)?[d?.goal,profile?.goal,m.summary].find(x=>x&&!placeholder.test(clean(x)))||"":preferredSummary;
   const summary=clip(fallback||"Описание задачи методики содержится в руководстве выбранной версии.",150);
