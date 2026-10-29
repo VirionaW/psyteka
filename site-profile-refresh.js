@@ -1,6 +1,6 @@
 "use strict";
 /* Личный кабинет: интерактивное избранное и папки (сохранение прежнего формата).
-   Все данные локальны для вошедшего аккаунта; библиотеки и методики не меняем. */
+   Папки синхронизируются с защищенным облачным профилем пользователя. */
 (function(){
  const icons={
   moon:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.7A8.7 8.7 0 0 1 8.3 3.8 8.8 8.8 0 1 0 20.2 15.7Z"/></svg>',
@@ -42,7 +42,7 @@
   }catch(_){return blank()}
  }
  function store(data){
-  try{if(!key())return false;localStorage.setItem(key(),JSON.stringify(data));return true;}catch(_){return false}
+  try{if(!key())return false;localStorage.setItem(key(),JSON.stringify(data));window.PSY_CLOUD?.saveCollections(data).catch(()=>{});return true;}catch(_){return false}
  }
  section.innerHTML=`
   <div class="psy-collection-overview" id="psyCollectionOverview">
@@ -298,6 +298,6 @@
  },{passive:false});
  window.addEventListener("resize",updateArrows,{passive:true});
  window.addEventListener("storage",e=>{if(e.key===key())render();});
- Promise.resolve(identity?.ready).then(()=>{userID=identity?.user?.id||null;render();}).catch(()=>render());
+ Promise.resolve(identity?.ready).then(()=>window.PSY_CLOUD?.ready).then(()=>{userID=identity?.user?.id||null;render();}).catch(()=>render());window.addEventListener("psy-collections-synced",()=>{if(userID)render()});
  render();
 })();
