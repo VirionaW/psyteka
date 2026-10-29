@@ -10,11 +10,16 @@
  notebook.setAttribute("aria-label","Сохраненные результаты этой методики");
  const heading=document.createElement("div");
  heading.className="psy-result-notebook-head";
+ const back=document.createElement("button");
+ back.type="button";
+ back.className="psy-result-notebook-back";
+ back.textContent="← Чистый бланк";
+ back.setAttribute("aria-label","Вернуться к чистому бланку обработки");
  const title=document.createElement("strong");
  title.textContent="Мои результаты";
  const sub=document.createElement("span");
  sub.className="psy-result-notebook-sub";
- heading.append(title,sub);
+ heading.append(back,title,sub);
  const list=document.createElement("nav");
  list.className="psy-result-notebook-tabs";
  list.setAttribute("aria-label","Переключить сохраненный результат");
@@ -25,6 +30,12 @@
 
  let records=[],cachedMethod="",loadPromise=null,requestId=0,loading=false,error="";
  const getState=()=>window.PSY_PROCESSING_NOTEBOOK?.getState?.()||null;
+ back.addEventListener("click",()=>{
+  const controller=window.PSY_PROCESSING_NOTEBOOK;
+  if(!controller?.openBlank)return;
+  const changed=controller.openBlank();
+  if(changed)render();
+ });
  function position(){
   if(notebook.hidden||modal.hidden)return;
   const rect=modal.getBoundingClientRect();
