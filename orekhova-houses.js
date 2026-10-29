@@ -165,7 +165,7 @@
  }
  function analysisDetails(s){
   const position=id=>s.ranking.indexOf(id)+1;
-  const makeColor=id=>({id,name:colorName(id),hex:color(id)?.hex||"#ffffff",position:position(id)});
+  const makeColor=id=>({id,colorName:colorName(id),hex:color(id)?.hex||"#ffffff",position:position(id)});
   const feelings=EMOTIONS.map((name,i)=>({
    index:i+1,name,explanation:FEELING_HELP[i],...makeColor(s.emotions[i])
   }));
@@ -186,7 +186,7 @@
   return {feelings,situations,pairs,chains};
  }
  function reportColor(item){
-  return '<span class="analysis-color"><span class="analysis-color-swatch" style="background:'+item.hex+'"></span><strong>'+esc(item.name)+'</strong><span>· место '+item.position+' из 8</span></span>';
+  return '<span class="analysis-color"><span class="analysis-color-swatch" style="background:'+item.hex+'"></span><strong>'+esc(item.colorName||item.name)+'</strong><span>· место '+item.position+' из 8</span></span>';
  }
  function renderDetailReport(s){
   const d=analysisDetails(s);
