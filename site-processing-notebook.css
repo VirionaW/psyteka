@@ -1,0 +1,79 @@
+/* Tabs touch the LEFT edge of the processing modal, without occupying its contents. */
+.psy-result-notebook[hidden]{display:none!important}
+.psy-result-notebook{
+ position:fixed;z-index:23;width:176px;
+ display:flex;flex-direction:column;gap:0;min-height:0;
+ color:var(--ink,#233c34);font-family:inherit;
+ filter:drop-shadow(-3px 8px 11px rgba(20,45,35,.12));
+}
+.psy-result-notebook-head{
+ display:flex;flex-direction:column;gap:2px;
+ padding:12px 11px 11px 13px;
+ background:var(--paper,#fff);border:1px solid var(--line,#dbe6de);
+ border-right:0;border-radius:14px 0 0 0;
+ min-height:52px;
+}
+.psy-result-notebook-head strong{font-size:12px;line-height:1.25;font-weight:800}
+.psy-result-notebook-sub{font-size:10px;color:var(--muted,#68766f);line-height:1.25}
+.psy-result-notebook-tabs{min-height:0;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}
+.psy-result-notebook-tab{
+ appearance:none;flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+ min-height:56px;width:100%;max-width:100%;text-align:left;gap:4px;
+ padding:11px 12px 11px 14px;
+ background:var(--paper,#fff);color:var(--ink,#233c34);
+ border:1px solid var(--line,#dbe6de);border-right:0;border-top:0;
+ border-radius:12px 0 0 12px;cursor:pointer;
+ position:relative;transition:background .15s ease,box-shadow .15s ease;
+}
+.psy-result-notebook-tab[data-index="0"]{background:color-mix(in srgb,var(--paper,#fff) 87%,#bbd9c2)}
+.psy-result-notebook-tab[data-index="1"]{background:color-mix(in srgb,var(--paper,#fff) 88%,#e2cba6)}
+.psy-result-notebook-tab[data-index="2"]{background:color-mix(in srgb,var(--paper,#fff) 88%,#c8c3df)}
+.psy-result-notebook-tab[data-index="3"]{background:color-mix(in srgb,var(--paper,#fff) 90%,#c1d7e5)}
+.psy-result-notebook-tab[data-index="4"]{background:color-mix(in srgb,var(--paper,#fff) 88%,#e3c1c0)}
+.psy-result-notebook-tab[data-index="5"]{background:color-mix(in srgb,var(--paper,#fff) 88%,#c1d8c4)}
+.psy-result-notebook-tab:hover{background:var(--soft,#edf5ed);box-shadow:inset 4px 0 var(--green,#237c57)}
+.psy-result-notebook-tab:focus-visible{outline:3px solid var(--green,#237c57);outline-offset:-4px;z-index:2}
+.psy-result-notebook-tab.is-current{
+ background:var(--paper,#fff);box-shadow:inset 5px 0 var(--green,#237c57);
+ font-weight:800;border-color:var(--green,#237c57);z-index:1;
+}
+.psy-result-notebook-tab:disabled{cursor:progress;opacity:.55}
+.psy-result-notebook-title{
+ display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+ overflow-wrap:anywhere;width:100%;font-size:11px;line-height:1.25;font-weight:750;
+}
+.psy-result-notebook-tab small{font-size:10px;color:var(--muted,#69766f);font-weight:500}
+.psy-result-notebook-empty{
+ background:var(--paper,#fff);margin:0;padding:13px 12px;font-size:11px;
+ line-height:1.4;color:var(--muted,#69766f);border:1px solid var(--line,#dbe6de);
+ border-right:0;border-radius:0 0 0 13px;overflow-wrap:anywhere;
+}
+.library-page #modal.modal.psy-notebook-open{
+ width:min(calc(100vw - 240px),1120px)!important;
+ left:calc(50% + 96px)!important;
+}
+@media(max-width:980px){
+ .library-page #modal.modal.psy-notebook-open{
+  width:calc(100vw - 142px)!important;
+  left:calc(50% + 52px)!important;
+ }
+ .psy-result-notebook{width:114px}
+ .psy-result-notebook-head{padding:9px 7px 8px;min-height:48px}
+ .psy-result-notebook-head strong{font-size:10px}
+ .psy-result-notebook-tab{padding:8px;min-height:52px}
+ .psy-result-notebook-title{font-size:10px}
+}
+@media(max-width:680px){
+ .library-page #modal.modal.psy-notebook-open{
+  width:calc(100vw - 80px)!important;
+  left:calc(50% + 34px)!important;
+ }
+ .psy-result-notebook{width:64px}
+ .psy-result-notebook-head{padding:7px 4px;min-height:44px}
+ .psy-result-notebook-head strong{font-size:9px;line-height:1.2}
+ .psy-result-notebook-sub{font-size:9px;overflow-wrap:anywhere}
+ .psy-result-notebook-tab{padding:8px 5px;min-height:56px}
+ .psy-result-notebook-title{font-size:9px;line-height:1.2}
+ .psy-result-notebook-tab small{font-size:8px}
+ .psy-result-notebook-empty{padding:8px 4px;font-size:9px}
+}
