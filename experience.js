@@ -644,13 +644,14 @@ function bindControls(){
   const go=i=>{rowIndex=i;modeIndices.class=i;setTab('score');};
   const addNames=names=>{
    if(!names?.length)return;
+   const grade=d.id==='cdi-27'?rows.find(x=>Number(x.schoolGrade)>=1&&Number(x.schoolGrade)<=11)?.schoolGrade:null;
    if(rows.length===1&&!rows[0].name?.trim()&&!window.PSY_MATCH_MSPSS.done(d,rows[0].answers))rows.splice(0,1);
    let first=-1;
    for(const name of names){
     const trimmed=String(name).trim();if(!trimmed)continue;
     if(!rows.some(x=>x.name?.trim().toLocaleLowerCase('ru')===trimmed.toLocaleLowerCase('ru'))){
      if(first<0)first=rows.length;
-     rows.push({name:trimmed,answers:[],attendance:"present"});
+     rows.push({name:trimmed,answers:[],attendance:"present",...(grade?{schoolGrade:Number(grade),ageYears:Number(grade)+6}:{} )});
     }
    }
    if(!rows.length)rows.push({name:"",answers:[]});
@@ -660,6 +661,17 @@ function bindControls(){
    rows,rowIndex,calcMode,tab:tabNow,
    onRender:()=>setTab('score'),
    onSelect:go,
+   onGenderAssigned:()=>{
+    if(d.id!=='cdi-27'||calcMode!=='class')return;
+    let next=-1;
+    for(let step=1;step<=rows.length;step++){
+     const j=(rowIndex+step)%rows.length;
+     if(j===rowIndex)continue;
+     if(rows[j].attendance!=='absent'&&(rows[j].name?.trim()||rows.length===1)&&!['m','f'].includes(rows[j].sex)){next=j;break;}
+    }
+    if(next<0)next=rows.findIndex(x=>x.attendance!=='absent'&&(x.name?.trim()||rows.length===1));
+    go(next<0?0:next);
+   },
    onBulkAdd:names=>{const first=addNames(names);go(first>=0?first:Math.min(rowIndex,rows.length-1));},
    onSort:names=>{
     const first=addNames(names),current=first>=0?rows[first]:rows[rowIndex];
