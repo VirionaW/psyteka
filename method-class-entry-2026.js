@@ -429,24 +429,34 @@
    '<button type="button" class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>';
   if(ctx.calcMode==="class"){
    h+='<div class="psy-mspss-workspace"><aside class="psy-mspss-sidebar"><h3>Список учащихся</h3>'+
-    (type(d)==="cdi"?'<label class="psy-cp-class-label" for="cpSchoolGrade">Класс<select id="cpSchoolGrade" '+(!allowDetails?"disabled":"")+'><option value="">Выбрать класс</option>'+Array.from({length:11},(_,i)=>i+1).map(g=>'<option value="'+g+'" '+(Number(classGrade(rows))===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select><small>Возраст подставится автоматически, его можно уточнить.</small></label>':'')+
-    window.PSY_ANALYTIC_SIGNATURES.fields(rows)+
-    '<p>Добавьте учеников по одному с новой строки. Для конфиденциальности можно использовать условные коды.</p>'+
-    '<label class="psy-mspss-label" for="cpBulkNames">Добавить участников</label><textarea id="cpBulkNames" rows="5" placeholder="Ученик 01&#10;Ученик 02"></textarea>'+
+    '<label class="psy-mspss-label" for="cpBulkNames">Участники (по одному в строке)</label><textarea id="cpBulkNames" rows="10" placeholder="Иванов Иван&#10;Петрова Анна&#10;Сидоров Алексей"></textarea>'+
     '<button type="button" class="btn primary psy-mspss-add" id="cpAddNames">Добавить в список</button>'+
     '<button type="button" class="btn psy-mspss-sort" id="cpSort" '+(!allowDetails?"disabled":"")+' >По алфавиту А - Я</button>'+
     '<div class="psy-mspss-person-list">'+rows.map((u,i)=>(u.name?.trim()||done(d,u.answers))?
       '<div class="psy-mspss-person-row '+(type(d)==="cdi"?(u.sex==="f"?"psy-cp-girl":u.sex==="m"?"psy-cp-boy":""):"")+'"><button type="button" class="psy-mspss-person '+(i===ctx.rowIndex?"active":"")+'" data-cp-person="'+i+'"><span>'+esc(u.name||"Участник "+(i+1))+'</span><small>'+(u.attendance==="absent"?"Отсутствует":done(d,u.answers)+"/"+total)+'</small></button>'+
       '<button type="button" class="psy-mspss-delete-person" title="Удалить ученика" aria-label="Удалить '+esc(u.name||"ученика")+'" data-cp-delete="'+i+'">×</button></div>':"").join("")+'</div>'+
-    '<button type="button" class="btn psy-mspss-delete-all" id="cpDeleteAll" '+(!allowDetails?"disabled":"")+' >Удалить всех участников</button></aside><div class="psy-mspss-entry">';
+    '<button type="button" class="btn psy-mspss-delete-all" id="cpDeleteAll" '+(!allowDetails?"disabled":"")+' >Удалить всех участников</button>'+
+    window.PSY_ANALYTIC_SIGNATURES.fields(rows)+'</aside><div class="psy-mspss-entry">';
   }else h+='<div class="psy-mspss-entry">';
-  h+='<label class="psy-mspss-name-field" for="cpCurrentName"><span>Фамилия и имя / условный код</span><input type="text" id="cpCurrentName" '+(!allowDetails?"disabled ":"")+'maxlength="120" autocomplete="off" value="'+esc(r.name||"")+'" placeholder="Введите имя или код"></label>';
-  if(type(d)==="cdi"&&ctx.calcMode!=="class")h+='<label class="psy-cp-class-label" for="cpSchoolGrade">Класс<select id="cpSchoolGrade" '+(!allowDetails?"disabled":"")+'><option value="">Выбрать класс</option>'+Array.from({length:11},(_,i)=>i+1).map(g=>'<option value="'+g+'" '+(Number(r.schoolGrade)===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select><small>Класс необходимо выбрать до ввода ответов. Возраст можно уточнить отдельно.</small></label>';
-  if(type(d)==="cdi"&&ctx.calcMode==="class")h+='<div class="psy-cp-current '+(r.sex==="f"?"psy-cp-girl":r.sex==="m"?"psy-cp-boy":"")+'"><span>'+(ctx.rowIndex+1)+' / '+rows.length+'</span><b>Сейчас: '+esc(r.name||"Участник "+(ctx.rowIndex+1))+'</b></div>'+(rows.genderNote?'<p class="psy-cp-gender-feedback" role="status">'+esc(rows.genderNote)+'</p>':"");
-  if(type(d)==="cdi")h+='<div class="psy-cp-demographics"><label>Возраст<select id="cpAge" '+(!allowDetails?"disabled":"")+'><option value="">Не выбран</option>'+Array.from({length:11},(_,i)=>i+7).map(age=>'<option value="'+age+'" '+(r.ageYears===age?"selected":"")+'>'+age+'</option>').join("")+'</select></label><div class="psy-cp-sex-field"><span>Пол для Т-балла</span><div class="psy-cp-sex-buttons" role="group" aria-label="Пол ребенка"><button type="button" '+(!allowGender?"disabled ":"")+'class="btn psy-cp-sex-btn '+(r.sex==="f"?"is-selected":"")+'" data-cp-sex="f" aria-pressed="'+(r.sex==="f")+'">Девочка</button><button type="button" '+(!allowGender?"disabled ":"")+'class="btn psy-cp-sex-btn '+(r.sex==="m"?"is-selected":"")+'" data-cp-sex="m" aria-pressed="'+(r.sex==="m")+'">Мальчик</button></div></div></div>';
-  if(type(d)==="cdi")h+='<div class="psy-cdi-student-note psy-cdi-specialist-note"><strong>Только для психолога – ввод баллов</strong><p>Ребенок выбирает ОДНО из трех утверждений в оригинальном опроснике, а не цифру. Здесь вводятся баллы <b>0, 1 или 2</b>, соответствующие выбранному тексту по ключу. Порядок утверждений может отличаться от порядка баллов.</p></div>';
+  if(ctx.calcMode==="class"&&!hasRoster){
+   h+='<div class="psy-cp-empty-state"><h3>Добавьте участников</h3><p>Введите имена или коды слева, каждый с новой строки, и нажмите «Добавить в список».</p></div></div></div></section>';
+   return h;
+  }
+  if(type(d)==="cdi"&&ctx.calcMode==="class")h+='<div class="psy-cp-current '+(r.sex==="f"?"psy-cp-girl":r.sex==="m"?"psy-cp-boy":"")+'"><span>'+(ctx.rowIndex+1)+' / '+rows.length+'</span><b>Сейчас: '+esc(r.name||"Участник "+(ctx.rowIndex+1))+'</b></div>';
+  if(type(d)==="cdi"&&rows.genderNote&&ctx.calcMode==="class")h+='<p class="psy-cp-gender-feedback" role="status">'+esc(rows.genderNote)+'</p>';
+  h+='<label class="psy-mspss-name-field" for="cpCurrentName"><span>Участник</span><input type="text" id="cpCurrentName" maxlength="120" autocomplete="off" value="'+esc(r.name||"")+'" placeholder="Имя или условный код"></label>';
+  if(type(d)==="cdi"){
+   const chosenClass=Number(ctx.calcMode==="class"?classGrade(rows):r.schoolGrade);
+   h+='<div class="psy-cp-age-class"><label for="cpAge">Возраст<select id="cpAge"><option value="">Выбрать возраст</option>'+Array.from({length:11},(_,i)=>i+7).map(age=>'<option value="'+age+'" '+(Number(r.ageYears)===age?"selected":"")+'>'+age+' лет</option>').join("")+'</select></label>'+
+    '<span class="psy-cp-or" aria-hidden="true">или</span>'+
+    '<label for="cpSchoolGrade">Класс<select id="cpSchoolGrade"><option value="">Выбрать класс</option>'+Array.from({length:11},(_,i)=>i+1).map(g=>'<option value="'+g+'" '+(chosenClass===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select></label></div>'+
+    '<div class="psy-cp-sex-field"><span>Пол</span><div class="psy-cp-sex-buttons" role="group" aria-label="Пол ребенка">'+
+    '<button type="button" '+(!allowGender?"disabled ":"")+'class="btn psy-cp-sex-btn '+(r.sex==="f"?"is-selected":"")+'" data-cp-sex="f" aria-pressed="'+(r.sex==="f")+'">Девочка</button>'+
+    '<button type="button" '+(!allowGender?"disabled ":"")+'class="btn psy-cp-sex-btn '+(r.sex==="m"?"is-selected":"")+'" data-cp-sex="m" aria-pressed="'+(r.sex==="m")+'">Мальчик</button></div></div>';
+  }
+  if(type(d)==="cdi")h+='<details class="psy-cdi-student-note psy-cdi-specialist-note"><summary>Как вводить баллы</summary><p>Вводите 0, 1 или 2 по ключу оригинального опросника, а не номер выбранного утверждения.</p></details>';
   if(!canAnswer)h+='<p class="psy-cdi-lock-note" id="cdiLockNote" '+(canAnswer?'hidden':'')+'>'+
-   (!allowDetails?"Сначала добавьте хотя бы одного участника в список.":!r.name?.trim()?"Сначала укажите участника.":type(d)==="cdi"&&!allowGender?"Сначала выберите класс или возраст ребенка.":"Выберите пол ребенка, чтобы открыть ввод ответов.")+'</p>';
+   (!r.name?.trim()?"Сначала укажите участника.":type(d)==="cdi"&&!cdiAgeReady(r,rows,ctx.calcMode)?"Выберите возраст или класс.":"Выберите пол ребенка.")+'</p>';
   h+='<p class="psy-mspss-progress" id="cpProgress">Заполнено '+n+' из '+total+'</p>';
   if(r.attendance==="absent")h+='<p class="psy-cp-absence">Ученик отмечен отсутствующим. Ввод заблокирован до возвращения в список присутствующих.</p>';
   h+='<div class="psy-mspss-grid psy-cp-grid">'+subjects(d).map((topic,i)=>{
