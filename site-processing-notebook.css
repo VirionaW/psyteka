@@ -49,7 +49,7 @@
  border-right:0;border-radius:0 0 0 16px;overflow-wrap:anywhere;
 }
 .library-page #modal.modal.psy-notebook-open{
- width:min(calc(100vw - 300px),1120px)!important;
+ width:min(calc(100vw - 300px),1240px)!important;
  left:calc(50% + 122px)!important;
 }
 @media(max-width:980px){
@@ -82,15 +82,15 @@
    being squeezed into single-character columns in the uncovered left strip.
    Do not alter the banner's normal layout when the portfolio is closed. */
 @media(min-width:681px){
- body.library-page:has(#modal:not([hidden])) .hero>div:first-child{
+ body.library-page[data-area="school"]:has(#modal:not([hidden])) .hero>div:first-child{
   min-width:min(440px,65vw)!important;
   width:min(520px,65vw)!important;
   max-width:none!important;
   flex:0 0 auto!important;
  }
- body.library-page:has(#modal:not([hidden])) .hero h1,
- body.library-page:has(#modal:not([hidden])) .hero .eyebrow,
- body.library-page:has(#modal:not([hidden])) .hero p{
+ body.library-page[data-area="school"]:has(#modal:not([hidden])) .hero h1,
+ body.library-page[data-area="school"]:has(#modal:not([hidden])) .hero .eyebrow,
+ body.library-page[data-area="school"]:has(#modal:not([hidden])) .hero p{
   overflow-wrap:normal!important;
   word-break:normal!important;
   hyphens:none!important;
