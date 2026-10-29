@@ -165,7 +165,7 @@
   const preferredSummary=item.summary||m.summary||d?.goal||profile?.goal||m.goal||"";
   const fallback=placeholder.test(preferredSummary)?d?.goal||profile?.goal||m.summary||"":preferredSummary;
   const summary=clip(fallback||"Описание задачи методики содержится в руководстве выбранной версии.",150);
-  return {author,type:age?type:"Опросник",age,quantity,summary,confirmedAge:age!=="Возраст по авторской версии",confirmedQuantity:quantity!=="Число заданий по форме",category:m.theme};
+  return {author,type:type||"Вид методики уточняется",age,quantity,summary,confirmedAge:age!=="Возраст по авторской версии",confirmedQuantity:quantity!=="Число заданий по форме",category:m.theme};
  }
  // Одна карточка – один основной способ предъявления, даже если
  // рисуночная или графическая методика одновременно относится к проективным.
