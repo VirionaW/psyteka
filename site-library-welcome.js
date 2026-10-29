@@ -42,3 +42,34 @@
  // A deep link added later by client-side navigation also clears the welcome state.
  window.addEventListener('popstate',()=>{if(new URLSearchParams(location.search).has('area'))activate()});
 })();
+
+
+// Preserve the chosen direction across reloads and navigate to the method list,
+// not to the very top of the library page.
+(function(){
+ const allowed=new Set(['school','preschool','adults','special','documents','spt','prevention','information','pmpk']);
+ const initial=new URLSearchParams(location.search).get('area');
+ if(allowed.has(initial)){try{sessionStorage.setItem('psy-library-last-area',initial)}catch(_){}}
+ document.querySelectorAll('[data-view]').forEach(button=>{
+  button.addEventListener('click',()=>{
+   const area=button.dataset.view;
+   if(!allowed.has(area))return;
+   try{sessionStorage.setItem('psy-library-last-area',area)}catch(_){}
+   const url=new URL(location.href);
+   url.searchParams.set('area',area);
+   history.replaceState(history.state,'',url.pathname+url.search+url.hash);
+   if(area==='school'){
+    // Let the existing view handlers finish and cards finish rendering.
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+     const target=document.querySelector('#schoolView .filters')||document.getElementById('schoolView');
+     if(target&&!target.hidden){
+      const y=target.getBoundingClientRect().top+window.scrollY-20;
+      window.scrollTo({top:Math.max(0,y),behavior:'instant'});
+      const main=document.querySelector('main.main');
+      if(main&&main.scrollHeight>main.clientHeight+20)main.scrollTo({top:Math.max(0,target.offsetTop-20),behavior:'instant'});
+     }
+    }));
+   }
+  });
+ });
+})();
