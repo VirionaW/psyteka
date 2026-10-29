@@ -10,10 +10,10 @@
    calculator:true,printFormat:"A4",
    source:"https://elib.kspu.ru/get/174453"
  });
- const house=i=>'<div class="or-house"><svg viewBox="0 0 100 95" role="img" aria-label="Домик '+i+'">'+
-   '<path d="M5 42L39 13L57 27V14H68V36L85 42H5Z" fill="#ffffff" stroke="#343d35" stroke-width="2.1" stroke-linejoin="round"/>'+
-   '<path d="M15 42H76V87H15Z" fill="#ffffff" stroke="#343d35" stroke-width="2.1"/>'+
-   '<path d="M33 62H53V87H33Z" fill="none" stroke="#343d35" stroke-width="2.1"/></svg><span>'+i+'</span></div>';
+ const house=i=>'<div class="or-house"><svg viewBox="0 0 124 122" role="img" aria-label="Домик '+i+'">'+
+   '<path d="M6 52 L62 8 L80 22 V8 H91 V31 L118 52 Z" fill="#fff" stroke="#343d35" stroke-width="2.6" stroke-linejoin="round"/>'+
+   '<path d="M21 52 H103 V114 H21 Z" fill="#fff" stroke="#343d35" stroke-width="2.6"/>'+
+   '<path d="M51 83 H73 V114 H51 Z" fill="none" stroke="#343d35" stroke-width="2.4"/></svg><span>'+i+'</span></div>';
  const blank=()=>{
   const one='<section class="or-print-section"><h3>1 задание</h3><div class="or-print-rectangles">'+Array.from({length:8},(_,i)=>'<div><span>'+(i+1)+'</span></div>').join("")+'</div></section>';
   const two=[2,3].map(step=>'<section class="or-print-section"><h3>'+step+' задание</h3><div class="or-print-houses">'+Array.from({length:10},(_,i)=>house(i+1)).join("")+'</div></section>').join("");
