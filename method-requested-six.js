@@ -67,9 +67,15 @@ function score(d,answers,version){
  return scales?{raw:scales.map(x=>x.raw).join(" / "),max:"По шкалам",caption:scales.map(x=>x.title+": "+x.raw).join("; "),scales}:null;
 }
 function processing(d){return "<h3>Ключ и обработка</h3><p>"+escape(d.scoring)+"</p><h3>Интерпретация и ограничения</h3><p>"+escape(d.interpret)+"</p>";}
-function status(r,d){return !!results(d,r.answers,r.sixVersion);}
-function summary(d,r){const res=results(d,r.answers,r.sixVersion);if(!d.scaleMax&&!(d.id==="morosanova-ssp-family"&&String(r.sixVersion)==="3"))return '<p>Регистрируйте наблюдения без расчета тестовых баллов. Официальный подсчет производится по опубликованному руководству выбранной редакции.</p>';return res?'<div class="psy-six-results">'+res.map(x=>'<div><strong>'+escape(x.title)+'</strong><span>'+x.raw+' ('+x.min+'-'+x.max+')'+(x.band?' · '+x.band:'')+'</span></div>').join("")+'</div>':'<p>До заполнения всех '+(d.id==="morosanova-ssp-family"?28:d.questionsCount)+' ответов итог не рассчитывается.</p>';}
-function table(d,rows){return '<h3>Сводная таблица группы</h3><div class="results-table"><table><thead><tr><th>Код</th><th>Полнота</th><th>Результат</th></tr></thead><tbody>'+rows.map((r,i)=>{const res=results(d,r.answers,r.sixVersion);return '<tr><td>'+escape(r.name||"Участник "+(i+1))+'</td><td>'+(status(r,d)?"Заполнено":"Нет полного результата")+'</td><td>'+escape(res?res.map(x=>x.raw).join(" / "):"–")+'</td></tr>'}).join("")+'</tbody></table></div>';}
+function status(r,d){return !!String(r?.name||"").trim()&&!!results(d,r.answers,r.sixVersion);}
+function coloredScore(x){const color=x.band==="Низкий"?"#287343":x.band==="Средний"?"#a8750a":x.band==="Высокий"?"#b43838":"inherit";return '<strong style="color:'+color+';font-weight:800">'+escape(x.raw)+'</strong>';}
+function summary(d,r){
+ if(!String(r?.name||"").trim())return '<p class="privacy-inline">Сначала укажите код участника. До этого итоговая обработка недоступна.</p>';
+ const res=results(d,r.answers,r.sixVersion);
+ if(!d.scaleMax&&!(d.id==="morosanova-ssp-family"&&String(r.sixVersion)==="3"))return '<p>Регистрируйте наблюдения без расчета тестовых баллов. Официальный подсчет производится по опубликованному руководству выбранной редакции.</p>';
+ return res?'<div class="psy-six-results">'+res.map(x=>'<div><strong>'+escape(x.title)+'</strong><span>'+coloredScore(x)+' ('+x.min+'-'+x.max+')'+(x.band?' · '+escape(x.band):'')+'</span></div>').join("")+'</div>':'<p>До заполнения всех '+(d.id==="morosanova-ssp-family"?28:d.questionsCount)+' ответов итог не рассчитывается.</p>';
+}
+function table(d,rows){return '<h3>Сводная таблица группы</h3><div class="results-table"><table><thead><tr><th>Код</th><th>Полнота</th><th>Результат</th></tr></thead><tbody>'+rows.map((r,i)=>{const res=results(d,r.answers,r.sixVersion);return '<tr><td>'+escape(r.name||"Участник "+(i+1))+'</td><td>'+(status(r,d)?"Заполнено":"Нет полного результата")+'</td><td>'+(status(r,d)?res.map(coloredScore).join(" / "):"–")+'</td></tr>'}).join("")+'</tbody></table></div>';}
 function calculator(d,ctx){
  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],done=status(r,d);
  let html='<section class="psy-six-calc" data-six-id="'+escape(d.id)+'"><div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one" type="button">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class" type="button">Группа / класс</button></div>';
@@ -116,14 +122,17 @@ function csv(d,rows){
 function bind(d,ctx){
  const rows=ctx.rows,r=rows?.[ctx.rowIndex],root=document.querySelector(".psy-six-calc");if(!r||!root)return;
  const update=()=>{
+  const named=!!String(r.name||"").trim();
+  root.querySelectorAll("[data-six-answer],[data-six-unverified]").forEach(input=>{input.disabled=!named;});
   const ok=status(r,d),badge=root.querySelector("#sixStatus"),report=root.querySelector("[data-six-report]"),scored=!!d.scaleMax||(d.id==="morosanova-ssp-family"&&String(r.sixVersion)==="3");
   if(badge){badge.className="psy-six-state "+(scored?(ok?"ready":"pending"):"neutral");badge.textContent=scored?(ok?"Результат рассчитан":"Требуется заполнение"):"Протокол наблюдения";}
   if(report)report.disabled=scored&&!ok;
   const result=root.querySelector("#sixSummary");if(result)result.innerHTML=summary(d,r);
   const group=root.querySelector("#sixClass");if(group)group.innerHTML=table(d,rows);
  };
+ root.querySelector("#participantName")?.addEventListener("input",e=>{r.name=e.target.value;update();});
  root.querySelectorAll("[data-six-answer]").forEach(sel=>sel.addEventListener("change",()=>{
-  r.answers ||= [];r.answers[Number(sel.dataset.sixAnswer)]=sel.value;update();
+  if(!String(r.name||"").trim())return;r.answers ||= [];r.answers[Number(sel.dataset.sixAnswer)]=sel.value;update();
  }));
  root.querySelectorAll("[data-six-unverified]").forEach(sel=>sel.addEventListener("change",()=>{
   r.sixAnswers ||= [];r.sixAnswers[Number(sel.dataset.sixUnverified)]=sel.value;update();
