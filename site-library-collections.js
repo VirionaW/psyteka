@@ -5,7 +5,7 @@
  let uid=null, active=null;
  const key=()=>uid?'psy-collections-v1:'+uid:null;
  const read=()=>{try{const d=JSON.parse(localStorage.getItem(key()));return {favorites:Array.isArray(d?.favorites)?d.favorites:[],folders:Array.isArray(d?.folders)?d.folders:[]}}catch(_){return {favorites:[],folders:[]}}};
- const save=d=>{if(key())localStorage.setItem(key(),JSON.stringify(d))};
+ const save=d=>{if(!key())return;localStorage.setItem(key(),JSON.stringify(d));window.PSY_CLOUD?.saveCollections(d).catch(()=>{});};
  const star='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2.7 2.85 5.88 6.48.94-4.69 4.57 1.11 6.45L12 17.5l-5.75 3.04 1.1-6.45-4.68-4.57 6.48-.94L12 2.7Z"/></svg>';
  let pop=document.createElement('div');pop.className='psy-star-pop';pop.hidden=true;pop.setAttribute('role','dialog');pop.setAttribute('aria-label','Сохранить методику');document.body.append(pop);
  function close(){pop.hidden=true;active=null}
@@ -43,5 +43,5 @@
  if(modal)new MutationObserver(modalStar).observe(modal,{attributes:true,attributeFilter:['hidden'],childList:true,subtree:false});
  document.addEventListener('click',e=>{if(!pop.contains(e.target)&&!e.target.closest('.psy-star-trigger'))close()});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
  window.addEventListener('resize',close);
- Promise.resolve(window.PSY_IDENTITY?.ready).then(()=>{uid=window.PSY_IDENTITY?.user?.id||null;enhance();modalStar()});enhance();modalStar();
+ Promise.resolve(window.PSY_IDENTITY?.ready).then(()=>window.PSY_CLOUD?.ready).then(()=>{uid=window.PSY_IDENTITY?.user?.id||null;enhance();modalStar();updateStars()});window.addEventListener("psy-collections-synced",updateStars);enhance();modalStar();
 })();
