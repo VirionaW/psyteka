@@ -785,6 +785,14 @@ const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const size=d=>cfg(d).n,limit=d=>cfg(d).max;
 const present=(d,r)=>Array.from({length:size(d)},(_,i)=>r?.answers?.[i]).filter(v=>v!==null&&v!==undefined&&v!==""&&/^[0-9]$/.test(String(v))&&Number(v)<=limit(d)).length;
 const scored=(d,r)=>r?.attendance!=="absent"&&present(d,r)===size(d)?m.score(d,r.answers,r):null;
+const roster=rows=>rows.some(x=>!!x?.name?.trim());
+const gradeOf=rows=>Number(rows.find(x=>Number(x.schoolGrade)>=7&&Number(x.schoolGrade)<=11)?.schoolGrade||0);
+const ageOk=(d,r,rows,mode)=>{
+ if(d.id!=="lazarus-wcq50")return mode==="class"?gradeOf(rows)>=7:Number(r?.schoolGrade)>=7;
+ const age=Number(r?.ageYears)||Number(r?.schoolGrade||gradeOf(rows))+6;
+ return Number.isInteger(age)&&age>=14&&age<=90;
+};
+const ready=(d,r,rows,mode)=>!!r?.name?.trim()&&r.attendance!=="absent"&&(mode!=="class"||roster(rows))&&ageOk(d,r,rows,mode)&&(d.id!=="lazarus-wcq50"||["f","m"].includes(r.sex));
 const topic=(d,i,r)=>d.id==="eysenck-40"&&r?.eysenckVersion==="block"?"Вопрос "+(i+1):items[d.id][i];
 const opts=d=>d.id==="eysenck-40"?"0 – не подходит · 1 – бывает иногда · 2 – бывает часто":d.id==="lazarus-wcq50"?"0 – никогда · 1 – редко · 2 – иногда · 3 – часто":"0 – Нет · 1 – Да";
 const childOpts=d=>d.id==="razuvaeva-osr29"?"Для каждого утверждения отметь «Да» или «Нет».":opts(d);
@@ -850,25 +858,30 @@ function group(d,rows){
  '</tbody></table></div>'+(d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Категория суицидального риска автоматически не присваивается.</p>':"")+analytical711Preview(d,rows)+'</section>';
 }
 function calculator(d,ctx){
- const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],answers=r.answers||[],grade=rows.find(x=>Number(x.schoolGrade)>=7&&Number(x.schoolGrade)<=11)?.schoolGrade;
+ const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],answers=r.answers||[],grade=gradeOf(rows),hasRoster=roster(rows),locked=!ready(d,r,rows,ctx.calcMode);
  let out='<section class="psy-mspss-calculator psy-711-calculator psy-711-'+d.id+'"><div class="calc-mode psy-mspss-modes"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>';
  if(ctx.calcMode==="class"){
- out+='<div class="psy-mspss-workspace"><aside class="psy-mspss-sidebar"><h3>Список учащихся</h3><label class="psy-cp-class-label">Класс<select id="school711Grade"><option value="">Не выбран</option>'+
+ out+='<div class="psy-mspss-workspace"><aside class="psy-mspss-sidebar"><h3>Список учащихся</h3><label class="psy-cp-class-label">Класс<select id="school711Grade" '+(!hasRoster?"disabled":"")+'><option value="">Не выбран</option>'+
  [7,8,9,10,11].map(g=>'<option value="'+g+'" '+(Number(grade)===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select></label>'+
  window.PSY_ANALYTIC_SIGNATURES.fields(rows)+
  '<label class="psy-mspss-label">Добавить участников</label><textarea id="school711Bulk" rows="5" placeholder="Ученик 01&#10;Ученик 02"></textarea>'+
  '<button type="button" class="btn primary psy-mspss-add" id="school711Add">Добавить в список</button><button type="button" class="btn psy-mspss-sort" id="school711Sort">По алфавиту А - Я</button><div class="psy-mspss-person-list">'+
- rows.map((x,i)=>'<div class="psy-mspss-person-row"><button type="button" class="psy-mspss-person '+(ctx.rowIndex===i?"active":"")+'" data-711-person="'+i+'"><span>'+esc(x.name||"Участник "+(i+1))+'</span><small>'+(x.attendance==="absent"?"Отсутствовал":present(d,x)+"/"+size(d))+'</small></button>'+
+ rows.map((x,i)=>'<div class="psy-mspss-person-row '+(x.sex==="f"?"psy-cp-girl":x.sex==="m"?"psy-cp-boy":"")+'"><button type="button" class="psy-mspss-person '+(ctx.rowIndex===i?"active":"")+'" data-711-person="'+i+'"><span>'+esc(x.name||"Участник "+(i+1))+'</span><small>'+(x.attendance==="absent"?"Отсутствовал":present(d,x)+"/"+size(d))+'</small></button>'+
  '<button type="button" class="psy-mspss-delete-person" title="Удалить участника" data-711-delete="'+i+'">×</button></div>').join("")+'</div></aside><div class="psy-mspss-entry">';
  }else out+='<div class="psy-mspss-entry">';
  out+='<label class="psy-mspss-name-field">Участник<input id="school711Name" type="text" value="'+esc(r.name||"")+'" placeholder="Имя или код"></label>';
+ if(ctx.calcMode==="class")out+='<div class="psy-cp-current '+(r.sex==="f"?"psy-cp-girl":r.sex==="m"?"psy-cp-boy":"")+'"><span>'+(ctx.rowIndex+1)+' / '+rows.length+'</span><b>Сейчас: '+esc(r.name||"Участник "+(ctx.rowIndex+1))+'</b></div>';
+ if(rows.genderNote&&ctx.calcMode==="class")out+='<p class="psy-cp-gender-feedback" role="status">'+esc(rows.genderNote)+'</p>';
+ if(ctx.calcMode!=="class")out+='<label class="psy-cp-class-label">Класс<select id="school711Grade"><option value="">Не выбран</option>'+[7,8,9,10,11].map(g=>'<option value="'+g+'" '+(Number(r.schoolGrade)===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select></label>';
+ if(d.id==="lazarus-wcq50")out+='<div class="psy-cp-demographics"><label>Возраст<input id="school711Age" type="number" min="14" max="90" step="1" value="'+(Number(r.ageYears)>=14&&Number(r.ageYears)<=90?Number(r.ageYears):"")+'" placeholder="14-90"></label><div class="psy-cp-sex-field"><span>Пол участника</span><div class="psy-cp-sex-buttons" role="group" aria-label="Пол"><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="f"?"is-selected":"")+'" data-711-sex="f" aria-pressed="'+(r.sex==="f")+'" '+(!hasRoster||!ageOk(d,r,rows,ctx.calcMode)?"disabled":"")+'>Девочка / женщина</button><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="m"?"is-selected":"")+'" data-711-sex="m" aria-pressed="'+(r.sex==="m")+'" '+(!hasRoster||!ageOk(d,r,rows,ctx.calcMode)?"disabled":"")+'>Мальчик / мужчина</button></div></div></div>';
+ if(locked)out+='<p class="psy-cdi-lock-note">'+(ctx.calcMode==="class"&&!hasRoster?"Сначала добавьте хотя бы одного участника.":!r.name?.trim()?"Сначала укажите участника.":!ageOk(d,r,rows,ctx.calcMode)?(d.id==="lazarus-wcq50"?"Укажите класс или возраст от 14 до 90 лет.":"Выберите класс перед вводом ответов."):"Укажите пол участника.")+'</p>';
  if(d.id==="eysenck-40")out+='<label class="psy-711-version">Редакция опросника<select id="school711Version">'+
  '<option value="interleaved" '+(r.eysenckVersion!=="block"?"selected":"")+'>Версия 2 – чередование шкал (твой бланк)</option>'+
  '<option value="block" '+(r.eysenckVersion==="block"?"selected":"")+'>Версия 1 – шкалы по блокам</option></select></label>';
  out+='<p class="psy-711-answer-key">'+esc(opts(d))+'</p><p class="psy-mspss-progress" id="school711Progress">Заполнено '+present(d,r)+' из '+size(d)+'</p>'+
  '<div class="psy-mspss-grid psy-711-grid">'+items[d.id].map((question,i)=>{const v=answers[i],filled=v!==null&&v!==undefined&&v!==""&&/^[0-9]$/.test(String(v))&&Number(v)<=limit(d);return '<label class="psy-mspss-item '+(filled?"is-complete":"is-missing")+'"><span><b>'+(i+1)+'.</b> '+esc(topic(d,i,r))+'</span>'+
- '<input type="text" inputmode="numeric" maxlength="1" autocomplete="off" data-711-answer="'+i+'" data-cp-answer="'+i+'" class="psy-mspss-score-input psy-711-input" value="'+(filled?v:"")+'" placeholder="0-'+limit(d)+'" '+(r.attendance==="absent"?"disabled":"")+'></label>'}).join("")+'</div>';
- if(ctx.calcMode==="class")out+='<div class="psy-711-advance"><button type="button" class="btn" id="school711Absent">'+(r.attendance==="absent"?"Вернуть в присутствующие":"Отсутствовал – следующий")+'</button><button type="button" class="btn primary" id="school711Next">Следующий участник →</button></div>';
+ '<input type="text" inputmode="numeric" maxlength="1" autocomplete="off" data-711-answer="'+i+'" data-cp-answer="'+i+'" class="psy-mspss-score-input psy-711-input" value="'+(filled?v:"")+'" placeholder="0-'+limit(d)+'" '+(locked?"disabled":"")+'></label>'}).join("")+'</div>';
+ if(ctx.calcMode==="class")out+='<div class="psy-711-advance"><button type="button" class="btn" id="school711Absent" '+(!hasRoster?"disabled":"")+' >'+(r.attendance==="absent"?"Вернуть в присутствующие":"Отсутствовал – следующий")+'</button><button type="button" class="btn primary" id="school711Next" '+(!hasRoster?"disabled":"")+' >Следующий участник →</button></div>';
  out+='<div id="school711Result">'+result(d,r)+'</div></div>';
  if(ctx.calcMode==="class")out+='</div><div id="school711Group">'+group(d,rows)+'</div>';
  return out+'</section>';
