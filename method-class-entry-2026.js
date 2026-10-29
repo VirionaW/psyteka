@@ -280,7 +280,10 @@
  const alpha=rows=>rows.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||"","ru",{sensitivity:"base"}));
  const gradeAge=g=>Number.isInteger(Number(g))&&Number(g)>=1&&Number(g)<=11?Number(g)+6:null;
  const classGrade=rows=>rows.find(r=>Number.isInteger(Number(r.schoolGrade))&&Number(r.schoolGrade)>=1&&Number(r.schoolGrade)<=11)?.schoolGrade||null;
- const cdiReady=(d,r,rows,mode)=>r?.attendance!=="absent"&&(type(d)!=="cdi"||!!(gradeAge(mode==="class"?classGrade(rows):r?.schoolGrade)&&["m","f"].includes(r?.sex)));
+ const cdiRoster=rows=>rows.some(x=>!!x.name?.trim()||(x.answers||[]).some(v=>v!==null&&v!==undefined&&v!==""));
+ const cdiAgeReady=(r,rows,mode)=>!!(gradeAge(mode==="class"?classGrade(rows):r?.schoolGrade)||(Number.isInteger(Number(r?.ageYears))&&Number(r?.ageYears)>=7&&Number(r?.ageYears)<=17));
+ const cdiContextReady=(d,r,rows,mode)=>type(d)!=="cdi"||((mode!=="class"||cdiRoster(rows))&&cdiAgeReady(r,rows,mode)&&r?.attendance!=="absent");
+ const cdiReady=(d,r,rows,mode)=>r?.attendance!=="absent"&&cdiContextReady(d,r,rows,mode)&&(type(d)!=="cdi"||["m","f"].includes(r?.sex));
  function cdiClassRow(d,r,i){
   const z=scoring(d,r),overall=z?norms.norm(z.raw,r.ageYears,r.sex):null;
   const scales=z?norms.scaleScores(r.answers):null;
@@ -338,28 +341,29 @@
   return '<section class="psy-mspss-group psy-ph-class-results"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div></section>'+phillipsClassReference(d,rows);
  }
  function calculator(d,ctx){
-  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],a=r.answers||[],n=done(d,a),total=size(d),canAnswer=cdiReady(d,r,rows,ctx.calcMode);
+  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],a=r.answers||[],n=done(d,a),total=size(d),canAnswer=cdiReady(d,r,rows,ctx.calcMode),hasRoster=cdiRoster(rows),cdiClass=type(d)==="cdi"&&ctx.calcMode==="class",allowDetails=!cdiClass||hasRoster,allowGender=allowDetails&&cdiContextReady(d,r,rows,ctx.calcMode);
   let h='<section class="psy-mspss-calculator psy-cp-calculator"><div class="calc-mode psy-mspss-modes">'+
    '<button type="button" class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button>'+
    '<button type="button" class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>';
   if(ctx.calcMode==="class"){
    h+='<div class="psy-mspss-workspace"><aside class="psy-mspss-sidebar"><h3>Список учащихся</h3>'+
-    (type(d)==="cdi"?'<label class="psy-cp-class-label" for="cpSchoolGrade">Класс<select id="cpSchoolGrade"><option value="">Выбрать класс</option>'+Array.from({length:11},(_,i)=>i+1).map(g=>'<option value="'+g+'" '+(Number(classGrade(rows))===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select><small>Возраст подставится автоматически, его можно уточнить.</small></label>':'')+
+    (type(d)==="cdi"?'<label class="psy-cp-class-label" for="cpSchoolGrade">Класс<select id="cpSchoolGrade" '+(!allowDetails?"disabled":"")+'><option value="">Выбрать класс</option>'+Array.from({length:11},(_,i)=>i+1).map(g=>'<option value="'+g+'" '+(Number(classGrade(rows))===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select><small>Возраст подставится автоматически, его можно уточнить.</small></label>':'')+
     '<p>Добавьте учеников по одному с новой строки. Для конфиденциальности можно использовать условные коды.</p>'+
     '<label class="psy-mspss-label" for="cpBulkNames">Добавить участников</label><textarea id="cpBulkNames" rows="5" placeholder="Ученик 01&#10;Ученик 02"></textarea>'+
     '<button type="button" class="btn primary psy-mspss-add" id="cpAddNames">Добавить в список</button>'+
-    '<button type="button" class="btn psy-mspss-sort" id="cpSort">По алфавиту А - Я</button>'+
+    '<button type="button" class="btn psy-mspss-sort" id="cpSort" '+(!allowDetails?"disabled":"")+' >По алфавиту А - Я</button>'+
     '<div class="psy-mspss-person-list">'+rows.map((u,i)=>(u.name?.trim()||done(d,u.answers))?
       '<div class="psy-mspss-person-row '+(type(d)==="cdi"?(u.sex==="f"?"psy-cp-girl":u.sex==="m"?"psy-cp-boy":""):"")+'"><button type="button" class="psy-mspss-person '+(i===ctx.rowIndex?"active":"")+'" data-cp-person="'+i+'"><span>'+esc(u.name||"Участник "+(i+1))+'</span><small>'+(u.attendance==="absent"?"Отсутствует":done(d,u.answers)+"/"+total)+'</small></button>'+
       '<button type="button" class="psy-mspss-delete-person" title="Удалить ученика" aria-label="Удалить '+esc(u.name||"ученика")+'" data-cp-delete="'+i+'">×</button></div>':"").join("")+'</div>'+
-    '<button type="button" class="btn psy-mspss-delete-all" id="cpDeleteAll">Удалить всех участников</button></aside><div class="psy-mspss-entry">';
+    '<button type="button" class="btn psy-mspss-delete-all" id="cpDeleteAll" '+(!allowDetails?"disabled":"")+' >Удалить всех участников</button></aside><div class="psy-mspss-entry">';
   }else h+='<div class="psy-mspss-entry">';
-  h+='<label class="psy-mspss-name-field" for="cpCurrentName"><span>Фамилия и имя / условный код</span><input type="text" id="cpCurrentName" maxlength="120" autocomplete="off" value="'+esc(r.name||"")+'" placeholder="Введите имя или код"></label>';
-  if(type(d)==="cdi"&&ctx.calcMode!=="class")h+='<label class="psy-cp-class-label" for="cpSchoolGrade">Класс<select id="cpSchoolGrade"><option value="">Выбрать класс</option>'+Array.from({length:11},(_,i)=>i+1).map(g=>'<option value="'+g+'" '+(Number(r.schoolGrade)===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select><small>Класс необходимо выбрать до ввода ответов. Возраст можно уточнить отдельно.</small></label>';
+  h+='<label class="psy-mspss-name-field" for="cpCurrentName"><span>Фамилия и имя / условный код</span><input type="text" id="cpCurrentName" '+(!allowDetails?"disabled ":"")+'maxlength="120" autocomplete="off" value="'+esc(r.name||"")+'" placeholder="Введите имя или код"></label>';
+  if(type(d)==="cdi"&&ctx.calcMode!=="class")h+='<label class="psy-cp-class-label" for="cpSchoolGrade">Класс<select id="cpSchoolGrade" '+(!allowDetails?"disabled":"")+'><option value="">Выбрать класс</option>'+Array.from({length:11},(_,i)=>i+1).map(g=>'<option value="'+g+'" '+(Number(r.schoolGrade)===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select><small>Класс необходимо выбрать до ввода ответов. Возраст можно уточнить отдельно.</small></label>';
   if(type(d)==="cdi"&&ctx.calcMode==="class")h+='<div class="psy-cp-current '+(r.sex==="f"?"psy-cp-girl":r.sex==="m"?"psy-cp-boy":"")+'"><span>'+(ctx.rowIndex+1)+' / '+rows.length+'</span><b>'+esc(r.name||"Участник "+(ctx.rowIndex+1))+'</b></div>';
-  if(type(d)==="cdi")h+='<div class="psy-cp-demographics"><label>Возраст<select id="cpAge"><option value="">Не выбран</option>'+Array.from({length:11},(_,i)=>i+7).map(age=>'<option value="'+age+'" '+(r.ageYears===age?"selected":"")+'>'+age+'</option>').join("")+'</select></label><div class="psy-cp-sex-field"><span>Пол для Т-балла</span><div class="psy-cp-sex-buttons" role="group" aria-label="Пол ребенка"><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="f"?"is-selected":"")+'" data-cp-sex="f" aria-pressed="'+(r.sex==="f")+'">Девочка</button><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="m"?"is-selected":"")+'" data-cp-sex="m" aria-pressed="'+(r.sex==="m")+'">Мальчик</button></div></div></div>';
+  if(type(d)==="cdi")h+='<div class="psy-cp-demographics"><label>Возраст<select id="cpAge" '+(!allowDetails?"disabled":"")+'><option value="">Не выбран</option>'+Array.from({length:11},(_,i)=>i+7).map(age=>'<option value="'+age+'" '+(r.ageYears===age?"selected":"")+'>'+age+'</option>').join("")+'</select></label><div class="psy-cp-sex-field"><span>Пол для Т-балла</span><div class="psy-cp-sex-buttons" role="group" aria-label="Пол ребенка"><button type="button" '+(!allowGender?"disabled ":"")+'class="btn psy-cp-sex-btn '+(r.sex==="f"?"is-selected":"")+'" data-cp-sex="f" aria-pressed="'+(r.sex==="f")+'">Девочка</button><button type="button" '+(!allowGender?"disabled ":"")+'class="btn psy-cp-sex-btn '+(r.sex==="m"?"is-selected":"")+'" data-cp-sex="m" aria-pressed="'+(r.sex==="m")+'">Мальчик</button></div></div></div>';
   if(type(d)==="cdi")h+='<div class="psy-cdi-student-note psy-cdi-specialist-note"><strong>Только для психолога – ввод баллов</strong><p>Ребенок выбирает ОДНО из трех утверждений в оригинальном опроснике, а не цифру. Здесь вводятся баллы <b>0, 1 или 2</b>, соответствующие выбранному тексту по ключу. Порядок утверждений может отличаться от порядка баллов.</p></div>';
-  if(type(d)==="cdi")h+='<p class="psy-cdi-lock-note" id="cdiLockNote" '+(canAnswer?'hidden':'')+'>Сначала выберите класс и пол ребенка. После этого можно вводить баллы по пунктам.</p>';
+  if(type(d)==="cdi")h+='<p class="psy-cdi-lock-note" id="cdiLockNote" '+(canAnswer?'hidden':'')+'>'+
+   (!allowDetails?"Сначала добавьте хотя бы одного участника в список.":!allowGender?"Сначала выберите класс или возраст ребенка.":"Выберите пол ребенка, чтобы открыть ввод ответов.")+'</p>';
   h+='<p class="psy-mspss-progress" id="cpProgress">Заполнено '+n+' из '+total+'</p>';
   if(r.attendance==="absent")h+='<p class="psy-cp-absence">Ученик отмечен отсутствующим. Ввод заблокирован до возвращения в список присутствующих.</p>';
   h+='<div class="psy-mspss-grid psy-cp-grid">'+subjects(d).map((topic,i)=>{
@@ -372,8 +376,8 @@
    const nextIndex=nextAvailable(ctx.rowIndex);
    const chooser=type(d)==="ph"?'<label class="psy-ph-bottom-chooser" for="cpBottomPerson">Участник <select id="cpBottomPerson" aria-label="Перейти к участнику">'+rows.map((person,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+esc((i+1)+". "+(person.name||"Участник "+(i+1))+(person.attendance==="absent"?" (отсутствует)":""))+'</option>').join("")+'</select></label>':'';
    h+='<div class="psy-mspss-after-questions psy-cp-next-actions '+(type(d)==="ph"?"psy-ph-bottom-nav":"")+'">'+chooser+
-    '<button type="button" class="btn" id="cpAbsent">'+(r.attendance==="absent"?"Вернуть в список присутствующих":"Отсутствовал – следующий")+'</button>'+
-    '<button type="button" class="btn primary" id="cpNext" '+(nextIndex<0?"disabled":"")+' >'+(type(d)==="ph"&&nextIndex>=0?"Следующий: "+esc(rows[nextIndex].name||"Участник "+(nextIndex+1))+" →":"Следующий участник →")+'</button></div>';
+    '<button type="button" class="btn" id="cpAbsent" '+(!allowDetails?"disabled":"")+' >'+(r.attendance==="absent"?"Вернуть в список присутствующих":"Отсутствовал – следующий")+'</button>'+
+    '<button type="button" class="btn primary" id="cpNext" '+(nextIndex<0||!allowDetails?"disabled":"")+' >'+(type(d)==="ph"&&nextIndex>=0?"Следующий: "+esc(rows[nextIndex].name||"Участник "+(nextIndex+1))+" →":"Следующий участник →")+'</button></div>';
   }
   h+='<div id="cpResult">'+result(d,r)+'</div></div>';
   if(ctx.calcMode==="class")h+='</div><div id="cpGroup">'+group(d,rows)+'</div>';
@@ -585,7 +589,9 @@
   const rows=ctx.rows,r=rows[ctx.rowIndex];if(!r)return;r.answers ||= [];
   const update=()=>{
    const n=done(d,r.answers),progress=document.getElementById("cpProgress");if(progress)progress.textContent="Заполнено "+n+" из "+size(d);
-   const canAnswer=cdiReady(d,r,rows,ctx.calcMode),lock=document.getElementById("cdiLockNote");if(lock)lock.hidden=canAnswer;
+   const canAnswer=cdiReady(d,r,rows,ctx.calcMode),lock=document.getElementById("cdiLockNote");
+   if(lock){lock.hidden=canAnswer;if(!canAnswer)lock.textContent=ctx.calcMode==="class"&&!cdiRoster(rows)?"Сначала добавьте хотя бы одного участника в список.":!cdiContextReady(d,r,rows,ctx.calcMode)?"Сначала выберите класс или возраст ребенка.":"Выберите пол ребенка, чтобы открыть ввод ответов.";}
+   document.querySelectorAll("[data-cp-sex]").forEach(btn=>{btn.disabled=!cdiContextReady(d,r,rows,ctx.calcMode);});
    document.querySelectorAll("input[data-cp-answer]").forEach(input=>{input.disabled=!canAnswer;input.title=canAnswer?"":"Выберите класс и пол до ввода ответов";});
    const res=document.getElementById("cpResult");if(res)res.innerHTML=result(d,r);
    const groupEl=document.getElementById("cpGroup");if(groupEl)groupEl.innerHTML=group(d,rows);
@@ -604,18 +610,21 @@
   document.getElementById("cpSchoolGrade")?.addEventListener("change",e=>{
    const grade=e.target.value?Number(e.target.value):null;
    const age=gradeAge(grade);
-   rows.forEach(person=>{
+   (ctx.calcMode==="class"?rows:[r]).forEach(person=>{
     person.schoolGrade=grade;
     if(!person.ageManual)person.ageYears=age;
    });
    ctx.onRender?.();
   });
   document.querySelectorAll("[data-cp-sex]").forEach(btn=>btn.addEventListener("click",()=>{
+   if(type(d)==="cdi"&&!cdiContextReady(d,r,rows,ctx.calcMode))return;
+   const firstAssignment=!["m","f"].includes(r.sex);
    r.sex=btn.dataset.cpSex;
    document.querySelectorAll("[data-cp-sex]").forEach(b=>{
     const active=b.dataset.cpSex===r.sex;b.classList.toggle("is-selected",active);b.setAttribute("aria-pressed",String(active));
    });
    update();
+   if(type(d)==="cdi"&&ctx.calcMode==="class"&&firstAssignment){ctx.onGenderAssigned?.();return;}
    if(type(d)==="cdi"&&cdiReady(d,r,rows,ctx.calcMode))document.querySelector("input[data-cp-answer]:not(:disabled)")?.focus();
   }));
   document.querySelectorAll("[data-cp-person]").forEach(btn=>btn.addEventListener("click",()=>ctx.onSelect?.(Number(btn.dataset.cpPerson))));
