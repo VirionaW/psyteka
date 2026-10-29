@@ -323,36 +323,38 @@
  function materials(d){
   const isCDI=type(d)==="cdi";
   if(isCDI){
-   const positions=["Первое","Второе","Третье"];
-   return '<section class="psy-mspss-section psy-mspss-student"><div class="psy-mspss-blank-head">'+
-    '<div><h3>Лист ответов ученика</h3><p>Только вместе с полным текстом оригинальной CDI из проверенного бланка.</p></div>'+
+   const rows=norms.statements||[];
+   return '<section class="psy-mspss-section psy-mspss-student"><div class="psy-mspss-blank-head"><div>'+
+    '<h3>Бланк ученика</h3><p>27 групп утверждений из предоставленного PDF.</p></div>'+
     '<button class="btn primary psy-mspss-view" type="button" data-cp-print="blank">Посмотреть и распечатать</button></div>'+
-    '<div class="psy-cdi-student-note"><strong>Инструкция ученику</strong><p>Перед тобой 27 групп по три утверждения. Внимательно прочитай каждую группу в полном бланке опросника. Выбери ОДНО утверждение, которое лучше всего описывает твое самочувствие за последние две недели, и отметь, какое оно по порядку – первое, второе или третье. Здесь нет правильных и неправильных ответов.</p></div>'+
-    '<p class="psy-mspss-small"><b>Важно:</b> здесь не напечатаны сами утверждения, поэтому этот лист не является самостоятельным опросником. Числа 1, 2 и 3 означают только порядок утверждений, а НЕ баллы 0, 1 и 2. Баллы переносит психолог по ключу оригинального бланка.</p>'+
-    '<div class="psy-mspss-blank-scroll"><table class="psy-mspss-blank-table psy-cdi-student-table">'+
-    '<thead><tr><th>№</th><th>Первое</th><th>Второе</th><th>Третье</th></tr></thead><tbody>'+
-    Array.from({length:27},(_,i)=>'<tr><td>'+(i+1)+'</td>'+positions.map(()=>'<td class="psy-mspss-answer-cell">○</td>').join("")+'</tr>').join("")+
-    '</tbody></table></div></section>';
+    '<div class="psy-cdi-student-note"><strong>Инструкция ученику</strong><p>В каждом пункте прочитай три утверждения. Выбери одно, которое лучше всего описывает, как ты чувствовал себя за последние две недели. В колонке «Выбор» запиши 1, 2 или 3 – номер выбранного утверждения. Здесь нет правильных и неправильных ответов.</p></div>'+
+    '<div class="psy-mspss-blank-scroll"><table class="psy-mspss-blank-table psy-cdi-student-table psy-cdi-statement-table">'+
+    '<thead><tr><th>№</th><th>Утверждения</th><th>Выбор (1, 2 или 3)</th></tr></thead><tbody>'+
+    rows.map((group,i)=>'<tr><td>'+(i+1)+'</td><td><div class="psy-cdi-statement-list">'+group.map((entry,j)=>'<p><b>'+(j+1)+'.</b> '+esc(entry[0])+'</p>').join("")+'</div></td><td class="psy-cdi-choose-cell"></td></tr>').join("")+
+    '</tbody></table></div><p class="psy-mspss-small">Цифры 1, 2, 3 обозначают порядок утверждений, а не диагностические баллы. Баллы психолог определяет по ключу. Формулировки перенесены из загруженного PDF без редакторской замены спорных мест в пунктах 3 и 27.</p></section>';
   }
   const options=["Нет","Да"];
   return '<section class="psy-mspss-section psy-mspss-student"><div class="psy-mspss-blank-head"><div><h3>Лист ответов ученика</h3><p>Используется вместе с полным текстом 58 вопросов исходного PDF.</p></div><button class="btn primary psy-mspss-view" type="button" data-cp-print="blank">Посмотреть и распечатать</button></div>'+
    '<p><strong>Инструкция:</strong> прочитай каждый вопрос в полном опроснике и отметь «Да» или «Нет».</p>'+
    '<div class="psy-mspss-blank-scroll"><table class="psy-mspss-blank-table"><thead><tr><th>№</th><th>Тема пункта</th>'+options.map(x=>'<th>'+esc(x)+'</th>').join("")+'</tr></thead><tbody>'+
-   subjects(d).map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(q)+'</td>'+options.map(()=>'<td class="psy-mspss-answer-cell">○</td>').join("")+'</tr>').join("")+'</tbody></table></div>'+
+   subjects(d).map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(q)+'</td>'+options.map(()=>'<td class="psy-mspss-answer-cell"></td>').join("")+'</tr>').join("")+'</tbody></table></div>'+
    '<p class="psy-mspss-small">Краткая тема не заменяет текст вопроса. Для обследования используйте полную проверенную редакцию.</p></section>';
  }
  function printable(d,mode){
   const isCDI=type(d)==="cdi";
-  const source=isCDI?"Оригинальный 27-пунктный опросник CDI (полный текст предъявляется отдельно)":"Предоставленный PDF Гребень (2007), 58 вопросов";
+  const source=isCDI?"Предоставленный пользователем 8-страничный PDF CDI, пункты 1-27":"PDF Гребень (2007), тест Филлипса";
   const guide='<article><h1>'+esc(isCDI?"Опросник детской депрессии М. Ковач (CDI)":"Тест школьной тревожности Филлипса")+'</h1><p>'+esc(source)+'</p><h2>Цель</h2><p>'+esc(d.goal)+'</p><h2>Порядок проведения</h2><p>'+esc(d.instructions)+'</p><h2>Ключ</h2><p>'+esc(d.scoring)+'</p><h2>Интерпретация</h2><p>'+esc(d.interpret)+'</p></article>';
   const note=isCDI?
-   'Прочитай каждую группу из трех утверждений в полном бланке. Отметь одно – первое, второе либо третье – которое лучше всего описывает твое самочувствие за последние две недели. Номера 1, 2, 3 НЕ означают баллы. Без полного текста опросника этот лист использовать нельзя.':
-   'Прочитай каждый вопрос в полном опроснике и отметь «Да» или «Нет». Без исходного текста этот лист использовать нельзя.';
-  const options=isCDI?["Первое","Второе","Третье"]:["Нет","Да"];
-  const blank='<article class="newpage"><h1>Лист ответов ученика</h1><p>Участник: ____________________________  Дата: _______________</p>'+
-   '<p><b>Инструкция:</b> '+esc(note)+'</p><table><thead><tr><th>№</th>'+options.map(o=>'<th>'+esc(o)+'</th>').join("")+'</tr></thead><tbody>'+
-   Array.from({length:size(d)},(_,i)=>'<tr><td>'+(i+1)+'</td>'+options.map(() =>'<td class="choice">○</td>').join("")+'</tr>').join("")+'</tbody></table></article>';
-  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Материалы Метоларии</title><style>@page{size:A4;margin:14mm}body{font:11pt/1.5 Arial;color:#1e3e2e}h1{font-size:18pt}h2{font-size:13pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #8ba892;padding:6px;font-size:9pt;text-align:center}tr{break-inside:avoid}.choice{font-size:14pt}.newpage{break-before:page}</style></head><body>'+(mode==="blank"?blank:guide)+(mode==="combined"?blank:"")+'</body></html>';
+   'Прочитай три утверждения в каждой строке. В колонке «Выбор» запиши номер одного утверждения: 1, 2 или 3. Они не равны баллам.':
+   'Прочитай вопрос в исходном тексте и отметь «Да» или «Нет».';
+  const table=isCDI?
+   '<table><thead><tr><th>№</th><th>Утверждения</th><th>Выбор (1/2/3)</th></tr></thead><tbody>'+
+   norms.statements.map((group,i)=>'<tr><td>'+(i+1)+'</td><td class="statement">'+group.map((entry,j)=>'<p>'+(j+1)+'. '+esc(entry[0])+'</p>').join("")+'</td><td class="blank">&nbsp;</td></tr>').join("")+'</tbody></table>':
+   '<table><thead><tr><th>№</th><th>Краткая тема</th><th>Да / Нет</th></tr></thead><tbody>'+
+   subjects(d).map((name,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(name)+'</td><td class="blank">&nbsp;</td></tr>').join("")+'</tbody></table>';
+  const blank='<article class="'+(mode==="combined"?"newpage":"")+'"><h1>Бланк ученика</h1><p>Фамилия, имя: ____________________________  Дата: _______________</p>'+
+   '<p><b>Инструкция:</b> '+esc(note)+'</p>'+table+'</article>';
+  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Бланк Метоларии</title><style>@page{size:A4;margin:13mm}body{font:10.2pt/1.4 Arial;color:#183b2d}h1{font-size:17pt}h2{font-size:13pt}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #a6bbaf;padding:6px;font-size:9.5pt;text-align:left;vertical-align:top}th:first-child,td:first-child{width:34px;text-align:center}th:last-child,td:last-child{width:90px;text-align:center}.statement p{margin:2px 0 5px}.blank{min-height:65px}tr{break-inside:avoid}.newpage{break-before:page}</style></head><body>'+(mode==="blank"?blank:guide)+(mode==="combined"?blank:"")+'</body></html>';
  }
  function report(d,rows,mode,index){
   const selected=mode==="class"?alpha(rows).filter(r=>r.name?.trim()||done(d,r.answers)):[rows[index]];
