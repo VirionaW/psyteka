@@ -284,6 +284,7 @@
  const alpha=rows=>rows.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||"","ru",{sensitivity:"base"}));
  const gradeAge=g=>Number.isInteger(Number(g))&&Number(g)>=1&&Number(g)<=11?Number(g)+6:null;
  const classGrade=rows=>rows.find(r=>Number.isInteger(Number(r.schoolGrade))&&Number(r.schoolGrade)>=1&&Number(r.schoolGrade)<=11)?.schoolGrade||null;
+ const cdiReady=(d,r,rows,mode)=>type(d)!=="cdi"||!!(gradeAge(mode==="class"?classGrade(rows):r?.schoolGrade)&&["m","f"].includes(r?.sex)&&r?.attendance!=="absent");
  function cdiClassRow(d,r,i){
   const z=scoring(d,r),n=z?norms.norm(z.raw,r.ageYears,r.sex):null;
   const scales=z?norms.scaleScores(r.answers):null;
@@ -350,7 +351,7 @@
   return '<section class="psy-mspss-group psy-ph-class-results"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div></section>'+phillipsClassReference(d,rows);
  }
  function calculator(d,ctx){
-  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],a=r.answers||[],n=done(d,a),total=size(d);
+  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],a=r.answers||[],n=done(d,a),total=size(d),canAnswer=cdiReady(d,r,rows,ctx.calcMode);
   let h='<section class="psy-mspss-calculator psy-cp-calculator"><div class="calc-mode psy-mspss-modes">'+
    '<button type="button" class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button>'+
    '<button type="button" class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>';
@@ -367,15 +368,17 @@
     '<button type="button" class="btn psy-mspss-delete-all" id="cpDeleteAll">Удалить всех участников</button></aside><div class="psy-mspss-entry">';
   }else h+='<div class="psy-mspss-entry">';
   h+='<label class="psy-mspss-name-field" for="cpCurrentName"><span>Фамилия и имя / условный код</span><input type="text" id="cpCurrentName" maxlength="120" autocomplete="off" value="'+esc(r.name||"")+'" placeholder="Введите имя или код"></label>';
+  if(type(d)==="cdi"&&ctx.calcMode!=="class")h+='<label class="psy-cp-class-label" for="cpSchoolGrade">Класс<select id="cpSchoolGrade"><option value="">Выбрать класс</option>'+Array.from({length:11},(_,i)=>i+1).map(g=>'<option value="'+g+'" '+(Number(r.schoolGrade)===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select><small>Класс необходимо выбрать до ввода ответов. Возраст можно уточнить отдельно.</small></label>';
   if(type(d)==="cdi"&&ctx.calcMode==="class")h+='<div class="psy-cp-current '+(r.sex==="f"?"psy-cp-girl":r.sex==="m"?"psy-cp-boy":"")+'"><span>'+(ctx.rowIndex+1)+' / '+rows.length+'</span><b>'+esc(r.name||"Участник "+(ctx.rowIndex+1))+'</b></div>';
   if(type(d)==="cdi")h+='<div class="psy-cp-demographics"><label>Возраст<select id="cpAge"><option value="">Не выбран</option>'+Array.from({length:11},(_,i)=>i+7).map(age=>'<option value="'+age+'" '+(r.ageYears===age?"selected":"")+'>'+age+'</option>').join("")+'</select></label><div class="psy-cp-sex-field"><span>Пол для Т-балла</span><div class="psy-cp-sex-buttons" role="group" aria-label="Пол ребенка"><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="f"?"is-selected":"")+'" data-cp-sex="f" aria-pressed="'+(r.sex==="f")+'">Девочка</button><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="m"?"is-selected":"")+'" data-cp-sex="m" aria-pressed="'+(r.sex==="m")+'">Мальчик</button></div></div></div>';
   if(type(d)==="cdi")h+='<div class="psy-cdi-student-note psy-cdi-specialist-note"><strong>Только для психолога – ввод баллов</strong><p>Ребенок выбирает ОДНО из трех утверждений в оригинальном опроснике, а не цифру. Здесь вводятся баллы <b>0, 1 или 2</b>, соответствующие выбранному тексту по ключу. Порядок утверждений может отличаться от порядка баллов.</p></div>';
+  if(type(d)==="cdi")h+='<p class="psy-cdi-lock-note" id="cdiLockNote" '+(canAnswer?'hidden':'')+'>Сначала выберите класс и пол ребенка. После этого можно вводить баллы по пунктам.</p>';
   h+='<p class="psy-mspss-progress" id="cpProgress">Заполнено '+n+' из '+total+'</p>';
   if(r.attendance==="absent")h+='<p class="psy-cp-absence">Ученик отмечен отсутствующим. Ввод заблокирован до возвращения в список присутствующих.</p>';
   h+='<div class="psy-mspss-grid psy-cp-grid">'+subjects(d).map((topic,i)=>{
    const answer=value(d,a[i]),complete=answer!=="";
    return '<label class="psy-mspss-item '+(complete?"is-complete":"is-missing")+'"><span><b>'+(i+1)+'.</b> '+esc(topic)+'</span>'+
-    '<input class="psy-mspss-score-input psy-cp-answer" data-cp-answer="'+i+'" type="text" inputmode="numeric" autocomplete="off" maxlength="1" placeholder="'+(type(d)==="cdi"?"0-2":"0-1")+'" aria-label="Пункт '+(i+1)+' – балл" value="'+esc(answer)+'" '+(r.attendance==="absent"?"disabled":"")+'></label>';
+    '<input class="psy-mspss-score-input psy-cp-answer" data-cp-answer="'+i+'" type="text" inputmode="numeric" autocomplete="off" maxlength="1" placeholder="'+(type(d)==="cdi"?"0-2":"0-1")+'" aria-label="Пункт '+(i+1)+' – балл" value="'+esc(answer)+'" '+(!canAnswer?"disabled":"")+'></label>';
   }).join("")+'</div>';
   if(ctx.calcMode==="class"){
    const nextAvailable=(start)=>{for(let step=1;step<rows.length;step++){const j=(start+step)%rows.length;if(rows[j].attendance!=="absent")return j;}return -1;};
@@ -602,6 +605,8 @@
   const rows=ctx.rows,r=rows[ctx.rowIndex];if(!r)return;r.answers ||= [];
   const update=()=>{
    const n=done(d,r.answers),progress=document.getElementById("cpProgress");if(progress)progress.textContent="Заполнено "+n+" из "+size(d);
+   const canAnswer=cdiReady(d,r,rows,ctx.calcMode),lock=document.getElementById("cdiLockNote");if(lock)lock.hidden=canAnswer;
+   document.querySelectorAll("input[data-cp-answer]").forEach(input=>{input.disabled=!canAnswer;input.title=canAnswer?"":"Выберите класс и пол до ввода ответов";});
    const res=document.getElementById("cpResult");if(res)res.innerHTML=result(d,r);
    const groupEl=document.getElementById("cpGroup");if(groupEl)groupEl.innerHTML=group(d,rows);
    const active=document.querySelector(".psy-mspss-person.active small");if(active)active.textContent=r.attendance==="absent"?"Отсутствует":n+"/"+size(d);
@@ -631,7 +636,7 @@
     const active=b.dataset.cpSex===r.sex;b.classList.toggle("is-selected",active);b.setAttribute("aria-pressed",String(active));
    });
    update();
-   if(ctx.calcMode==="class"&&type(d)==="cdi")ctx.onGenderAssigned?.();
+   if(type(d)==="cdi"&&cdiReady(d,r,rows,ctx.calcMode))document.querySelector("input[data-cp-answer]:not(:disabled)")?.focus();
   }));
   document.querySelectorAll("[data-cp-person]").forEach(btn=>btn.addEventListener("click",()=>ctx.onSelect?.(Number(btn.dataset.cpPerson))));
   document.getElementById("cpBottomPerson")?.addEventListener("change",e=>ctx.onSelect?.(Number(e.target.value)));
@@ -647,7 +652,7 @@
   document.getElementById("cpNext")?.addEventListener("click",()=>ctx.onNext?.());
   const inputs=[...document.querySelectorAll("input[data-cp-answer]")];
   const next=(i)=>{for(let j=i+1;j<inputs.length;j++)if(!inputs[j].disabled){inputs[j].focus();return;}document.getElementById("cpNext")?.focus();};
-  function setInput(field,val){const i=Number(field.dataset.cpAnswer);if(val!==""&&![...Array(max(d)+1)].some((_,n)=>String(n)===val))return;field.value=val;
+  function setInput(field,val){if(!cdiReady(d,r,rows,ctx.calcMode))return;const i=Number(field.dataset.cpAnswer);if(val!==""&&![...Array(max(d)+1)].some((_,n)=>String(n)===val))return;field.value=val;
    r.answers[i]=val===""?null:type(d)==="cdi"?Number(val):val==="1"?"yes":"no";
    const card=field.closest(".psy-mspss-item");card?.classList.toggle("is-complete",val!=="");card?.classList.toggle("is-missing",val==="");update();
   }
