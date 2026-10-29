@@ -163,16 +163,80 @@
   state.step=n;render();
   document.querySelector(".wizard-steps")?.scrollIntoView({behavior:"smooth",block:"start"});
  }
+ function analysisDetails(s){
+  const position=id=>s.ranking.indexOf(id)+1;
+  const makeColor=id=>({id,name:colorName(id),hex:color(id)?.hex||"#ffffff",position:position(id)});
+  const feelings=EMOTIONS.map((name,i)=>({
+   index:i+1,name,explanation:FEELING_HELP[i],...makeColor(s.emotions[i])
+  }));
+  const situations=SITUATIONS.map((name,i)=>{
+   const id=s.situations[i];
+   const related=feelings.filter(f=>f.id===id).map(f=>f.name);
+   return {index:i+1,name,explanation:SITUATION_HELP[i],related,dark:["brown","black"].includes(id),...makeColor(id)};
+  });
+  const pairs=PAIRS.map(([name,a,b,block])=>{
+   const first=feelings[a],second=feelings[b];
+   return {name,block,first,second,same:first.id===second.id,distance:Math.abs(first.position-second.position)};
+  });
+  const chains=COLORS.map(c=>{
+   const em=feelings.filter(f=>f.id===c.id).map(f=>f.name);
+   const sit=situations.filter(f=>f.id===c.id).map(f=>f.name);
+   return {id:c.id,name:c.name,hex:c.hex,rank:position(c.id),em,sit,total:em.length+sit.length};
+  }).filter(x=>x.total>=2);
+  return {feelings,situations,pairs,chains};
+ }
+ function reportColor(item){
+  return '<span class="analysis-color"><span class="analysis-color-swatch" style="background:'+item.hex+'"></span><strong>'+esc(item.name)+'</strong><span>· место '+item.position+' из 8</span></span>';
+ }
+ function renderDetailReport(s){
+  const d=analysisDetails(s);
+  const road='<div class="analysis-road">'+s.ranking.map((id,i)=>'<div class="analysis-road-item"><span class="analysis-road-swatch" style="background:'+color(id).hex+'"></span><b>'+(i+1)+'</b><small>'+esc(colorName(id))+'</small></div>').join("")+'</div>';
+  const pairCards=d.pairs.map(p=>
+   '<article class="analysis-pair"><h4>'+esc(p.name)+'</h4><p class="analysis-domain">Сфера: '+esc(p.block)+'</p>'+
+   '<p>'+esc(p.first.name)+': '+reportColor(p.first)+'</p><p>'+esc(p.second.name)+': '+reportColor(p.second)+'</p>'+
+   '<p class="analysis-interpretation">'+(p.same?
+   'Чувства получили одинаковый цвет. В руководстве это рассматривается как повод проверить, различает ли ребенок противоположные переживания.':
+   'Цвета разные; расстояние между выбранными цветами в дорожке – '+p.distance+' '+(p.distance===1?'место':p.distance<5?'места':'мест')+'. Руководство предлагает учитывать эту дистанцию, не задавая числового порога.')+'</p></article>'
+  ).join("");
+  const emotionCards=d.feelings.map(item=>
+   '<article class="analysis-house-card"><div class="analysis-house-icon">'+houseSvg(item.index,item.id)+'</div><div class="analysis-house-content"><h4>Домик '+item.index+' · '+esc(item.name)+'</h4>'+
+   reportColor(item)+'<p>'+esc(item.explanation)+'</p></div></article>').join("");
+  const situationCards=d.situations.map(item=>
+   '<article class="analysis-house-card"><div class="analysis-house-icon">'+houseSvg(item.index,item.id)+'</div><div class="analysis-house-content"><h4>Домик '+item.index+' · '+esc(item.name)+'</h4>'+
+   reportColor(item)+'<p>'+esc(item.explanation)+'</p>'+
+   '<p><strong>Совпадения с чувствами:</strong> '+esc(item.related.length?item.related.join(", "):"не выявлены")+'.</p>'+
+   (item.dark?'<p class="analysis-attention">Коричневый или черный цвет: по руководству эту сферу следует дополнительно обсудить с ребенком, не делая вывода по одному цвету.</p>':'')+
+   (item.index===10?'<p><strong>Слова ребенка:</strong> '+esc(s.description)+'</p>':'')+'</div></article>').join("");
+  const chains=d.chains.length?'<ul class="analysis-chains">'+d.chains.map(group=>
+   '<li>'+reportColor({name:group.name,hex:group.hex,position:group.rank})+
+   '<div>Чувства: '+esc(group.em.length?group.em.join(", "):"нет совпадений")+'.</div><div>Ситуации: '+esc(group.sit.length?group.sit.join(", "):"нет совпадений")+'.</div></li>').join("")+'</ul>':
+   '<p class="muted">Повторяющихся цветовых ассоциаций не выявлено.</p>';
+  const caution=d.situations.filter(x=>x.dark);
+  return '<section class="analysis-section"><h3>1. Цветовая дорожка – как ребенок предпочел цвета</h3>'+
+   '<p class="muted">Номер 1 – первый выбранный цвет, номер 8 – последний. Позиция цвета помогает сопоставить эмоциональные и школьные домики с личными предпочтениями. Это не самостоятельная оценка эмоции.</p>'+road+'</section>'+
+   '<section class="analysis-section"><h3>2. Социальные эмоции – все 10 домиков</h3>'+
+   '<p class="muted">Ниже указан каждый домик, его цвет, место цвета в дорожке и смысл чувства из инструкции. В методике сравнивают пять пар противоположных переживаний.</p>'+
+   '<div class="analysis-houses">'+emotionCards+'</div>'+
+   '<h4>Пять пар и соответствующие сферы</h4><div class="analysis-pairs">'+pairCards+'</div></section>'+
+   '<section class="analysis-section"><h3>3. Школьные и личные ситуации – все 10 домиков</h3>'+
+   '<p class="muted">Здесь отражено эмоциональное отношение ребенка к себе, школе, учителю, одноклассникам и учебным занятиям. Указаны совпадения цветов с домиками чувств.</p>'+
+   '<div class="analysis-houses">'+situationCards+'</div></section>'+
+   '<section class="analysis-section"><h3>4. Совпадающие цвета – цепочки ассоциаций</h3>'+
+   '<p class="muted">Одинаковый цвет соединяет разные чувства и ситуации. Руководство предлагает смотреть на такие цепочки совместно, например «школа – счастье – восхищение» или «домашние задания – горе – скука».</p>'+chains+'</section>'+
+   '<section class="analysis-section"><h3>5. Что уточнить в беседе</h3>'+
+   (caution.length?'<p>Коричневый или черный цвет отмечен в '+caution.length+' '+(caution.length===1?'ситуации':caution.length<5?'ситуациях':'ситуациях')+': '+esc(caution.map(x=>x.name).join("; "))+'. По руководству это повод внимательнее изучить эти переживания, а не готовый диагноз.</p>':'<p>Коричневый и черный цвета для школьных ситуаций не выбраны. Это не исключает трудностей и не позволяет самостоятельно признать адаптацию благополучной.</p>')+
+   '<p><strong>О десятом домике ребенок сказал:</strong> '+esc(s.description)+'</p>'+
+   '<p class="muted">Отношение к школе по этой методике может описываться как положительное, амбивалентное или отрицательное, но итоговую категорию определяет психолог по целому протоколу и беседе. Для комплексной оценки адаптации нужны также данные учителя, родителей и другие наблюдения.</p></section>';
+ }
  function resultHtml(s){
   const c=calculate(s);
   if(!complete(s)||!validGroup()||!c)return '<h2>Результаты</h2><div class="report-empty">Заполните восемь цветов дорожки, все 10 чувств, 10 ситуаций и описание десятого домика. Для группового режима укажите класс или группу.</div>';
   const v=classifyVK(c.vk),co=classifyCO(c.co);
-  const notes=observations(s);
   return '<h2>Результаты: '+esc(s.name)+'</h2><div class="report-grid">'+
-   '<div class="metric"><div class="metric-title">Вегетативный коэффициент (ВК)</div><strong class="metric-number number-'+v.level+'">'+c.vk.toFixed(2).replace(".",",")+'</strong><p>'+esc(v.text)+'</p></div>'+
-   '<div class="metric"><div class="metric-title">Суммарное отклонение (СО)</div><strong class="metric-number number-'+co.level+'">'+c.co+'</strong><p>'+esc(co.text)+'</p></div></div>'+
-   '<h3>Качественные наблюдения</h3>'+(notes.length?'<ul class="notes">'+notes.map(n=>'<li>'+esc(n)+'</li>').join("")+'</ul>':'<p class="muted">Выраженных совпадений в парах чувств и коричневого/черного в ситуациях не обнаружено. Оцените полный рисунок и беседу.</p>')+
-   '<p class="muted">Интерпретация описывает особенности цветового выбора и не заменяет психологическое заключение.</p>'+
+   '<div class="metric"><div class="metric-title">Вегетативный коэффициент (ВК)</div><strong class="metric-number number-'+v.level+'">'+c.vk.toFixed(2).replace(".",",")+'</strong><p>'+esc(v.text)+'</p><p class="muted">Показатель энергетического баланса. Сопоставляется с наблюдениями и режимом деятельности.</p></div>'+
+   '<div class="metric"><div class="metric-title">Суммарное отклонение (СО)</div><strong class="metric-number number-'+co.level+'">'+c.co+'</strong><p>'+esc(co.text)+'</p><p class="muted">Показатель общего эмоционального фона относительно аутогенной нормы.</p></div></div>'+
+   '<p class="analysis-intro">Ниже – подробный протокол всех цветов и домиков. Сначала факты выбора ребенка, затем пояснения и направления для беседы. Это описание не является автоматическим психологическим заключением.</p>'+
+   renderDetailReport(s)+
    '<div class="report-actions"><button type="button" class="primary" id="downloadOne">Скачать Word</button><button type="button" class="light-button" id="printOne">Распечатать результаты</button></div>';
  }
  function renderGroup(){
