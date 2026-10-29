@@ -301,9 +301,21 @@
   EMOTIONS.forEach((x,i)=>b+=wp((i+1)+". "+x+": "+colorName(s.emotions[i])));
   b+=wp("Задание 3. Домики ситуаций");
   SITUATIONS.forEach((x,i)=>b+=wp((i+1)+". "+x+": "+colorName(s.situations[i])));
-  b+=wp("Домик 10: "+s.description)+wp("Качественные наблюдения");
+  const detailed=analysisDetails(s);
+  b+=wp("Задание 1. Предпочтение цветов от 1 до 8");
+  s.ranking.forEach((id,i)=>b+=wp((i+1)+". "+colorName(id)));
+  b+=wp("Задание 2. Пояснение к домикам чувств");
+  detailed.feelings.forEach(item=>b+=wp("Домик "+item.index+". "+item.name+" – "+item.name+" / место цвета "+item.position+". "+item.explanation));
+  b+=wp("Пять пар социальных эмоций");
+  detailed.pairs.forEach(p=>b+=wp(p.name+" – "+p.block+": "+colorName(p.first.id)+" (место "+p.first.position+") / "+colorName(p.second.id)+" (место "+p.second.position+"). "+(p.same?"Одинаковый цвет, требуется уточнение дифференциации чувств.":"Разница мест в дорожке: "+p.distance+".")));
+  b+=wp("Задание 3. Пояснение к домикам ситуаций");
+  detailed.situations.forEach(item=>b+=wp("Домик "+item.index+". "+item.name+": "+item.name+" / место цвета "+item.position+". "+item.explanation+" Совпадения с чувствами: "+(item.related.join(", ")||"не выявлены")+". "+(item.dark?"Коричневый или черный – требуется уточняющая беседа.":"")));
+  b+=wp("Домик 10 – слова ребенка: "+s.description);
+  b+=wp("Цепочки одинаковых цветов");
+  detailed.chains.forEach(x=>b+=wp(x.name+" (место "+x.rank+"): чувства – "+(x.em.join(", ")||"нет")+"; ситуации – "+(x.sit.join(", ")||"нет")+"."));
+  b+=wp("Качественные наблюдения");
   const notes=observations(s);notes.forEach(n=>b+=wp("• "+n));
-  return b+wp("Методика проективная. Оценка требует беседы и других данных. Цвет сам по себе не является диагнозом.");
+  return b+wp("Методика проективная. Отношение к школе определяется психологом в контексте беседы, данных учителя и родителей. Цвет сам по себе не является диагнозом.");
  }
  // Simple ZIP writer (stored files) for a real, offline-generated DOCX.
  function crc32(data){let crc=0xFFFFFFFF;for(const byte of data){crc^=byte;for(let i=0;i<8;i++)crc=(crc>>>1)^((crc&1)?0xEDB88320:0);}return (crc^0xFFFFFFFF)>>>0;}
