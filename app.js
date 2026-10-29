@@ -10,7 +10,22 @@ $('#category').innerHTML+=[...new Set(C.map(x=>x.theme))].map(t=>'<option value=
 function theme(isDark){document.documentElement.classList.toggle('dark',isDark);try{localStorage.setItem('psyteka-theme',isDark?'dark':'light')}catch{}$('#themeIcon').innerHTML=isDark?'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/>':'<path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13z"/>';$('#themeLabel').textContent=isDark?'Светлая тема':'Темная тема'}
 $('#themeBtn').onclick=()=>theme(!document.documentElement.classList.contains('dark'));
 try{theme(localStorage.getItem('psyteka-theme')==='dark')}catch{theme(false)}
-function render(){const out=C.filter(m=>{const hay=[m.name,m.author,m.theme,m.goal].join(' ').toLowerCase();return (!state.topic||m.theme===state.topic)&&(!state.category||m.theme===state.category)&&(!state.query||hay.includes(state.query.toLowerCase()))&&(!state.format||window.PSY_SCHOOL_CARDS?.classify(m,window.PSY_FULL_METHODS?.[m.name],window.PSY_PORTFOLIO_EDITS?.[m.name]||{},window.PSY_GUIDE_STANDARD)===state.format)});$('#resultCount').textContent='Найдено: '+out.length;$('#listHeading').textContent=state.topic||'Школьные материалы';$('#catalog').innerHTML=out.length?out.map(m=>'<article class="method"><div class="head"><div class="glyph" aria-hidden="true">'+(icons[m.theme]||'▤')+'</div><div><h3>'+escapeHTML(m.name)+'</h3><small>'+escapeHTML(m.author)+'</small></div></div><div class="tags"><span class="tag">'+escapeHTML(m.theme)+'</span><span class="tag">'+escapeHTML(m.format)+'</span></div><p>'+escapeHTML(m.goal)+'</p><div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">Подробнее</button>'+(m.source?'<a class="btn" target="_blank" rel="noopener noreferrer" href="'+escapeHTML(m.source)+'">Источник ↗</a>':'')+'</div></article>').join(''):'<p>По этим фильтрам ничего не найдено.</p>';document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openMethod(C.find(m=>m.id===b.dataset.open)))}
+function render(){
+ const out=C.filter(m=>{
+  const hay=[m.name,m.author,m.theme,m.goal].join(' ').toLowerCase();
+  return (!state.topic||m.theme===state.topic)&&(!state.category||m.theme===state.category)&&(!state.query||hay.includes(state.query.toLowerCase()))&&(!state.format||window.PSY_SCHOOL_CARDS?.classify(m,window.PSY_FULL_METHODS?.[m.name],window.PSY_PORTFOLIO_EDITS?.[m.name]||{},window.PSY_GUIDE_STANDARD)===state.format);
+ });
+ $('#resultCount').textContent='Найдено: '+out.length;
+ $('#listHeading').textContent=state.topic||'Школьные материалы';
+ $('#catalog').innerHTML=out.length?out.map(m=>{
+  const details=window.PSY_SCHOOL_CARDS?.compose(m,window.PSY_FULL_METHODS?.[m.name],window.PSY_PORTFOLIO_EDITS?.[m.name]||{},window.PSY_GUIDE_STANDARD)||{};
+  const tags=[details.type||m.format,details.age||'',details.quantity||''].filter(Boolean);
+  const author=details.author||m.author||'';
+  const description=details.summary||m.goal||'';
+  return '<article class="method"><div class="head"><div class="glyph" aria-hidden="true">'+(icons[m.theme]||'▤')+'</div><div><h3>'+escapeHTML(m.name)+'</h3><small class="method-card-author">'+escapeHTML(author)+'</small></div></div><div class="tags">'+tags.map(t=>'<span class="tag">'+escapeHTML(t)+'</span>').join('')+'</div><p class="method-card-summary">'+escapeHTML(description)+'</p><div class="actions"><button type="button" class="btn primary" data-open="'+escapeHTML(m.id)+'">Открыть методику</button></div></article>';
+ }).join(''):'<p>По этим фильтрам ничего не найдено.</p>';
+ document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openMethod(C.find(m=>m.id===b.dataset.open)));
+}
 $('#showAllMaterials').onclick=()=>{state.topic='';state.query='';state.category='';state.format='';$('#search').value='';$('#category').value='';$('#format').value='';selectView('school');highlight();render();document.querySelector('.main')?.scrollTo?.({top:0})};
 $('#search').oninput=e=>{state.query=e.target.value;render()};$('#category').onchange=e=>{state.category=e.target.value;render()};$('#format').onchange=e=>{state.format=e.target.value;render();highlight()};
 document.querySelectorAll('[data-topic]').forEach(b=>b.onclick=()=>{state.topic=b.dataset.topic;state.category='';$('#category').value='';selectView('school');highlight();render();document.querySelector('.main').scrollTo?.({top:0})});
