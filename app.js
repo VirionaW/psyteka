@@ -12,7 +12,8 @@ $('#themeBtn').onclick=()=>theme(!document.documentElement.classList.contains('d
 try{theme(localStorage.getItem('psyteka-theme')==='dark')}catch{theme(false)}
 function render(){
  const out=C.filter(m=>{
-  const hay=[m.name,m.author,m.theme,m.goal].join(' ').toLowerCase();
+  const card=window.PSY_SCHOOL_CARDS?.compose(m,window.PSY_FULL_METHODS?.[m.name],window.PSY_PORTFOLIO_EDITS?.[m.name]||{},window.PSY_GUIDE_STANDARD)||{};
+  const hay=[m.name,m.author,m.theme,m.goal,card.author,card.type,card.age,card.quantity,card.summary].join(' ').toLowerCase();
   return (!state.topic||m.theme===state.topic)&&(!state.category||m.theme===state.category)&&(!state.query||hay.includes(state.query.toLowerCase()))&&(!state.format||window.PSY_SCHOOL_CARDS?.classify(m,window.PSY_FULL_METHODS?.[m.name],window.PSY_PORTFOLIO_EDITS?.[m.name]||{},window.PSY_GUIDE_STANDARD)===state.format);
  });
  $('#resultCount').textContent='Найдено: '+out.length;
