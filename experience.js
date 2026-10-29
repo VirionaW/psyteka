@@ -1073,6 +1073,24 @@ window.PSY_PROCESSING_NOTEBOOK={
   methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords};
   setTab(tabNow==="processing"?"processing":"score");
   return true;
+ },
+ openBlank:()=>{
+  if(!methodNow||!["score","processing"].includes(tabNow))return false;
+  const saved=savedModeRecords[calcMode]||{};
+  const hasEnteredData=rows.some(r=>r.name?.trim()||(r.answers||[]).some(v=>v!==""&&v!==null&&v!==undefined));
+  const changed=saved.baseline!==null&&saved.baseline!==undefined
+   ?JSON.stringify(rows)!==saved.baseline:hasEnteredData;
+  if(changed&&!confirm("Вернуться к чистому бланку? Несохраненные изменения текущей обработки будут потеряны. Сохраненные в профиле результаты останутся."))return false;
+  rows=[{name:"",answers:[]}];
+  rowIndex=0;
+  modeSnapshots[calcMode]=rows;
+  modeIndices[calcMode]=0;
+  savedModeRecords[calcMode]={id:null,title:"",baseline:null};
+  activeSavedAssessmentId=null;
+  activeSavedAssessmentTitle="";
+  methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords};
+  setTab(tabNow==="processing"?"processing":"score");
+  return true;
  }
 };
 render();
