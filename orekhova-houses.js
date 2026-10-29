@@ -1,15 +1,15 @@
 "use strict";
 (() => {
  const COLORS=[
-  {id:"blue",name:"Синий",hex:"#235eaf"}, {id:"green",name:"Зеленый",hex:"#208452"},
-  {id:"red",name:"Красный",hex:"#d9403b"}, {id:"yellow",name:"Желтый",hex:"#f0c51b"},
-  {id:"purple",name:"Фиолетовый",hex:"#8754af"}, {id:"brown",name:"Коричневый",hex:"#855635"},
-  {id:"gray",name:"Серый",hex:"#929292"}, {id:"black",name:"Черный",hex:"#272727"}
+  {id:"blue",name:"Синий",hex:"#235eaf"}, {id:"red",name:"Красный",hex:"#d9403b"},
+  {id:"yellow",name:"Желтый",hex:"#f0c51b"}, {id:"green",name:"Зеленый",hex:"#208452"},
+  {id:"purple",name:"Фиолетовый",hex:"#8754af"}, {id:"gray",name:"Серый",hex:"#929292"},
+  {id:"brown",name:"Коричневый",hex:"#855635"}, {id:"black",name:"Черный",hex:"#272727"}
  ];
  // Aутогенная норма 34251607 (номера теста Люшера 0-7).
  const NORM=["red","yellow","green","purple","blue","brown","gray","black"];
  const EMOTIONS=["Счастье","Горе","Справедливость","Обида","Дружба","Ссора","Доброта","Злоба","Скука","Восхищение"];
- const SITUATIONS=["Я сам / моя душа","По дороге в школу","На уроке чтения","На уроке письма","На уроке математики","Разговор с учителем","Общение с одноклассниками","Дома","Когда делаю уроки","Своя ситуация (домик 10)"];
+ const SITUATIONS=["Твоя душа","Настроение по дороге в школу","Настроение на уроке чтения","Настроение на уроке письма","Настроение на уроке математики","Настроение при разговоре с учителем","Настроение при общении с одноклассниками","Настроение дома","Настроение во время домашних заданий","Свободный домик – ситуация ребенка"];
  const PAIRS=[["Счастье – горе",0,1],["Справедливость – обида",2,3],["Дружба – ссора",4,5],["Доброта – злоба",6,7],["Скука – восхищение",8,9]];
  const $=id=>document.getElementById(id);
  const state={mode:"one",students:[],selected:0,groupName:"",clipboard:null,step:1,activeColor:"blue"};
@@ -31,7 +31,7 @@
   return {vk,co};
  }
  function classifyVK(n){const rounded=Math.round(n*100)/100;
-  return rounded<=.50?{text:"Выраженная усталость",level:"red"}:rounded<=.91?{text:"Компенсируемая усталость",level:"yellow"}:rounded<=2?{text:"Оптимальная работоспособность",level:"green"}:{text:"Категория не задана для ВК выше 2",level:"neutral"};
+  return rounded<=.50?{text:"Хроническое переутомление, истощение, низкая работоспособность",level:"red"}:rounded<=.91?{text:"Компенсируемое состояние усталости",level:"yellow"}:rounded<=1.90?{text:"Оптимальная работоспособность",level:"green"}:rounded>2?{text:"Перевозбуждение",level:"red"}:{text:"Для ВК от 1,91 до 2,00 категория в руководстве не указана",level:"neutral"};
  }
  function classifyCO(n){
   return n<10?{text:"Преобладание положительных эмоций",level:"green"}:n<=18?{text:"Эмоциональный фон в обычном диапазоне",level:"yellow"}:n===20?{text:"Пограничное значение без категории в источнике",level:"neutral"}:{text:"Преобладание отрицательных эмоций",level:"red"};
@@ -39,7 +39,7 @@
  function observations(s){
   const out=[];
   for(const [label,a,b] of PAIRS)if(s.emotions[a]===s.emotions[b])out.push('Одинаковый цвет в паре «'+label+'» – уточните различение этих чувств в беседе.');
-  const dark=SITUATIONS.map((v,i)=>["brown","black"].includes(v)?SITUATIONS[i]:null).filter(Boolean);
+  const dark=SITUATIONS.map((v,i)=>["brown","black"].includes(s.situations[i])?v:null).filter(Boolean);
   if(dark.length)out.push('Коричневый или черный в ситуациях: '+dark.join(", ")+'. Уточните переживания ребенка.');
   const same=SITUATIONS.map((v,i)=>{const indexes=s.emotions.map((x,k)=>x===v?EMOTIONS[k]:null).filter(Boolean);return indexes.length?'«'+SITUATIONS[i]+'» – '+indexes.join(", "):null;}).filter(Boolean);
   if(same.length)out.push("Совпадения цветов ситуаций и чувств: "+same.join("; ")+".");
@@ -67,18 +67,20 @@
   return complete(s)&&validGroup();
  }
  function houseSvg(number,chosen){
-  const c=color(chosen),fill=c?c.hex:"transparent",stroke=c?"#3c4f43":"#617567",contrast=c&&(["yellow","gray"].includes(c.id))?"#23382d":"#fff";
-  return '<svg class="house-shape" viewBox="0 0 124 120" aria-hidden="true" focusable="false">'+
-   '<path d="M12 49L62 11L112 49L105 57L62 23L19 57Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="3"/>'+
-   '<path d="M25 50V111H99V50L62 21Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="3"/>'+
-   '<rect x="51" y="77" width="22" height="34" rx="2" fill="none" stroke="'+(c?contrast:stroke)+'" stroke-width="2.2"/>'+
-   '<circle cx="67" cy="95" r="2" fill="'+(c?contrast:stroke)+'"/></svg>';
+  // Roof with chimney, rectangular walls and a doorway, matching the provided answer form.
+  const c=color(chosen),fill=c?c.hex:"#ffffff";
+  const stroke="#34463d",doorStroke=c&&["black","brown","purple","blue","red","green"].includes(chosen)?"#ffffff":"#34463d";
+  return '<svg class="house-shape" viewBox="0 0 124 122" role="img" aria-label="Закрашиваемый домик '+number+'">'+
+   '<path d="M7 52L47 17L70 34V18H82V44L111 52H7Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="2.8" stroke-linejoin="round"/>'+
+   '<path d="M19 52H99V113H19Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="2.8"/>'+
+   '<path d="M46 80H71V113H46Z" fill="none" stroke="'+doorStroke+'" stroke-width="2.6"/>'+
+   '<circle cx="66" cy="98" r="2.2" fill="'+doorStroke+'"/></svg>';
  }
  function renderRanking(){
   const s=current();if(!s)return;
   $("ranking").innerHTML=Array.from({length:8},(_,i)=>{
    const c=color(s.ranking[i]),isSelected=!!c&&c.id===state.activeColor;
-   return '<button type="button" class="paint-rect'+(c?' filled':'')+(isSelected?' paint-selected':'')+'" data-rect-index="'+i+'" aria-label="Прямоугольник '+(i+1)+', '+(c?c.name:'не закрашен')+'" title="'+(c?c.name:'Выберите цвет и нажмите')+'" style="'+(c?'--paint-fill:'+c.hex+';':'')+'"><span class="rect-position">'+(i+1)+'</span><span class="rect-color-name">'+(c?c.name:'Раскрасить')+'</span></button>';
+   return '<button type="button" class="paint-rect'+(c?' filled':'')+(isSelected?' paint-selected':'')+'" data-rect-index="'+i+'" aria-label="Прямоугольник '+(i+1)+', '+(c?c.name:'не закрашен')+'" title="'+(c?c.name:'Выберите цвет и нажмите')+'" style="'+(c?'--paint-fill:'+c.hex+';':'')+'"><span class="rect-surface" aria-hidden="true"></span><span class="rect-position">'+(i+1)+'</span><span class="rect-color-name">'+(c?c.name:'Не закрашен')+'</span></button>';
   }).join("");
   $("rankPalette").innerHTML=COLORS.map(c=>choice(c,state.activeColor)).join("");
   $("activeColorText").innerHTML='<span class="swatch" style="background:'+color(state.activeColor).hex+'"></span><span>'+color(state.activeColor).name+'</span>';
@@ -194,7 +196,7 @@
   SITUATIONS.forEach((x,i)=>b+=wp((i+1)+". "+x+": "+colorName(s.situations[i])));
   b+=wp("Домик 10: "+s.description)+wp("Качественные наблюдения");
   const notes=observations(s);notes.forEach(n=>b+=wp("• "+n));
-  return b+wp("Оценка требует учета беседы и других данных. Цвет сам по себе не является диагнозом.");
+  return b+wp("Методика проективная. Оценка требует беседы и других данных. Цвет сам по себе не является диагнозом.");
  }
  // Simple ZIP writer (stored files) for a real, offline-generated DOCX.
  function crc32(data){let crc=0xFFFFFFFF;for(const byte of data){crc^=byte;for(let i=0;i<8;i++)crc=(crc>>>1)^((crc&1)?0xEDB88320:0);}return (crc^0xFFFFFFFF)>>>0;}
