@@ -31,7 +31,7 @@ const FIGURE_FIELDS=[
  ["Дополнительные наблюдения","Записи психолога по ходу обследования."]
 ];
 const KEY="metolaria_luscher_session_20261029";
-const initial=()=>({variant:null,mode:"one",group:"",people:[],index:0});
+const initial=()=>({variant:null,mode:"one",group:"",people:[],index:0,byVariant:{},chooser:false});
 let state=initial();
 try{const saved=JSON.parse(sessionStorage.getItem(KEY)||"null");if(saved&&VERSIONS[saved.variant]&&Array.isArray(saved.people))state={...initial(),...saved};}catch(_){}
 const escapeHTML=t=>String(t??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
@@ -52,7 +52,7 @@ function renderPeople(){
 }
 function selectVariant(key){
  if(!VERSIONS[key])return;
- if(state.variant!==key){state.variant=key;state.people=[];state.index=0;}
+ if(state.variant!==key){if(state.variant)state.byVariant[state.variant]={people:state.people,index:state.index};const saved=state.byVariant[key]||{people:[],index:0};state.variant=key;state.people=saved.people;state.index=saved.index;}state.chooser=false;
  $("versionScreen").hidden=true;$("workspace").hidden=false;
  $("versionTitle").textContent=VERSIONS[key].title;$("versionDescription").textContent=VERSIONS[key].description;
  document.querySelectorAll("[data-mode]").forEach(el=>el.classList.toggle("active",el.dataset.mode===state.mode));
@@ -137,7 +137,6 @@ function analysisHTML(p){
 }
 function printOrExport(){
  const p=person();if(!p)return "";
- const div=document.createElement("div");div.innerHTML=analysisHTML(p);
  const paras=[VERSIONS[state.variant].title,"Участник: "+p.name+(p.age?", "+p.age+" лет":"")+(state.group?", "+state.group:"")];
  if(!isManual()){
   if(p.first.length)paras.push("Первый выбор: "+p.first.map(name).join(", "));
@@ -216,7 +215,7 @@ function downloadWord(){
 }
 document.querySelectorAll("[data-version]").forEach(b=>b.addEventListener("click",()=>selectVariant(b.dataset.version)));
 document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{state.mode=b.dataset.mode;save();render();}));
-$("backVersions").addEventListener("click",()=>{$("workspace").hidden=true;$("versionScreen").hidden=false;});
+$("backVersions").addEventListener("click",()=>{state.chooser=true;save();$("workspace").hidden=true;$("versionScreen").hidden=false;});
 $("groupName").addEventListener("input",e=>{state.group=e.target.value;save();});
 $("addPerson").addEventListener("click",newPerson);
 $("personAge").addEventListener("keydown",e=>{if(e.key==="Enter")newPerson();});
@@ -232,6 +231,6 @@ $("word").addEventListener("click",downloadWord);
 $("print").addEventListener("click",()=>{const p=person();if(!p)return;$("printRoot").innerHTML='<div class="print-sheet"><h2>Тест Люшера · '+escapeHTML(VERSIONS[state.variant].title)+'</h2><p>'+escapeHTML(p.name)+'</p>'+analysisHTML(p)+'</div>';window.print();});
 $("theme").addEventListener("click",()=>{document.documentElement.classList.toggle("dark");const dark=document.documentElement.classList.contains("dark");$("theme").textContent=dark?"Светлая тема":"Темная тема";try{sessionStorage.setItem("metolaria_luscher_dark",dark?"1":"0");}catch(_){};});
 try{if(sessionStorage.getItem("metolaria_luscher_dark")==="1"){document.documentElement.classList.add("dark");$("theme").textContent="Светлая тема";}}catch(_){}
-if(state.variant)render();
+if(state.variant&&!state.chooser)render();
 window.PSY_LUSCHER_TEST={analyze,versions:VERSIONS,colors:COLORS};
 })();
