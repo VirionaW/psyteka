@@ -104,13 +104,13 @@ function calculator(d,ctx){
 function save(filename,contents,mime){const url=URL.createObjectURL(new Blob([contents],{type:mime})),node=document.createElement("a");node.href=url;node.download=filename;document.body.appendChild(node);node.click();node.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
 function printable(d,r){
  const res=results(d,r.answers,r.sixVersion),selected=d.forms[Number(r.sixVersion)]||d.forms[0];
- const rows=res?res.map(x=>'<tr><td>'+escape(x.title)+'</td><td>'+x.raw+'</td><td>'+(x.band?escape(x.band):"Без нормативной категории")+'</td></tr>').join(""):"";
+ const rows=res?res.map(x=>'<tr><td>'+escape(x.title)+'</td><td>'+coloredScore(x)+'</td><td>'+(x.band?escape(x.band):"Без нормативной категории")+'</td></tr>').join(""):"";
  const score=res?'<h2>Обработка</h2><table><thead><tr><th>Шкала</th><th>Баллы</th><th>Уровень</th></tr></thead><tbody>'+rows+'</tbody></table>':'<h2>Обработка</h2><p>Количественный результат не вычислялся по данной редакции.</p>';
   const isSsp=d.id==="morosanova-ssp-family"&&String(r.sixVersion)==="3";
  const responseCount=isSsp?28:(d.questionsCount||d.responseCount||0),answerList=(d.scaleMax||isSsp)?r.answers:r.sixAnswers;
  const list=responseCount?'<h2>Зарегистрированные ответы</h2><p>'+Array.from({length:responseCount},(_,i)=>(i+1)+": "+(answerList?.[i]||"–")).map(escape).join(" · ")+'</p>':"";
  const body='<h1>'+escape(d.name)+'</h1><p>'+escape(d.author)+'</p><p><b>Код участника:</b> '+escape(r.name||"Без персональных данных")+'</p><p><b>Редакция:</b> '+escape(selected.label)+'</p>'+score+list+'<h2>Наблюдения</h2><p>'+escape(r.sixProtocol||"Не записаны")+'</p><h2>Интерпретация и ограничения</h2><p>'+escape(d.interpret)+'</p><p>Первоисточник: '+a(d.source,"Научная публикация")+'</p>';
- return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Протокол · '+escape(d.name)+'</title><style>@page{size:A4;margin:15mm}body{font:11pt/1.5 Arial;color:#244536}h1{font-size:17pt}h2{font-size:13pt;margin-top:16pt}p{overflow-wrap:anywhere}table{border-collapse:collapse;width:100%}th,td{padding:7pt;border:1px solid #b2c6bb;text-align:left}tr{break-inside:avoid}</style></head><body>'+body+'</body></html>';
+ return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Протокол · '+escape(d.name)+'</title><style>@page{size:A4;margin:15mm}body{font:11pt/1.5 Arial;color:#244536;-webkit-print-color-adjust:exact;print-color-adjust:exact}h1{font-size:17pt}h2{font-size:13pt;margin-top:16pt}p{overflow-wrap:anywhere}table{border-collapse:collapse;width:100%}th,td{padding:7pt;border:1px solid #b2c6bb;text-align:left}tr{break-inside:avoid}</style></head><body>'+body+'</body></html>';
 }
 function csv(d,rows){
  const safe=x=>{const s=String(x??"");return '"'+(/^[\s]*[=+\-@]/.test(s)?"'"+s:s).replace(/"/g,'""')+'"';};
