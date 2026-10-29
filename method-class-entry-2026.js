@@ -801,11 +801,53 @@ function result(d,r){
  (d.id==="razuvaeva-osr29"?'<p class="psy-711-safety">Показатели факторов не определяют вероятность суицида и не исключают опасности. При признаках угрозы необходима очная профессиональная оценка безопасности.</p>':
  '<p class="psy-mspss-small">'+(d.id==="eysenck-40"?"Диапазоны по каждой шкале: 0-7, 8-14, 15-20.":"Проценты показывают долю от максимума шкалы, а не возрастные нормативы или Т-баллы.")+'</p>')+'</section>';
 }
+
+function analytical711(d,rows){
+ const total=rows.filter(r=>r?.name?.trim()||present(d,r)).length;
+ const people=rows.filter(r=>!!scored(d,r)),n=people.length;
+ if(!n)return null;
+ const grade=people.find(r=>Number(r.schoolGrade)>=7&&Number(r.schoolGrade)<=11)?.schoolGrade,klass=String(rows.analyticClass||"").trim();
+ const lines=[
+  {kind:"title",text:"Аналитическая справка"},
+  {kind:"subtitle",text:"По методике «"+cfg(d).name+"»"},
+  {kind:"meta",text:klass?"Класс: "+klass:grade?"Класс: "+grade:"Класс не указан"},
+  {kind:"body",text:"В обследовании приняли участие "+n+" из "+total+" учащихся ("+Math.round(100*n/total)+"%)."}
+ ];
+ if(rows.analyticSchool?.trim())lines.unshift({kind:"institution",text:String(rows.analyticSchool).trim()});
+ const share=x=>x+" чел. ("+Math.round(100*x/n)+"%)";
+ const scores=people.map(r=>scored(d,r));
+ const names=scores[0].scales;
+ if(d.id==="eysenck-40"){
+  lines.push({kind:"body",text:"Распределение результатов по четырем шкалам самооценки психических состояний:"});
+  names.forEach((factor,i)=>{
+   const vals=scores.map(x=>x.scales[i].raw);
+   const low=vals.filter(v=>v<=7).length,mid=vals.filter(v=>v>=8&&v<=14).length,high=vals.filter(v=>v>=15).length;
+   lines.push({kind:"factor",text:factor.name+": низкий (0-7) – "+share(low)+", средний (8-14) – "+share(mid)+", высокий (15-20) – "+share(high)+"."});
+  });
+  lines.push({kind:"body",text:"Уровни отражают выраженность соответствующих состояний по используемым границам методики и не являются диагнозом."});
+ }else{
+  const factors=names.map((factor,i)=>({name:factor.name,mean:scores.reduce((acc,x)=>acc+(x.scales[i]?.percent||0),0)/n})).sort((a,b)=>b.mean-a.mean);
+  lines.push({kind:"body",text:d.id==="lazarus-wcq50"?
+   "В группе наиболее выражены следующие способы совладающего поведения (средний процент от максимума шкалы):":
+   "Групповые средние значения наиболее выраженных факторов (в процентах от максимума шкалы):"});
+  factors.slice(0,4).forEach(x=>lines.push({kind:"factor",text:x.name+" – "+Math.round(x.mean)+"%."}));
+  lines.push({kind:"body",text:d.id==="lazarus-wcq50"?
+   "Проценты описывают долю от максимума шкалы, не являются возрастными нормами и клиническими порогами. Способы совладания могут сочетаться.":
+   "Факторные баллы не определяют вероятность суицида. Автоматическая категория риска не присваивается; при подозрении на угрозу необходима очная оценка безопасности."});
+ }
+ return {lines,n,total};
+}
+function analytical711Preview(d,rows){
+ const summary=analytical711(d,rows);
+ return summary?'<section class="psy-cp-analytic-preview psy-711-analytic"><h3>Аналитическая справка</h3>'+
+  summary.lines.filter(x=>x.kind!=="title").map(x=>'<p class="psy-cp-analytic-'+x.kind+'">'+esc(x.text)+'</p>').join("")+
+  window.PSY_ANALYTIC_SIGNATURES.html(rows)+'</section>':"";
+}
 function group(d,rows){
  const keys=(cfg(d).versions?.[0]?.scales||cfg(d).scales);
  return '<section class="psy-mspss-group psy-711-group psy-711-'+d.id+'"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th>'+keys.map(s=>'<th>'+esc(s.name)+'</th>').join("")+'</tr></thead><tbody>'+
  rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+'</td>'+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="'+(v?"psy-711-"+tone(d,v):"")+'">'+(v?num(d,v):"–")+'</td>'}).join("")+'</tr>'}).join("")+
- '</tbody></table></div>'+(d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Категория суицидального риска автоматически не присваивается.</p>':"")+'</section>';
+ '</tbody></table></div>'+(d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Категория суицидального риска автоматически не присваивается.</p>':"")+analytical711Preview(d,rows)+'</section>';
 }
 function calculator(d,ctx){
  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],answers=r.answers||[],grade=rows.find(x=>Number(x.schoolGrade)>=7&&Number(x.schoolGrade)<=11)?.schoolGrade;
@@ -813,6 +855,7 @@ function calculator(d,ctx){
  if(ctx.calcMode==="class"){
  out+='<div class="psy-mspss-workspace"><aside class="psy-mspss-sidebar"><h3>Список учащихся</h3><label class="psy-cp-class-label">Класс<select id="school711Grade"><option value="">Не выбран</option>'+
  [7,8,9,10,11].map(g=>'<option value="'+g+'" '+(Number(grade)===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select></label>'+
+ window.PSY_ANALYTIC_SIGNATURES.fields(rows)+
  '<label class="psy-mspss-label">Добавить участников</label><textarea id="school711Bulk" rows="5" placeholder="Ученик 01&#10;Ученик 02"></textarea>'+
  '<button type="button" class="btn primary psy-mspss-add" id="school711Add">Добавить в список</button><button type="button" class="btn psy-mspss-sort" id="school711Sort">По алфавиту А - Я</button><div class="psy-mspss-person-list">'+
  rows.map((x,i)=>'<div class="psy-mspss-person-row"><button type="button" class="psy-mspss-person '+(ctx.rowIndex===i?"active":"")+'" data-711-person="'+i+'"><span>'+esc(x.name||"Участник "+(i+1))+'</span><small>'+(x.attendance==="absent"?"Отсутствовал":present(d,x)+"/"+size(d))+'</small></button>'+
@@ -862,8 +905,10 @@ function bind(d,ctx){
   const res=document.getElementById("school711Result");if(res)res.innerHTML=result(d,r);
   const gr=document.getElementById("school711Group");if(gr)gr.innerHTML=group(d,ctx.rows);
   const button=document.getElementById("cpReportBottom");if(button){const eligible=ctx.calcMode==="class"?ctx.rows.some(x=>scored(d,x)):!!scored(d,r);button.disabled=!eligible;button.classList.toggle("psy-mspss-waiting",!eligible)}
+   const analytic=document.getElementById("cpAnalyticBottom");if(analytic){const eligible=!!analytical711(d,ctx.rows);analytic.disabled=!eligible;analytic.classList.toggle("psy-mspss-waiting",!eligible);}
   const label=document.querySelector(".psy-mspss-person.active small");if(label)label.textContent=r.attendance==="absent"?"Отсутствовал":present(d,r)+"/"+size(d);
  };
+ window.PSY_ANALYTIC_SIGNATURES.bind(ctx.rows,()=>{const area=document.getElementById("school711Group");if(area)area.innerHTML=group(d,ctx.rows);});
  document.getElementById("school711Name")?.addEventListener("input",e=>{r.name=e.target.value;const x=document.querySelector(".psy-mspss-person.active span");if(x)x.textContent=r.name});
  document.getElementById("school711Grade")?.addEventListener("change",e=>{ctx.rows.forEach(x=>x.schoolGrade=e.target.value?Number(e.target.value):null);ctx.onRender?.()});
  document.getElementById("school711Version")?.addEventListener("change",e=>{
@@ -902,8 +947,9 @@ function csv(d,rows){
 }
 /* Create a real OOXML Word file without remote services. */
 function report(d,rows,mode,index){
- const people=(mode==="class"?rows:[rows[index]]).filter(Boolean);if(!people.length)return false;
- if(mode!=="class"&&!scored(d,people[0]))return false;
+ const people=((mode==="class"||mode==="analysis")?rows:[rows[index]]).filter(Boolean);if(!people.length)return false;
+ if(mode==="analysis"){if(!analytical711(d,rows))return false;}
+ else if(mode!=="class"&&!scored(d,people[0]))return false;
  const x=s=>String(s??"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F<>&"']/g,ch=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;","'":"&apos;"}[ch]||""));
  const para=s=>'<w:p><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">'+x(s)+'</w:t></w:r></w:p>';
  const cel=(s,color,head)=>'<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/>'+(color?'<w:shd w:val="clear" w:color="auto" w:fill="'+color+'"/>':"")+'</w:tcPr><w:p><w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="18"/>'+(head?"<w:b/>":"")+'</w:rPr><w:t xml:space="preserve">'+x(s)+'</w:t></w:r></w:p></w:tc>';
@@ -916,13 +962,26 @@ function report(d,rows,mode,index){
   fill.push([null,null,...scales.map((s,j)=>{const factor=z?.scales?.[j];if(!factor)return null;const kind=tone(d,factor);return kind==="high"?(d.id==="eysenck-40"?"F9DEDC":"FFE4C6"):kind==="middle"?"FFF0CF":kind==="low"?"E4F1FB":"EAF1F4"})]);
  }
  const grade=people.find(r=>Number(r.schoolGrade)>=7&&Number(r.schoolGrade)<=11)?.schoolGrade;
- let body=para(cfg(d).name)+para(mode==="class"?"Результаты "+(grade?grade+" класса":"класса"):"Результат участника")+para("Дата: "+new Date().toLocaleDateString("ru-RU"));
- body+=table([["№","Участник",...scales.map(s=>s.name)],...rowsData],fill);
- if(d.id==="eysenck-40")body+=para("Интервалы каждой шкалы:")+table([["Баллы","Уровень"],["0-7","Низкий"],["8-14","Средний"],["15-20","Высокий"]],[["E4F1FB","E4F1FB"],["FFF0CF","FFF0CF"],["F9DEDC","F9DEDC"]]);
- else if(d.id==="lazarus-wcq50")body+=para("Числа – сырые баллы по каждой копинг-стратегии. Цвета показывают условную долю максимума: до 33%, 34-66%, свыше 66%. Это не клинические пороги и не возрастные нормативы.");
- else body+=para("Факторы представлены с коэффициентами. Это не расчет вероятности суицида; при необходимости нужна очная оценка безопасности.");
+ const analytic=mode==="analysis"?analytical711(d,rows):null;
+ const analyticPara=v=>{
+  const head=["title","subtitle","institution"].includes(v.kind);
+  return '<w:p><w:pPr><w:jc w:val="'+(head?"center":v.kind==="meta"?"left":"both")+'"/>'+
+   '<w:spacing w:after="155" w:line="335" w:lineRule="auto"/></w:pPr><w:r>'+
+   '<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/>'+
+   '<w:sz w:val="'+(v.kind==="title"?32:28)+'"/>'+(head?"<w:b/>":"")+'</w:rPr>'+
+   '<w:t xml:space="preserve">'+x(v.text)+'</w:t></w:r></w:p>';
+ };
+ let body;
+ if(analytic)body=analytic.lines.map(analyticPara).join("")+window.PSY_ANALYTIC_SIGNATURES.word(rows);
+ else{
+  body=para(cfg(d).name)+para(mode==="class"?"Результаты "+(grade?grade+" класса":"класса"):"Результат участника")+para("Дата: "+new Date().toLocaleDateString("ru-RU"));
+  body+=table([["№","Участник",...scales.map(s=>s.name)],...rowsData],fill);
+  if(d.id==="eysenck-40")body+=para("Интервалы каждой шкалы:")+table([["Баллы","Уровень"],["0-7","Низкий"],["8-14","Средний"],["15-20","Высокий"]],[["E4F1FB","E4F1FB"],["FFF0CF","FFF0CF"],["F9DEDC","F9DEDC"]]);
+  else if(d.id==="lazarus-wcq50")body+=para("Числа – сырые баллы по каждой копинг-стратегии. Цвета показывают условную долю максимума: до 33%, 34-66%, свыше 66%. Это не клинические пороги и не возрастные нормативы.");
+  else body+=para("Факторы представлены с коэффициентами. Это не расчет вероятности суицида; при необходимости нужна очная оценка безопасности.");
+ }
  const documentXml='<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+
- '<w:sectPr><w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="680" w:bottom="680" w:left="680" w:right="680"/></w:sectPr></w:body></w:document>';
+ '<w:sectPr>'+(analytic?'<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:bottom="850" w:left="850" w:right="850"/>':'<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="680" w:bottom="680" w:left="680" w:right="680"/>')+'</w:sectPr></w:body></w:document>';
  const contentTypes='<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
  const rel='<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
  const encoder=new TextEncoder(),tab=new Uint32Array(256);
@@ -939,7 +998,7 @@ function report(d,rows,mode,index){
  }
  const directory=join(central),end=new Uint8Array(22);u32(end,0,0x06054b50);u16(end,8,central.length);u16(end,10,central.length);u32(end,12,directory.length);u32(end,16,offset);
  const archive=join([...local,directory,end]),url=URL.createObjectURL(new Blob([archive],{type:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"}));
- const a=document.createElement("a");a.href=url;a.download="Metolaria_"+d.id+(mode==="class"?"_class":"_participant")+"_results.docx";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);return true;
+ const a=document.createElement("a");a.href=url;a.download=mode==="analysis"?"Metolaria_"+d.id+"_analiticheskaya_spravka.docx":"Metolaria_"+d.id+(mode==="class"?"_class":"_participant")+"_results.docx";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);return true;
 }
 const old={supports:base.supports,scoring:base.scoring,done:base.done,bind:base.bind,group:base.group,report:base.report,csv:base.csv,calculator:m.calculator,instruction:m.instruction,materials:m.materials,printPage:m.printPage};
 base.supports=d=>supports(d)||old.supports(d);
