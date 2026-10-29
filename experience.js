@@ -979,21 +979,47 @@ function openMethod(m){
 }
 window.openMethod=openMethod;
 render();
-window.addEventListener("load",async()=>{
+/* Direct links from favorites, folders and saved assessments must open a method, not only the library. */
+let requestedMethodOpened=false;
+function resolveMethodByName(value){
+ const normalize=s=>String(s||"").normalize("NFKC").toLocaleLowerCase("ru").replace(/ё/g,"е").replace(/[^\p{L}\p{N}]+/gu," ").trim();
+ const requested=normalize(value);
+ return C.find(m=>m.name===value)||C.find(m=>normalize(m.name)===requested)||null;
+}
+async function openRequestedLibraryMethod(){
  const q=new URLSearchParams(location.search),name=q.get("method"),assessment=q.get("assessment");
  if(!name)return;
- const found=C.find(m=>m.name===name)||C.find(m=>m.name?.localeCompare(name,"ru",{sensitivity:"base"})===0);
- if(!found)return;
- openMethod(found);
+ const found=resolveMethodByName(name);
+ if(!found){
+  const search=document.querySelector("#search");
+  if(search){search.value=name;state.query=name;render()}
+  return;
+ }
+ if(!requestedMethodOpened){openMethod(found);requestedMethodOpened=true;}
  if(!assessment)return;
  try{
-  const data=await window.PSY_CLOUD?.getAssessment(assessment);
+  const cloud=window.PSY_CLOUD;
+  if(!cloud)throw Error("Облачное хранилище не загружено");
+  const data=await cloud.getAssessment(assessment);
   if(!data||data.method_name!==found.name)throw Error("Методика не совпадает с сохраненной");
   activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=data.title;
-  calcMode=data.snapshot.calcMode;rows=data.snapshot.rows;
+  calcMode=data.snapshot.calcMode;rows=data.snapshot.rows.length?data.snapshot.rows:[{name:"",answers:[]}];
   rowIndex=Math.max(0,Math.min(rows.length-1,data.snapshot.rowIndex));
   modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
   methodSessions[found.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex};
   setTab("score");
  }catch(e){alert("Не удалось открыть сохраненное обследование: "+e.message)}
-},{once:true});
+}
+if(new URLSearchParams(location.search).has("method")){
+ const name=new URLSearchParams(location.search).get("method");
+ const match=resolveMethodByName(name);
+ if(match){openMethod(match);requestedMethodOpened=true;}
+}
+if(document.readyState==="complete")openRequestedLibraryMethod();
+else window.addEventListener("load",openRequestedLibraryMethod,{once:true});
+window.addEventListener("psy-assessment-dirty",()=>{
+ const save=document.getElementById("cpSaveBottom")||document.getElementById("mspssSaveBottom");
+ if(!save)return;
+ save.textContent=activeSavedAssessmentId?"Сохранить изменения":"Сохранить результат";
+ save.classList.remove("psy-is-saved");
+});
