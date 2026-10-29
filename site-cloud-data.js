@@ -5,6 +5,18 @@
  let user=null,client=null,queue=Promise.resolve(),loading=true,dirtyPending=false;
  const blank=()=>({favorites:[],folders:[]});
  const key=()=>user?"psy-collections-v1:"+user.id:null;
+ const pendingKey=()=>user?"psy-collections-pending-v1:"+user.id:null;
+ const isPending=()=>{try{return !!(pendingKey()&&localStorage.getItem(pendingKey()))}catch(_){return false}};
+ const setPending=flag=>{try{if(!pendingKey())return;if(flag)localStorage.setItem(pendingKey(),"1");else localStorage.removeItem(pendingKey())}catch(_){}};
+ const mergeUnsent=(cloud,local)=>{
+  const cloudData=normalize(cloud),localData=normalize(local),folders=cloudData.folders.slice();
+  for(const f of localData.folders){
+   const old=folders.find(x=>x.id===f.id);
+   if(old){old.methods=[...new Set([...old.methods,...f.methods])];old.name=f.name;old.color=f.color;old.description=f.description}
+   else folders.push(f);
+  }
+  return normalize({favorites:[...new Set([...cloudData.favorites,...localData.favorites])],folders});
+ };
  const normalize=d=>({
   favorites:Array.isArray(d?.favorites)?[...new Set(d.favorites.filter(x=>typeof x==="string").map(x=>x.slice(0,220)))]:[],
   folders:Array.isArray(d?.folders)?d.folders.filter(f=>f&&typeof f.name==="string").map(f=>({
@@ -25,13 +37,22 @@
  const ready=Promise.resolve(identity?.ready).then(async()=>{
   user=identity?.user||null;client=identity?.client||null;
   if(!user||!client){loading=false;return false}
+  dirtyPending=dirtyPending||isPending();
   const {data,error}=await client.from("psy_user_collections").select("data").eq("user_id",user.id).maybeSingle();
   if(error){message("Избранное не синхронизировано: "+error.message);loading=false;return false}
-  if(data?.data){if(!dirtyPending)putLocal(data.data)}else{
+  if(data?.data){
+   if(dirtyPending){
+    const recovered=mergeUnsent(data.data,readLocal());
+    const write=await client.from("psy_user_collections").upsert({user_id:user.id,data:recovered,updated_at:new Date().toISOString()});
+    if(write.error)message("Подборки остались на этом устройстве, облачное восстановление не выполнено: "+write.error.message);
+    else{putLocal(recovered);dirtyPending=false;setPending(false)}
+   }else putLocal(data.data);
+  }else{
    const local=readLocal();
    if(local.favorites.length||local.folders.length){
     const write=await client.from("psy_user_collections").upsert({user_id:user.id,data:local,updated_at:new Date().toISOString()});
-    if(write.error)message("Не удалось перенести подборки на сервер: "+write.error.message);
+    if(write.error){dirtyPending=true;setPending(true);message("Не удалось перенести подборки на сервер: "+write.error.message)}
+    else{dirtyPending=false;setPending(false)}
    }
   }
   loading=false;
@@ -40,13 +61,13 @@
  }).catch(e=>{loading=false;message("Ошибка облачного подключения: "+e.message);return false});
  const saveCollections=d=>{
   const copy=normalize(d);
-  dirtyPending=true;putLocal(copy);
+  dirtyPending=true;putLocal(copy);setPending(true);
   queue=queue.catch(()=>{}).then(async()=>{
    await ready;
    if(!client||!user)throw Error("Для синхронизации нужен вход в аккаунт");
    const {error}=await client.from("psy_user_collections").upsert({user_id:user.id,data:copy,updated_at:new Date().toISOString()});
    if(error)throw error;
-   dirtyPending=false;putLocal(copy);
+   dirtyPending=false;setPending(false);putLocal(copy);
    window.dispatchEvent(new CustomEvent("psy-collections-synced"));
   }).catch(e=>{message("Папки сохранены на этом устройстве, но облачная синхронизация не удалась: "+e.message);throw e});
   return queue;
