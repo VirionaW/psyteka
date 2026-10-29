@@ -351,7 +351,7 @@
  function analyticPreview(d,rows){
   const a=analyticSummary(d,rows);
   return a?'<section class="psy-cp-analytic-preview"><h3>Аналитическая справка</h3>'+
-   a.lines.filter(x=>!["title","subtitle","meta"].includes(x.kind)).map(x=>'<p>'+esc(x.text)+'</p>').join("")+'</section>':"";
+   a.lines.filter(x=>x.kind!=="title").map(x=>'<p class="psy-cp-analytic-'+x.kind+'">'+esc(x.text)+'</p>').join("")+'</section>':"";
  }
 
  function phillipsClassReference(d,rows){
