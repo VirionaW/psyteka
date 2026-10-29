@@ -108,7 +108,7 @@
     SCALES.map((scale,k)=>{
      if(!z)return '<td class="psy-ph-score"></td>';
      const p=z.scales[k].percent;
-     return '<td class="psy-ph-score psy-ph-tone-'+(p>75?"high":p>50?"raised":"ordinary")+'">'+Math.round(p)+'</td>';
+     return '<td class="psy-ph-score"><span class="psy-ph-score-mark psy-ph-tone-'+(p>75?"high":p>50?"raised":"ordinary")+'">'+Math.round(p)+'</span></td>';
     }).join("")+'</tr>';
   }).join("");
   return '<div class="psy-ph-scroll psy-ph-class-results"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div>';
