@@ -389,3 +389,19 @@ html.dark .site-landing #siteHome .psy-text-link{color:#c5e5c8}
  .site-landing #siteHome .section-card>span{transition:none!important}
  .site-landing #siteHome .section-card:hover{transform:none!important}
 }
+
+
+/* METOLARIA MISSION IMAGE FIT 20261029 – retain the approved artwork without overflow. */
+.site-landing #siteHome #about .psy-mission-art{
+ position:relative!important;isolation:isolate;overflow:visible;
+}
+.site-landing #siteHome #about .psy-mission-art>img{
+ position:absolute!important;inset:0!important;
+ display:block!important;width:100%!important;height:100%!important;
+ max-width:none!important;max-height:none!important;
+ border-radius:26px!important;object-fit:cover!important;object-position:center center!important;
+ opacity:1!important;visibility:visible!important;
+ filter:saturate(1.08) contrast(1.04)!important;
+}
+.site-landing #siteHome #about .psy-mission-art:before{z-index:-1!important}
+.site-landing #siteHome #about .psy-mission-note{z-index:2}
