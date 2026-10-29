@@ -6,6 +6,11 @@
  const allowed=new Set(["school","preschool","adults","special","documents","spt","prevention","information","pmpk"]);
  const sidebar=document.getElementById("sidebar");
  const main=document.querySelector("main.main");
+ // Only tree groups are expandable content. The sidebar itself is controlled
+ // by site-panel-toggle.js and must NEVER receive a hidden attribute here.
+ const navigable=new Set(["schoolTree","preschoolTree","specialTree","diagnosticsGroup",
+  "correctionGroup","informationGroup","testingGroup",
+  "preschoolGroup0","preschoolGroup1","preschoolGroup2","preschoolGroup3"]);
  function capture(){
   try{
    const route=new URLSearchParams(location.search).get("area");
@@ -19,9 +24,9 @@
    const expanded=Array.from(document.querySelectorAll("button[aria-controls][aria-expanded]"))
     .map(b=>({id:b.id||null,view:b.dataset.view||null,section:b.dataset.section||null,
      controls:b.getAttribute("aria-controls"),open:b.getAttribute("aria-expanded")==="true"}))
-    .filter(x=>x.controls);
+    .filter(x=>navigable.has(x.controls));
    sessionStorage.setItem(KEY,JSON.stringify({
-    area,school,expanded,
+    area,school,expanded,modalOpen:!document.getElementById("modal")?.hidden,
     windowY:Math.max(0,window.scrollY||document.documentElement.scrollTop||0),
     mainY:Math.max(0,main?.scrollTop||0),
     sidebarY:Math.max(0,sidebar?.scrollTop||0)
@@ -36,7 +41,7 @@
  function restore(){
   // Keep the direction, navigation tree and nested subtopics exactly as they were.
   for(const item of saved.expanded||[]){
-   if(!item.controls)continue;
+   if(!navigable.has(item.controls))continue;
    const b=Array.from(document.querySelectorAll("button[aria-controls]"))
     .find(el=>el.getAttribute("aria-controls")===item.controls &&
       (!item.view||el.dataset.view===item.view));
