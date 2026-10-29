@@ -163,7 +163,7 @@
   const qty=clean(item.count||d?.count||profile?.count||m.count||"");
   const quantity=qty&&!/не уточнено|не подтвержден|возможная|сведения уточняют/i.test(qty)?clip(qty,74):isProgram?"Материалы программы":"Количество заданий уточняется";
   const preferredSummary=item.summary||m.summary||d?.goal||profile?.goal||m.goal||"";
-  const fallback=placeholder.test(preferredSummary)?d?.goal||profile?.goal||m.summary||"":preferredSummary;
+  const fallback=placeholder.test(preferredSummary)?[d?.goal,profile?.goal,m.summary].find(x=>x&&!placeholder.test(clean(x)))||"":preferredSummary;
   const summary=clip(fallback||"Описание задачи методики содержится в руководстве выбранной версии.",150);
   return {author,type:type||"Вид методики уточняется",age,quantity,summary,confirmedAge:age!=="Возраст уточняется",confirmedQuantity:quantity!=="Количество заданий уточняется",category:m.theme};
  }
