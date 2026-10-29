@@ -979,3 +979,21 @@ function openMethod(m){
 }
 window.openMethod=openMethod;
 render();
+window.addEventListener("load",async()=>{
+ const q=new URLSearchParams(location.search),name=q.get("method"),assessment=q.get("assessment");
+ if(!name)return;
+ const found=C.find(m=>m.name===name)||C.find(m=>m.name?.localeCompare(name,"ru",{sensitivity:"base"})===0);
+ if(!found)return;
+ openMethod(found);
+ if(!assessment)return;
+ try{
+  const data=await window.PSY_CLOUD?.getAssessment(assessment);
+  if(!data||data.method_name!==found.name)throw Error("Методика не совпадает с сохраненной");
+  activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=data.title;
+  calcMode=data.snapshot.calcMode;rows=data.snapshot.rows;
+  rowIndex=Math.max(0,Math.min(rows.length-1,data.snapshot.rowIndex));
+  modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
+  methodSessions[found.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex};
+  setTab("score");
+ }catch(e){alert("Не удалось открыть сохраненное обследование: "+e.message)}
+},{once:true});
