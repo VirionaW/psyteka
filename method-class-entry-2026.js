@@ -419,7 +419,7 @@
   const para=(s,kind="")=>'<w:p>'+(kind==="head"?'<w:pPr><w:pStyle w:val="Heading1"/></w:pPr>':kind==="sub"?'<w:pPr><w:pStyle w:val="Heading2"/></w:pPr>':'')+run(s,kind!=="")+'</w:p>';
   const cell=(s)=>'<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/></w:tcPr>'+para(s)+'</w:tc>';
   const table=(head,body)=>{
-   const widths=!isCDI&&mode==="class"&&head.length===10?[550,2200,...Array(8).fill(1620)]:head.map(()=>1200);
+   const widths=!isCDI&&mode==="class"&&head.length===10?[550,2200,...Array(8).fill(1620)]:!isCDI&&mode==="class"&&head.length===4&&head[0]==="Показатель"?[5000,3450,3700,3450]:head.map(()=>1200);
    const all=[head,...body];return '<w:tbl><w:tblPr><w:tblW w:w="'+widths.reduce((a,b)=>a+b,0)+'" w:type="dxa"/><w:tblBorders><w:top w:val="single" w:sz="5"/><w:left w:val="single" w:sz="5"/><w:bottom w:val="single" w:sz="5"/><w:right w:val="single" w:sz="5"/><w:insideH w:val="single" w:sz="5"/><w:insideV w:val="single" w:sz="5"/></w:tblBorders></w:tblPr>'+
      '<w:tblGrid>'+widths.map(w=>'<w:gridCol w:w="'+w+'"/>').join("")+'</w:tblGrid>'+
      all.map(row=>'<w:tr>'+row.map(cell).join("")+'</w:tr>').join("")+'</w:tbl>';
@@ -444,7 +444,7 @@
   body+=table(columns,summary);
   if(mode==="class"&&!isCDI){
    const stats=phillipsStats(d,people);
-   body+=para("Справка по классу","sub")+para("Полностью обработано: "+stats.total+" из "+people.length+". Число детей и доля от обработанных анкет.");
+   body+='<w:p><w:pPr><w:pageBreakBefore/></w:pPr>'+run("Справка по классу",true)+'</w:p>'+para("Полностью обработано: "+stats.total+" из "+people.length+". Число детей и доля от обработанных анкет.");
    if(stats.total)body+=table(["Показатель","Не превышает 50%","Повышенный >50-75%","Высокий >75%"],
     stats.rows.map(x=>[x.name,countByLevel(x.ordinary,stats.total),countByLevel(x.raised,stats.total),countByLevel(x.high,stats.total)]));
    body+=para("Пороги отражают показатели по методике Филлипса, а не клинические диагнозы.");
