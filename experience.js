@@ -1071,6 +1071,13 @@ window.PSY_PROCESSING_NOTEBOOK={
   rowIndex=Math.max(0,Math.min(rows.length-1,data.snapshot.rowIndex||0));
   modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
   methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords};
+  try{
+   const u=new URL(location.href);
+   if(u.searchParams.has("method")){
+    u.searchParams.set("assessment",data.id);
+    history.replaceState(history.state,"",u.pathname+u.search+u.hash);
+   }
+  }catch(_){}
   setTab(tabNow==="processing"?"processing":"score");
   return true;
  },
@@ -1089,6 +1096,13 @@ window.PSY_PROCESSING_NOTEBOOK={
   activeSavedAssessmentId=null;
   activeSavedAssessmentTitle="";
   methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords};
+  try{
+   const u=new URL(location.href);
+   if(u.searchParams.has("assessment")){
+    u.searchParams.delete("assessment");
+    history.replaceState(history.state,"",u.pathname+u.search+u.hash);
+   }
+  }catch(_){}
   setTab(tabNow==="processing"?"processing":"score");
   return true;
  }
