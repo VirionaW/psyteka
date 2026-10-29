@@ -362,11 +362,91 @@
   const head=type(d)==="cdi"?"<th>Сырой / 54</th><th>Т-балл</th>":"<th>Общий / 58</th><th>Процент</th>"+phillips.scales.map((s,i)=>"<th>Ф"+(i+1)+"</th>").join("");
   const entries=selected.map((r,i)=>{const z=scoring(d,r),t=z&&type(d)==="cdi"?norms.norm(z.raw,r.ageYears,r.sex):null;return '<tr><td>'+esc(r.name||"У-"+(i+1))+'</td><td>'+(r.attendance==="absent"?"Отсутствовал":z?"Обработан":"Неполная анкета")+'</td>'+(type(d)==="cdi"?'<td>'+(z?z.raw:"–")+'</td><td>'+(t?.t??"–")+'</td>':'<td>'+(z?z.raw:"–")+'</td><td>'+(z?z.percent.toFixed(1)+"%":"–")+'</td>'+phillips.scales.map((s,j)=>'<td>'+(z?z.scales[j].percent.toFixed(1)+"%":"–")+'</td>').join(""))+'</tr>'}).join("");
   const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Отчет Метоларии</title><style>@page{size:A4 landscape;margin:13mm}body{font:11pt Arial;color:#1c392b}h1{font-size:18pt}table{border-collapse:collapse;width:100%;font-size:9pt}td,th{border:1px solid #abc1b4;padding:7px;text-align:left}thead{background:#e8f3ec}p{line-height:1.5}</style></head><body><h1>'+esc(type(d)==="cdi"?"Опросник детской депрессии М. Ковач (CDI)":"Тест школьной тревожности Филлипса")+'</h1><p>Дата: '+new Date().toLocaleDateString("ru-RU")+' · '+(mode==="class"?"Отчет класса":"Индивидуальный отчет")+'</p><table><thead><tr><th>Ученик</th><th>Статус</th>'+head+'</tr></thead><tbody>'+entries+'</tbody></table><p>Результаты не являются диагнозом. Отсутствующие и неполные анкеты исключены из подсчета.</p></body></html>';
-  return save("Metolaria_"+(type(d)==="cdi"?"CDI":"Phillips")+(mode==="class"?"_class":"_participant")+"_report.html",html,"text/html;charset=utf-8");
+  return wordDocument(d,rows,mode,index);
  }
  function save(name,body,mime){
   const uri=URL.createObjectURL(new Blob([body],{type:mime})),a=document.createElement("a");a.href=uri;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(uri),1000);return true;
  }
+ /* Build a real offline OOXML .docx (ZIP stored entries), without CDN or remote upload. */
+ function wordDocument(d,rows,mode,index){
+  const people=(mode==="class"?alpha(rows):[rows[index]]).filter(Boolean);
+  const isCDI=type(d)==="cdi";
+  if(!people.length)return false;
+  const xmlEscape=s=>String(s??"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,"").replace(/[<>&"']/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;","'":"&apos;"}[c]));
+  const run=(s,bold=false)=>'<w:r>'+(bold?'<w:rPr><w:b/></w:rPr>':'')+'<w:t xml:space="preserve">'+xmlEscape(s)+'</w:t></w:r>';
+  const para=(s,kind="")=>'<w:p>'+(kind==="head"?'<w:pPr><w:pStyle w:val="Heading1"/></w:pPr>':kind==="sub"?'<w:pPr><w:pStyle w:val="Heading2"/></w:pPr>':'')+run(s,kind!=="")+'</w:p>';
+  const cell=(s)=>'<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/></w:tcPr>'+para(s)+'</w:tc>';
+  const table=(head,body)=>{
+   const all=[head,...body];return '<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders><w:top w:val="single" w:sz="5"/><w:left w:val="single" w:sz="5"/><w:bottom w:val="single" w:sz="5"/><w:right w:val="single" w:sz="5"/><w:insideH w:val="single" w:sz="5"/><w:insideV w:val="single" w:sz="5"/></w:tblBorders></w:tblPr>'+
+     '<w:tblGrid>'+head.map(()=>'<w:gridCol w:w="1200"/>').join("")+'</w:tblGrid>'+
+     all.map(row=>'<w:tr>'+row.map(cell).join("")+'</w:tr>').join("")+'</w:tbl>';
+  };
+  const title=isCDI?"Опросник детской депрессии М. Ковач (CDI)":"Тест школьной тревожности Филлипса";
+  const describe=r=>{
+   const z=scoring(d,r);
+   if(r.attendance==="absent")return "Отсутствовал";
+   if(!z)return "Не завершено ("+done(d,r.answers)+" из "+size(d)+")";
+   return "Обработан";
+  };
+  let body=para(title,"head")+para("Метолария · "+(mode==="class"?"Отчет группы / класса":"Индивидуальный отчет")+" · "+new Date().toLocaleDateString("ru-RU"));
+  body+=para("Сводные результаты","sub");
+  const columns=isCDI?["Участник","Статус","Возраст","Пол","Сырой / 54","Т-балл"]:["Участник","Статус","Общий / 58","Процент"];
+  const summary=people.map((r,i)=>{
+   const z=scoring(d,r),n=isCDI&&z?norms.norm(z.raw,r.ageYears,r.sex):null;
+   const base=[r.name||"У-"+String(i+1).padStart(2,"0"),describe(r)];
+   return isCDI?[...base,r.ageYears??"–",r.sex==="f"?"Девочка":r.sex==="m"?"Мальчик":"Не указан",z?.raw??"–",n?.t??"–"]:
+      [...base,z?.raw??"–",z?z.percent.toFixed(1)+"%":"–"];
+  });
+  body+=table(columns,summary);
+  if(mode==="class"){
+   const completed=people.filter(r=>!!scoring(d,r)).length,absent=people.filter(r=>r.attendance==="absent").length;
+   body+=para("Всего в списке: "+people.length+"; заполнено: "+completed+"; отсутствуют: "+absent+".");
+  }
+  for(let i=0;i<people.length;i++){
+   const r=people[i],z=scoring(d,r),n=isCDI&&z?norms.norm(z.raw,r.ageYears,r.sex):null;
+   if(i>0)body+='<w:p><w:pPr><w:pageBreakBefore/></w:pPr></w:p>';
+   body+=para("Результат: "+(r.name||"У-"+(i+1)),"sub")+para("Статус: "+describe(r));
+   if(isCDI){
+    body+=para("Возраст: "+(r.ageYears??"не указан")+" лет; пол: "+(r.sex==="f"?"девочка":r.sex==="m"?"мальчик":"не указан"));
+    body+=para("Общий сырой балл: "+(z?z.raw+" из 54":"не рассчитан"));
+    body+=para("Т-балл: "+(n?.t??"не рассчитан"));
+    if(n)body+=para(n.status==="ok"?n.level:n.message);
+    body+=para("Ответы по пунктам (закодированные баллы; при отсутствии ребенка исключены)","sub");
+    body+=table(["Пункт","Балл"],Array.from({length:27},(_,j)=>[String(j+1),r.attendance==="absent"?"–":valid(r.answers?.[j],d)?String(r.answers[j]):"–"]));
+   }else{
+    body+=para("Общий показатель: "+(z?z.raw+" из 58, "+z.percent.toFixed(1)+"%":"не рассчитан"));
+    if(z)body+=table(["Фактор","Число несовпадений","Процент"],z.scales.map(s=>[s.name,String(s.raw)+" из "+s.max,s.percent.toFixed(1)+"%"]));
+   }
+  }
+  body+=para("Результаты не являются диагнозом. Необследованные и отсутствующие дети не включены в сводный расчет.");
+  const doc='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+   '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+
+   '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:bottom="850" w:left="850" w:right="850"/></w:sectPr></w:body></w:document>';
+  const types='<?xml version="1.0" encoding="UTF-8"?>'+
+   '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
+  const rels='<?xml version="1.0" encoding="UTF-8"?>'+
+   '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
+  const textEnc=new TextEncoder(),crcTable=new Uint32Array(256);
+  for(let n=0;n<256;n++){let z=n;for(let k=0;k<8;k++)z=(z&1)?0xedb88320^(z>>>1):z>>>1;crcTable[n]=z>>>0;}
+  const crc32=buf=>{let crc=0xffffffff;for(const b of buf)crc=crcTable[(crc^b)&255]^(crc>>>8);return (crc^0xffffffff)>>>0;};
+  const u16=(a,v,o)=>{a[o]=v&255;a[o+1]=(v>>>8)&255;};
+  const u32=(a,v,o)=>{u16(a,v,o);u16(a,v>>>16,o+2);};
+  const join=parts=>{const n=parts.reduce((a,x)=>a+x.length,0),out=new Uint8Array(n);let pos=0;for(const x of parts){out.set(x,pos);pos+=x.length;}return out;};
+  let offset=0;const locals=[],centers=[];
+  for(const [name,xml] of [["[Content_Types].xml",types],["_rels/.rels",rels],["word/document.xml",doc]]){
+   const nameBytes=textEnc.encode(name),data=textEnc.encode(xml),crc=crc32(data);
+   const local=new Uint8Array(30+nameBytes.length);u32(local,0x04034b50,0);u16(local,20,4);u16(local,0,6);u16(local,0,8);u32(local,crc,14);
+   u32(local,data.length,18);u32(local,data.length,22);u16(local,nameBytes.length,26);local.set(nameBytes,30);
+   locals.push(local,data);
+   const center=new Uint8Array(46+nameBytes.length);u32(center,0x02014b50,0);u16(center,20,4);u16(center,20,6);u32(center,crc,16);
+   u32(center,data.length,20);u32(center,data.length,24);u16(center,nameBytes.length,28);u32(center,offset,42);center.set(nameBytes,46);
+   centers.push(center);offset+=local.length+data.length;
+  }
+  const central=join(centers),end=new Uint8Array(22);u32(end,0x06054b50,0);u16(end,centers.length,8);u16(end,centers.length,10);u32(end,central.length,12);u32(end,offset,16);
+  const zip=join([...locals,central,end]);
+  return save("Metolaria_"+(isCDI?"CDI":"Phillips")+(mode==="class"?"_class":"_participant")+"_results.docx",zip,"application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+ }
+
  function csv(d,rows){
   const head=["Ученик","Статус",...(type(d)==="cdi"?["Возраст","Пол","Сырой балл","Т-балл"]:["Общий балл","%",...phillips.scales.map(x=>x.name)]),...Array.from({length:size(d)},(_,i)=>"Пункт "+(i+1))];
   const records=[head,...alpha(rows).map((r,i)=>{const z=scoring(d,r),t=z&&type(d)==="cdi"?norms.norm(z.raw,r.ageYears,r.sex):null;
