@@ -602,3 +602,18 @@ html.dark .library-page #modal.psy-mspss-example .psy-cdi-total-t.psy-cdi-tone-o
 html.dark .library-page #modal.psy-mspss-example .psy-cdi-lock-note{background:#4d391e;color:#ffecb4;border-color:#c6a064}
 .library-page #modal.psy-mspss-example .psy-cdi-estimate{display:block;padding:8px;margin:8px 0;border:1px dashed currentColor;border-radius:8px;font-size:12px;line-height:1.4}
 .library-page #modal.psy-mspss-example input.psy-cp-answer:disabled{opacity:.55;cursor:not-allowed}
+
+
+/* Цветовая обработка шкал Айзенка, Лазаруса и Разуваевой */
+.psy-semester-result-table table{min-width:520px}
+.psy-semester-result-table td{vertical-align:middle}
+.psy-semester-score{display:inline-block;border:1px solid transparent;padding:5px 10px;border-radius:8px;font-weight:800;min-width:2.5em;text-align:center;font-variant-numeric:tabular-nums}
+.psy-semester-score.is-low{background:#dcefe3;border-color:#9dceb0;color:#145632}
+.psy-semester-score.is-medium{background:#ffe8ba;border-color:#e4b76e;color:#744408}
+.psy-semester-score.is-high{background:#8d2026;border-color:#6c121b;color:#fff}
+.psy-semester-score.is-neutral{background:#e8edf1;border-color:#b8c9d3;color:#223b4d}
+.psy-semester-denom{margin-left:5px;font-size:.88em;color:var(--text-muted,#52655a)}
+[data-theme="dark"] .psy-semester-score.is-low,.dark .psy-semester-score.is-low{background:#17432c;color:#c6f4d6;border-color:#417e57}
+[data-theme="dark"] .psy-semester-score.is-medium,.dark .psy-semester-score.is-medium{background:#603d12;color:#fff1ca;border-color:#a57b36}
+[data-theme="dark"] .psy-semester-score.is-high,.dark .psy-semester-score.is-high{background:#8d2026;color:#fff;border-color:#bf6b70}
+[data-theme="dark"] .psy-semester-score.is-neutral,.dark .psy-semester-score.is-neutral{background:#284150;color:#e6f2f8;border-color:#688390}
