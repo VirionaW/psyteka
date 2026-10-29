@@ -282,7 +282,8 @@
    return {name:item.name,ordinary,raised,high};
   })};
  }
- const classPercent=(count,total)=>total?(100*count/total).toFixed(1).replace(".",",")+"%":"0%";
+ const classPercent=(count,total)=>total?Math.round(100*count/total)+"%":"0%";
+ const phillipsColor=p=>p>75?"high":p>50?"raised":"ordinary";
  const countByLevel=(count,total)=>count+" ("+classPercent(count,total)+")";
  function phillipsClassReference(d,rows){
   const stats=phillipsStats(d,rows);
@@ -304,11 +305,15 @@
    return '<section class="psy-mspss-group psy-cdi-class-results"><h3>Результаты класса</h3>'+
     '<div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th><th>Т-балл</th><th>Интерпретация</th></tr></thead><tbody>'+body+'</tbody></table></div></section>';
   }
-  const head=phillips.scales.map(scale=>'<th scope="col">'+esc(scale.name)+'</th>').join("");
+  const head=phillips.scales.map(scale=>'<th scope="col">'+esc(scale.name+", %")+'</th>').join("");
   const body=ordered.map((r,i)=>{
    const z=scoring(d,r);
-   return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td>'+
-    phillips.scales.map((scale,j)=>'<td>'+(z?z.scales[j].percent.toFixed(1).replace(".",",")+"%":"–")+'</td>').join("")+'</tr>';
+   return '<tr><td class="psy-ph-number">'+(i+1)+'</td><td class="psy-ph-name">'+esc(r.name||"У-"+String(i+1).padStart(2,"0"))+'</td>'+
+    phillips.scales.map((scale,j)=>{
+     if(!z)return '<td class="psy-ph-score"></td>';
+     const percent=z.scales[j].percent;
+     return '<td class="psy-ph-score psy-ph-tone-'+phillipsColor(percent)+'">'+Math.round(percent)+'</td>';
+    }).join("")+'</tr>';
   }).join("");
   return '<section class="psy-mspss-group psy-ph-class-results"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div></section>'+phillipsClassReference(d,rows);
  }
@@ -418,11 +423,25 @@
   const run=(s,bold=false)=>'<w:r>'+(bold?'<w:rPr><w:b/></w:rPr>':'')+'<w:t xml:space="preserve">'+xmlEscape(s)+'</w:t></w:r>';
   const para=(s,kind="")=>'<w:p>'+(kind==="head"?'<w:pPr><w:pStyle w:val="Heading1"/></w:pPr>':kind==="sub"?'<w:pPr><w:pStyle w:val="Heading2"/></w:pPr>':'')+run(s,kind!=="")+'</w:p>';
   const cell=(s)=>'<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/></w:tcPr>'+para(s)+'</w:tc>';
-  const table=(head,body)=>{
+  // Separate Word formatting for Phillips only; CDI and individual reports are untouched.
+  const phCell=(s,header,left,width,percent)=>{
+   const fill=Number.isFinite(percent)?(percent>75?"FBE0E0":percent>50?"FFF0C9":"E2F3E8"):null;
+   const tcPr='<w:tcPr><w:tcW w:w="'+width+'" w:type="dxa"/><w:vAlign w:val="center"/>'+
+    (fill?'<w:shd w:val="clear" w:color="auto" w:fill="'+fill+'"/>':"")+'</w:tcPr>';
+   const rPr='<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>'+
+    '<w:sz w:val="22"/><w:szCs w:val="22"/>'+(header?"<w:b/>":"")+'</w:rPr>';
+   return '<w:tc>'+tcPr+'<w:p><w:pPr><w:jc w:val="'+(left?"left":"center")+'"/><w:spacing w:after="0"/></w:pPr>'+
+    '<w:r>'+rPr+'<w:t xml:space="preserve">'+xmlEscape(s)+'</w:t></w:r></w:p></w:tc>';
+  };
+  const table=(head,body,format="",percentRows=[])=>{
    const widths=!isCDI&&mode==="class"&&head.length===10?[550,2200,...Array(8).fill(1620)]:!isCDI&&mode==="class"&&head.length===4&&head[0]==="Показатель"?[5000,3450,3700,3450]:head.map(()=>1200);
-   const all=[head,...body];return '<w:tbl><w:tblPr><w:tblW w:w="'+widths.reduce((a,b)=>a+b,0)+'" w:type="dxa"/><w:tblBorders><w:top w:val="single" w:sz="5"/><w:left w:val="single" w:sz="5"/><w:bottom w:val="single" w:sz="5"/><w:right w:val="single" w:sz="5"/><w:insideH w:val="single" w:sz="5"/><w:insideV w:val="single" w:sz="5"/></w:tblBorders></w:tblPr>'+
+   const all=[head,...body];return '<w:tbl><w:tblPr><w:tblW w:w="'+widths.reduce((a,b)=>a+b,0)+'" w:type="dxa"/>'+
+    (format?'<w:tblLayout w:type="fixed"/>':"")+
+    '<w:tblBorders><w:top w:val="single" w:sz="5"/><w:left w:val="single" w:sz="5"/><w:bottom w:val="single" w:sz="5"/><w:right w:val="single" w:sz="5"/><w:insideH w:val="single" w:sz="5"/><w:insideV w:val="single" w:sz="5"/></w:tblBorders></w:tblPr>'+
      '<w:tblGrid>'+widths.map(w=>'<w:gridCol w:w="'+w+'"/>').join("")+'</w:tblGrid>'+
-     all.map(row=>'<w:tr>'+row.map(cell).join("")+'</w:tr>').join("")+'</w:tbl>';
+     all.map((row,i)=>'<w:tr>'+(format&&i===0?'<w:trPr><w:tblHeader w:val="true"/></w:trPr>':"")+
+      row.map((text,j)=>format?phCell(text,i===0,format==="scores"?j===1:j===0,widths[j],
+       format==="scores"&&i>0&&j>=2?percentRows[i-1]?.[j-2]:null):cell(text)).join("")+'</w:tr>').join("")+'</w:tbl>';
   };
   const title=isCDI?"Опросник детской депрессии М. Ковач (CDI)":"Тест школьной тревожности Филлипса";
   const describe=r=>{
@@ -433,20 +452,20 @@
   };
   let body=para(title,"head")+para("Метолария · "+(mode==="class"?"Отчет группы / класса":"Индивидуальный отчет")+" · "+new Date().toLocaleDateString("ru-RU"));
   body+=para("Сводные результаты","sub");
-  const columns=isCDI?["№","Участник","Т-балл","Интерпретация"]:mode==="class"?["№","Участник",...phillips.scales.map(s=>s.name)]:["Участник","Статус","Общий / 58","Процент"];
+  const columns=isCDI?["№","Участник","Т-балл","Интерпретация"]:mode==="class"?["№","Участник",...phillips.scales.map(s=>s.name+", %")]:["Участник","Статус","Общий / 58","Процент"];
   const summary=people.map((r,i)=>{
    const z=scoring(d,r),n=isCDI&&z?norms.norm(z.raw,r.ageYears,r.sex):null;
    const base=[r.name||"У-"+String(i+1).padStart(2,"0"),describe(r)];
    return isCDI?Object.values(cdiClassRow(d,r,i)).map(String):mode==="class"?
-      [String(i+1),r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((s,j)=>z?z.scales[j].percent.toFixed(1).replace(".",",")+"%":"–")]:
+      [String(i+1),r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((s,j)=>z?Math.round(z.scales[j].percent):"")]:
       [...base,z?.raw??"–",z?z.percent.toFixed(1)+"%":"–"];
   });
-  body+=table(columns,summary);
+  body+=table(columns,summary,!isCDI&&mode==="class"?"scores":"",!isCDI&&mode==="class"?people.map(r=>scoring(d,r)?.scales.map(s=>s.percent)||[]):[]);
   if(mode==="class"&&!isCDI){
    const stats=phillipsStats(d,people);
    body+='<w:p><w:pPr><w:pageBreakBefore/></w:pPr>'+run("Справка по классу",true)+'</w:p>'+para("Полностью обработано: "+stats.total+" из "+people.length+". Число детей и доля от обработанных анкет.");
    if(stats.total)body+=table(["Показатель","Не превышает 50%","Повышенный >50-75%","Высокий >75%"],
-    stats.rows.map(x=>[x.name,countByLevel(x.ordinary,stats.total),countByLevel(x.raised,stats.total),countByLevel(x.high,stats.total)]));
+    stats.rows.map(x=>[x.name,countByLevel(x.ordinary,stats.total),countByLevel(x.raised,stats.total),countByLevel(x.high,stats.total)]),"reference");
    body+=para("Пороги отражают показатели по методике Филлипса, а не клинические диагнозы.");
   }
   if(!isCDI&&mode!=="class")for(let i=0;i<people.length;i++){
@@ -504,10 +523,10 @@
    const escapeCSV=x=>'"'+String(x??"").replace(/"/g,'""')+'"';
    return "\uFEFF"+[header,...data].map(row=>row.map(escapeCSV).join(";")).join("\r\n");
   }
-  const head=["№","Участник",...phillips.scales.map(scale=>scale.name)];
+  const head=["№","Участник",...phillips.scales.map(scale=>scale.name+", %")];
   const data=rows.filter(r=>r.name?.trim()||done(d,r.answers)).map((r,i)=>{
    const z=scoring(d,r);
-   return [i+1,r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((scale,j)=>z?z.scales[j].percent.toFixed(1).replace(".",",")+"%":"")];
+   return [i+1,r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((scale,j)=>z?Math.round(z.scales[j].percent):"")];
   });
   const cell=v=>{let s=String(v??"");if(/^\s*[=+@-]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';};
   return "\uFEFF"+[head,...data].map(row=>row.map(cell).join(";")).join("\r\n");
