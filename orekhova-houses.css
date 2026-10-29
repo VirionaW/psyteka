@@ -22,3 +22,48 @@ html.dark{color-scheme:dark;--paper:#17251e;--surface:#25382d;--ink:#f0f8ee;--so
 #printRoot{display:none}
 @page{size:A4;margin:13mm}
 @media print{body{background:#fff!important;color:#111!important;font:11pt/1.35 Arial,sans-serif}body>header,body>main,body>footer,body>#psy-preview-gate{display:none!important}#printRoot{display:block!important;position:static;color:#111;background:#fff}.print-page{break-after:page;page-break-after:always}.print-page:last-child{break-after:auto;page-break-after:auto}.print-page button,.print-page .action-row{display:none!important}.print-page h1{font-size:18pt;margin:0 0 6mm}.print-page h2{font-size:13pt;margin:5mm 0 2mm}.print-page p{font-size:10pt;margin:2.5mm 0}.print-page table{width:100%;border-collapse:collapse;font-size:10pt}.print-page td,.print-page th{border:1px solid #777;padding:4px 7px}.print-page .blank-preview{border:0;padding:0;max-width:none}.print-page .houses-grid{grid-template-columns:repeat(5,1fr);gap:12mm 4mm}.print-page .house{width:78px;height:62px}.print-page .blank-ranks div{height:38px}.print-page .source{font-size:9pt}}
+
+/* Домики Ореховой: раскрашиваем сами фигуры, не цветные индикаторы рядом с ними. */
+.wizard-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:0 0 18px}
+.wizard-step{border:1px solid var(--line);background:var(--surface);border-radius:13px;min-height:63px;display:flex;gap:9px;align-items:center;justify-content:flex-start;padding:11px 13px;color:var(--ink);font-size:14px;font-weight:750;text-align:left;line-height:1.25}
+.wizard-step span{flex:none;display:grid;place-items:center;border-radius:50%;width:28px;height:28px;background:var(--paper);border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.wizard-step.current{border:2px solid var(--green);padding:10px 12px;background:color-mix(in srgb,var(--green) 7%,var(--surface))}
+.wizard-step.current span{background:var(--green);color:#fff;border-color:var(--green)}
+.wizard-step.completed span{background:#d5ede0;border-color:#a4d5b5;color:#286046}
+.wizard-step:disabled{opacity:.52}
+.worksheet-step{display:none!important}.worksheet-step.current{display:block!important}
+.paint-tools{margin-bottom:18px}.paint-tools .palette{gap:10px}
+.paint-tools .color-option{font-size:14px;min-height:52px;padding:8px 13px}
+.paint-tools .color-option.selected{outline:3px solid var(--green);outline-offset:1px;background:color-mix(in srgb,var(--green) 9%,var(--surface))}
+.paint-tools .color-option .swatch{width:29px;height:29px}
+.active-color{display:flex;align-items:center;gap:9px;font-weight:800;background:var(--paper);padding:8px 12px;border:1px solid var(--line);border-radius:12px}
+.active-color .swatch{height:28px;width:28px}
+.step-kicker{font-size:12px!important;font-weight:850;letter-spacing:.07em;text-transform:uppercase;color:var(--green);margin:0 0 5px!important}
+.painting-rectangles{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:11px;margin:22px 0 8px}
+.paint-rect{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:space-between;min-width:0;aspect-ratio:0.88;border:2px solid #758a7a;border-radius:8px;background:var(--paint-fill,var(--surface));color:var(--ink);padding:9px 3px 6px;font-size:12px;font-weight:750;transition:transform .12s ease,border-color .12s ease}
+.paint-rect:hover,.paint-house:hover{transform:translateY(-2px);border-color:var(--green)}
+.paint-rect.filled{border-color:#415449;box-shadow:inset 0 0 0 2px #ffffff88}
+.paint-rect.filled .rect-position,.paint-rect.filled .rect-color-name{background:#fffffff0;color:#23382a;border-radius:6px;padding:2px 5px}
+.paint-rect.filled[style*="272727"] .rect-color-name{background:#fff}
+.paint-rect .rect-position{font-size:13px}
+.paint-rect .rect-color-name{max-width:100%;overflow-wrap:anywhere;line-height:1.25}
+.paint-rect.paint-selected{outline:3px solid var(--green);outline-offset:2px}
+.painting-houses{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:17px 15px;margin-top:22px}
+.paint-house-wrap{min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;gap:5px;border-radius:12px;padding:8px 4px 13px;background:var(--paper);border:1px solid var(--line)}
+.paint-house{border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;background:transparent;padding:7px 5px 4px;border-radius:12px;color:var(--ink);width:100%;min-height:135px;transition:transform .12s ease}
+.paint-house.filled{background:color-mix(in srgb,var(--green) 4%,var(--surface))}
+.house-shape{width:100%;max-width:130px;height:auto;aspect-ratio:124/120;overflow:visible}
+.house-index{font-size:12px;font-weight:700;color:var(--soft)}
+.house-caption{font-size:14px;font-weight:800;line-height:1.32;overflow-wrap:anywhere;min-height:34px}
+.house-chosen{font-size:12px;color:var(--soft);min-height:18px}
+.last-house{max-width:820px;margin:26px auto 6px;padding:20px;border-radius:14px;background:var(--paper);border:1px solid var(--line)}
+.last-house label{font-size:17px}
+.last-house textarea{width:100%;min-height:90px;margin-top:10px;border-radius:11px;padding:12px 14px;border:1px solid #b2c7b8;background:var(--surface);color:var(--ink);resize:vertical;font:inherit}
+.last-house textarea:focus-visible{outline:2px solid var(--green);outline-offset:1px}
+.wizard-nav{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:6px}
+.wizard-nav #stepHint{color:var(--soft);font-size:13px;font-weight:750;text-align:center}
+.wizard-nav #nextStep{margin-left:auto}
+#groupReport[hidden],.paint-tools[hidden]{display:none!important}
+@media(max-width:850px){.wizard-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.painting-rectangles{grid-template-columns:repeat(4,minmax(0,1fr))}.paint-rect{min-height:110px;max-height:160px;aspect-ratio:auto}.painting-houses{grid-template-columns:repeat(3,minmax(0,1fr))}.paint-house{min-height:125px}}
+@media(max-width:540px){.wizard-step{min-height:60px;padding:9px 8px;font-size:12px}.wizard-step.current{padding:8px 7px}.wizard-step span{height:25px;width:25px}.paint-tools .color-option{flex:1 1 45%;padding:9px 8px}.paint-tools .color-option .swatch{width:26px;height:26px}.painting-rectangles{gap:8px}.painting-houses{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.paint-house-wrap{padding:5px 4px 9px}.paint-house{min-height:115px}.house-shape{max-width:116px}.house-caption{min-height:0}.wizard-nav{flex-wrap:wrap}.wizard-nav #stepHint{order:3;width:100%}.last-house{padding:14px}}
+@media print{.wizard-steps,.paint-tools,.wizard-nav,.student-bar,.workspace-meta{display:none!important}}
