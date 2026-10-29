@@ -14,12 +14,13 @@
  back.type="button";
  back.className="psy-result-notebook-back";
  back.textContent="← Чистый бланк";
+ back.hidden=true;
  back.setAttribute("aria-label","Вернуться к чистому бланку обработки");
  const title=document.createElement("strong");
  title.textContent="Мои результаты";
  const sub=document.createElement("span");
  sub.className="psy-result-notebook-sub";
- heading.append(back,title,sub);
+ heading.append(title,sub);
  const list=document.createElement("nav");
  list.className="psy-result-notebook-tabs";
  list.setAttribute("aria-label","Переключить сохраненный результат");
@@ -27,6 +28,11 @@
  message.className="psy-result-notebook-empty";
  notebook.append(heading,list,message);
  document.body.append(notebook);
+ // Put the return button in the top of the portfolio/processing window, not
+ // in the left gutter where the tabs may be partially off-screen.
+ const modalHead=modal.querySelector(".modalhead");
+ if(modalHead)modalHead.insertBefore(back,modal.querySelector("#closeModal")||null);
+ else heading.prepend(back);
 
  let records=[],cachedMethod="",loadPromise=null,requestId=0,loading=false,error="";
  const getState=()=>window.PSY_PROCESSING_NOTEBOOK?.getState?.()||null;
@@ -47,9 +53,10 @@
  function render(){
   const state=getState();
   const visible=!!state?.visible&&(state.tab==="score"||state.tab==="processing");
-  if(!visible){notebook.hidden=true;modal.classList.remove("psy-notebook-open");return}
+  if(!visible){notebook.hidden=true;back.hidden=true;modal.classList.remove("psy-notebook-open");return}
   modal.classList.add("psy-notebook-open");
   notebook.hidden=false;
+  back.hidden=false;
   sub.textContent=state.mode==="class"?"Групповые":"Индивидуальные";
   list.replaceChildren();
   message.hidden=true;
