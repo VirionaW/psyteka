@@ -15,7 +15,13 @@
  });
  function readLocal(){try{return normalize(JSON.parse(localStorage.getItem(key())||"null"))}catch(_){return blank()}}
  function putLocal(data){try{if(key())localStorage.setItem(key(),JSON.stringify(normalize(data)))}catch(_){}}
- function message(value){window.dispatchEvent(new CustomEvent("psy-cloud-state",{detail:{message:value}}))}
+ function message(value){
+  window.dispatchEvent(new CustomEvent("psy-cloud-state",{detail:{message:value}}));
+  if(!document.body)return;
+  let node=document.getElementById("psyCloudNotice");
+  if(!node){node=document.createElement("div");node.id="psyCloudNotice";node.className="psy-cloud-notice";node.setAttribute("role","alert");document.body.append(node)}
+  node.textContent=value;node.hidden=false;
+ }
  const ready=Promise.resolve(identity?.ready).then(async()=>{
   user=identity?.user||null;client=identity?.client||null;
   if(!user||!client){loading=false;return false}
