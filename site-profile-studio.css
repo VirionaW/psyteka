@@ -1127,3 +1127,10 @@ html.dark .psy-collections-studio .psy-folder-delete-cancel{
 @media(max-width:520px){
  .psy-collections-studio .psy-folder-palette-options{grid-template-columns:repeat(auto-fill,42px)!important;}
 }
+
+/* Active library button: override earlier generic !important navigation rules. */
+body[data-account="profile"] .site-header nav>a.psy-nav-library-highlight,
+html.dark body[data-account="profile"] .site-header nav>a.psy-nav-library-highlight{
+ background:#246648!important;color:#ffffff!important;border-color:#246648!important;
+ box-shadow:0 3px 12px rgba(20,65,43,.20)!important;
+}
