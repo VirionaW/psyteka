@@ -96,29 +96,54 @@
  document.head.appendChild(style);
 })();
 
-/* Center glyph geometrically, independent of font baseline or inherited line-height. */
+/* Centered SVG close icon. No font glyphs or pseudo-element crosses. */
 (function(){
+ const selector='button#closeModal, button.psy-folder-dialog-x, button.psy-entry-x, button.psy-folder-close, button.psy-modal-close, button.modal-close, button.psy-star-remove, button.psy-favorite-remove, button[class*="favorite-remove"], button[class*="remove-favorite"]';
  const css=document.createElement('style');
  css.textContent=`
- button#closeModal,button.psy-folder-dialog-x,button.psy-entry-x,
- button.psy-folder-close,button.psy-modal-close,button.modal-close,
- button.psy-star-remove,button.psy-favorite-remove,
- button[class*="favorite-remove"],button[class*="remove-favorite"]{
-  position:relative!important;display:inline-grid!important;place-items:center!important;
-  padding:0!important;line-height:1!important;text-align:center!important;
+ button.psy-svg-close{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  padding:0!important;text-align:center!important;line-height:1!important;font-size:0!important;
+  text-indent:0!important;position:relative!important;
  }
- button#closeModal,button.psy-folder-dialog-x,button.psy-entry-x,
- button.psy-folder-close,button.psy-modal-close,button.modal-close{
-  font-size:0!important;
- }
- button#closeModal::after,button.psy-folder-dialog-x::after,button.psy-entry-x::after,
- button.psy-folder-close::after,button.psy-modal-close::after,button.modal-close::after{
-  content:""!important;position:absolute!important;top:50%!important;left:50%!important;
-  width:12px!important;height:12px!important;transform:translate(-50%,-50%)!important;
-  background:linear-gradient(currentColor,currentColor) center/1.6px 12px no-repeat,
-             linear-gradient(currentColor,currentColor) center/12px 1.6px no-repeat!important;
-  rotate:45deg;pointer-events:none!important;
+ button.psy-svg-close::before,button.psy-svg-close::after{content:none!important;display:none!important;background:none!important}
+ button.psy-svg-close>svg.psy-close-icon{
+  display:block!important;position:static!important;inset:auto!important;
+  margin:0!important;padding:0!important;transform:none!important;rotate:none!important;
+  width:16px!important;height:16px!important;min-width:16px!important;min-height:16px!important;
+  color:inherit!important;fill:none!important;stroke:currentColor!important;
+  stroke-width:1.8!important;stroke-linecap:round!important;pointer-events:none!important;
  }
  `;
- document.head.append(css);
+ document.head.appendChild(css);
+ function fix(root){
+  const buttons=[];
+  if(root.nodeType===1&&root.matches?.(selector))buttons.push(root);
+  root.querySelectorAll?.(selector).forEach(b=>buttons.push(b));
+  for(const b of buttons){
+   if(b.classList.contains('psy-svg-close'))continue;
+   // Do not replace meaningful text such as "Удалить" with a close symbol.
+   const glyph=b.textContent.trim();
+   if(!['×','✕','✖','x','X',''].includes(glyph)&&b.id!=='closeModal')continue;
+   b.classList.add('psy-svg-close');
+   b.replaceChildren();
+   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   svg.setAttribute('viewBox','0 0 24 24');
+   svg.setAttribute('aria-hidden','true');
+   svg.classList.add('psy-close-icon');
+   const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+   path.setAttribute('d','M6 6 L18 18 M18 6 L6 18');
+   svg.append(path);b.append(svg);
+   if(!b.hasAttribute('aria-label'))b.setAttribute('aria-label','Закрыть');
+  }
+ }
+ function ready(){
+  fix(document);
+  const observer=new MutationObserver(records=>{
+   for(const record of records)for(const node of record.addedNodes)if(node.nodeType===1)fix(node);
+  });
+  observer.observe(document.body,{childList:true,subtree:true});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});
+ else ready();
 })();
