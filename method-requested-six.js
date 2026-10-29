@@ -68,14 +68,25 @@ function score(d,answers,version){
 }
 function processing(d){return "<h3>Ключ и обработка</h3><p>"+escape(d.scoring)+"</p><h3>Интерпретация и ограничения</h3><p>"+escape(d.interpret)+"</p>";}
 function status(r,d){return !!String(r?.name||"").trim()&&!!results(d,r.answers,r.sixVersion);}
-function coloredScore(x){const color=x.band==="Низкий"?"#287343":x.band==="Средний"?"#a8750a":x.band==="Высокий"?"#b43838":"inherit";return '<strong style="color:'+color+';font-weight:800">'+escape(x.raw)+'</strong>';}
+function coloredScore(x,d){
+ // Only published category bands receive traffic-light colors.
+ // A high indecision score is unfavorable; high confidence is favorable.
+ let color="inherit";
+ if(x.band&&d?.id==="professional-attitudes-2025"){
+  const indecision=/Нерешительность/i.test(x.title);
+  color=x.band==="Средний"?"#a8750a":
+   x.band==="Высокий"?(indecision?"#b43838":"#287343"):
+   (indecision?"#287343":"#b43838");
+ }
+ return '<strong style="color:'+color+';font-weight:800">'+escape(x.raw)+'</strong>';
+}
 function summary(d,r){
  if(!String(r?.name||"").trim())return '<p class="privacy-inline">Сначала укажите код участника. До этого итоговая обработка недоступна.</p>';
  const res=results(d,r.answers,r.sixVersion);
  if(!d.scaleMax&&!(d.id==="morosanova-ssp-family"&&String(r.sixVersion)==="3"))return '<p>Регистрируйте наблюдения без расчета тестовых баллов. Официальный подсчет производится по опубликованному руководству выбранной редакции.</p>';
- return res?'<div class="psy-six-results">'+res.map(x=>'<div><strong>'+escape(x.title)+'</strong><span>'+coloredScore(x)+' ('+x.min+'-'+x.max+')'+(x.band?' · '+escape(x.band):'')+'</span></div>').join("")+'</div>':'<p>До заполнения всех '+(d.id==="morosanova-ssp-family"?28:d.questionsCount)+' ответов итог не рассчитывается.</p>';
+ return res?'<div class="psy-six-results">'+res.map(x=>'<div><strong>'+escape(x.title)+'</strong><span>'+coloredScore(x,d)+' ('+x.min+'-'+x.max+')'+(x.band?' · '+escape(x.band):'')+'</span></div>').join("")+'</div>':'<p>До заполнения всех '+(d.id==="morosanova-ssp-family"?28:d.questionsCount)+' ответов итог не рассчитывается.</p>';
 }
-function table(d,rows){return '<h3>Сводная таблица группы</h3><div class="results-table"><table><thead><tr><th>Код</th><th>Полнота</th><th>Результат</th></tr></thead><tbody>'+rows.map((r,i)=>{const res=results(d,r.answers,r.sixVersion);return '<tr><td>'+escape(r.name||"Участник "+(i+1))+'</td><td>'+(status(r,d)?"Заполнено":"Нет полного результата")+'</td><td>'+(status(r,d)?res.map(coloredScore).join(" / "):"–")+'</td></tr>'}).join("")+'</tbody></table></div>';}
+function table(d,rows){return '<h3>Сводная таблица группы</h3><div class="results-table"><table><thead><tr><th>Код</th><th>Полнота</th><th>Результат</th></tr></thead><tbody>'+rows.map((r,i)=>{const res=results(d,r.answers,r.sixVersion);return '<tr><td>'+escape(r.name||"Участник "+(i+1))+'</td><td>'+(status(r,d)?"Заполнено":"Нет полного результата")+'</td><td>'+(status(r,d)?res.map(x=>coloredScore(x,d)).join(" / "):"–")+'</td></tr>'}).join("")+'</tbody></table></div>';}
 function calculator(d,ctx){
  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],done=status(r,d);
  let html='<section class="psy-six-calc" data-six-id="'+escape(d.id)+'"><div class="calc-mode"><button class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one" type="button">Один участник</button><button class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class" type="button">Группа / класс</button></div>';
@@ -104,7 +115,7 @@ function calculator(d,ctx){
 function save(filename,contents,mime){const url=URL.createObjectURL(new Blob([contents],{type:mime})),node=document.createElement("a");node.href=url;node.download=filename;document.body.appendChild(node);node.click();node.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
 function printable(d,r){
  const res=String(r.name||"").trim()?results(d,r.answers,r.sixVersion):null,selected=d.forms[Number(r.sixVersion)]||d.forms[0];
- const rows=res?res.map(x=>'<tr><td>'+escape(x.title)+'</td><td>'+coloredScore(x)+'</td><td>'+(x.band?escape(x.band):"Без нормативной категории")+'</td></tr>').join(""):"";
+ const rows=res?res.map(x=>'<tr><td>'+escape(x.title)+'</td><td>'+coloredScore(x,d)+'</td><td>'+(x.band?escape(x.band):"Без нормативной категории")+'</td></tr>').join(""):"";
  const score=res?'<h2>Обработка</h2><table><thead><tr><th>Шкала</th><th>Баллы</th><th>Уровень</th></tr></thead><tbody>'+rows+'</tbody></table>':'<h2>Обработка</h2><p>Количественный результат не вычислялся по данной редакции.</p>';
   const isSsp=d.id==="morosanova-ssp-family"&&String(r.sixVersion)==="3";
  const responseCount=isSsp?28:(d.questionsCount||d.responseCount||0),answerList=(d.scaleMax||isSsp)?r.answers:r.sixAnswers;
@@ -116,7 +127,7 @@ function csv(d,rows){
  const safe=x=>{const s=String(x??"");return '"'+(/^[\s]*[=+\-@]/.test(s)?"'"+s:s).replace(/"/g,'""')+'"';};
  const defs=d.ssp2020Scales?[...d.ssp2020Scales,{title:"Общий уровень саморегуляции"}]:(d.scales||[]);
  const head=["Код участника","Редакция","Состояние",...defs.map(x=>x.title),"Ответы","Наблюдения"];
- const body=rows.map((r,i)=>{const scores=results(d,r.answers,r.sixVersion),selected=d.forms[Number(r.sixVersion)]||d.forms[0];return [r.name||"Участник "+(i+1),selected.label,scores?"Рассчитано":"Нет количественной обработки",...defs.map((_,j)=>scores?scores[j].raw:""),(d.scaleMax||d.ssp2020Scales?r.answers||[]:r.sixAnswers||[]).join("|"),r.sixProtocol||""];});
+ const body=rows.map((r,i)=>{const scores=status(r,d)?results(d,r.answers,r.sixVersion):null,selected=d.forms[Number(r.sixVersion)]||d.forms[0];return [r.name||"Участник "+(i+1),selected.label,scores?"Рассчитано":"Нет количественной обработки",...defs.map((_,j)=>scores?scores[j].raw:""),(d.scaleMax||d.ssp2020Scales?r.answers||[]:r.sixAnswers||[]).join("|"),r.sixProtocol||""];});
  return "\uFEFF"+[head,...body].map(row=>row.map(safe).join(";")).join("\r\n");
 }
 function bind(d,ctx){
@@ -135,7 +146,7 @@ function bind(d,ctx){
   if(!String(r.name||"").trim())return;r.answers ||= [];r.answers[Number(sel.dataset.sixAnswer)]=sel.value;update();
  }));
  root.querySelectorAll("[data-six-unverified]").forEach(sel=>sel.addEventListener("change",()=>{
-  r.sixAnswers ||= [];r.sixAnswers[Number(sel.dataset.sixUnverified)]=sel.value;update();
+  if(!String(r.name||"").trim())return;r.sixAnswers ||= [];r.sixAnswers[Number(sel.dataset.sixUnverified)]=sel.value;update();
  }));
  root.querySelector("[data-six-version]")?.addEventListener("change",e=>{
   r.sixVersion=e.target.value;
