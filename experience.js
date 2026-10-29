@@ -721,7 +721,7 @@ function bindControls(){
   window.PSY_MATCH_MSPSS.bind(d,{
    rows,rowIndex,calcMode,tab:tabNow,
    onRender:()=>setTab('score'),
-   onSelect:go,
+   onSelect:i=>{rows.genderNote="";go(i);},
    onGenderAssigned:()=>{
     if(!['cdi-27','lazarus-wcq50'].includes(d.id)||calcMode!=='class')return;
     const current=rows[rowIndex],currentName=current?.name||"Участник "+(rowIndex+1);
