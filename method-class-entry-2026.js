@@ -673,6 +673,7 @@ const present=(d,r)=>Array.from({length:size(d)},(_,i)=>r?.answers?.[i]).filter(
 const scored=(d,r)=>r?.attendance!=="absent"&&present(d,r)===size(d)?m.score(d,r.answers,r):null;
 const topic=(d,i,r)=>d.id==="eysenck-40"&&r?.eysenckVersion==="block"?"Вопрос "+(i+1):items[d.id][i];
 const opts=d=>d.id==="eysenck-40"?"0 – не подходит · 1 – бывает иногда · 2 – бывает часто":d.id==="lazarus-wcq50"?"0 – никогда · 1 – редко · 2 – иногда · 3 – часто":"0 – Нет · 1 – Да";
+const childOpts=d=>d.id==="razuvaeva-osr29"?"Для каждого утверждения отметь «Да» или «Нет».":opts(d);
 const tone=(d,s)=>d.id==="razuvaeva-osr29"?"neutral":d.id==="eysenck-40"?(s.raw<=7?"low":s.raw<=14?"middle":"high"):(s.percent<=33?"low":s.percent<=66?"middle":"high");
 const label=(d,s)=>d.id==="razuvaeva-osr29"?"Без автоматического диагностического уровня":d.id==="eysenck-40"?(s.raw<=7?"Низкий уровень":s.raw<=14?"Средний уровень":"Высокий уровень"):(s.percent<=33?"До 33% максимума":s.percent<=66?"34-66% максимума":"Свыше 66% максимума");
 const num=(d,s)=>d.id==="razuvaeva-osr29"?s.adjusted.toFixed(1).replace(".",","):String(s.raw);
@@ -727,13 +728,13 @@ function guide(d){
  '<div class="psy-mspss-manual-actions"><button type="button" class="btn" data-711-print="guide">Без бланка</button><button type="button" class="btn primary" data-711-print="combined">С бланком</button></div></section>';
 }
 function sheet(d){
- return '<section class="psy-mspss-student psy-711-student"><div class="psy-mspss-blank-head"><div><h3>Бланк ученика</h3><p>'+(d.id==="eysenck-40"?"Редакция 2 – чередование шкал. Для версии 1 нужен отдельный бланк.":"Формулировки утверждений и графа ответа")+'</p></div><button type="button" class="btn primary" data-711-print="blank">Посмотреть и распечатать</button></div>'+(d.id==="lazarus-wcq50"?"<p><b>Оказавшись в трудной ситуации, я...</b></p>":"")+'<p>'+esc(opts(d))+'</p>'+
+ return '<section class="psy-mspss-student psy-711-student"><div class="psy-mspss-blank-head"><div><h3>Бланк ученика</h3><p>'+(d.id==="eysenck-40"?"Редакция 2 – чередование шкал. Для версии 1 нужен отдельный бланк.":"Формулировки утверждений и графа ответа")+'</p></div><button type="button" class="btn primary" data-711-print="blank">Посмотреть и распечатать</button></div>'+(d.id==="lazarus-wcq50"?"<p><b>Оказавшись в трудной ситуации, я...</b></p>":"")+'<p>'+esc(childOpts(d))+'</p>'+
  '<div class="psy-mspss-blank-scroll"><table class="psy-mspss-blank-table psy-711-sheet"><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+
  items[d.id].map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(q)+'</td><td></td></tr>').join("")+'</tbody></table></div></section>';
 }
 function printable(d,mode){
  const md=cfg(d),b='<section class="'+(mode==="combined"?"newpage":"")+'"><h1>'+esc(md.name)+'</h1>'+(d.id==="eysenck-40"?"<p>Бланк версии 2</p>":"")+ '<p>Участник: ________________________ Класс: ______ Дата: ____________</p>'+
- '<p>'+(d.id==="lazarus-wcq50"?"Оказавшись в трудной ситуации, я...":"")+'</p><p>'+esc(opts(d))+'</p><table><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+
+ '<p>'+(d.id==="lazarus-wcq50"?"Оказавшись в трудной ситуации, я...":"")+'</p><p>'+esc(childOpts(d))+'</p><table><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+
  items[d.id].map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(q)+'</td><td></td></tr>').join("")+'</tbody></table></section>';
  const g='<h1>'+esc(md.name)+'</h1><h2>Цель</h2><p>'+esc(md.goal)+'</p><h2>Инструкция</h2><p>'+esc(md.instruction)+'</p><h2>Подсчет</h2><p>'+esc(md.scoring)+'</p>';
  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>'+esc(md.name)+'</title><style>@page{size:A4;margin:14mm}body{font:10pt/1.4 Arial}table{width:100%;border-collapse:collapse}td,th{border:1px solid #9bb2a5;padding:5px;vertical-align:top}td:first-child{width:35px}td:last-child{width:70px}tr{break-inside:avoid}.newpage{break-before:page}</style></head><body>'+(mode==="blank"?b:g)+(mode==="combined"?b:"")+'</body></html>';
