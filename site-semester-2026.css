@@ -274,3 +274,9 @@ html.dark .library-page #modal.psy-mspss-example .psy-cp-sex-btn.is-selected{
  .library-page #modal.psy-mspss-example .psy-cdi-statement-list p{font-size:13px}
  .library-page #modal.psy-mspss-example .psy-cdi-statement-table{min-width:0}
 }
+
+/* Полные названия восьми шкал Филлипса в результатах класса. */
+.library-page #modal.psy-mspss-example .psy-ph-class-results .psy-mspss-scroll th {white-space:normal;line-height:1.35;vertical-align:top;min-width:155px;max-width:215px}
+.library-page #modal.psy-mspss-example .psy-ph-class-results .psy-mspss-scroll th:first-child {min-width:42px;width:42px;max-width:42px}
+.library-page #modal.psy-mspss-example .psy-ph-class-results .psy-mspss-scroll th:nth-child(2) {min-width:170px;max-width:240px}
+.library-page #modal.psy-mspss-example .psy-ph-class-results .psy-mspss-scroll td {font-variant-numeric:tabular-nums}
