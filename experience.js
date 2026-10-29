@@ -131,7 +131,7 @@ function bindAnswerCopyControls(){
  copy.title="Копировать ответы без имени, возраста и пола";
  paste.title="Вставить ранее скопированные ответы";
  copy.disabled=!(current.answers||[]).some(v=>v!==null&&v!==undefined&&v!=="");
- paste.disabled=!copiedAssessmentAnswers||copiedAssessmentAnswers.key!==key||copiedAssessmentAnswers.version!==version;
+ paste.disabled=!copiedAssessmentAnswers||copiedAssessmentAnswers.key!==key||copiedAssessmentAnswers.version!==version||copiedAssessmentAnswers.sourceRow===current||!entry.querySelector("input[data-cp-answer]:not(:disabled)");
  info.className="psy-copy-status";info.setAttribute("role","status");
  if(!paste.disabled)info.textContent="Источник: "+copiedAssessmentAnswers.source;
  copy.onclick=()=>{
@@ -140,7 +140,7 @@ function bindAnswerCopyControls(){
  };
  paste.onclick=()=>{
   const buf=copiedAssessmentAnswers;
-  if(!buf||buf.key!==key||buf.version!==version||buf.sourceRow===current)return;
+  if(!buf||buf.key!==key||buf.version!==version||buf.sourceRow===current||!entry.querySelector("input[data-cp-answer]:not(:disabled)"))return;
   if((current.answers||[]).some(v=>v!==null&&v!==undefined&&v!=="")&&!confirm("Заменить ответы у "+(current.name||"участника")+"?"))return;
   current.answers=buf.answers.slice();setTab("score");
  };
