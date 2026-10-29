@@ -67,3 +67,56 @@ html.dark body.site-landing .site-header a.site-logo .psy-wordmark span{
   border:0!important;border-radius:0!important;padding:0!important;
   display:inline!important;margin:0!important;
 }
+
+/* Shared theme switch appearance: same moon, sun and button across site headers. */
+body.site-landing .site-header button.site-theme-btn.theme-switch{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:9px!important;
+  height:auto!important;
+  min-height:44px!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:9px 15px!important;
+  border:1px solid #cddfcf!important;
+  border-radius:40px!important;
+  background:#fff!important;
+  color:#1d4838!important;
+  font:700 13px/1.3 system-ui,-apple-system,"Segoe UI",sans-serif!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+  box-shadow:none!important;
+  cursor:pointer!important;
+}
+body.site-landing .site-header button.site-theme-btn.theme-switch:hover{
+  background:#eaf4ec!important;
+  border-color:#9fc4ac!important;
+}
+body.site-landing .site-header button.site-theme-btn.theme-switch svg.site-theme-icon{
+  display:block!important;
+  width:20px!important;
+  height:20px!important;
+  flex:none!important;
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:1.8!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+}
+body.site-landing .site-header button.site-theme-btn.theme-switch .site-theme-label{
+  display:inline!important;
+  font-weight:700!important;
+}
+body.site-landing .site-header button.site-theme-btn.theme-switch:focus-visible{
+  outline:2px solid #d7ae69!important;
+  outline-offset:2px!important;
+}
+html.dark body.site-landing .site-header button.site-theme-btn.theme-switch{
+  background:#294535!important;
+  border-color:#648773!important;
+  color:#f4faf3!important;
+}
+html.dark body.site-landing .site-header button.site-theme-btn.theme-switch:hover{
+  background:#35543f!important;
+}
