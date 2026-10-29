@@ -292,7 +292,7 @@
     '<button type="button" class="btn psy-mspss-delete-all" id="cpDeleteAll">Удалить всех участников</button></aside><div class="psy-mspss-entry">';
   }else h+='<div class="psy-mspss-entry">';
   h+='<label class="psy-mspss-name-field" for="cpCurrentName"><span>Фамилия и имя / условный код</span><input type="text" id="cpCurrentName" maxlength="120" autocomplete="off" value="'+esc(r.name||"")+'" placeholder="Введите имя или код"></label>';
-  if(type(d)==="cdi")h+='<div class="psy-cp-demographics"><label>Возраст, полных лет<select id="cpAge"><option value="">Не выбран</option>'+Array.from({length:11},(_,i)=>i+7).map(age=>'<option value="'+age+'" '+(r.ageYears===age?"selected":"")+'>'+age+'</option>').join("")+'</select></label><label>Пол для Т-баллов<select id="cpSex"><option value="">Не выбран</option><option value="m" '+(r.sex==="m"?"selected":"")+'>Мальчик</option><option value="f" '+(r.sex==="f"?"selected":"")+'>Девочка</option></select></label></div>';
+  if(type(d)==="cdi")h+='<div class="psy-cp-demographics"><label>Возраст, полных лет<select id="cpAge"><option value="">Не выбран</option>'+Array.from({length:11},(_,i)=>i+7).map(age=>'<option value="'+age+'" '+(r.ageYears===age?"selected":"")+'>'+age+'</option>').join("")+'</select></label><div class="psy-cp-sex-field"><span>Пол для Т-балла</span><div class="psy-cp-sex-buttons" role="group" aria-label="Пол ребенка"><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="f"?"is-selected":"")+'" data-cp-sex="f" aria-pressed="'+(r.sex==="f")+'">Девочка</button><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="m"?"is-selected":"")+'" data-cp-sex="m" aria-pressed="'+(r.sex==="m")+'">Мальчик</button></div></div></div>';
   if(type(d)==="cdi")h+='<div class="psy-cdi-student-note psy-cdi-specialist-note"><strong>Только для психолога – ввод баллов</strong><p>Ребенок выбирает ОДНО из трех утверждений в оригинальном опроснике, а не цифру. Здесь вводятся баллы <b>0, 1 или 2</b>, соответствующие выбранному тексту по ключу. Порядок утверждений может отличаться от порядка баллов.</p></div>';
   h+='<p class="psy-mspss-progress" id="cpProgress">Заполнено '+n+' из '+total+'</p>';
   if(r.attendance==="absent")h+='<p class="psy-cp-absence">Ученик отмечен отсутствующим. Ввод заблокирован до возвращения в список присутствующих.</p>';
@@ -391,7 +391,13 @@
    r.name=e.target.value;const active=document.querySelector(".psy-mspss-person.active span");if(active)active.textContent=r.name||"Участник";
   });
   document.getElementById("cpAge")?.addEventListener("change",e=>{r.ageYears=e.target.value?Number(e.target.value):null;update()});
-  document.getElementById("cpSex")?.addEventListener("change",e=>{r.sex=e.target.value;update()});
+  document.querySelectorAll("[data-cp-sex]").forEach(btn=>btn.addEventListener("click",()=>{
+   r.sex=btn.dataset.cpSex;
+   document.querySelectorAll("[data-cp-sex]").forEach(b=>{
+    const active=b.dataset.cpSex===r.sex;b.classList.toggle("is-selected",active);b.setAttribute("aria-pressed",String(active));
+   });
+   update();
+  }));
   document.querySelectorAll("[data-cp-person]").forEach(btn=>btn.addEventListener("click",()=>ctx.onSelect?.(Number(btn.dataset.cpPerson))));
   document.getElementById("cpAddNames")?.addEventListener("click",()=>{const t=document.getElementById("cpBulkNames"),names=(t?.value||"").split(/[\r\n]+/).map(x=>x.trim()).filter(Boolean);if(names.length)ctx.onBulkAdd?.(names);else t?.focus();});
   document.getElementById("cpSort")?.addEventListener("click",()=>{const t=document.getElementById("cpBulkNames"),names=(t?.value||"").split(/[\r\n]+/).map(x=>x.trim()).filter(Boolean);ctx.onSort?.(names);});
