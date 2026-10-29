@@ -11,11 +11,12 @@
  const panes={
   information:document.getElementById("psyInfo"),
   security:document.getElementById("psySecurity"),
+  results:document.getElementById("psySavedResults"),
   settings:document.getElementById("psyStudioSettings"),
   subscription:document.getElementById("psyStudioSubscription")
  };
- if(!nav||!main||!folders||tabs.length!==5||Object.values(panes).some(v=>!v))return;
- const hashes={information:"psyInfo",security:"psySecurity",folders:"psyCollections",settings:"psyStudioSettings",subscription:"psyStudioSubscription"};
+ if(!nav||!main||!folders||tabs.length!==6||Object.values(panes).some(v=>!v))return;
+ const hashes={information:"psyInfo",security:"psySecurity",folders:"psyCollections",results:"psySavedResults",settings:"psyStudioSettings",subscription:"psyStudioSubscription"};
  const fromHash=()=>{
   const hash=decodeURIComponent(location.hash.slice(1));
   return Object.keys(hashes).find(k=>hash===hashes[k]||(k==="folders"&&hash==="psyCollectionsArea"))||"information";
