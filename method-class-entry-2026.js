@@ -910,16 +910,19 @@ const label=(d,s)=>d.id==="razuvaeva-osr29"?"Без автоматическог
 const num=(d,s)=>d.id==="razuvaeva-osr29"?s.adjusted.toFixed(1).replace(".",","):d.id==="lazarus-wcq50"&&s.tScore!==null?String(s.tScore):String(s.raw);
 const razKey=(d,r)=>d.id==="razuvaeva-osr29"?(r?.razuvaevaKey==="method-six"?"Б":"А"):"";
 const razLabel=(d,r)=>razKey(d,r)?"Ключ "+razKey(d,r):"";
-const maximum=(d,s)=>d.id==="razuvaeva-osr29"?(s.max*s.factor).toFixed(1).replace(".",","):String(s.max);
+// PsyTests rounds the chart's upper axis tick upward. The mathematically
+// possible factor maximum is still raw max multiplied by the coefficient.
+const preciseRazMaximum=s=>(s.max*s.factor).toFixed(1).replace(".",",");
+const maximum=(d,s)=>d.id==="razuvaeva-osr29"?String(Math.ceil(s.max*s.factor)):String(s.max);
 function result(d,r){
  if(r?.attendance==="absent")return '<section class="psy-711-result">Участник отсутствовал. Результаты не рассчитываются.</section>';
  const z=scored(d,r);if(!z)return '<section class="psy-711-result">Заполнено '+present(d,r)+' из '+size(d)+'. Для подсчета нужны все ответы.</section>';
  return '<section class="psy-711-result"><h3>Результаты участника'+(d.id==="razuvaeva-osr29"?" · "+razLabel(d,r):"")+'</h3><div class="psy-711-scale-grid">'+z.scales.map(s=>
  '<div class="psy-711-scale psy-711-'+tone(d,s)+'"><b>'+esc(s.name)+'</b><strong>'+(d.id==="lazarus-wcq50"&&s.tScore!==null?num(d,s)+" Т-балл":num(d,s)+' / '+maximum(d,s))+'</strong><span>'+
- esc(d.id==="razuvaeva-osr29"?"Коэффициент "+s.factor:
+ esc(d.id==="razuvaeva-osr29"?"Коэффициент "+s.factor+" · точный максимум "+preciseRazMaximum(s):
  d.id==="lazarus-wcq50"?(s.tScore!==null?"Сырой: "+s.raw+" / "+s.max+" · "+window.PSY_WCQ_NORMS_2026.level(s.tScore):"Сырой: "+s.raw+" / "+s.max+" · нормативный Т-балл недоступен"):label(d,s))+'</span>'+
  '<div class="psy-711-track"><span style="width:'+(d.id==="lazarus-wcq50"&&s.tScore!==null?Math.max(0,Math.min(100,s.tScore/90*100)):s.percent)+'%"></span></div></div>').join("")+'</div>'+
- (d.id==="razuvaeva-osr29"?'<p class="psy-711-safety">Показатели факторов не определяют вероятность суицида и не исключают опасности. При признаках угрозы необходима очная профессиональная оценка безопасности.</p>':
+ (d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Верхняя граница после косой черты округлена вверх, как на ПсиТесте. Точные максимумы указаны под результатами. Баллы и коэффициенты не округляются.</p><p class="psy-711-safety">Показатели факторов не определяют вероятность суицида и не исключают опасности. При признаках угрозы необходима очная профессиональная оценка безопасности.</p>':
  '<p class="psy-mspss-small">'+(d.id==="eysenck-40"?"Диапазоны по каждой шкале: 0-7, 8-14, 15-20.":"Проценты показывают долю от максимума шкалы, а не возрастные нормативы или Т-баллы.")+'</p>')+'</section>';
 }
 
