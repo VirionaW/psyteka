@@ -378,7 +378,10 @@
       }
       if(heading.startsWith("Школьные ситуации")){
        const groups=["Школьный день и нагрузка","Учебные предметы","Отношения в школе"];
-       extra='<div class="work-school-groups">'+groups.map(group=>
+       const related=result.sharedSchoolColors.length?
+        '<div class="work-school-shared"><h5>Что объединяет разные школьные ситуации</h5><ul>'+
+        result.sharedSchoolColors.map(item=>'<li>'+esc(item.text)+'</li>').join("")+'</ul></div>':"";
+       extra=related+'<div class="work-school-groups">'+groups.map(group=>
         '<section class="work-school-group"><h5>'+esc(group)+'</h5>'+
         '<div class="work-school-grid">'+result.schoolCards.filter(item=>item.group===group).map(item=>
          '<article class="work-situation"><div class="work-situation-top"><strong>'+esc(item.title)+'</strong><span class="work-situation-type">'+esc(item.category)+'</span></div>'+
@@ -473,6 +476,10 @@
     });
    }
    if(head.startsWith("Школьные ситуации")){
+    if(result.sharedSchoolColors.length){
+     b+=wp("Повторяющиеся цвета школьных ситуаций");
+     result.sharedSchoolColors.forEach(item=>b+=wp(item.text));
+    }
     let lastGroup="";
     result.schoolCards.forEach(item=>{
      if(item.group!==lastGroup){b+=wp(item.group);lastGroup=item.group;}
