@@ -608,13 +608,13 @@
    const fill=Number.isFinite(percent)&&s!==""?(percent>75?"FF6868":percent>50?"FFF14D":"4BE878"):null;
    const tcPr='<w:tcPr><w:tcW w:w="'+width+'" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>';
    const rPr='<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>'+
-    '<w:sz w:val="22"/><w:szCs w:val="22"/>'+(header||fill?"<w:b/>":"")+
+    '<w:sz w:val="20"/><w:szCs w:val="20"/>'+(header||fill?"<w:b/>":"")+
     (fill?'<w:shd w:val="clear" w:color="auto" w:fill="'+fill+'"/><w:color w:val="111111"/>':"")+'</w:rPr>';
    return '<w:tc>'+tcPr+'<w:p><w:pPr><w:jc w:val="'+(left?"left":"center")+'"/><w:spacing w:after="0"/></w:pPr>'+
     '<w:r>'+rPr+'<w:t xml:space="preserve">'+xmlEscape(s)+'</w:t></w:r></w:p></w:tc>';
   };
   const table=(head,body,format="",percentRows=[])=>{
-   const widths=format==="cdi"?[520,2200,...Array(6).fill(1920)]:format==="cdi-legend"?[2100,8500]:!isCDI&&mode==="class"&&head.length===10?[550,2200,...Array(8).fill(1620)]:!isCDI&&mode==="class"&&head.length===4&&head[0]==="Показатель"?[5000,3450,3700,3450]:head.map(()=>1200);
+   const widths=format==="cdi"?[500,2100,...Array(head.length-2).fill(Math.floor(7700/(head.length-2)))]:format==="cdi-legend"?[2600,7500]:format==="scores"?[500,2100,...Array(head.length-2).fill(Math.floor(7700/(head.length-2)))]:format==="reference"?[4000,2100,2100,2100]:head.length===4?[2200,3000,2500,2500]:head.map(()=>1200);
    const all=[head,...body];return '<w:tbl><w:tblPr><w:tblW w:w="'+widths.reduce((a,b)=>a+b,0)+'" w:type="dxa"/>'+
     (format?'<w:tblLayout w:type="fixed"/>':"")+
     '<w:tblBorders><w:top w:val="single" w:sz="5"/><w:left w:val="single" w:sz="5"/><w:bottom w:val="single" w:sz="5"/><w:right w:val="single" w:sz="5"/><w:insideH w:val="single" w:sz="5"/><w:insideV w:val="single" w:sz="5"/></w:tblBorders></w:tblPr>'+
@@ -656,9 +656,29 @@
       [String(i+1),r.name||"У-"+String(i+1).padStart(2,"0"),...phillips.scales.map((s,j)=>z?Math.round(z.scales[j].percent):"")]:
       [...base,z?.raw??"–",z?z.percent.toFixed(1)+"%":"–"];
   });
-  body+=table(columns,summary,isCDI?"cdi":mode==="class"?"scores":"",
-   isCDI?people.map(r=>{const z=scoring(d,r),n=z?norms.norm(z.raw,r.ageYears,r.sex):null;const values=z?norms.scaleScores(r.answers).map(x=>{const v=norms.scaleNorm(x.id,x.raw,r.ageYears,r.sex);return cdiUsable(v)?v.t:null}):norms.scales.map(()=>null);return [cdiUsable(n)?n.t:null,...values]}):
-   mode==="class"?people.map(r=>scoring(d,r)?.scales.map(s=>s.percent)||[]):[]);
+  // On portrait A4 the complete CDI/Phillips matrix is too wide. Keep every
+  // factor, but print the results as two readable tables with repeated names.
+  if(isCDI||mode==="class"){
+   const valueRows=isCDI?people.map(r=>{
+    const z=scoring(d,r),n=z?norms.norm(z.raw,r.ageYears,r.sex):null;
+    const factors=z?norms.scaleScores(r.answers).map(x=>{
+     const v=norms.scaleNorm(x.id,x.raw,r.ageYears,r.sex);
+     return cdiUsable(v)?v.t:null;
+    }):norms.scales.map(()=>null);
+    return [cdiUsable(n)?n.t:null,...factors];
+   }):people.map(r=>scoring(d,r)?.scales.map(s=>s.percent)||[]);
+   const breaks=isCDI?[[0,1,2],[3,4,5]]:[[0,1,2,3],[4,5,6,7]];
+   breaks.forEach((part,i)=>{
+    body+=para(isCDI?(i===0?"Общий показатель и шкалы 1-2":"Шкалы 3-5")
+     :(i===0?"Факторы 1-4":"Факторы 5-8"),"sub");
+    const subsetColumns=[columns[0],columns[1],...part.map(j=>columns[j+2])];
+    const subsetRows=summary.map(row=>[row[0],row[1],...part.map(j=>row[j+2])]);
+    const subsetMarks=valueRows.map(row=>part.map(j=>row[j]));
+    body+=table(subsetColumns,subsetRows,isCDI?"cdi":"scores",subsetMarks);
+   });
+  }else{
+   body+=table(columns,summary);
+  }
   if(isCDI){
    body+=para("Расшифровка результатов","sub");
    body+=table(["Баллы","Уровень"],cdiLegend.slice().reverse().map(x=>[x.range,x.level]),
@@ -691,7 +711,7 @@
   }
   const doc='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+
-   '<w:sectPr>'+((mode==="class"||isCDI)&&!analytical?'<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="550" w:bottom="550" w:left="550" w:right="550"/>':'<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:bottom="850" w:left="850" w:right="850"/>')+'</w:sectPr></w:body></w:document>';
+   '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:bottom="850" w:left="700" w:right="700"/></w:sectPr></w:body></w:document>';
   const types='<?xml version="1.0" encoding="UTF-8"?>'+
    '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
   const rels='<?xml version="1.0" encoding="UTF-8"?>'+
