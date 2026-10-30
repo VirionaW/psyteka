@@ -722,13 +722,14 @@ function bindControls(){
    if(!names?.length)return;
    const grade=(d.id==='cdi-27'||window.PSY_SCHOOL_711_UI?.supports(d))?rows.find(x=>Number(x.schoolGrade)>=1&&Number(x.schoolGrade)<=11)?.schoolGrade:null;
    const cdiFormat=d.id==="cdi-27"?rows.find(x=>["score","position","letter"].includes(x.cdiInputMode))?.cdiInputMode:null;
+   const razFormat=d.id==="razuvaeva-osr29"?rows.find(x=>x.razuvaevaKey==="method-six")?.razuvaevaKey:null;
    if(rows.length===1&&!rows[0].name?.trim()&&!window.PSY_MATCH_MSPSS.done(d,rows[0].answers))rows.splice(0,1);
    let first=-1;
    for(const name of names){
     const trimmed=String(name).trim();if(!trimmed)continue;
     if(!rows.some(x=>x.name?.trim().toLocaleLowerCase('ru')===trimmed.toLocaleLowerCase('ru'))){
      if(first<0)first=rows.length;
-     rows.push({name:trimmed,answers:[],attendance:"present",...(grade?{schoolGrade:Number(grade),ageYears:Number(grade)+6}:{} ),...(cdiFormat?{cdiInputMode:cdiFormat,cdiInputModeInherited:true}:{})});
+     rows.push({name:trimmed,answers:[],attendance:"present",...(grade?{schoolGrade:Number(grade),...(d.id==="lazarus-wcq50"?{}:{ageYears:Number(grade)+6})}:{} ),...(cdiFormat?{cdiInputMode:cdiFormat,cdiInputModeInherited:true}:{}),...(razFormat?{razuvaevaKey:razFormat}:{})});
     }
    }
    if(!rows.length)rows.push({name:"",answers:[]});
