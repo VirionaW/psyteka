@@ -201,7 +201,7 @@ input,textarea,select{font-size:16px;line-height:1.5}
 .protocol-heading p{margin:0}
 .protocol-counter{padding:7px 14px;border:1px solid var(--line);border-radius:999px;color:var(--green);font-size:14px;font-weight:700;white-space:nowrap}
 .protocol-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(340px,1fr);gap:24px}
-.protocol-top-fields{display:grid;grid-template-columns:minmax(0,0.65fr) minmax(0,1.35fr);gap:15px}
+.protocol-top-fields{display:grid;grid-template-columns:minmax(0,.75fr) minmax(85px,.45fr) minmax(0,1.35fr);gap:15px}
 .protocol-top-fields textarea{min-height:49px;max-height:170px}
 .protocol-observations h3{margin:20px 0 8px}
 .protocol-output{border-left:1px solid var(--line);padding-left:25px}
@@ -277,10 +277,16 @@ html.dark .record-color-toggle{background:#1b2a24;color:var(--ink)}
 html.dark .record-color-toggle[aria-pressed=true]{background:#3a7056;color:#fff}
 .record .fields{grid-template-columns:repeat(3,minmax(0,1fr))}
 .record .fields label:last-child{grid-column:1/-1}
-@media(max-width:700px){.record .fields{grid-template-columns:1fr}.record-tools{width:100%;justify-content:flex-start}}
+@media(max-width:700px){.record .fields,.protocol-top-fields{grid-template-columns:1fr}.record-tools{width:100%;justify-content:flex-start}}
 
 .method-focus{font-size:15px;line-height:1.5;color:var(--ink);margin:9px 0 0;padding:9px 12px;border-radius:9px;background:#eef6ef;border:1px solid var(--line)}
 html.dark .method-focus{background:#2b493b;color:#deefdf}
+.synthesis-section{padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--white);margin-bottom:18px}
+.synthesis-section h3{margin:0 0 5px;font-size:19px}.synthesis-help{font-size:13px;color:var(--muted);margin:0 0 12px}
+.synthesis-preview{max-height:530px;overflow-y:auto;overscroll-behavior:contain}
+.synthesis-preview h4{font-size:15px;margin:16px 0 5px;color:var(--ink)}.synthesis-preview h4:first-child{margin-top:0}
+.synthesis-preview p{margin:0 0 12px;white-space:pre-line;line-height:1.6;font-size:14px;overflow-wrap:anywhere}
+.synthesis-section .actions{margin-top:12px}@media print{.synthesis-section{display:none!important}}
 </style>
 </head>
 <body>
@@ -300,16 +306,17 @@ html.dark .method-focus{background:#2b493b;color:#deefdf}
 <div class="protocol-heading"><div><h2>Мой протокол</h2><p class="subtle">Выбранные элементы и характеристики рисунка</p></div><span class="protocol-counter" id="recordCount">0 записей</span></div>
 <div class="protocol-grid">
 <div class="protocol-observations">
-<div class="protocol-top-fields"><label for="subjectCode">Код обследования (необязательно)<input id="subjectCode" maxlength="70" placeholder="Например: А-01"></label><label for="contextNotes">Контекст рисунка<textarea id="contextNotes" placeholder="Особенности задания или наблюдения"></textarea></label></div>
+<div class="protocol-top-fields"><label for="subjectCode">Код обследования (необязательно)<input id="subjectCode" maxlength="70" placeholder="Например: А-01"></label><label for="subjectAge">Возраст, лет<input id="subjectAge" type="number" min="3" max="99" step="1" inputmode="numeric" placeholder="9"></label><label for="contextNotes">Контекст рисунка<textarea id="contextNotes" placeholder="Особенности задания или наблюдения"></textarea></label></div>
 <h3>Добавленные элементы</h3><div class="record-list" id="recordList"><div class="empty">Пока записей нет. Выберите элемент, настройте его признаки и нажмите «Добавить в протокол».</div></div>
 </div>
-<div class="protocol-output"><label for="conclusion">Сводка специалиста<textarea id="conclusion" rows="5" placeholder="Итоги наблюдения и профессиональные выводы"></textarea></label>
+<div class="protocol-output"><section class="synthesis-section" aria-label="Связная интерпретация"><h3>Интерпретация для педагога-психолога</h3><p class="synthesis-help">Автоматически объединяет зафиксированные признаки, выделяет сочетания и подсказывает вопросы для беседы. Не изменяет ваши записи.</p><div id="synthesisPreview" class="synthesis-preview" aria-live="polite"><p class="subtle">Добавьте элементы в протокол, чтобы увидеть интерпретацию.</p></div><div class="actions"><button class="btn" id="copySynthesis" type="button" disabled>Копировать интерпретацию</button></div></section><label for="conclusion">Дополнительная сводка специалиста<textarea id="conclusion" rows="5" placeholder="Итоги наблюдения и профессиональные выводы"></textarea></label>
 <div class="actions"><button class="btn primary" id="exportReport" type="button">Скачать отчет HTML</button><button class="btn" id="printReport" type="button">Печать / PDF</button><button class="btn" id="exportJSON" type="button">Сохранить для продолжения</button><button class="btn" id="loadBtn" type="button">Открыть файл</button><input class="sr-only" id="importJSON" type="file" accept=".json,application/json"></div>
 <div class="actions"><button class="btn danger" id="clear" type="button">Очистить протокол</button></div>
 <p class="privacy">Данные не отправляются на сервер. Сохраните протокол в файл, чтобы продолжить позже. Не указывайте ФИО ребенка.</p></div>
 </div></section>
 <p class="library-caution">Интерпретации символов и расположения – справочные гипотезы, а не самостоятельный диагностический ключ. <a href="https://pubmed.ncbi.nlm.nih.gov/9631202/" target="_blank" rel="noopener noreferrer">Научный обзор</a>.</p>
 </main><footer>Метолария – автономный инструмент для специалиста. При первом онлайн-открытии страница сохраняется для повторных посещений без сети (пока кеш браузера не удален).</footer><div id="printSheet" aria-hidden="true"></div>
+<script src="drawing-library-interpretation.js?v=20261030a"></script>
 <script>
 (function(){
 "use strict";
@@ -3065,14 +3072,14 @@ function init(){
   var next=this.value;
   if(state.items.length||$("#subjectCode").value.trim()||$("#contextNotes").value.trim()||$("#conclusion").value.trim()){
    if(!confirm("При смене методики текущий протокол очищается. Продолжить?")){this.value=state.method;return}
-   state.items=[];$("#subjectCode").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords();
+   state.items=[];$("#subjectCode").value="";$("#subjectAge").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords();
   }
   state.method=next;state.category="Все";state.sheetOpen=false;state.draft=draftEmpty();state.editKey=null;state.visibleLimit=100;
   $("#search").value="";
   $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
   $("#methodBadge").textContent=methodName(state.method);renderMethodFocus();
   try{history.replaceState(null,"","?method="+encodeURIComponent(state.method))}catch(e){}
-  renderCategories();renderResults();renderDetails();
+  renderCategories();renderResults();renderDetails();renderSynthesis();
  });
  $("#search").addEventListener("input",function(){state.visibleLimit=100;renderResults()});
  $("#categories").addEventListener("click",function(e){
@@ -3145,7 +3152,7 @@ function init(){
    color.setAttribute("aria-pressed",String(item.colors.includes(v)));
    var summary=row.querySelector("summary");
    if(summary)summary.textContent="Цвета: "+(item.colors.length?item.colors.map(function(k){return colorByKey(k)[1]}).join(", "):"не указаны");
-   return;
+   renderSynthesis();return;
   }
   var edit=e.target.closest("[data-edit]");
   if(edit){
@@ -3159,12 +3166,15 @@ function init(){
  });
  $("#recordList").addEventListener("input",recordChange);
  $("#recordList").addEventListener("change",recordChange);
+ $("#subjectAge").addEventListener("input",renderSynthesis);
+ $("#contextNotes").addEventListener("input",renderSynthesis);
+ $("#copySynthesis").addEventListener("click",function(){var s=buildSynthesis();if(!s.hasContent)return;var content=s.text;if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(content).then(function(){$("#actionStatus").textContent="Интерпретация скопирована."}).catch(function(){fallbackCopy(content)})}else fallbackCopy(content)});
  $("#exportJSON").addEventListener("click",function(){if(!state.items.length&&!$("#contextNotes").value&&!$("#conclusion").value&&!$("#subjectCode").value){alert("В протоколе пока нет записей.");return}download("psyteka_drawing_protocol.json",JSON.stringify(getDocument(),null,2),"application/json")});
  $("#exportReport").addEventListener("click",function(){download("psyteka_drawing_report.html",reportHTML(),"text/html")});
  $("#printReport").addEventListener("click",function(){$("#printSheet").innerHTML=reportBody();window.print()});
  $("#loadBtn").addEventListener("click",function(){$("#importJSON").click()});
  $("#importJSON").addEventListener("change",importFile);
- $("#clear").addEventListener("click",function(){if(!confirm("Очистить протокол?"))return;state.items=[];$("#subjectCode").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords();$("#actionStatus").textContent=""});
+ $("#clear").addEventListener("click",function(){if(!confirm("Очистить протокол?"))return;state.items=[];$("#subjectCode").value="";$("#subjectAge").value="";$("#contextNotes").value="";$("#conclusion").value="";renderRecords();$("#actionStatus").textContent=""});
  $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
  $("#methodBadge").textContent=methodName(state.method);renderMethodFocus();
  $("#connection").textContent=entries.length+" элементов · автономный справочник";
@@ -3293,7 +3303,7 @@ function recordChange(e){
  if(key==="position"&&!Object.prototype.hasOwnProperty.call(POS,val))return;
  if(key==="size"&&!Object.prototype.hasOwnProperty.call(SZ,val))return;
  if(key==="note")val=val.slice(0,4000);
- item[key]=val;
+ item[key]=val;renderSynthesis();
 }
 function renderRecords(){
  $("#recordCount").textContent=state.items.length+" "+(state.items.length===1?"запись":state.items.length>=2&&state.items.length<=4?"записи":"записей");
@@ -3308,11 +3318,12 @@ function renderRecords(){
   '<div class="record-colors"><details><summary>Цвета: '+(colors.length?colors.map(function(k){return colorByKey(k)[1]}).join(", "):"не указаны")+'</summary><div class="record-color-grid">'+COLORS.filter(function(c){return c[0]}).map(function(c){return '<button type="button" class="record-color-toggle" data-record-color="'+c[0]+'" aria-pressed="'+colors.includes(c[0])+'">'+esc(c[1])+'</button>'}).join("")+'</div></details></div>'+
   '<label>Описание<textarea data-field="note" maxlength="4000">'+esc(x.note||"")+'</textarea></label></div></div>';
  }).join(""):'<div class="empty">Пока нет записей. Выберите элемент в поиске, раскройте признаки и добавьте его.</div>';
+ renderSynthesis();
 }
 function getDocument(){
  return {
   schema:"psyteka-drawing-protocol",version:1,method:state.method,methodName:methodName(state.method),
-  code:$("#subjectCode").value.slice(0,70),context:$("#contextNotes").value.slice(0,20000),
+  code:$("#subjectCode").value.slice(0,70),age:$("#subjectAge").value===""?null:Number($("#subjectAge").value),context:$("#contextNotes").value.slice(0,20000),
   items:state.items.map(function(x){return {
    elementId:x.elementId,name:x.name,position:x.position,size:x.size,
    color:x.color||"",colors:normalizeColors(x.colors,x.color),
@@ -3323,6 +3334,27 @@ function getDocument(){
   conclusion:$("#conclusion").value.slice(0,20000),
   notice:"Справочные трактовки признаков рассматриваются в сочетании с другими данными, не как самостоятельный диагностический ключ."
  };
+}
+function buildSynthesis(){
+ if(!window.MetolariaDrawingSynthesis)return {hasContent:false,text:"",sections:[]};
+ var d=getDocument(),items=d.items.map(function(x){
+  var entry=byId(x.elementId),f={},counts={};
+  (x.features||[]).forEach(function(k){var item=featureById(entry,k);if(item)f[k]=item[1]});
+  countFields(entry).forEach(function(t){counts[t[0]]=t[1]});
+  return Object.assign({},x,{featureLabels:f,countLabels:counts});
+ });
+ return window.MetolariaDrawingSynthesis.build({method:d.method,age:d.age,context:d.context,items:items});
+}
+function renderSynthesis(){
+ var element=$("#synthesisPreview");if(!element)return;
+ var s=buildSynthesis();
+ $("#copySynthesis").disabled=!s.hasContent;
+ element.innerHTML=s.hasContent?s.sections.map(function(p){return '<h4>'+esc(p.title)+'</h4><p>'+esc(p.text)+'</p>'}).join(""):'<p class="subtle">Добавьте элементы в протокол, чтобы увидеть связную интерпретацию.</p>';
+}
+function fallbackCopy(text){
+ var f=document.createElement("textarea");f.value=text;f.style.position="fixed";f.style.opacity="0";document.body.appendChild(f);f.select();
+ try{document.execCommand("copy");$("#actionStatus").textContent="Интерпретация скопирована."}catch(e){$("#actionStatus").textContent="Не удалось скопировать автоматически. Выделите текст интерпретации."}
+ f.remove();
 }
 function reportBody(){
  var d=getDocument();
@@ -3343,7 +3375,8 @@ function reportBody(){
    (info.length?'<p>'+esc(info.join(" · "))+'</p>':'')+
    (analysis.length?'<div>'+analysis.map(function(p){return '<p><strong>'+esc(p.title)+':</strong> '+esc(p.text)+'</p>'}).join("")+'</div>':'')+'</div>');
  });
- if(d.conclusion)parts.push('<h2>Сводка специалиста</h2><p>'+esc(d.conclusion)+'</p>');
+ var synthesized=buildSynthesis();if(synthesized.hasContent)synthesized.sections.forEach(function(s){parts.push('<h2>'+esc(s.title)+'</h2><p>'+esc(s.text)+'</p>')});
+ if(d.conclusion)parts.push('<h2>Дополнительная сводка специалиста</h2><p>'+esc(d.conclusion)+'</p>');
  parts.push('<hr><p><small>Справочные значения и наблюдаемые признаки могут использоваться как гипотезы, но не являются отдельным диагнозом.</small></p>');
  return parts.join("");
 }
@@ -3388,6 +3421,7 @@ async function importFile(e){
   $("#methodHint").textContent=METHODS.find(function(x){return x[0]===state.method})[2];
   $("#methodBadge").textContent=methodName(state.method);renderMethodFocus();
   $("#subjectCode").value=String(d.code||"").slice(0,70);
+  $("#subjectAge").value=Number.isInteger(Number(d.age))&&Number(d.age)>=3&&Number(d.age)<=99?Number(d.age):"";
   $("#contextNotes").value=String(d.context||"").slice(0,20000);
   $("#conclusion").value=String(d.conclusion||"").slice(0,20000);
   state.sheetOpen=false;state.draft=draftEmpty();state.editKey=null;state.tab="position";state.category="Все";$("#search").value="";
