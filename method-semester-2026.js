@@ -82,7 +82,7 @@ function score(d,a,row){
  return {complete:true,scales,answers,raw:null};
 }
 function link(url,title){return '<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(title)+'</a>'}
-function intro(m){return '<div class="notice psy-semester-note">'+esc(m.notice)+'</div><p>Подлинный текст и редакция: '+link(m.source,"Открыть опубликованный источник")+(m.rights?' · '+link(m.rights,"Правообладатель"):'')+'</p>'}
+function intro(m){return '<div class="notice psy-semester-note">'+esc(m.notice)+'</div><p>Подлинный текст и редакция: '+link(m.source,"Открыть опубликованный источник")+(m.rights?' · '+link(m.rights,"Правообладатель"):'')+(m.id==="lazarus-wcq50"?' · '+link(window.PSY_WCQ_NORMS_2026?.source||"https://lektsia.com/14x819f.html","Таблица перевода в Т-баллы"):"")+'</p>'}
 function instruction(d){const m=cfg(d);if(!m)return "";
  return '<h3>Цель</h3><p>'+esc(m.goal)+'</p><h3>Инструкция для специалиста</h3><p>'+esc(m.instruction)+'</p>'+
  '<h3>Инструкция для участника</h3><blockquote class="kid-instruction">Внимательно прочитай утверждения на выданном бланке и выбери один ответ для каждого номера. Здесь нет правильных или неправильных ответов. Если формулировка непонятна, обратись к специалисту.</blockquote>'+
