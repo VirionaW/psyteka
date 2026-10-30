@@ -49,7 +49,7 @@
  function temporaryFailure(){
   // A network/authorization-service outage is not a sign-out: never discard
   // the refresh session or pretend access was denied.
-  document.addEventListener("DOMContentLoaded",()=>{
+  const renderError=()=>{
    const css=document.createElement("style");
    css.textContent="html.psy-access-retry body{visibility:visible!important}html.psy-access-retry body > :not(#psyAccessRetryMessage){display:none!important}";
    document.head.append(css);
@@ -63,7 +63,9 @@
    retry.addEventListener("click",()=>location.reload());
    screen.append(heading,info,retry);document.body.append(screen);
    root.classList.add("psy-access-retry");
-  },{once:true});
+  };
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",renderError,{once:true});
+  else renderError();
  }
  (async()=>{
   try{
