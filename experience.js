@@ -728,7 +728,7 @@ function bindControls(){
     const trimmed=String(name).trim();if(!trimmed)continue;
     if(!rows.some(x=>x.name?.trim().toLocaleLowerCase('ru')===trimmed.toLocaleLowerCase('ru'))){
      if(first<0)first=rows.length;
-     rows.push({name:trimmed,answers:[],attendance:"present",...(grade?{schoolGrade:Number(grade),ageYears:Number(grade)+6}:{} ),...(cdiFormat?{cdiInputMode:cdiFormat}:{})});
+     rows.push({name:trimmed,answers:[],attendance:"present",...(grade?{schoolGrade:Number(grade),ageYears:Number(grade)+6}:{} ),...(cdiFormat?{cdiInputMode:cdiFormat,cdiInputModeInherited:true}:{})});
     }
    }
    if(!rows.length)rows.push({name:"",answers:[]});
