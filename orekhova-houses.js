@@ -368,7 +368,28 @@
    '<div class="work-short">'+result.short.map(x=>
     '<article class="work-short-item"><span>'+esc(x.label)+'</span><strong class="number-'+x.tone+'">'+esc(x.value)+'</strong></article>').join("")+'</div>'+
    '<section class="work-interpretation"><h3>Анализ результатов</h3>'+
-    result.sections.map(([heading,body])=>'<div class="work-paragraph"><h4>'+esc(heading)+'</h4><p>'+esc(body)+'</p></div>').join("")+
+    result.sections.map(([heading,body])=>{
+      let extra="";
+      if(heading.startsWith("Социальные эмоции")){
+       extra='<div class="work-emotion-grid">'+result.emotionCards.map(item=>
+        '<article class="work-emotion-card"><h5>'+esc(item.title)+' · '+esc(item.pair)+'</h5>'+
+        '<p class="work-emotion-colors">'+esc(item.first)+'<span class="work-dash">/</span>'+esc(item.second)+'</p>'+
+        '<p>'+esc(item.interpretation)+'</p></article>').join("")+'</div>';
+      }
+      if(heading.startsWith("Школьные ситуации")){
+       const groups=["Школьный день и нагрузка","Учебные предметы","Отношения в школе"];
+       extra='<div class="work-school-groups">'+groups.map(group=>
+        '<section class="work-school-group"><h5>'+esc(group)+'</h5>'+
+        '<div class="work-school-grid">'+result.schoolCards.filter(item=>item.group===group).map(item=>
+         '<article class="work-situation"><div class="work-situation-top"><strong>'+esc(item.title)+'</strong><span class="work-situation-type">'+esc(item.category)+'</span></div>'+
+         '<div class="work-situation-color"><i class="work-swatch" style="background:'+item.colorHex+'"></i>'+
+         '<span><b>'+esc(item.color)+'</b> · '+item.place+' место в дорожке</span></div>'+
+         '<p>'+esc(item.meaning)+'</p>'+
+         '<p class="work-situation-check"><strong>Что проверить:</strong> '+esc(item.check)+'</p></article>').join("")+
+        '</div></section>').join("")+'</div>';
+      }
+      return '<div class="work-paragraph"><h4>'+esc(heading)+'</h4><p>'+esc(body)+'</p>'+extra+'</div>';
+    }).join("")+
    '</section>'+
    '<section class="work-actions"><h3>На что обратить внимание психологу</h3><ol>'+result.actions.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol></section>'+
    '<details class="report-expanded"><summary>Полный протокол: 20 домиков, цвета и пять пар эмоций</summary><div class="report-expanded-inner">'+renderDetailReport(s)+'</div></details>'+
@@ -436,7 +457,26 @@
     wp("КРАТКИЕ РЕЗУЛЬТАТЫ");
   result.short.forEach(item=>b+=wp(item.label+": "+item.value,colorHex(item.tone)));
   b+=wp("АНАЛИЗ РЕЗУЛЬТАТОВ");
-  result.sections.forEach(([head,body])=>{b+=wp(head)+wp(body);});
+  result.sections.forEach(([head,body])=>{
+   b+=wp(head)+wp(body);
+   if(head.startsWith("Социальные эмоции")){
+    result.emotionCards.forEach(item=>{
+     b+=wp(item.title+" · "+item.pair);
+     b+=wp("Выборы: "+item.first+" / "+item.second);
+     b+=wp("Анализ: "+item.interpretation);
+    });
+   }
+   if(head.startsWith("Школьные ситуации")){
+    let lastGroup="";
+    result.schoolCards.forEach(item=>{
+     if(item.group!==lastGroup){b+=wp(item.group);lastGroup=item.group;}
+     b+=wp(item.title+" – "+item.category);
+     b+=wp("Цвет: "+item.color+", место "+item.place+" из 8.");
+     b+=wp("Значение выбора: "+item.meaning);
+     b+=wp("Что проверить: "+item.check);
+    });
+   }
+  });
   b+=wp("НА ЧТО ОБРАТИТЬ ВНИМАНИЕ ПСИХОЛОГУ");
   result.actions.forEach((item,i)=>b+=wp((i+1)+". "+item));
   b+=wp("ПРОТОКОЛ: ЦВЕТОВАЯ ДОРОЖКА");
