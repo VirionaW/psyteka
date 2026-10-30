@@ -798,6 +798,7 @@
    const mode=e.target.value;
    if(!cdiEntryModes.includes(mode)||(mode!=="score"&&!cdiKeyValid))return;
    r.cdiInputMode=mode; // answers remain normalized 0-2; only visible form changes
+   if(ctx.calcMode==="class")rows.forEach(person=>{if(person!==r&&!person.cdiInputMode)person.cdiInputMode=mode;});
    ctx.onRender?.();
   });
   const inputs=[...document.querySelectorAll("input[data-cp-answer]")];
