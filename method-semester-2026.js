@@ -31,9 +31,9 @@ const methods=[
  {id:"lazarus-wcq50",name:"Способы совладающего поведения Р. Лазаруса (WCQ)",author:"Р. Лазарус, С. Фолкман; русскоязычные адаптации Т. Л. Крюковой и Л. И. Вассермана и соавт.",age:"7-11 классы по программе обследования; нормативы адаптации требуют отдельного подтверждения",theme:"Адаптация",n:50,max:3,source:WCQ_SOURCE,
   goal:"Изучение восьми стратегий совладания со стрессом по 50-пунктной версии WCQ.",
   instruction:"Предъявите проверенный полный текст конкретной 50-пунктной русскоязычной версии WCQ. Внесите ответы по номерам: 0 – никогда, 1 – редко, 2 – иногда, 3 – часто. Не смешивайте порядок вопросов разных адаптаций.",
-  scoring:"Каждый ответ 0-3. По каждой из 8 шкал складываются ответы на пункты опубликованного ключа, отдельно показываются сырой балл и доля от максимума. T-баллы и процентили без возрастных таблиц конкретной адаптации не рассчитываются.",
-  interpret:"Восемь шкал отражают предпочитаемые стратегии. Высокий процент заполнения максимума не равен клиническому уровню и не имеет статуса возрастной нормы. Обязательно учитывайте ситуацию, возраст и версию опросника.",
-  notice:"Ключ ниже относится к 50-пунктному порядку, приведенному в общедоступных русскоязычных публикациях. Стандартизированные T-баллы требуют отдельной таблицы норм и подтвержденной адаптации. Полные авторские стимулы здесь не перепечатаны.",
+  scoring:"Каждый ответ 0-3. По ключу подсчитывается сумма для восьми шкал. Для адаптации Вассермана и соавт. (2009) сырой балл переводится по опубликованной нормативной таблице в Т-балл отдельно для мужчин и женщин возрастных групп 14-20, 21-30, 31-45, 46-60 лет. Вне этих групп указываются только сырые баллы.",
+  interpret:"Восемь шкал отражают способы совладания. Для подтвержденных Т-баллов: менее 40 – редкое использование, 40-60 – умеренное, более 60 – выраженное. Т-баллы не являются клиническим диагнозом. При отсутствии применимых возрастно-половых норм показываются сырые баллы без нормативной категории.",
+  notice:"Ключ относится к 50-пунктной адаптации НИПНИ им. Бехтерева. Таблицы Т-баллов: Вассерман и соавт., 2009, приложение 2, для пола и возрастов 14-60 лет. Фактический возраст каждого участника вводится отдельно от класса; после 60 лет нормативный показатель не выводится. Не смешивайте редакции и ключи. Полные авторские стимулы здесь не перепечатаны.",
   scales:groups(["Конфронтация","Дистанцирование","Самоконтроль","Поиск социальной поддержки","Принятие ответственности","Бегство-избегание","Планирование решения проблемы","Положительная переоценка"],
    [[2,3,13,21,26,37],[8,9,11,16,32,35],[6,10,27,34,44,49,50],[4,14,17,24,33,36],[5,19,22,42],[7,12,25,31,38,41,46,47],[1,20,30,39,40,43],[15,18,23,28,29,45,48]])},
  {id:"razuvaeva-osr29",name:"Опросник суицидального риска (Шмелев – Разуваева)",author:"А. Г. Шмелев (1992); модификация Т. Н. Разуваевой (1993)",age:"7-11 классы по программе обследования; проводит подготовленный специалист",theme:"Мониторинг риска",n:29,max:1,source:RAZ_SOURCE,
@@ -74,9 +74,10 @@ function score(d,a,row){
  const m=cfg(d);if(!m||row?.attendance==="absent"||!complete(m,a))return null;
  const answers=Array.from({length:m.n},(_,i)=>Number(a[i]));
  if(m.id==="cdi-27")return {raw:answers.reduce((x,y)=>x+y,0),max:54,complete:true,answers};
- const scales=effectiveScales(m,row).map(s=>{
+ const scales=effectiveScales(m,row).map((s,index)=>{
   const raw=s.q.reduce((sum,n)=>sum+answers[n-1],0),max=s.q.length*m.max,factor=s.factor||1;
-  return {name:s.name,raw,max,factor,adjusted:Math.round(raw*factor*100)/100,percent:raw/max*100,q:s.q};
+  const tScore=m.id==="lazarus-wcq50"?(window.PSY_WCQ_NORMS_2026?.tScore(index,raw,row?.ageYears,row?.sex)??null):null;
+  return {name:s.name,raw,max,factor,adjusted:Math.round(raw*factor*100)/100,percent:raw/max*100,tScore,q:s.q};
  });
  return {complete:true,scales,answers,raw:null};
 }
@@ -109,12 +110,12 @@ function scoreTone(m,s){
 }
 function scoreDescription(m,s){
  if(m.id==="eysenck-40")return s.raw<=7?"Низкая выраженность":s.raw<=14?"Средняя выраженность":"Высокая выраженность";
- if(m.id==="lazarus-wcq50")return "Доля максимума: "+Math.round(s.percent)+"% (не нормативный уровень)";
+ if(m.id==="lazarus-wcq50")return s.tScore===null?"Сырой балл; возрастно-половая норма недоступна":window.PSY_WCQ_NORMS_2026.level(s.tScore)+" (Т-балл)";
  return "Факторный показатель, не категория риска";
 }
 function resultTable(m,z){
  return '<div class="psy-semester-table psy-semester-result-table"><table><thead><tr><th>Шкала</th><th>Баллы</th><th>Интерпретация показателя</th></tr></thead><tbody>'+
- z.scales.map(s=>'<tr><td><b>'+esc(s.name)+'</b></td><td><span class="psy-semester-score '+scoreTone(m,s)+'">'+(m.id==="razuvaeva-osr29"?s.adjusted.toFixed(2).replace(".",","):s.raw)+'</span><span class="psy-semester-denom">'+(m.id==="razuvaeva-osr29"?" (сырой: "+s.raw+" / "+s.max+")":" / "+s.max)+'</span></td><td>'+esc(scoreDescription(m,s))+'</td></tr>').join("")+'</tbody></table></div>';
+ z.scales.map(s=>'<tr><td><b>'+esc(s.name)+'</b></td><td><span class="psy-semester-score '+scoreTone(m,s)+'">'+(m.id==="razuvaeva-osr29"?s.adjusted.toFixed(2).replace(".",","):m.id==="lazarus-wcq50"&&s.tScore!==null?s.tScore:s.raw)+'</span><span class="psy-semester-denom">'+(m.id==="razuvaeva-osr29"?" (сырой: "+s.raw+" / "+s.max+")":m.id==="lazarus-wcq50"&&s.tScore!==null?" Т-балл (сырой: "+s.raw+" / "+s.max+")":" / "+s.max)+'</span></td><td>'+esc(scoreDescription(m,s))+'</td></tr>').join("")+'</tbody></table></div>';
 }
 function result(d,row){const m=cfg(d),n=count(m,row.answers),z=score(d,row.answers,row);
  if(row.attendance==="absent")return '<div class="psy-semester-status is-skipped">Отсутствовал – результаты не рассчитываются</div>';
