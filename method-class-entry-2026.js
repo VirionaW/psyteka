@@ -486,15 +486,25 @@
     '<button type="button" '+(!allowGender?"disabled ":"")+'class="btn psy-cp-sex-btn '+(r.sex==="f"?"is-selected":"")+'" data-cp-sex="f" aria-pressed="'+(r.sex==="f")+'">Девочка</button>'+
     '<button type="button" '+(!allowGender?"disabled ":"")+'class="btn psy-cp-sex-btn '+(r.sex==="m"?"is-selected":"")+'" data-cp-sex="m" aria-pressed="'+(r.sex==="m")+'">Мальчик</button></div></div>';
   }
+  if(type(d)==="cdi"){
+   const entryMode=cdiEntryMode(r);
+   h+='<div class="psy-cdi-entry-mode"><label for="cpCdiInputMode">Формат ответов<select id="cpCdiInputMode">'+
+    '<option value="score" '+(entryMode==="score"?"selected":"")+'>Баллы 0-2</option>'+
+    '<option value="position" '+(entryMode==="position"?"selected":"")+(cdiKeyValid?"":" disabled")+'>Номера утверждений 1-3 (бланк PDF)</option>'+
+    '<option value="letter" '+(entryMode==="letter"?"selected":"")+(cdiKeyValid?"":" disabled")+'>Буквы А, Б, В (бланк PDF)</option>'+
+    '</select></label>'+
+    '<small>'+(entryMode==="score"?"Вводятся уже подсчитанные баллы по ключу.":cdiKeyValid?"Буквы и номера пересчитываются по ключу каждого пункта; они не равны баллам.":"Для этого формата нет проверенного ключа.")+
+    ' Используйте порядок утверждений именно из предоставленного 27-пунктного PDF.</small></div>';
+  }
   if(type(d)==="cdi")h+='<details class="psy-cdi-student-note psy-cdi-specialist-note"><summary>Как вводить баллы</summary><p>Вводите 0, 1 или 2 по ключу оригинального опросника, а не номер выбранного утверждения.</p></details>';
   if(!canAnswer)h+='<p class="psy-cdi-lock-note" id="cdiLockNote" '+(canAnswer?'hidden':'')+'>'+
    (!r.name?.trim()?"Сначала укажите участника.":type(d)==="cdi"&&!cdiAgeReady(r,rows,ctx.calcMode)?"Выберите возраст или класс.":"Выберите пол ребенка.")+'</p>';
   h+='<p class="psy-mspss-progress" id="cpProgress">Заполнено '+n+' из '+total+'</p>';
   if(r.attendance==="absent")h+='<p class="psy-cp-absence">Ученик отмечен отсутствующим. Ввод заблокирован до возвращения в список присутствующих.</p>';
   h+='<div class="psy-mspss-grid psy-cp-grid">'+subjects(d).map((topic,i)=>{
-   const answer=value(d,a[i]),complete=answer!=="";
+   const answer=type(d)==="cdi"?cdiEncode(cdiEntryMode(r),i,a[i]):value(d,a[i]),complete=answer!=="";
    return '<label class="psy-mspss-item '+(complete?"is-complete":"is-missing")+'"><span><b>'+(i+1)+'.</b> '+esc(topic)+'</span>'+
-    '<input class="psy-mspss-score-input psy-cp-answer" data-cp-answer="'+i+'" type="text" inputmode="numeric" autocomplete="off" maxlength="1" placeholder="'+(type(d)==="cdi"?"0-2":"0-1")+'" aria-label="Пункт '+(i+1)+' – балл" value="'+esc(answer)+'" '+(!canAnswer?"disabled":"")+'></label>';
+    '<input class="psy-mspss-score-input psy-cp-answer" data-cp-answer="'+i+'" type="text" inputmode="'+(type(d)==="cdi"&&cdiEntryMode(r)==="letter"?"text":"numeric")+'" autocomplete="off" maxlength="1" placeholder="'+(type(d)==="cdi"?(cdiEntryMode(r)==="letter"?"А/Б/В":cdiEntryMode(r)==="position"?"1-3":"0-2"):"0-1")+'" aria-label="Пункт '+(i+1)+' – '+(type(d)==="cdi"?"ответ":"балл")+'"'+(type(d)==="cdi"&&cdiEntryMode(r)!=="score"?' title="'+esc(cdiEntryHint(cdiEntryMode(r),i))+'"':"")+' value="'+esc(answer)+'" '+(!canAnswer?"disabled":"")+'></label>';
   }).join("")+'</div>';
   if(ctx.calcMode==="class"){
    const nextAvailable=(start)=>{for(let step=1;step<rows.length;step++){const j=(start+step)%rows.length;if(rows[j].attendance!=="absent")return j;}return -1;};
