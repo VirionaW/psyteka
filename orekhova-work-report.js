@@ -22,8 +22,8 @@
  const quote=x=>"«"+x+"»";
  function build(s,score,group){
   const p=id=>s.ranking.indexOf(id)+1;
-  const v=score.vk,co=score.co;
-  const vk=v<=.5?{status:"Хроническое переутомление",tone:"red",guide:"энергетический показатель в неблагоприятном диапазоне"}:v<=.91?{status:"Компенсируемая усталость",tone:"yellow",guide:"работоспособность поддерживается ценой периодического снижения активности"}:v<=1.9?{status:"Оптимальная работоспособность",tone:"green",guide:"энергетический показатель в оптимальном диапазоне"}:v>2?{status:"Перевозбуждение",tone:"red",guide:"возможна перегрузка темпом деятельности"}:{status:"Между опубликованными порогами",tone:"neutral",guide:"для этого значения в шкале нет отдельной категории"};
+  const v=score.vk,co=score.co,vRounded=Math.round(v*100)/100;
+  const vk=vRounded<=.5?{status:"Хроническое переутомление",tone:"red",guide:"энергетический показатель в неблагоприятном диапазоне"}:vRounded<=.91?{status:"Компенсируемая усталость",tone:"yellow",guide:"работоспособность поддерживается ценой периодического снижения активности"}:vRounded<=1.9?{status:"Оптимальная работоспособность",tone:"green",guide:"энергетический показатель в оптимальном диапазоне"}:vRounded>2?{status:"Перевозбуждение",tone:"red",guide:"возможна перегрузка темпом деятельности"}:{status:"Между опубликованными порогами",tone:"neutral",guide:"для этого значения в шкале нет отдельной категории"};
   const emotional=co<10?{status:"Преобладают положительные эмоции",tone:"green"}:co<=18?{status:"Обычный эмоциональный фон",tone:"yellow"}:co===20?{status:"Значение 20 без категории",tone:"neutral"}:{status:"Преобладают отрицательные эмоции",tone:"red"};
   const pairs=GROUPS.map(([domain,a,b])=>({domain,a,b,same:s.emotions[a]===s.emotions[b],distance:Math.abs(p(s.emotions[a])-p(s.emotions[b]))}));
   const same=pairs.filter(x=>x.same);
@@ -41,8 +41,9 @@
   const risk=school.filter(x=>x.marker==="adverse"||x.dark);
   const mixed=school.filter(x=>x.marker==="mixed");
   const severe=[...school].filter(x=>x.points>=2).sort((a,b)=>b.points-a.points||a.i-b.i);
-  const schoolStatus=risk.length>=3?"Преимущественно напряженные ассоциации":strong.length>=4&&!risk.length?"Преимущественно благоприятные ассоциации":"Неоднородное отношение";
-  const schoolTone=risk.length>=3?"red":strong.length>=4&&!risk.length?"green":"yellow";
+  const preschool=Number.isInteger(s.age)&&s.age<=6&&!/^1[а-яa-z]?$/i.test(String(group||"").trim());
+  const schoolStatus=preschool?"Школьные сюжеты – представления":risk.length>=3?"Преимущественно напряженные ассоциации":strong.length>=4&&!risk.length?"Преимущественно благоприятные ассоциации":"Неоднородное отношение";
+  const schoolTone=preschool?"neutral":risk.length>=3?"red":strong.length>=4&&!risk.length?"green":"yellow";
   const grade=String(group||"").trim(),firstGrade=/^1[а-яa-z]?$/i.test(grade);
   let ageLabel,ageExplanation,ageAction;
   if(!Number.isInteger(s.age)){
@@ -88,7 +89,7 @@
    "Все пять пар противоположных чувств получили разные цвета; прямых совпадений противоположных эмоций нет.";
   const semantic2=" Основные цвета использованы для "+plus+" из пяти положительных чувств; коричневый или черный – для "+minus+" из пяти отрицательных."+
    (unusual.length?" Нетипично для схемы методики темные цвета получили положительные чувства: "+list(unusual.map(i=>quote(EM[i])))+".":"");
-  const atSchool=severe.length?
+  const atSchool=preschool?"Указанные цвета относятся к предполагаемым школьным ситуациям. Сначала уточнить, знакомы ли ребенку реальные уроки, учитель и домашние задания; затем, если опыт есть, обсудить следующие выборы. "+severe.slice(0,3).map(describe).join(". ")+".":severe.length?
    "Приоритетные школьные ситуации: "+severe.slice(0,4).map(describe).join(". ")+".":"В семи школьных ситуациях нет сильных отрицательных совпадений с домиками чувств.";
   const resources=strong.length?
    " Относительно благоприятные связи: "+strong.slice(0,3).map(describe).join(". ")+".":"";
@@ -104,7 +105,7 @@
   else if(vk.tone==="yellow")add("energy","Понаблюдать, в какие часы падает работоспособность, и обсудить с педагогом чередование нагрузки и отдыха.",3);
   if(emotional.tone==="red")add("mood","Провести индивидуальную беседу об источниках неприятных переживаний, сопоставить ответы с данными родителей и учителя.",5);
   if(same.length)same.slice(0,2).forEach(x=>add("pair"+x.domain,"Проверить различение эмоций "+quote(EM[x.a])+" и "+quote(EM[x.b])+": попросить привести примеры из собственной жизни.",4));
-  severe.slice(0,3).forEach(x=>add("school"+x.i,ASK[x.i],4+x.points));
+  if(!preschool)severe.slice(0,3).forEach(x=>add("school"+x.i,ASK[x.i],4+x.points));
   if(self.marker==="adverse"||self.dark)add("self",ASK[0],5);
   if(home.marker==="adverse"||home.dark)add("home",ASK[7],4);
   if(s.age<=6&&!firstGrade||!Number.isInteger(s.age)||s.age>10)add("age",ageAction,3);
@@ -116,13 +117,13 @@
   if(emotional.tone==="green")strengths.push("положительный общий эмоциональный фон");
   if(!same.length)strengths.push("пять пар противоположных чувств раскрашены по-разному");
   if(strong.length)strengths.push("благоприятные совпадения для "+list(strong.slice(0,2).map(x=>quote(x.name))));
-  const status=emotional.tone==="red"||risk.length>=3||same.length>=3?"Требует повышенного внимания":emotional.tone==="yellow"||severe.length||same.length?"Имеются отдельные зоны внимания":"Преимущественно благоприятные показатели по методике";
+  const status=emotional.tone==="red"||(!preschool&&risk.length>=3)||same.length>=3?"Требует повышенного внимания":emotional.tone==="yellow"||(!preschool&&severe.length)||same.length?"Имеются отдельные зоны внимания":"Преимущественно благоприятные показатели по методике";
   return {
    short:[
     {label:"Энергетический баланс (ВК)",value:v.toFixed(2).replace(".",",")+" · "+vk.status,tone:vk.tone},
     {label:"Эмоциональный фон (СО)",value:co+" · "+emotional.status,tone:emotional.tone},
     {label:"Различение социальных эмоций",value:same.length?same.length+" совпавших пар из 5":"5 разных пар из 5",tone:same.length>=2?"red":same.length?"yellow":"green"},
-    {label:"Школьные ситуации",value:schoolStatus,tone:risk.length>=3?"red":strong.length>=4&&!risk.length?"green":"yellow"},
+    {label:"Школьные ситуации",value:schoolStatus,tone:preschool?"neutral":risk.length>=3?"red":strong.length>=4&&!risk.length?"green":"yellow"},
     {label:"Возрастной контекст",value:ageLabel,tone:"neutral"}
    ],
    sections:[
@@ -133,7 +134,7 @@
     ["Оценка с учетом возраста",ageExplanation],
     ["Рабочее заключение",status+". "+
       (strengths.length?"Ресурсы: "+list(strengths)+". ":"")+
-      (severe.length?"Проверить прежде всего "+list(severe.slice(0,3).map(x=>quote(x.name)))+". ":"")+
+      (!preschool&&severe.length?"Проверить прежде всего "+list(severe.slice(0,3).map(x=>quote(x.name)))+". ":"")+
       "Дальнейшая работа строится по указанным ниже наблюдаемым ситуациям."]
    ],
    actions,ageStatus:ageLabel,schoolStatus,status
