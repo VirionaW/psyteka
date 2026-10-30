@@ -61,7 +61,8 @@
    const info=document.createElement("p");info.textContent="Связь с сервисом аккаунтов временно недоступна. Вход не сброшен. Попробуйте еще раз.";
    const retry=document.createElement("button");retry.type="button";retry.textContent="Повторить проверку";retry.style.cssText="padding:13px 18px;border:0;border-radius:12px;background:#257854;color:#fff;cursor:pointer;font:700 15px system-ui";
    retry.addEventListener("click",()=>location.reload());
-   screen.append(heading,info,retry);document.body.append(screen);
+   const signIn=document.createElement("a");signIn.href="index.html?home=1&entry=1";signIn.textContent="Перейти к входу";signIn.style.cssText="color:#246d53;text-decoration:underline;font-weight:600";
+   screen.append(heading,info,retry,signIn);document.body.append(screen);
    root.classList.add("psy-access-retry");
   };
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",renderError,{once:true});
