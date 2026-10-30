@@ -159,6 +159,9 @@ function bindAnswerCopyControls(){
  else entry.querySelector(".psy-cp-grid")?.insertAdjacentElement("afterend",box);
 }
 function setTab(name){
+ const previousTab=tabNow;
+ const preserveScroll=previousTab===name&&(name==="score"||name==="processing");
+ const previousScroll=preserveScroll?($("#modalBody")?.scrollTop||0):0;
  if((name==="score"||name==="processing")&&window.PSY_GUIDE_STANDARD?.selectionUnsupported(methodNow?.name))name="instruction";
  tabNow=name;
  document.querySelectorAll(".modal-tab").forEach(x=>{x.classList.toggle("active",x.dataset.tab===name);x.setAttribute("aria-selected",String(x.dataset.tab===name))});
@@ -178,7 +181,7 @@ function setTab(name){
    if(!['phillips58','semester2026','mspss','orekhovaHouses8','luscherHub'].includes(DETAILS[methodNow.name]?.workflow))body.innerHTML=window.PSY_GUIDE_STANDARD.supplement(methodNow.name,DETAILS[methodNow.name],methodNow,body.innerHTML);
    window.PSY_GUIDE_STANDARD.bind(()=>setTab('instruction'));
  }
- body.scrollTop=0;
+ body.scrollTop=preserveScroll?previousScroll:0;
  const bottom=$("#bottomProcessing");
  if(bottom){
   const insideProcessing=name==="score"||name==="processing";
@@ -729,7 +732,7 @@ function bindControls(){
     const trimmed=String(name).trim();if(!trimmed)continue;
     if(!rows.some(x=>x.name?.trim().toLocaleLowerCase('ru')===trimmed.toLocaleLowerCase('ru'))){
      if(first<0)first=rows.length;
-     rows.push({name:trimmed,answers:[],attendance:"present",...(grade?{schoolGrade:Number(grade),...(d.id==="lazarus-wcq50"?{}:{ageYears:Number(grade)+6})}:{} ),...(cdiFormat?{cdiInputMode:cdiFormat,cdiInputModeInherited:true}:{}),...(razFormat?{razuvaevaKey:razFormat}:{})});
+     rows.push({name:trimmed,answers:[],attendance:"present",...(grade?{schoolGrade:Number(grade),ageYears:Number(grade)+6,ageManual:false}:{} ),...(cdiFormat?{cdiInputMode:cdiFormat,cdiInputModeInherited:true}:{}),...(razFormat?{razuvaevaKey:razFormat}:{})});
     }
    }
    if(!rows.length)rows.push({name:"",answers:[]});
