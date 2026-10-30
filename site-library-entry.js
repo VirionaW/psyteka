@@ -11,9 +11,9 @@
   /^sb_publishable_[A-Za-z0-9_-]+$/.test(conf.publishableKey||"")&&window.supabase?.createClient);
  // Reuse the identity client's auth session and browser lock rather than
  // creating another competing Supabase client on the same landing page.
- const client=valid?(window.PSY_IDENTITY?.client||window.supabase.createClient(conf.url,conf.publishableKey,{
+ const client=valid?(window.PSY_IDENTITY?.client||window.PSY_AUTH_CLIENT||(window.PSY_AUTH_CLIENT=window.supabase.createClient(conf.url,conf.publishableKey,{
   auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
- })):null;
+ }))):null;
  let destination="library.html",currentUser=null,role="participant",trial=null,paid=null,requestAt=0,timer=null,lastFocus=null,opening=false,ownerNeedsMfa=false,sendingEmail=false;
  const html=`<dialog id="psyEntryDialog" aria-labelledby="psyEntryTitle" aria-modal="true">
  <div class="psy-entry-inner">
