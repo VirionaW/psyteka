@@ -263,7 +263,39 @@
  const type=d=>d?.id==="cdi-27"?"cdi":d?.workflow==="phillips58"?"ph":null;
  const max=d=>type(d)==="cdi"?2:1;
  const size=d=>type(d)==="cdi"?27:58;
- const subjects=d=>type(d)==="cdi"?Array(27).fill("Балл по ключу оригинального бланка"):phillips.topics;
+ const subjects=d=>type(d)==="cdi"?Array(27).fill("Ответ по выбранной форме"):phillips.topics;
+ /* The original uploaded 27-item handout supplies statement positions and their
+    actual 0-2 codes. Do not conflate position with raw score or apply this key
+    to another edition/CDI 2. Internally persist ONLY normalized 0-2 scores. */
+ const cdiLetters=["А","Б","В"];
+ const cdiEntryModes=["score","position","letter"];
+ const cdiEntryMode=r=>cdiEntryModes.includes(r?.cdiInputMode)?r.cdiInputMode:"score";
+ const cdiKeyValid=Array.isArray(norms?.statements)&&norms.statements.length===27&&
+  norms.statements.every(group=>Array.isArray(group)&&group.length===3&&
+    group.every(x=>Array.isArray(x)&&Number.isInteger(x[1])&&x[1]>=0&&x[1]<=2)&&
+    group.map(x=>x[1]).slice().sort((a,b)=>a-b).join(",")==="0,1,2");
+ const cdiEntryHint=(mode,i)=>{
+  if(!cdiKeyValid||mode==="score")return "";
+  const key=norms.statements[i].map((x,j)=>(mode==="letter"?cdiLetters[j]:String(j+1))+" = "+x[1]).join(" · ");
+  return "Пункт "+(i+1)+": "+key+" баллов (порядок из предоставленного PDF)";
+ };
+ const cdiDecode=(mode,i,token)=>{
+  const input=String(token??"").trim().toUpperCase();
+  if(!input)return null;
+  if(mode==="score")return /^[012]$/.test(input)?Number(input):null;
+  if(!cdiKeyValid||i<0||i>=27)return null;
+  let p=-1;
+  if(mode==="position"&&/^[123]$/.test(input))p=Number(input)-1;
+  if(mode==="letter")p=cdiLetters.indexOf(input);
+  return p>=0?norms.statements[i][p][1]:null;
+ };
+ const cdiEncode=(mode,i,score)=>{
+  if(![0,1,2,"0","1","2"].includes(score))return "";
+  if(mode==="score")return String(score);
+  if(!cdiKeyValid||i<0||i>=27)return "";
+  const j=norms.statements[i].findIndex(x=>x[1]===Number(score));
+  return j<0?"":mode==="letter"?cdiLetters[j]:String(j+1);
+ };
  const status=r=>r?.attendance==="absent"?"Отсутствовал":"Присутствует";
  const valid=(v,d)=>type(d)==="cdi"?[0,1,2,"0","1","2"].includes(v):v==="yes"||v==="no";
  function done(d,answers){return Array.from({length:size(d)},(_,i)=>answers?.[i]).filter(v=>valid(v,d)).length;}
