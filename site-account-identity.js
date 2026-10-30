@@ -5,9 +5,9 @@
  const valid=/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(cfg.url||"")
   &&/^sb_publishable_[a-zA-Z0-9_-]+$/.test(cfg.publishableKey||"")
   &&!!window.supabase?.createClient;
- const client=valid?window.supabase.createClient(cfg.url,cfg.publishableKey,{
+ const client=valid?(window.PSY_AUTH_CLIENT||(window.PSY_AUTH_CLIENT=window.supabase.createClient(cfg.url,cfg.publishableKey,{
   auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
- }):null;
+ }))):null;
  const state={user:null,role:"participant",client};
  const prefix=(field)=>state.user?.id?"psy-"+field+"-v2:"+state.user.id:null;
  state.profileKey=()=>prefix("profile");
