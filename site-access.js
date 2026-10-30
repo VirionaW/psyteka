@@ -43,20 +43,40 @@
  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||"")||
     !/^sb_publishable_[A-Za-z0-9_-]+$/.test(config.publishableKey||"")||
     !window.supabase?.createClient){goHome();return}
- const client=window.supabase.createClient(config.url,config.publishableKey,{
+ const client=window.PSY_AUTH_CLIENT||(window.PSY_AUTH_CLIENT=window.supabase.createClient(config.url,config.publishableKey,{
   auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
- });
+ }));
+ function temporaryFailure(){
+  // A network/authorization-service outage is not a sign-out: never discard
+  // the refresh session or pretend access was denied.
+  document.addEventListener("DOMContentLoaded",()=>{
+   const css=document.createElement("style");
+   css.textContent="html.psy-access-retry body{visibility:visible!important}html.psy-access-retry body > :not(#psyAccessRetryMessage){display:none!important}";
+   document.head.append(css);
+   const screen=document.createElement("main");
+   screen.id="psyAccessRetryMessage";
+   screen.setAttribute("role","alert");
+   screen.style.cssText="min-height:100vh;display:grid;place-content:center;gap:16px;max-width:520px;margin:auto;padding:30px;text-align:center;font:16px/1.5 system-ui,sans-serif;color:#214537";
+   const heading=document.createElement("h1");heading.textContent="Не удалось проверить доступ";heading.style.fontSize="24px";
+   const info=document.createElement("p");info.textContent="Связь с сервисом аккаунтов временно недоступна. Вход не сброшен. Попробуйте еще раз.";
+   const retry=document.createElement("button");retry.type="button";retry.textContent="Повторить проверку";retry.style.cssText="padding:13px 18px;border:0;border-radius:12px;background:#257854;color:#fff;cursor:pointer;font:700 15px system-ui";
+   retry.addEventListener("click",()=>location.reload());
+   screen.append(heading,info,retry);document.body.append(screen);
+   root.classList.add("psy-access-retry");
+  },{once:true});
+ }
  (async()=>{
   try{
    const {data,error}=await client.auth.getUser();
-   if(error||!data?.user||data.user.is_anonymous){goHome();return}
+   if(error){temporaryFailure();return}
+   if(!data?.user||data.user.is_anonymous){goHome();return}
    const uid=data.user.id;
    const [r,t,p]=await Promise.all([
     client.from("psy_account_roles").select("role").eq("user_id",uid).maybeSingle(),
     client.from("psy_trial_access").select("expires_at").eq("user_id",uid).maybeSingle(),
     client.from("psy_paid_access").select("plan,expires_at").eq("user_id",uid).maybeSingle()
    ]);
-   if(r.error||t.error||p.error){goHome();return}
+   if(r.error||t.error||p.error){temporaryFailure();return}
    if(["owner","shadow","moderator"].includes(r.data?.role)){
     // Reading the library is not an administrative action.
     // The management page and server-side role changes still require AAL2.
@@ -70,6 +90,6 @@
    }
    if(!t.data?.expires_at||new Date(t.data.expires_at).getTime()<=Date.now()){goHome();return}
    root.classList.add("psy-access-ok");pill("Пробный доступ",t.data.expires_at);
-  }catch(_){goHome()}
+  }catch(_){temporaryFailure()}
  })();
 })();
