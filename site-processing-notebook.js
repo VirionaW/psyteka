@@ -42,11 +42,36 @@
   const changed=controller.openBlank();
   if(changed)render();
  });
+ // Keep the result bookmarks outside the unchanged modal. When the left
+ // gutter is too narrow for readable bookmarks, give them their own row inside
+ // the dialog rather than covering the assessment or disappearing off-screen.
  function position(){
   if(notebook.hidden||modal.hidden)return;
   const rect=modal.getBoundingClientRect();
-  const width=notebook.getBoundingClientRect().width;
-  notebook.style.left=Math.max(4,Math.round(rect.left-width+1))+"px";
+  const gutter=Math.max(0,Math.floor(rect.left)-6);
+  const inline=gutter<86;
+  if(inline&&!notebook.classList.contains("is-inline")){
+   notebook.classList.add("is-inline");
+   const anchor=Array.from(modal.children).find(x=>x.classList.contains("method-tabs"))
+    ||modal.querySelector(".modalbody")||modal.querySelector(".modalfoot");
+   if(anchor&&anchor.parentElement===modal)modal.insertBefore(notebook,anchor);
+   else modal.appendChild(notebook);
+  }else if(!inline&&notebook.classList.contains("is-inline")){
+   notebook.classList.remove("is-inline");
+   document.body.appendChild(notebook);
+  }
+  if(inline){
+   notebook.classList.remove("is-compact");
+   notebook.style.width="100%";
+   notebook.style.left="";
+   notebook.style.top="";
+   notebook.style.maxHeight="";
+   return;
+  }
+  const width=Math.min(228,gutter);
+  notebook.classList.toggle("is-compact",width<170);
+  notebook.style.width=width+"px";
+  notebook.style.left=Math.round(rect.left-width)+"px";
   notebook.style.top=Math.round(rect.top+Math.min(127,Math.max(74,rect.height*.13)))+"px";
   notebook.style.maxHeight=Math.max(145,Math.floor(rect.height-155))+"px";
  }
