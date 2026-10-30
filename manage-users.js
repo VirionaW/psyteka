@@ -8,7 +8,7 @@
  const previous=document.getElementById("usersPrevious");
  const next=document.getElementById("usersNext");
  const pageLabel=document.getElementById("usersPageLabel");
- let client=null,page=1,lastPage=1,users=[],ownerId="",busy=false;
+ let client=null,page=1,lastPage=1,users=[],ownerId="",busy=false,searchMode=false,requestSeq=0;
  function say(text,error=false){
   status.textContent=text;status.classList.toggle("error",error);
  }
@@ -49,14 +49,18 @@
 
  async function call(body){
   const {data,error}=await client.functions.invoke("manage-user-roles",{body});
-  if(error)throw new Error("Ошибка запроса к серверу. Проверьте подключение.");
+  if(error){
+   let reason="Ошибка запроса к серверу. Проверьте подключение.";
+   try{const details=await error.context?.json?.();if(typeof details?.error==="string")reason=details.error;}catch(_){}
+   throw new Error(reason);
+  }
   if(data?.error)throw new Error(data.error);
   return data;
  }
  function draw(){
   list.replaceChildren();
   const q=search.value.trim().toLocaleLowerCase("ru");
-  const shown=users.filter(u=>String(u.email).toLocaleLowerCase("ru").includes(q));
+  const shown=searchMode?users:users.filter(u=>String(u.email).toLocaleLowerCase("ru").includes(q));
   if(!shown.length)list.appendChild(element("div","psy-empty","На этой странице пользователи не найдены."));
   for(const user of shown){
    const row=element("article","psy-users-row");
@@ -93,26 +97,50 @@
    }
    row.append(main,actions);list.appendChild(row);
   }
-  previous.disabled=busy||page<=1;
-  next.disabled=busy||page>=lastPage;
-  pageLabel.textContent="Страница "+page+(lastPage>1?" из "+lastPage:"");
+  previous.disabled=busy||searchMode||page<=1;
+  next.disabled=busy||searchMode||page>=lastPage;
+  pageLabel.textContent=searchMode?"Результат поиска":"Страница "+page+(lastPage>1?" из "+lastPage:"");
  }
  async function load(targetPage){
   if(busy)return;
+  const sequence=++requestSeq;searchMode=false;
   busy=true;previous.disabled=true;next.disabled=true;
   say("Загружаем список участников...");
   try{
    const data=await call({action:"list",page:targetPage});
+   if(sequence!==requestSeq)return;
    users=Array.isArray(data?.users)?data.users:[];
    page=targetPage;
    lastPage=Math.max(1,Number(data?.totalPages)||1);
    say("Права участников доступны только Владельцу и Тени после подтверждения защиты.");
-  }catch(e){say(e.message||"Не удалось загрузить список участников.",true)}
-  finally{busy=false;draw();}
+  }catch(e){if(sequence===requestSeq)say(e.message||"Не удалось загрузить список участников.",true)}
+  finally{busy=false;if(sequence===requestSeq)draw();}
  }
- search.addEventListener("input",draw);
+ async function findByEmail(email){
+  const sequence=++requestSeq;
+  searchMode=true;busy=true;previous.disabled=true;next.disabled=true;
+  say("Ищем зарегистрированный аккаунт...");
+  try{
+   const data=await call({action:"find",email});
+   if(sequence!==requestSeq)return;
+   users=Array.isArray(data?.users)?data.users:[];
+   page=1;lastPage=1;
+   say(users.length?"Аккаунт найден. Выберите роль и сохраните изменение.":"Такой подтвержденный или неподтвержденный аккаунт не найден.");
+  }catch(e){if(sequence===requestSeq){users=[];say(e.message||"Поиск временно недоступен.",true)}}
+  finally{if(sequence===requestSeq){busy=false;draw();}}
+ }
+ search.addEventListener("input",()=>{
+  const email=search.value.trim().toLowerCase();
+  if(!email){void load(1);return;}
+  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){
+   ++requestSeq;searchMode=true;users=[];busy=false;draw();
+   say("Введите полный адрес электронной почты для поиска по всем аккаунтам.");
+   return;
+  }
+  void findByEmail(email);
+ });
  previous.addEventListener("click",()=>load(page-1));
  next.addEventListener("click",()=>load(page+1));
- document.getElementById("usersRefresh").addEventListener("click",()=>load(page));
+ document.getElementById("usersRefresh").addEventListener("click",()=>search.value.trim()?findByEmail(search.value.trim().toLowerCase()):load(page));
  await load(1);
 })();
