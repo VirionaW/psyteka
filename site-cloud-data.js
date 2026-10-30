@@ -82,6 +82,7 @@
    sex:r.sex==="m"||r.sex==="f"?r.sex:null,
    schoolGrade:Number.isInteger(r.schoolGrade)?r.schoolGrade:null,
    ageManual:r.ageManual===true,
+   ...(r.razuvaevaKey==="method-six"||r.razuvaevaKey==="kmc-seven"?{razuvaevaKey:r.razuvaevaKey}:{}),
    attendance:r.attendance==="absent"?"absent":"present"
   }));
   return {calcMode:snapshot.calcMode,rows,rowIndex:Math.min(rows.length-1,Math.max(0,Number(snapshot.rowIndex)||0))};
