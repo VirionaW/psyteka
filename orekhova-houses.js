@@ -388,6 +388,12 @@
          '<p class="work-situation-check"><strong>Что проверить:</strong> '+esc(item.check)+'</p></article>').join("")+
         '</div></section>').join("")+'</div>';
       }
+      if(heading.startsWith("Отношение к себе")){
+       extra='<div class="work-personal-grid">'+result.personalCards.map(item=>
+         '<article class="work-situation"><div class="work-situation-top"><strong>'+esc(item.title)+'</strong><span class="work-situation-type">'+esc(item.category)+'</span></div>'+
+         '<div class="work-situation-color"><i class="work-swatch" style="background:'+item.colorHex+'"></i><span><b>'+esc(item.color)+'</b> · '+item.place+' место в дорожке</span></div>'+
+         '<p>'+esc(item.meaning)+'</p><p class="work-situation-check"><strong>Что проверить:</strong> '+esc(item.check)+'</p></article>').join("")+'</div>';
+      }
       return '<div class="work-paragraph"><h4>'+esc(heading)+'</h4><p>'+esc(body)+'</p>'+extra+'</div>';
     }).join("")+
    '</section>'+
@@ -470,6 +476,14 @@
     let lastGroup="";
     result.schoolCards.forEach(item=>{
      if(item.group!==lastGroup){b+=wp(item.group);lastGroup=item.group;}
+     b+=wp(item.title+" – "+item.category);
+     b+=wp("Цвет: "+item.color+", место "+item.place+" из 8.");
+     b+=wp("Значение выбора: "+item.meaning);
+     b+=wp("Что проверить: "+item.check);
+    });
+   }
+   if(head.startsWith("Отношение к себе")){
+    result.personalCards.forEach(item=>{
      b+=wp(item.title+" – "+item.category);
      b+=wp("Цвет: "+item.color+", место "+item.place+" из 8.");
      b+=wp("Значение выбора: "+item.meaning);
