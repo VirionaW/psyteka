@@ -619,7 +619,9 @@
     (format?'<w:tblLayout w:type="fixed"/>':"")+
     '<w:tblBorders><w:top w:val="single" w:sz="5"/><w:left w:val="single" w:sz="5"/><w:bottom w:val="single" w:sz="5"/><w:right w:val="single" w:sz="5"/><w:insideH w:val="single" w:sz="5"/><w:insideV w:val="single" w:sz="5"/></w:tblBorders></w:tblPr>'+
      '<w:tblGrid>'+widths.map(w=>'<w:gridCol w:w="'+w+'"/>').join("")+'</w:tblGrid>'+
-     all.map((row,i)=>'<w:tr>'+(format&&i===0?'<w:trPr><w:tblHeader w:val="true"/></w:trPr>':"")+
+     // The first row is a column heading only once. Word must not repeat it
+     // automatically when this same table flows onto another page.
+     all.map((row,i)=>'<w:tr>'+
       row.map((text,j)=>format==="cdi"||format==="cdi-legend"?
        cdiWordCell(text,i===0,format==="cdi"?j===1:j===1,widths[j],
         i>0?(format==="cdi"&&j>=2&&j<=7?cdiWordBand(percentRows[i-1]?.[j-2]):format==="cdi-legend"&&j===0?cdiWordBand(percentRows[i-1]):null):null):
