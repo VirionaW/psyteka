@@ -14,7 +14,7 @@
  const client=valid?(window.PSY_IDENTITY?.client||window.PSY_AUTH_CLIENT||(window.PSY_AUTH_CLIENT=window.supabase.createClient(conf.url,conf.publishableKey,{
   auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
  }))):null;
- let destination="library.html",currentUser=null,role="participant",trial=null,paid=null,requestAt=0,timer=null,lastFocus=null,opening=false,ownerNeedsMfa=false,sendingEmail=false;
+ let destination="library.html",currentUser=null,role="participant",trial=null,paid=null,requestAt=0,timer=null,lastFocus=null,opening=false,ownerNeedsMfa=false,sendingEmail=false,retryDirect=false;
  const html=`<dialog id="psyEntryDialog" aria-labelledby="psyEntryTitle" aria-modal="true">
  <div class="psy-entry-inner">
   <div class="psy-entry-top"><div><p class="psy-entry-eyebrow"><span class="psy-brand-name-first">Мето</span><span class="psy-brand-name-last">лария</span> · личный доступ</p><h2 id="psyEntryTitle">Войти в Метоларию</h2></div>
@@ -64,6 +64,13 @@
    <div class="psy-entry-choice"><strong>Посмотрите будущие тарифы</strong><p>Есть три планируемых платных варианта. Покупка еще не подключена, списаний не будет.</p><p><a href="subscriptions.html">Описание подписок и условий</a></p></div>
    <div class="psy-entry-actions"><button class="psy-entry-btn secondary" type="button" id="psyEntryExpiredClose">Вернуться на главную</button></div>
   </div>
+  <div class="psy-entry-step" id="psyEntryIssue" hidden>
+   <p class="psy-entry-lead">Не удалось связаться с сервером аккаунтов. Сохраненная сессия не удалена. Повторите проверку соединения.</p>
+   <div class="psy-entry-actions">
+    <button class="psy-entry-btn" type="button" id="psyEntryRetry">Повторить проверку</button>
+    <button class="psy-entry-btn secondary" type="button" id="psyEntrySignInAgain">Войти по почте</button>
+   </div>
+  </div>
   <p class="psy-entry-error" id="psyEntryError" role="status" aria-live="polite" hidden></p>
  </div></dialog>`;
  document.body.insertAdjacentHTML("beforeend",html);
@@ -81,7 +88,7 @@
   const timeout=setTimeout(()=>reject(new Error("Проверка доступа занимает слишком много времени. Повторите попытку.")),ms);
   Promise.resolve(promise).then(value=>{clearTimeout(timeout);resolve(value)},err=>{clearTimeout(timeout);reject(err)});
  });
- const steps=["psyEntryEmail","psyEntryCode","psyEntryPlans","psyEntryAccess","psyEntryExpired"];
+ const steps=["psyEntryEmail","psyEntryCode","psyEntryPlans","psyEntryAccess","psyEntryExpired","psyEntryIssue"];
  function step(id){for(const s of steps)el(s).hidden=s!==id;el("psyEntryError").hidden=true}
  function error(text){const e=el("psyEntryError");e.textContent=text;e.hidden=!text}
  function hourText(milliseconds){
@@ -152,7 +159,8 @@
    // An empty local session is enough to offer sign-in immediately. The
    // server-side account and entitlement checks remain mandatory for access.
    const {data:cached,error:sessionError}=await withTimeout(client.auth.getSession(),6500);
-   if(sessionError||!cached?.session?.user){
+   if(sessionError)throw sessionError;
+   if(!cached?.session?.user){
     currentUser=null;
     const pendingEmail=el("psyEntryCode").dataset.email;
     // Keep the OTP input available when the person reopens the dialog
@@ -162,7 +170,8 @@
     show();return;
    }
    const {data,error:authError}=await withTimeout(client.auth.getUser(),8500);
-   if(authError||!data?.user||data.user.is_anonymous){
+   if(authError)throw authError;
+   if(!data?.user||data.user.is_anonymous){
     currentUser=null;
     if(el("psyEntryCode").dataset.email&&requestAt&&Date.now()-requestAt<600000)step("psyEntryCode");
     else step("psyEntryEmail");
@@ -215,7 +224,10 @@
     return;
    }
    show();
-  }catch(ex){step("psyEntryEmail");show();error("Не удалось связаться с сервисом авторизации или проверить доступ. Вход пока не подтвержден. Проверьте соединение и повторите попытку.")}
+  }catch(ex){
+   retryDirect=direct;step("psyEntryIssue");show();
+   error("Проверка аккаунта временно не удалась. Это не означает, что сессия истекла.");
+  }
   finally{opening=false;checkStatus.hidden=true}
  }
  const badge=document.createElement("span");badge.id="psyHomeTrial";badge.className="psy-entry-pill";badge.hidden=true;
@@ -226,6 +238,8 @@
   const to=validTarget(a.getAttribute("href"));if(!to)return;
   e.preventDefault();setDestination(to);load({direct:true});
  },true);
+ el("psyEntryRetry").addEventListener("click",()=>{if(!opening)void load({direct:retryDirect})});
+ el("psyEntrySignInAgain").addEventListener("click",()=>{step("psyEntryEmail");error("");el("psyEntryMail").focus()});
  el("psyEntryAgain").addEventListener("click",()=>{
   el("psyEntryMail").value=el("psyEntryCode").dataset.email||el("psyEntryMail").value;
   step("psyEntryEmail");error("");el("psyEntryMail").focus();
