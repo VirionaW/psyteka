@@ -881,3 +881,27 @@ html.dark .library-page #modal.psy-mspss-example .psy-cp-gender-feedback{
   margin-left:0;
  }
 }
+
+/* CDI ITEM-KEYED RESPONSE FORMATS 20261030 */
+.library-page #modal.psy-mspss-example .psy-cdi-entry-mode{
+ display:flex;align-items:flex-end;flex-wrap:wrap;gap:10px 16px;
+ padding:12px 15px;margin:12px 0 16px;
+ border:1px solid var(--line);border-radius:12px;
+ background:var(--soft);color:var(--ink);
+}
+.library-page #modal.psy-mspss-example .psy-cdi-entry-mode label{
+ flex:0 1 355px;min-width:min(100%,240px);display:grid;gap:7px;
+ font-size:14px;font-weight:750;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-entry-mode select{
+ width:100%;min-height:46px;padding:8px 12px;
+ border-radius:11px;border:1px solid var(--line);
+ background:var(--paper);color:var(--ink);font:inherit;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-entry-mode small{
+ display:block;flex:1 1 275px;font-size:12px;line-height:1.5;
+ color:var(--muted);font-weight:400;
+}
+.library-page #modal.psy-mspss-example .psy-cdi-entry-mode select:focus-visible{
+ outline:3px solid #d9aa5a;outline-offset:2px;
+}
