@@ -926,6 +926,8 @@ function analytical711(d,rows){
  const total=rows.filter(r=>r?.name?.trim()||present(d,r)).length;
  const people=rows.filter(r=>!!scored(d,r)),n=people.length;
  if(!n)return null;
+ // Different published keys must never be pooled into one classroom average.
+ if(d.id==="razuvaeva-osr29"&&new Set(people.map(r=>razKey(d,r))).size>1)return null;
  const grade=people.find(r=>Number(r.schoolGrade)>=7&&Number(r.schoolGrade)<=11)?.schoolGrade,klass=String(rows.analyticClass||"").trim();
  const lines=[
   {kind:"title",text:"Аналитическая справка"},
@@ -968,7 +970,8 @@ function group(d,rows){
  const keys=(cfg(d).versions?.[0]?.scales||cfg(d).scales);
  return '<section class="psy-mspss-group psy-711-group psy-711-'+d.id+'"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th>'+keys.map(s=>'<th>'+esc(s.name)+'</th>').join("")+'</tr></thead><tbody>'+
  rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+(d.id==="razuvaeva-osr29"?'<small style="display:block;font-size:11px">'+razLabel(d,r)+'</small>':"")+'</td>'+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="psy-711-score-cell">'+(v?'<span class="psy-711-number psy-711-'+tone(d,v)+'">'+num(d,v)+'</span>'+(d.id==="lazarus-wcq50"?'<small style="display:block;font-size:11px">Сырой '+v.raw+'/'+v.max+'</small>':""):"")+'</td>'}).join("")+'</tr>'}).join("")+
- '</tbody></table></div>'+(d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Цвет чисел обозначает только долю максимума соответствующего фактора (до 33%, 34-66%, свыше 66%), но не уровень суицидального риска. Категория риска автоматически не присваивается.</p>':d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">Основные числа – стандартизированные Т-баллы (для возраста 14-60 лет при указанном поле), ниже – сырые баллы. Если возрастная норма недоступна, показан только сырой балл. Т менее 40 – редкое, 40-60 – умеренное, выше 60 – выраженное использование стратегии.</p>':"")+analytical711Preview(d,rows)+'</section>';
+ '</tbody></table></div>'+(d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Цвет чисел обозначает только долю максимума по выбранному ключу, а не уровень суицидального риска. Категория риска автоматически не присваивается.'+
+ (new Set(rows.filter(r=>!!scored(d,r)).map(r=>razKey(d,r))).size>1?' В группе выбраны разные ключи (А и Б). Приведите участников к одному ключу, иначе аналитическая справка не формируется.':'')+'</p>':d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">Основные числа – стандартизированные Т-баллы (для возраста 14-60 лет при указанном поле), ниже – сырые баллы. Если возрастная норма недоступна, показан только сырой балл. Т менее 40 – редкое, 40-60 – умеренное, выше 60 – выраженное использование стратегии.</p>':"")+analytical711Preview(d,rows)+'</section>';
 }
 function calculator(d,ctx){
  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],answers=r.answers||[],grade=gradeOf(rows),hasRoster=roster(rows),locked=!ready(d,r,rows,ctx.calcMode);
