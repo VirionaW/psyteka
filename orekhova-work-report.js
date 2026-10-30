@@ -142,6 +142,22 @@
   const ambivalence=mixed.length?
    " Неоднозначные ответы требуют отдельного уточнения: "+list(mixed.map(x=>quote(x.name)))+".":
    "";
+  const sharedSchoolColors=[];
+  for(const id of Object.keys(COLORS)){
+   const matches=school.filter(x=>x.id===id);
+   if(matches.length<2)continue;
+   const names=matches.map(x=>quote(x.name)),indexes=matches.map(x=>x.i);
+   let prompt;
+   if(indexes.includes(3)&&indexes.includes(5))
+    prompt="Уточнить, связаны ли переживания на письме с общением с учителем, проверкой или исправлением работ.";
+   else if(indexes.includes(8)&&indexes.some(i=>i>=2&&i<=4))
+    prompt="Проверить, сохраняются ли переживания с конкретных уроков при выполнении домашних заданий.";
+   else if(indexes.includes(5)&&indexes.includes(6))
+    prompt="Сравнить, как ребенок воспринимает общение со взрослым и сверстниками в школе.";
+   else prompt="Попросить ребенка объяснить, что общего он видит в этих ситуациях.";
+   sharedSchoolColors.push({color:COLORS[id],place:p(id),situations:matches.map(x=>x.name),
+    text:"Один "+COLORS[id]+" цвет (№ "+p(id)+" в дорожке) для "+list(names)+". "+prompt});
+  }
   const self=regions[0],home=regions[7],free=regions[9];
   const personalCards=[self,home,free].map(cardFor);
   personalCards[2].category="Собственный сюжет";
@@ -188,7 +204,7 @@
       (!preschool&&severe.length?"Проверить прежде всего "+list(severe.slice(0,3).map(x=>quote(x.name)))+". ":"")+
       "Дальнейшая работа строится по указанным ниже наблюдаемым ситуациям."]
    ],
-   actions,schoolCards,emotionCards,personalCards,ageStatus:ageLabel,schoolStatus,status
+   actions,schoolCards,emotionCards,personalCards,sharedSchoolColors,ageStatus:ageLabel,schoolStatus,status
   };
  }
  window.PSY_OREKHOVA_WORK_REPORT={build};
