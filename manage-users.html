@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="manage-users.css?v=20261027mfa1">
 <script defer src="auth-config.js?v=20261028metolaria1"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
-<script defer src="manage-users.js?v=20261028metolaria1"></script>
+<script defer src="manage-users.js?v=20261030role-email-search1"></script>
 </head>
 <body>
 <header class="auth-header">
@@ -35,8 +35,8 @@
    <div><h2 id="usersTitle">Аккаунты Метоларии</h2><p>Чтобы назначить подругу модератором, сначала она должна зарегистрироваться и подтвердить почту.</p></div>
    <button id="usersRefresh" type="button" class="auth-secondary">Обновить</button>
   </div>
-  <label for="usersSearch">Поиск по электронной почте на текущей странице</label>
-  <input id="usersSearch" autocomplete="off" type="search" placeholder="Найти участника">
+  <label for="usersSearch">Найти зарегистрированного участника по полной электронной почте</label>
+  <input id="usersSearch" autocomplete="off" type="search" placeholder="Адрес электронной почты">
   <div class="psy-users-table" id="usersList" aria-live="polite"></div>
   <nav class="psy-users-pages" aria-label="Страницы пользователей">
    <button id="usersPrevious" class="auth-secondary" type="button" disabled>Назад</button>
