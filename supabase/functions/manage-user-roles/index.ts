@@ -4,7 +4,7 @@
 // SQL схемы psy_account_roles. Никогда не копировать service key в GitHub/HTML.
 import { createClient } from "npm:@supabase/supabase-js@2.57.0";
 
-const siteOrigin = "https://psyteka.onrender.com";
+const siteOrigin = "https://metolaria.ru";
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const baseHeaders = {
   "Content-Type": "application/json; charset=utf-8",
@@ -87,6 +87,35 @@ Deno.serve(async (request: Request) => {
         })),
         page,
         totalPages: Math.ceil((data?.total ?? 0) / 50)
+      });
+    }
+
+    // Search by exact email across ALL Auth pages. AAL2 and owner/shadow
+    // verification above apply before exposing a registered address.
+    if (body.action === "find") {
+      const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+      if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+        return output(400, { error: "Укажите полный адрес электронной почты." });
+      let found: { id: string; email?: string; email_confirmed_at?: string | null } | null = null;
+      for (let page = 1; page <= 100 && !found; page++) {
+        const { data, error } = await admin.auth.admin.listUsers({ page, perPage: 100 });
+        if (error) return output(503, { error: "Не удалось выполнить поиск аккаунта." });
+        const users = data?.users ?? [];
+        found = users.find(user => user.email?.trim().toLowerCase() === email) ?? null;
+        if (users.length < 100) break;
+      }
+      if (!found) return output(200, { users: [], totalPages: 1 });
+      const { data: assignedRole, error: roleError } = await admin
+        .from("psy_account_roles").select("role").eq("user_id", found.id).maybeSingle();
+      if (roleError) return output(503, { error: "Не удалось проверить роль аккаунта." });
+      return output(200, {
+        users: assignedRole?.role === "shadow" ? [] : [{
+          id: found.id,
+          email: found.email ?? "",
+          confirmed: !!found.email_confirmed_at,
+          role: assignedRole?.role ?? "participant"
+        }],
+        totalPages: 1
       });
     }
 
