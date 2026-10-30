@@ -143,10 +143,13 @@
    " Неоднозначные ответы требуют отдельного уточнения: "+list(mixed.map(x=>quote(x.name)))+".":
    "";
   const self=regions[0],home=regions[7],free=regions[9];
-  const personal="Себя ребенок обозначил так: "+describe(self)+". Домашнюю обстановку – "+describe(home)+". "+
-   (self.marker==="adverse"||self.dark?"Отношение к себе требует отдельного обсуждения; ":"")+
-   (home.marker==="adverse"||home.dark?"домашние переживания также заслуживают уточнения; ":"")+
-   "десятый домик: «"+s.description.trim().replace(/[.!?]+$/,"")+"»; выбран "+free.color+" цвет, позиция "+free.place+".";
+  const personalCards=[self,home,free].map(cardFor);
+  personalCards[2].category="Собственный сюжет";
+  personalCards[2].meaning="Ребенок описал: «"+s.description.trim().replace(/[.!?]+$/,"")+"». "+
+    "Цвет и положение домика в дорожке помогают сопоставить этот сюжет с другими ответами. Содержание истории желательно уточнить собственными словами ребенка.";
+  const personal="Эти три домика рассматриваются отдельно от школьных предметов. "+
+    "Сравнение себя, дома и собственного сюжета показывает, где ребенок использует одинаковые чувства, а где ответы различаются. "+
+    "Ниже указаны конкретные выборы и вопросы для уточнения.";
   const concerns=[];
   const add=(key,text,level)=>{if(!concerns.some(x=>x.key===key))concerns.push({key,text,level})};
   if(vk.tone==="red")add("energy",v>2?"Проверить признаки перегрузки и чрезмерно высокого темпа: сон, паузы, занятость после школы.":"Уточнить утомление на уроках, отдых, сон и объем нагрузки; обсудить возможность восстановительных пауз.",5);
@@ -185,7 +188,7 @@
       (!preschool&&severe.length?"Проверить прежде всего "+list(severe.slice(0,3).map(x=>quote(x.name)))+". ":"")+
       "Дальнейшая работа строится по указанным ниже наблюдаемым ситуациям."]
    ],
-   actions,schoolCards,emotionCards,ageStatus:ageLabel,schoolStatus,status
+   actions,schoolCards,emotionCards,personalCards,ageStatus:ageLabel,schoolStatus,status
   };
  }
  window.PSY_OREKHOVA_WORK_REPORT={build};
