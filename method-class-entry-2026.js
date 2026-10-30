@@ -1011,7 +1011,21 @@ function calculator(d,ctx){
  out+='<p class="psy-711-answer-key">'+esc(opts(d))+'</p><p class="psy-mspss-progress" id="school711Progress">Заполнено '+present(d,r)+' из '+size(d)+'</p>'+
  '<div class="psy-mspss-grid psy-711-grid">'+items[d.id].map((question,i)=>{const v=answers[i],filled=v!==null&&v!==undefined&&v!==""&&/^[0-9]$/.test(String(v))&&Number(v)<=limit(d);return '<label class="psy-mspss-item '+(filled?"is-complete":"is-missing")+'"><span><b>'+(i+1)+'.</b> '+esc(topic(d,i,r))+'</span>'+
  '<input type="text" inputmode="numeric" maxlength="1" autocomplete="off" data-711-answer="'+i+'" data-cp-answer="'+i+'" class="psy-mspss-score-input psy-711-input" value="'+(filled?v:"")+'" placeholder="0-'+limit(d)+'" '+(locked?"disabled":"")+'></label>'}).join("")+'</div>';
- if(ctx.calcMode==="class")out+='<div class="psy-711-advance"><button type="button" class="btn" id="school711Absent" '+(!hasRoster?"disabled":"")+' >'+(r.attendance==="absent"?"Вернуть в присутствующие":"Отсутствовал – следующий")+'</button><button type="button" class="btn primary" id="school711Next" '+(!hasRoster?"disabled":"")+' >Следующий участник →</button></div>';
+ if(ctx.calcMode==="class"){
+  const next=rows.findIndex((x,j)=>j>ctx.rowIndex&&x.attendance!=="absent");
+  const nextIndex=next>=0?next:rows.findIndex((x,j)=>j<ctx.rowIndex&&x.attendance!=="absent");
+  out+='<div class="psy-711-advance psy-ph-bottom-nav">'+
+   '<label class="psy-ph-bottom-chooser" for="school711BottomPerson">Выбрать ученика'+
+   '<select id="school711BottomPerson" aria-label="Перейти к ученику">'+
+   rows.map((person,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+
+    esc((i+1)+". "+(person.name||"Участник "+(i+1))+(person.attendance==="absent"?" (отсутствует)":""))+'</option>').join("")+
+   '</select></label>'+
+   '<button type="button" class="btn" id="school711Absent" '+(!hasRoster?"disabled":"")+' >'+
+    (r.attendance==="absent"?"Вернуть в присутствующие":"Отсутствовал – следующий")+'</button>'+
+   '<button type="button" class="btn primary" id="school711Next" '+(nextIndex<0?"disabled":"")+' >'+
+    (nextIndex>=0?"Следующий: "+esc(rows[nextIndex].name||"Участник "+(nextIndex+1))+" →":"Следующий участник →")+
+   '</button></div>';
+ }
  out+='<div id="school711Result">'+result(d,r)+'</div></div>';
  if(ctx.calcMode==="class")out+='</div><div id="school711Group">'+group(d,rows)+'</div>';
  return out+'</section>';
@@ -1080,6 +1094,7 @@ function bind(d,ctx){
  document.getElementById("school711Sort")?.addEventListener("click",()=>ctx.onSort?.((document.getElementById("school711Bulk")?.value||"").split(/[\r\n]+/).map(x=>x.trim()).filter(Boolean)));
  document.querySelectorAll("[data-711-person]").forEach(el=>el.addEventListener("click",()=>ctx.onSelect?.(+el.dataset["711Person"])));
  document.querySelectorAll("[data-711-delete]").forEach(el=>el.addEventListener("click",()=>{if(confirm("Удалить участника с ответами?"))ctx.onDelete?.(+el.dataset["711Delete"])}));
+ document.getElementById("school711BottomPerson")?.addEventListener("change",e=>ctx.onSelect?.(Number(e.target.value)));
  document.getElementById("school711Next")?.addEventListener("click",()=>ctx.onNext?.());
  document.getElementById("school711Absent")?.addEventListener("click",()=>{
   if(r.attendance==="absent"){r.attendance="present";ctx.onRender?.();return}
