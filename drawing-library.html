@@ -316,7 +316,7 @@ html.dark .method-focus{background:#2b493b;color:#deefdf}
 </div></section>
 <p class="library-caution">Интерпретации символов и расположения – справочные гипотезы, а не самостоятельный диагностический ключ. <a href="https://pubmed.ncbi.nlm.nih.gov/9631202/" target="_blank" rel="noopener noreferrer">Научный обзор</a>.</p>
 </main><footer>Метолария – автономный инструмент для специалиста. При первом онлайн-открытии страница сохраняется для повторных посещений без сети (пока кеш браузера не удален).</footer><div id="printSheet" aria-hidden="true"></div>
-<script src="drawing-library-interpretation.js?v=20261030b"></script>
+<script src="drawing-library-interpretation.js?v=20261030c"></script>
 <script>
 (function(){
 "use strict";
@@ -3360,7 +3360,7 @@ function reportBody(){
  var d=getDocument();
  var parts=['<h1>Протокол рисунка</h1><p><strong>Методика:</strong> '+esc(d.methodName)+'</p>'];
  if(d.code)parts.push('<p><strong>Код обследования:</strong> '+esc(d.code)+'</p>');
- if(Number.isInteger(d.age)&&d.age>=3&&d.age<=99)parts.push('<p><strong>Возраст:</strong> '+esc(d.age)+' лет</p>');
+ if(Number.isInteger(d.age)&&d.age>=3&&d.age<=99)parts.push('<p><strong>Возраст, лет:</strong> '+esc(d.age)+'</p>');
  if(d.context)parts.push('<h2>Контекст обследования</h2><p>'+esc(d.context)+'</p>');
  var synthesized=buildSynthesis();
  if(synthesized.hasContent){
