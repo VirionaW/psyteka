@@ -215,3 +215,27 @@ html.dark{color-scheme:dark;--paper:#17251e;--surface:#25382d;--ink:#f0f8ee;--so
 .work-actions li{font-size:14.5px;line-height:1.65;margin:7px 0;padding-left:2px}
 @media(max-width:650px){.work-short{grid-template-columns:1fr}.work-short-item>strong{font-size:15px}.work-paragraph p{font-size:14px}.work-actions{padding:14px}.work-actions li{font-size:14px}}
 @media print{.work-short{grid-template-columns:repeat(2,1fr)!important}.work-short-item,.work-paragraph,.work-actions li{break-inside:avoid;page-break-inside:avoid}.work-short-item{print-color-adjust:exact;-webkit-print-color-adjust:exact}.work-actions{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+
+/* 30.10.2026: readable case-by-case Orekhova interpretation. */
+.work-school-groups{display:grid;gap:20px;margin:19px 0 3px}
+.work-school-group{min-width:0}
+.work-school-group>h5{font-size:15px;color:var(--ink);font-weight:800;margin:0 0 11px;padding-left:10px;border-left:3px solid var(--green)}
+.work-school-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.work-situation{min-width:0;display:flex;flex-direction:column;gap:9px;padding:15px 16px;border:1px solid var(--line);border-radius:13px;background:var(--paper)}
+.work-situation-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.work-situation-top>strong{font-size:15px;line-height:1.4;color:var(--ink)}
+.work-situation-type{font-size:11.5px;font-weight:700;padding:3px 8px;color:var(--soft);border:1px solid var(--line);border-radius:7px;background:var(--surface);line-height:1.35}
+.work-situation-color{display:flex;align-items:center;gap:8px;color:var(--soft);font-size:12.5px;line-height:1.4}
+.work-situation-color b{font-size:12.5px;color:var(--ink);font-weight:800}
+.work-swatch{display:inline-block;width:23px;height:23px;min-width:23px;border-radius:6px;border:1px solid #606e6166}
+.work-situation>p{font-size:13px;line-height:1.62;max-width:none;margin:0}
+.work-situation .work-situation-check{background:var(--surface);padding:10px 11px;border-radius:9px;border:1px solid var(--line);margin-top:auto}
+.work-situation-check strong{color:var(--ink)}
+.work-emotion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:17px 0 4px}
+.work-emotion-card{min-width:0;border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:13px 15px}
+.work-emotion-card h5{color:var(--ink);font-size:14px;line-height:1.45;font-weight:800;margin:0 0 8px}
+.work-emotion-card p{font-size:13px;line-height:1.6;margin:0 0 7px}
+.work-emotion-card .work-emotion-colors{color:var(--soft);font-size:12.5px;font-weight:730}
+.work-dash{margin:0 7px;color:var(--soft)}
+@media(max-width:800px){.work-school-grid,.work-emotion-grid{grid-template-columns:1fr}.work-situation{padding:14px}.work-school-groups{gap:16px}}
+@media print{.work-school-grid,.work-emotion-grid{display:block!important}.work-school-group,.work-situation,.work-emotion-card{break-inside:avoid;page-break-inside:avoid}.work-situation,.work-emotion-card{margin-bottom:10px}.work-swatch{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
