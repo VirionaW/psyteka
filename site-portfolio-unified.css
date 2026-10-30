@@ -46,3 +46,8 @@ html.dark .library-page #modal .psy-portfolio-unified .psy-profile-indicator:nth
  .library-page #modal .psy-portfolio-unified .psy-portfolio-file-links{display:grid;grid-template-columns:1fr;gap:8px}
  .library-page #modal .psy-portfolio-unified .psy-portfolio-document{width:100%}
 }
+
+/* Keep the catalogue stationary under an open method portfolio. */
+html.psy-method-modal-open,
+html.psy-method-modal-open body{overflow:hidden!important;overscroll-behavior:none}
+html.psy-method-modal-open #modal .modalbody{overscroll-behavior:contain}
