@@ -196,3 +196,22 @@ html.dark{color-scheme:dark;--paper:#17251e;--surface:#25382d;--ink:#f0f8ee;--so
  .narrative-paragraph{page-break-inside:avoid}
  .narrative-paragraph:last-child{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }
+
+/* Рабочий отчет Ореховой: показатель -> возраст -> находки -> действия. */
+.work-results-heading{font-size:19px;margin:22px 0 12px;color:var(--ink)}
+.work-short{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:0 0 18px}
+.work-short-item{min-width:0;padding:14px 16px;border-radius:12px;background:var(--paper);border:1px solid var(--line);display:flex;flex-direction:column;gap:7px}
+.work-short-item>span{font-size:12.5px;line-height:1.4;font-weight:760;color:var(--soft)}
+.work-short-item>strong{font-size:16px;line-height:1.5;overflow-wrap:anywhere}
+.work-interpretation{padding:17px 0;border-top:1px solid var(--line)}
+.work-interpretation>h3,.work-actions>h3{font-size:20px;margin:1px 0 9px}
+.work-paragraph{padding:13px 0;border-bottom:1px solid var(--line)}
+.work-paragraph h4{font-size:15px;margin:0 0 6px;font-weight:800;color:var(--ink)}
+.work-paragraph p{font-size:14.5px;line-height:1.67;max-width:105ch;margin:0;overflow-wrap:anywhere;color:var(--ink)}
+.work-paragraph:last-child{padding:14px 16px;background:var(--paper);border:1px solid var(--line);border-radius:12px;margin-top:13px}
+.work-actions{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:17px 20px;margin:12px 0 20px}
+.work-actions>h3{font-size:18px}
+.work-actions ol{margin:9px 0 0;padding-left:23px}
+.work-actions li{font-size:14.5px;line-height:1.65;margin:7px 0;padding-left:2px}
+@media(max-width:650px){.work-short{grid-template-columns:1fr}.work-short-item>strong{font-size:15px}.work-paragraph p{font-size:14px}.work-actions{padding:14px}.work-actions li{font-size:14px}}
+@media print{.work-short{grid-template-columns:repeat(2,1fr)!important}.work-short-item,.work-paragraph,.work-actions li{break-inside:avoid;page-break-inside:avoid}.work-short-item{print-color-adjust:exact;-webkit-print-color-adjust:exact}.work-actions{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
