@@ -894,23 +894,28 @@ const roster=rows=>rows.some(x=>!!x?.name?.trim());
 const gradeOf=rows=>Number(rows.find(x=>Number(x.schoolGrade)>=7&&Number(x.schoolGrade)<=11)?.schoolGrade||0);
 const ageOk=(d,r,rows,mode)=>{
  if(d.id!=="lazarus-wcq50")return mode==="class"?gradeOf(rows)>=7:Number(r?.schoolGrade)>=7;
- const age=Number(r?.ageYears)||Number(r?.schoolGrade||gradeOf(rows))+6;
- return Number.isInteger(age)&&age>=14&&age<=90;
+ // A school grade does not prove a pupil's exact age. Ask for it per pupil.
+ const age=r?.ageYears===null||r?.ageYears===undefined||r?.ageYears===""?null:Number(r.ageYears);
+ return age!==null&&Number.isInteger(age)&&age>=14&&age<=90;
 };
 const ready=(d,r,rows,mode)=>!!r?.name?.trim()&&r.attendance!=="absent"&&(mode!=="class"||roster(rows))&&ageOk(d,r,rows,mode)&&(d.id!=="lazarus-wcq50"||["f","m"].includes(r.sex));
 const topic=(d,i,r)=>d.id==="eysenck-40"&&r?.eysenckVersion==="block"?"Вопрос "+(i+1):items[d.id][i];
 const opts=d=>d.id==="eysenck-40"?"0 – не подходит · 1 – бывает иногда · 2 – бывает часто":d.id==="lazarus-wcq50"?"0 – никогда · 1 – редко · 2 – иногда · 3 – часто":"0 – Нет · 1 – Да";
 const childOpts=d=>d.id==="razuvaeva-osr29"?"Для каждого утверждения отметь «Да» или «Нет».":opts(d);
-const tone=(d,s)=>d.id==="eysenck-40"?(s.raw<=7?"low":s.raw<=14?"middle":"high"):(s.percent<=33?"low":s.percent<=66?"middle":"high");
+const tone=(d,s)=>d.id==="eysenck-40"?(s.raw<=7?"low":s.raw<=14?"middle":"high"):
+ d.id==="lazarus-wcq50"?(s.tScore===null?"neutral":s.tScore<40?"low":s.tScore<=60?"middle":"high"):
+ (s.percent<=33?"low":s.percent<=66?"middle":"high");
 const label=(d,s)=>d.id==="razuvaeva-osr29"?"Без автоматического диагностического уровня":d.id==="eysenck-40"?(s.raw<=7?"Низкий уровень":s.raw<=14?"Средний уровень":"Высокий уровень"):(s.percent<=33?"До 33% максимума":s.percent<=66?"34-66% максимума":"Свыше 66% максимума");
-const num=(d,s)=>d.id==="razuvaeva-osr29"?s.adjusted.toFixed(1).replace(".",","):String(s.raw);
+const num=(d,s)=>d.id==="razuvaeva-osr29"?s.adjusted.toFixed(1).replace(".",","):d.id==="lazarus-wcq50"&&s.tScore!==null?String(s.tScore):String(s.raw);
 const maximum=(d,s)=>d.id==="razuvaeva-osr29"?(s.max*s.factor).toFixed(1).replace(".",","):String(s.max);
 function result(d,r){
  if(r?.attendance==="absent")return '<section class="psy-711-result">Участник отсутствовал. Результаты не рассчитываются.</section>';
  const z=scored(d,r);if(!z)return '<section class="psy-711-result">Заполнено '+present(d,r)+' из '+size(d)+'. Для подсчета нужны все ответы.</section>';
  return '<section class="psy-711-result"><h3>Результаты участника</h3><div class="psy-711-scale-grid">'+z.scales.map(s=>
- '<div class="psy-711-scale psy-711-'+tone(d,s)+'"><b>'+esc(s.name)+'</b><strong>'+num(d,s)+' / '+maximum(d,s)+'</strong><span>'+esc(d.id==="razuvaeva-osr29"?"Коэффициент "+s.factor:label(d,s))+'</span>'+
- '<div class="psy-711-track"><span style="width:'+s.percent+'%"></span></div></div>').join("")+'</div>'+
+ '<div class="psy-711-scale psy-711-'+tone(d,s)+'"><b>'+esc(s.name)+'</b><strong>'+(d.id==="lazarus-wcq50"&&s.tScore!==null?num(d,s)+" Т-балл":num(d,s)+' / '+maximum(d,s))+'</strong><span>'+
+ esc(d.id==="razuvaeva-osr29"?"Коэффициент "+s.factor:
+ d.id==="lazarus-wcq50"?(s.tScore!==null?"Сырой: "+s.raw+" / "+s.max+" · "+window.PSY_WCQ_NORMS_2026.level(s.tScore):"Сырой: "+s.raw+" / "+s.max+" · нормативный Т-балл недоступен"):label(d,s))+'</span>'+
+ '<div class="psy-711-track"><span style="width:'+(d.id==="lazarus-wcq50"&&s.tScore!==null?Math.max(0,Math.min(100,s.tScore/90*100)):s.percent)+'%"></span></div></div>').join("")+'</div>'+
  (d.id==="razuvaeva-osr29"?'<p class="psy-711-safety">Показатели факторов не определяют вероятность суицида и не исключают опасности. При признаках угрозы необходима очная профессиональная оценка безопасности.</p>':
  '<p class="psy-mspss-small">'+(d.id==="eysenck-40"?"Диапазоны по каждой шкале: 0-7, 8-14, 15-20.":"Проценты показывают долю от максимума шкалы, а не возрастные нормативы или Т-баллы.")+'</p>')+'</section>';
 }
@@ -959,8 +964,8 @@ function analytical711Preview(d,rows){
 function group(d,rows){
  const keys=(cfg(d).versions?.[0]?.scales||cfg(d).scales);
  return '<section class="psy-mspss-group psy-711-group psy-711-'+d.id+'"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th>'+keys.map(s=>'<th>'+esc(s.name)+'</th>').join("")+'</tr></thead><tbody>'+
- rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+'</td>'+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="psy-711-score-cell">'+(v?'<span class="psy-711-number psy-711-'+tone(d,v)+'">'+num(d,v)+'</span>':"")+'</td>'}).join("")+'</tr>'}).join("")+
- '</tbody></table></div>'+(d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Цвет чисел обозначает только долю максимума соответствующего фактора (до 33%, 34-66%, свыше 66%), но не уровень суицидального риска. Категория риска автоматически не присваивается.</p>':d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">Цвета чисел показывают долю максимума шкалы, не клиническую норму.</p>':"")+analytical711Preview(d,rows)+'</section>';
+ rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+'</td>'+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="psy-711-score-cell">'+(v?'<span class="psy-711-number psy-711-'+tone(d,v)+'">'+num(d,v)+'</span>'+(d.id==="lazarus-wcq50"?'<small style="display:block;font-size:11px">Сырой '+v.raw+'/'+v.max+'</small>':""):"")+'</td>'}).join("")+'</tr>'}).join("")+
+ '</tbody></table></div>'+(d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Цвет чисел обозначает только долю максимума соответствующего фактора (до 33%, 34-66%, свыше 66%), но не уровень суицидального риска. Категория риска автоматически не присваивается.</p>':d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">Основные числа – стандартизированные Т-баллы (для возраста 14-60 лет при указанном поле), ниже – сырые баллы. Если возрастная норма недоступна, показан только сырой балл. Т менее 40 – редкое, 40-60 – умеренное, выше 60 – выраженное использование стратегии.</p>':"")+analytical711Preview(d,rows)+'</section>';
 }
 function calculator(d,ctx){
  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],answers=r.answers||[],grade=gradeOf(rows),hasRoster=roster(rows),locked=!ready(d,r,rows,ctx.calcMode);
@@ -978,8 +983,9 @@ function calculator(d,ctx){
  if(ctx.calcMode==="class")out+='<div class="psy-cp-current '+(r.sex==="f"?"psy-cp-girl":r.sex==="m"?"psy-cp-boy":"")+'"><span>'+(ctx.rowIndex+1)+' / '+rows.length+'</span><b>Сейчас: '+esc(r.name||"Участник "+(ctx.rowIndex+1))+'</b></div>';
  if(rows.genderNote&&ctx.calcMode==="class")out+='<p class="psy-cp-gender-feedback" role="status">'+esc(rows.genderNote)+'</p>';
  if(ctx.calcMode!=="class")out+='<label class="psy-cp-class-label">Класс<select id="school711Grade"><option value="">Не выбран</option>'+[7,8,9,10,11].map(g=>'<option value="'+g+'" '+(Number(r.schoolGrade)===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select></label>';
- if(d.id==="lazarus-wcq50")out+='<div class="psy-cp-demographics"><label>Возраст<input id="school711Age" type="number" min="14" max="90" step="1" value="'+(Number(r.ageYears)>=14&&Number(r.ageYears)<=90?Number(r.ageYears):"")+'" placeholder="14-90"></label><div class="psy-cp-sex-field"><span>Пол участника</span><div class="psy-cp-sex-buttons" role="group" aria-label="Пол"><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="f"?"is-selected":"")+'" data-711-sex="f" aria-pressed="'+(r.sex==="f")+'" '+(!hasRoster||!ageOk(d,r,rows,ctx.calcMode)?"disabled":"")+'>Девочка / женщина</button><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="m"?"is-selected":"")+'" data-711-sex="m" aria-pressed="'+(r.sex==="m")+'" '+(!hasRoster||!ageOk(d,r,rows,ctx.calcMode)?"disabled":"")+'>Мальчик / мужчина</button></div></div></div>';
- if(locked)out+='<p class="psy-cdi-lock-note">'+(ctx.calcMode==="class"&&!hasRoster?"Сначала добавьте хотя бы одного участника.":!r.name?.trim()?"Сначала укажите участника.":!ageOk(d,r,rows,ctx.calcMode)?(d.id==="lazarus-wcq50"?"Укажите класс или возраст от 14 до 90 лет.":"Выберите класс перед вводом ответов."):"Укажите пол участника.")+'</p>';
+ if(d.id==="lazarus-wcq50")out+='<div class="psy-cp-demographics"><label>Возраст (полных лет)<input id="school711Age" type="number" min="14" max="90" step="1" value="'+(Number(r.ageYears)>=14&&Number(r.ageYears)<=90?Number(r.ageYears):"")+'" placeholder="14-90"></label><div class="psy-cp-sex-field"><span>Пол участника</span><div class="psy-cp-sex-buttons" role="group" aria-label="Пол"><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="f"?"is-selected":"")+'" data-711-sex="f" aria-pressed="'+(r.sex==="f")+'" '+(!hasRoster||!ageOk(d,r,rows,ctx.calcMode)?"disabled":"")+'>Девочка / женщина</button><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="m"?"is-selected":"")+'" data-711-sex="m" aria-pressed="'+(r.sex==="m")+'" '+(!hasRoster||!ageOk(d,r,rows,ctx.calcMode)?"disabled":"")+'>Мальчик / мужчина</button></div></div></div>';
+ if(d.id==="lazarus-wcq50")out+='<p class="psy-mspss-small">Возраст указывайте для каждого участника отдельно: класс не заменяет фактический возраст. Т-баллы доступны по нормам для 14-60 лет.</p>';
+ if(locked)out+='<p class="psy-cdi-lock-note">'+(ctx.calcMode==="class"&&!hasRoster?"Сначала добавьте хотя бы одного участника.":!r.name?.trim()?"Сначала укажите участника.":!ageOk(d,r,rows,ctx.calcMode)?(d.id==="lazarus-wcq50"?"Укажите возраст участника (14-90 лет).":"Выберите класс перед вводом ответов."):"Укажите пол участника.")+'</p>';
  if(d.id==="eysenck-40")out+='<label class="psy-711-version">Редакция опросника<select id="school711Version">'+
  '<option value="interleaved" '+(r.eysenckVersion!=="block"?"selected":"")+'>Версия 2 – чередование шкал (твой бланк)</option>'+
  '<option value="block" '+(r.eysenckVersion==="block"?"selected":"")+'>Версия 1 – шкалы по блокам</option></select></label>';
@@ -1029,8 +1035,8 @@ function bind(d,ctx){
  window.PSY_ANALYTIC_SIGNATURES.bind(ctx.rows,()=>{const area=document.getElementById("school711Group");if(area)area.innerHTML=group(d,ctx.rows);});
  document.getElementById("school711Name")?.addEventListener("input",e=>{r.name=e.target.value;const x=document.querySelector(".psy-mspss-person.active span");if(x)x.textContent=r.name;});
  document.getElementById("school711Name")?.addEventListener("change",()=>ctx.onRender?.());
- document.getElementById("school711Grade")?.addEventListener("change",e=>{const grade=e.target.value?Number(e.target.value):null;(ctx.calcMode==="class"?ctx.rows:[r]).forEach(x=>{x.schoolGrade=grade;if(d.id==="lazarus-wcq50"&&grade&&(!Number(x.ageYears)||Number(x.ageYears)<14))x.ageYears=grade+6;});ctx.onRender?.()});
- document.getElementById("school711Age")?.addEventListener("change",e=>{const v=Number(e.target.value);r.ageYears=Number.isInteger(v)&&v>=14&&v<=90?v:null;ctx.onRender?.()});
+ document.getElementById("school711Grade")?.addEventListener("change",e=>{const grade=e.target.value?Number(e.target.value):null;(ctx.calcMode==="class"?ctx.rows:[r]).forEach(x=>{x.schoolGrade=grade;});ctx.onRender?.()});
+ document.getElementById("school711Age")?.addEventListener("change",e=>{const v=e.target.value.trim()===""?null:Number(e.target.value);r.ageYears=v!==null&&Number.isInteger(v)&&v>=14&&v<=90?v:null;ctx.onRender?.()});
  document.querySelectorAll("[data-711-sex]").forEach(btn=>btn.addEventListener("click",()=>{
   if(!r.name?.trim()||!ageOk(d,r,ctx.rows,ctx.calcMode))return;
   const initial=!["f","m"].includes(r.sex);
