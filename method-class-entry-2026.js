@@ -521,7 +521,7 @@
  function instruction(d){
   const isCDI=type(d)==="cdi";
   const intro=isCDI?"Опросник содержит 27 наборов из трех утверждений. Ребенок выбирает одно утверждение, соответствующее его состоянию за последние две недели. Порядок утверждений не всегда совпадает с порядком баллов.":"Опросник включает 58 вопросов о переживаниях в школе. На каждый вопрос нужно ответить «Да» или «Нет».";
-  const key=isCDI?"Сложите 27 выбранных баллов 0-2 (общий сырой балл 0-54) и отдельно суммы по пяти шкалам. Переведите каждый результат в Т-балл по таблице соответствующей шкалы с учетом пола и возраста (7-12 или 13-17 лет). При отсутствии точного значения Т-балл определяется ориентировочно по ближайшему сырому значению, со знаком ≈.":"За каждый ответ, не совпавший с ключом, начисляется 1 балл; максимум 58. Восемь факторов определяются по соответствующим номерам. В обработке выделяются восемь факторов школьной тревожности.";
+  const key=isCDI?"В обработке можно выбрать способ ввода: готовые баллы 0-2, номера выбранных утверждений 1-3 либо буквы А, Б, В. Для букв и номеров используется порядок утверждений из предоставленного 27-пунктного PDF: правильный балл определяется отдельно по ключу каждого вопроса. Другие редакции требуют другого проверенного ключа. Сложите 27 баллов 0-2 (общий сырой балл 0-54) и отдельно суммы по пяти шкалам. Переведите каждый результат в Т-балл по таблице соответствующей шкалы с учетом пола и возраста (7-12 или 13-17 лет). При отсутствии точного значения Т-балл определяется ориентировочно по ближайшему сырому значению, со знаком ≈.":"За каждый ответ, не совпавший с ключом, начисляется 1 балл; максимум 58. Восемь факторов определяются по соответствующим номерам. В обработке выделяются восемь факторов школьной тревожности.";
   const pupil=isCDI?"Прочитай по три утверждения в каждом пункте и отметь то, которое лучше всего описывает твое самочувствие за последние две недели. Здесь нет правильных и неправильных ответов.":"Прочитай вопросы о том, как ты чувствуешь себя в школе. Для каждого вопроса выбери «Да» или «Нет». Здесь нет правильных и неправильных ответов.";
   return '<section class="psy-mspss-section psy-mspss-manual"><div class="psy-mspss-manual-bar"><h3>Методика и руководство</h3><div class="psy-mspss-manual-actions"><button class="btn" type="button" data-cp-print="guide">Без бланка</button><button class="btn primary" type="button" data-cp-print="combined">С бланком</button></div></div>'+
    '<h3>Цель</h3><p>'+esc(d.goal)+'</p><h3>Описание методики</h3><p>'+esc(intro)+'</p>'+
@@ -794,24 +794,49 @@
    r.attendance="absent";(ctx.onAbsentNext||ctx.onRender)?.();
   });
   document.getElementById("cpNext")?.addEventListener("click",()=>ctx.onNext?.());
+  document.getElementById("cpCdiInputMode")?.addEventListener("change",e=>{
+   const mode=e.target.value;
+   if(!cdiEntryModes.includes(mode)||(mode!=="score"&&!cdiKeyValid))return;
+   r.cdiInputMode=mode; // answers remain normalized 0-2; only visible form changes
+   ctx.onRender?.();
+  });
   const inputs=[...document.querySelectorAll("input[data-cp-answer]")];
   const next=(i)=>{for(let j=i+1;j<inputs.length;j++)if(!inputs[j].disabled){inputs[j].focus();return;}document.getElementById("cpNext")?.focus();};
-  function setInput(field,val){if(!cdiReady(d,r,rows,ctx.calcMode))return;const i=Number(field.dataset.cpAnswer);if(val!==""&&![...Array(max(d)+1)].some((_,n)=>String(n)===val))return;field.value=val;
-   r.answers[i]=val===""?null:type(d)==="cdi"?Number(val):val==="1"?"yes":"no";
-   const card=field.closest(".psy-mspss-item");card?.classList.toggle("is-complete",val!=="");card?.classList.toggle("is-missing",val==="");update();
+  function setInput(field,val){
+   if(!cdiReady(d,r,rows,ctx.calcMode))return false;
+   const i=Number(field.dataset.cpAnswer),mode=type(d)==="cdi"?cdiEntryMode(r):"score";
+   const normalized=String(val).trim().toUpperCase();
+   const points=type(d)==="cdi"?cdiDecode(mode,i,normalized):null;
+   if(normalized!==""&&(type(d)==="cdi"?points===null:!["0","1"].includes(normalized)))return false;
+   field.value=normalized;
+   r.answers[i]=normalized===""?null:type(d)==="cdi"?points:normalized==="1"?"yes":"no";
+   const card=field.closest(".psy-mspss-item");card?.classList.toggle("is-complete",normalized!=="");card?.classList.toggle("is-missing",normalized==="");update();
+   return true;
   }
   inputs.forEach((field,i)=>{
-   field.addEventListener("input",()=>{const v=field.value.replace(/[^0-9]/g,"").slice(-1);if(v!==""&&Number(v)>max(d)){setInput(field,"");return;}setInput(field,v);if(v!=="")next(i);});
+   field.addEventListener("input",()=>{
+    const mode=type(d)==="cdi"?cdiEntryMode(r):"score";
+    const v=mode==="letter"?field.value.toUpperCase().replace(/[^АБВ]/g,"").slice(-1):
+      field.value.replace(/[^0-9]/g,"").slice(-1);
+    if(v!==""&&type(d)==="cdi"&&cdiDecode(mode,i,v)===null){setInput(field,"");return;}
+    if(!setInput(field,v)){setInput(field,"");return;}
+    if(v!=="")next(i);
+   });
    field.addEventListener("keydown",e=>{
     if(e.key==="Backspace"&&!field.value&&i>0){e.preventDefault();inputs[i-1].focus();inputs[i-1].select();}
     else if(e.key==="ArrowRight"){e.preventDefault();next(i);}
     else if(e.key==="ArrowLeft"&&i>0){e.preventDefault();inputs[i-1].focus();}
    });
    field.addEventListener("paste",e=>{
-    const text=e.clipboardData?.getData("text")||"";if(!/^[0-9\s,;]+$/.test(text))return;
-    const nums=text.replace(/[\s,;]/g,"").split("");if(!nums.length||nums.some(v=>Number(v)>max(d)))return;
-    e.preventDefault();nums.forEach((v,j)=>{if(inputs[i+j]&&!inputs[i+j].disabled)setInput(inputs[i+j],v)});
-    if(inputs[Math.min(inputs.length-1,i+nums.length)])inputs[Math.min(inputs.length-1,i+nums.length)].focus();
+    const mode=type(d)==="cdi"?cdiEntryMode(r):"score";
+    const text=(e.clipboardData?.getData("text")||"").toUpperCase();
+    const pattern=mode==="letter"?/^[АБВ\s,;]+$/:mode==="position"?/^[123\s,;]+$/:type(d)==="cdi"?/^[012\s,;]+$/:/^[01\s,;]+$/;
+    if(!pattern.test(text))return;
+    const tokens=text.replace(/[\s,;]/g,"").split("");
+    if(!tokens.length||tokens.some((v,j)=>i+j>=inputs.length||(type(d)==="cdi"?cdiDecode(mode,i+j,v)===null:!["0","1"].includes(v))))return;
+    e.preventDefault();
+    tokens.forEach((v,j)=>{if(inputs[i+j]&&!inputs[i+j].disabled)setInput(inputs[i+j],v)});
+    inputs[Math.min(inputs.length-1,i+tokens.length)]?.focus();
    });
    field.addEventListener("focus",()=>field.select());
   });
