@@ -146,8 +146,8 @@
    else step("psyEntryEmail");
    show();checkStatus.hidden=true;opening=false;return;
   }
-  // A cached session cannot authorize access: verify identity and rights online.
-  show();
+  // A cached session is checked silently. Do not flash a sign-in dialog
+  // only to close it once the verified user is redirected to the library.
   try{
    // An empty local session is enough to offer sign-in immediately. The
    // server-side account and entitlement checks remain mandatory for access.
