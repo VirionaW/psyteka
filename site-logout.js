@@ -11,9 +11,9 @@
  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||"")
     || !/^sb_publishable_[A-Za-z0-9_-]+$/.test(config.publishableKey||"")
     || !window.supabase?.createClient)return;
- const client=window.supabase.createClient(config.url,config.publishableKey,{
+ const client=window.PSY_AUTH_CLIENT||(window.PSY_AUTH_CLIENT=window.supabase.createClient(config.url,config.publishableKey,{
   auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
- });
+ }));
  let leaving=false;
  function forgetNavigation(){
   try{
