@@ -107,7 +107,7 @@
     blue:"#235eaf",red:"#d9403b",yellow:"#f0c51b",green:"#208452",
     purple:"#8754af",gray:"#929292",brown:"#855635",black:"#272727"
    })[x.id],place:x.place,category,meaning:meaning+" "+rankDetail,
-   check:ASK[x.i],good:x.good,bad:x.bad,group:x.i===1||x.i===8?"Школьный день и нагрузка":x.i>=2&&x.i<=4?"Учебные предметы":"Отношения в школе"};
+   check:preschool?"Уточнить, знакома ли ребенку эта ситуация по личному опыту или только по рассказам и ожиданиям. Попросить описать, как он ее представляет.":ASK[x.i],good:x.good,bad:x.bad,group:x.i===1||x.i===8?"Школьный день и нагрузка":x.i>=2&&x.i<=4?"Учебные предметы":"Отношения в школе"};
   };
   // Keep the original order inside meaningful professional workstreams.
   const schoolCards=[...school].sort((a,b)=>{
