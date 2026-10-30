@@ -41,7 +41,7 @@
   const risk=school.filter(x=>x.marker==="adverse"||x.dark);
   const mixed=school.filter(x=>x.marker==="mixed");
   const severe=[...school].filter(x=>x.points>=2).sort((a,b)=>b.points-a.points||a.i-b.i);
-  const preschool=Number.isInteger(s.age)&&s.age<=6&&!/^1[а-яa-z]?$/i.test(String(group||"").trim());
+  const preschool=Number.isInteger(s.age)&&s.age>=4&&s.age<=6&&!/^1[а-яa-z]?$/i.test(String(group||"").trim());
   const schoolStatus=preschool?"Школьные сюжеты – представления":risk.length>=3?"Преимущественно напряженные ассоциации":strong.length>=4&&!risk.length?"Преимущественно благоприятные ассоциации":"Неоднородное отношение";
   const schoolTone=preschool?"neutral":risk.length>=3?"red":strong.length>=4&&!risk.length?"green":"yellow";
   const grade=String(group||"").trim(),firstGrade=/^1[а-яa-z]?$/i.test(grade);
