@@ -102,7 +102,7 @@
   pageLabel.textContent=searchMode?"Результат поиска":"Страница "+page+(lastPage>1?" из "+lastPage:"");
  }
  async function load(targetPage){
-  if(busy)return;
+  if(busy&&!searchMode)return;
   const sequence=++requestSeq;searchMode=false;
   busy=true;previous.disabled=true;next.disabled=true;
   say("Загружаем список участников...");
@@ -114,7 +114,7 @@
    lastPage=Math.max(1,Number(data?.totalPages)||1);
    say("Права участников доступны только Владельцу и Тени после подтверждения защиты.");
   }catch(e){if(sequence===requestSeq)say(e.message||"Не удалось загрузить список участников.",true)}
-  finally{busy=false;if(sequence===requestSeq)draw();}
+  finally{if(sequence===requestSeq){busy=false;draw();}}
  }
  async function findByEmail(email){
   const sequence=++requestSeq;
@@ -132,7 +132,7 @@
  search.addEventListener("input",()=>{
   const email=search.value.trim().toLowerCase();
   if(!email){void load(1);return;}
-  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
    ++requestSeq;searchMode=true;users=[];busy=false;draw();
    say("Введите полный адрес электронной почты для поиска по всем аккаунтам.");
    return;
