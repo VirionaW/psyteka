@@ -361,14 +361,17 @@
  }
  function resultHtml(s){
   const c=calculate(s);
-  if(!complete(s)||!validGroup()||!c)return '<h2>Результаты</h2><div class="report-empty">Заполните восемь цветов дорожки, все 10 чувств, 10 ситуаций и описание десятого домика. Для группового режима укажите класс или группу.</div>';
-  const v=classifyVK(c.vk),co=classifyCO(c.co),story=narrativeReport(s);
-  return '<h2>Результаты: '+esc(s.name)+'</h2><div class="report-grid">'+
-   '<div class="metric"><div class="metric-title">Вегетативный коэффициент (ВК)</div><strong class="metric-number number-'+v.level+'">'+c.vk.toFixed(2).replace(".",",")+'</strong><p>'+esc(v.text)+'</p><p class="muted">Показатель энергетического баланса. Сопоставляется с наблюдениями и режимом деятельности.</p></div>'+
-   '<div class="metric"><div class="metric-title">Суммарное отклонение (СО)</div><strong class="metric-number number-'+co.level+'">'+c.co+'</strong><p>'+esc(co.text)+'</p><p class="muted">Показатель общего эмоционального фона относительно аутогенной нормы.</p></div></div>'+
-   '<section class="narrative-conclusion"><h3>Индивидуальный психологический вывод</h3>'+
-   '<div class="narrative-text">'+story.paragraphs.map(([heading,body])=>'<div class="narrative-paragraph"><h4>'+esc(heading)+'</h4><p>'+esc(body)+'</p></div>').join("")+'</div></section>'+
-   '<details class="report-expanded"><summary>Подробный протокол: все 20 домиков, пары чувств и цветовые совпадения</summary><div class="report-expanded-inner">'+renderDetailReport(s)+'</div></details>'+
+  if(!complete(s)||!validGroup()||!c)return '<h2>Результаты</h2><div class="report-empty">Для расчета заполните все 8 прямоугольников, 20 домиков и описание последнего домика. Для группы укажите класс.</div>';
+  const result=window.PSY_OREKHOVA_WORK_REPORT.build(s,c,state.groupName);
+  return '<h2>Результаты: '+esc(s.name)+'</h2>'+
+   '<h3 class="work-results-heading">Краткие результаты</h3>'+
+   '<div class="work-short">'+result.short.map(x=>
+    '<article class="work-short-item"><span>'+esc(x.label)+'</span><strong class="number-'+x.tone+'">'+esc(x.value)+'</strong></article>').join("")+'</div>'+
+   '<section class="work-interpretation"><h3>Анализ результатов</h3>'+
+    result.sections.map(([heading,body])=>'<div class="work-paragraph"><h4>'+esc(heading)+'</h4><p>'+esc(body)+'</p></div>').join("")+
+   '</section>'+
+   '<section class="work-actions"><h3>На что обратить внимание психологу</h3><ol>'+result.actions.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol></section>'+
+   '<details class="report-expanded"><summary>Полный протокол: 20 домиков, цвета и пять пар эмоций</summary><div class="report-expanded-inner">'+renderDetailReport(s)+'</div></details>'+
    '<div class="report-actions"><button type="button" class="primary" id="downloadOne">Скачать Word</button><button type="button" class="light-button" id="printOne">Распечатать результаты</button></div>';
  }
  function renderGroup(){
@@ -426,32 +429,24 @@
    for(const s of rows){const c=calculate(s);b+=wrow([{text:s.name},{text:c.vk.toFixed(2).replace(".",","),color:colorHex(classifyVK(c.vk).level)},{text:String(c.co),color:colorHex(classifyCO(c.co).level)},{text:classifyCO(c.co).text}]);}
    return b+'</w:tbl>'+wp("Проценты и выводы требуют профессиональной интерпретации. Незаполненные протоколы не учитываются.");
   }
-  const s=current(),c=calculate(s),v=classifyVK(c.vk),co=classifyCO(c.co);
-  const narrative=narrativeReport(s);
-  let b=wp("Метолария. Методика «Домики» О. А. Ореховой")+wp("Участник: "+s.name+(s.age?" · "+s.age+" лет":" · класс / группа: "+state.groupName))+
-  wp("ВК: "+c.vk.toFixed(2).replace(".",",")+" – "+v.text,colorHex(v.level))+wp("СО: "+c.co+" – "+co.text,colorHex(co.level))+
-  wp("ИНДИВИДУАЛЬНЫЙ ПСИХОЛОГИЧЕСКИЙ ВЫВОД");
-  narrative.paragraphs.forEach(([heading,body])=>{b+=wp(heading)+wp(body);});
-  b+=wp("ПОЛНЫЙ ПРОТОКОЛ И ЦВЕТОВЫЕ АССОЦИАЦИИ")+
-  wp("Задание 1. Дорожка: "+s.ranking.map(colorName).join(", "))+wp("Задание 2. Домики чувств");
-  EMOTIONS.forEach((x,i)=>b+=wp((i+1)+". "+x+": "+colorName(s.emotions[i])));
-  b+=wp("Задание 3. Домики ситуаций");
-  SITUATIONS.forEach((x,i)=>b+=wp((i+1)+". "+x+": "+colorName(s.situations[i])));
-  const detailed=analysisDetails(s);
-  b+=wp("Задание 1. Предпочтение цветов от 1 до 8");
+  const s=current(),c=calculate(s);
+  const result=window.PSY_OREKHOVA_WORK_REPORT.build(s,c,state.groupName);
+  let b=wp("Метолария. Методика «Домики» О. А. Ореховой")+
+    wp("Участник: "+s.name+(s.age?" · "+s.age+" лет":"")+(state.groupName?" · "+state.groupName:""))+
+    wp("КРАТКИЕ РЕЗУЛЬТАТЫ");
+  result.short.forEach(item=>b+=wp(item.label+": "+item.value,colorHex(item.tone)));
+  b+=wp("АНАЛИЗ РЕЗУЛЬТАТОВ");
+  result.sections.forEach(([head,body])=>{b+=wp(head)+wp(body);});
+  b+=wp("НА ЧТО ОБРАТИТЬ ВНИМАНИЕ ПСИХОЛОГУ");
+  result.actions.forEach((item,i)=>b+=wp((i+1)+". "+item));
+  b+=wp("ПРОТОКОЛ: ЦВЕТОВАЯ ДОРОЖКА");
   s.ranking.forEach((id,i)=>b+=wp((i+1)+". "+colorName(id)));
-  b+=wp("Задание 2. Пояснение к домикам чувств");
-  detailed.feelings.forEach(item=>b+=wp("Домик "+item.index+". "+item.name+" – "+colorName(item.id)+" / место цвета "+item.position+". "+item.explanation));
-  b+=wp("Пять пар социальных эмоций");
-  detailed.pairs.forEach(p=>b+=wp(p.name+" – "+p.block+": "+colorName(p.first.id)+" (место "+p.first.position+") / "+colorName(p.second.id)+" (место "+p.second.position+"). "+(p.same?"Одинаковый цвет, требуется уточнение дифференциации чувств.":"Разница мест в дорожке: "+p.distance+".")));
-  b+=wp("Задание 3. Пояснение к домикам ситуаций");
-  detailed.situations.forEach(item=>b+=wp("Домик "+item.index+". "+item.name+": "+colorName(item.id)+" / место цвета "+item.position+". "+item.explanation+" Совпадения с чувствами: "+(item.related.join(", ")||"не выявлены")+". "+(item.dark?"Коричневый или черный – требуется уточняющая беседа.":"")));
-  b+=wp("Домик 10 – слова ребенка: "+s.description);
-  b+=wp("Цепочки одинаковых цветов");
-  detailed.chains.forEach(x=>b+=wp(x.name+" (место "+x.rank+"): чувства – "+(x.em.join(", ")||"нет")+"; ситуации – "+(x.sit.join(", ")||"нет")+"."));
-  b+=wp("Качественные наблюдения");
-  const notes=observations(s);notes.forEach(n=>b+=wp("• "+n));
-  return b+wp("Методика: «Домики» О. А. Ореховой. Показатели и качественные связи анализируются в контексте условий обследования и доступных сведений о школьной адаптации.");
+  b+=wp("ПРОТОКОЛ: СОЦИАЛЬНЫЕ ЭМОЦИИ");
+  EMOTIONS.forEach((name,i)=>b+=wp((i+1)+". "+name+": "+colorName(s.emotions[i])));
+  b+=wp("ПРОТОКОЛ: ШКОЛЬНЫЕ И ЛИЧНЫЕ СИТУАЦИИ");
+  SITUATIONS.forEach((name,i)=>b+=wp((i+1)+". "+name+": "+colorName(s.situations[i])));
+  b+=wp("Слова ребенка о последнем домике: "+s.description);
+  return b;
  }
  // Simple ZIP writer (stored files) for a real, offline-generated DOCX.
  function crc32(data){let crc=0xFFFFFFFF;for(const byte of data){crc^=byte;for(let i=0;i<8;i++)crc=(crc>>>1)^((crc&1)?0xEDB88320:0);}return (crc^0xFFFFFFFF)>>>0;}
