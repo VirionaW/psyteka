@@ -316,7 +316,7 @@ html.dark .method-focus{background:#2b493b;color:#deefdf}
 </div></section>
 <p class="library-caution">Интерпретации символов и расположения – справочные гипотезы, а не самостоятельный диагностический ключ. <a href="https://pubmed.ncbi.nlm.nih.gov/9631202/" target="_blank" rel="noopener noreferrer">Научный обзор</a>.</p>
 </main><footer>Метолария – автономный инструмент для специалиста. При первом онлайн-открытии страница сохраняется для повторных посещений без сети (пока кеш браузера не удален).</footer><div id="printSheet" aria-hidden="true"></div>
-<script src="drawing-library-interpretation.js?v=20261030a"></script>
+<script src="drawing-library-interpretation.js?v=20261030b"></script>
 <script>
 (function(){
 "use strict";
@@ -3358,26 +3358,15 @@ function fallbackCopy(text){
 }
 function reportBody(){
  var d=getDocument();
- var parts=['<h1>Протокол рисунка</h1><p><strong>Методика:</strong> '+esc(d.methodName)+'</p><p><strong>Код:</strong> '+esc(d.code||"Не указан")+'</p>'];
+ var parts=['<h1>Протокол рисунка</h1><p><strong>Методика:</strong> '+esc(d.methodName)+'</p>'];
+ if(d.code)parts.push('<p><strong>Код обследования:</strong> '+esc(d.code)+'</p>');
+ if(Number.isInteger(d.age)&&d.age>=3&&d.age<=99)parts.push('<p><strong>Возраст:</strong> '+esc(d.age)+' лет</p>');
  if(d.context)parts.push('<h2>Контекст обследования</h2><p>'+esc(d.context)+'</p>');
- parts.push('<h2>Элементы рисунка</h2>');
- if(!d.items.length)parts.push('<p>Записей пока нет.</p>');
- else d.items.forEach(function(x,i){
-  var entry=byId(x.elementId);if(!entry)return;
-  var excludes=Array.isArray(x.excluded)?x.excluded:[];
-  var analysis=interpretationParts(entry,x).filter(function(p){return !excludes.includes(p.key)});
-  var info=[];
-  if(x.position&&x.position!=="unknown")info.push('Расположение: '+(POS[x.position]||POS.unknown)[0]);
-  var chosen=normalizeColors(x.colors,x.color);
-  if(chosen.length)info.push('Цвета: '+chosen.map(function(k){return colorByKey(k)[1]}).join(", "));
-  if(x.size)info.push('Размер: '+(SZ[x.size]||"Не указан"));
-  parts.push('<div class="print-item"><strong>'+(i+1)+'. '+esc(entry.name)+'</strong>'+
-   (info.length?'<p>'+esc(info.join(" · "))+'</p>':'')+
-   (analysis.length?'<div>'+analysis.map(function(p){return '<p><strong>'+esc(p.title)+':</strong> '+esc(p.text)+'</p>'}).join("")+'</div>':'')+'</div>');
- });
- var synthesized=buildSynthesis();if(synthesized.hasContent)synthesized.sections.forEach(function(s){parts.push('<h2>'+esc(s.title)+'</h2><p>'+esc(s.text)+'</p>')});
+ var synthesized=buildSynthesis();
+ if(synthesized.hasContent){
+  synthesized.sections.forEach(function(s){parts.push('<h2>'+esc(s.title)+'</h2><p>'+esc(s.text)+'</p>')});
+ }else parts.push('<p>Добавленные элементы рисунка отсутствуют.</p>');
  if(d.conclusion)parts.push('<h2>Дополнительная сводка специалиста</h2><p>'+esc(d.conclusion)+'</p>');
- parts.push('<hr><p><small>Справочные значения и наблюдаемые признаки могут использоваться как гипотезы, но не являются отдельным диагнозом.</small></p>');
  return parts.join("");
 }
 function reportHTML(){
