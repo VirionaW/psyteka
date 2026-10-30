@@ -907,11 +907,13 @@ const tone=(d,s)=>d.id==="eysenck-40"?(s.raw<=7?"low":s.raw<=14?"middle":"high")
  (s.percent<=33?"low":s.percent<=66?"middle":"high");
 const label=(d,s)=>d.id==="razuvaeva-osr29"?"Без автоматического диагностического уровня":d.id==="eysenck-40"?(s.raw<=7?"Низкий уровень":s.raw<=14?"Средний уровень":"Высокий уровень"):(s.percent<=33?"До 33% максимума":s.percent<=66?"34-66% максимума":"Свыше 66% максимума");
 const num=(d,s)=>d.id==="razuvaeva-osr29"?s.adjusted.toFixed(1).replace(".",","):d.id==="lazarus-wcq50"&&s.tScore!==null?String(s.tScore):String(s.raw);
+const razKey=(d,r)=>d.id==="razuvaeva-osr29"?(r?.razuvaevaKey==="method-six"?"Б":"А"):"";
+const razLabel=(d,r)=>razKey(d,r)?"Ключ "+razKey(d,r):"";
 const maximum=(d,s)=>d.id==="razuvaeva-osr29"?(s.max*s.factor).toFixed(1).replace(".",","):String(s.max);
 function result(d,r){
  if(r?.attendance==="absent")return '<section class="psy-711-result">Участник отсутствовал. Результаты не рассчитываются.</section>';
  const z=scored(d,r);if(!z)return '<section class="psy-711-result">Заполнено '+present(d,r)+' из '+size(d)+'. Для подсчета нужны все ответы.</section>';
- return '<section class="psy-711-result"><h3>Результаты участника</h3><div class="psy-711-scale-grid">'+z.scales.map(s=>
+ return '<section class="psy-711-result"><h3>Результаты участника'+(d.id==="razuvaeva-osr29"?" · "+razLabel(d,r):"")+'</h3><div class="psy-711-scale-grid">'+z.scales.map(s=>
  '<div class="psy-711-scale psy-711-'+tone(d,s)+'"><b>'+esc(s.name)+'</b><strong>'+(d.id==="lazarus-wcq50"&&s.tScore!==null?num(d,s)+" Т-балл":num(d,s)+' / '+maximum(d,s))+'</strong><span>'+
  esc(d.id==="razuvaeva-osr29"?"Коэффициент "+s.factor:
  d.id==="lazarus-wcq50"?(s.tScore!==null?"Сырой: "+s.raw+" / "+s.max+" · "+window.PSY_WCQ_NORMS_2026.level(s.tScore):"Сырой: "+s.raw+" / "+s.max+" · нормативный Т-балл недоступен"):label(d,s))+'</span>'+
@@ -965,7 +967,7 @@ function analytical711Preview(d,rows){
 function group(d,rows){
  const keys=(cfg(d).versions?.[0]?.scales||cfg(d).scales);
  return '<section class="psy-mspss-group psy-711-group psy-711-'+d.id+'"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th>'+keys.map(s=>'<th>'+esc(s.name)+'</th>').join("")+'</tr></thead><tbody>'+
- rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+'</td>'+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="psy-711-score-cell">'+(v?'<span class="psy-711-number psy-711-'+tone(d,v)+'">'+num(d,v)+'</span>'+(d.id==="lazarus-wcq50"?'<small style="display:block;font-size:11px">Сырой '+v.raw+'/'+v.max+'</small>':""):"")+'</td>'}).join("")+'</tr>'}).join("")+
+ rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+(d.id==="razuvaeva-osr29"?'<small style="display:block;font-size:11px">'+razLabel(d,r)+'</small>':"")+'</td>'+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="psy-711-score-cell">'+(v?'<span class="psy-711-number psy-711-'+tone(d,v)+'">'+num(d,v)+'</span>'+(d.id==="lazarus-wcq50"?'<small style="display:block;font-size:11px">Сырой '+v.raw+'/'+v.max+'</small>':""):"")+'</td>'}).join("")+'</tr>'}).join("")+
  '</tbody></table></div>'+(d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Цвет чисел обозначает только долю максимума соответствующего фактора (до 33%, 34-66%, свыше 66%), но не уровень суицидального риска. Категория риска автоматически не присваивается.</p>':d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">Основные числа – стандартизированные Т-баллы (для возраста 14-60 лет при указанном поле), ниже – сырые баллы. Если возрастная норма недоступна, показан только сырой балл. Т менее 40 – редкое, 40-60 – умеренное, выше 60 – выраженное использование стратегии.</p>':"")+analytical711Preview(d,rows)+'</section>';
 }
 function calculator(d,ctx){
@@ -987,6 +989,10 @@ function calculator(d,ctx){
  if(d.id==="lazarus-wcq50")out+='<div class="psy-cp-demographics"><label>Возраст (полных лет)<input id="school711Age" type="number" min="14" max="90" step="1" value="'+(Number(r.ageYears)>=14&&Number(r.ageYears)<=90?Number(r.ageYears):"")+'" placeholder="14-90"></label><div class="psy-cp-sex-field"><span>Пол участника</span><div class="psy-cp-sex-buttons" role="group" aria-label="Пол"><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="f"?"is-selected":"")+'" data-711-sex="f" aria-pressed="'+(r.sex==="f")+'" '+(!hasRoster||!ageOk(d,r,rows,ctx.calcMode)?"disabled":"")+'>Девочка / женщина</button><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="m"?"is-selected":"")+'" data-711-sex="m" aria-pressed="'+(r.sex==="m")+'" '+(!hasRoster||!ageOk(d,r,rows,ctx.calcMode)?"disabled":"")+'>Мальчик / мужчина</button></div></div></div>';
  if(d.id==="lazarus-wcq50")out+='<p class="psy-mspss-small">Возраст указывайте для каждого участника отдельно: класс не заменяет фактический возраст. Т-баллы доступны по нормам для 14-60 лет.</p>';
  if(locked)out+='<p class="psy-cdi-lock-note">'+(ctx.calcMode==="class"&&!hasRoster?"Сначала добавьте хотя бы одного участника.":!r.name?.trim()?"Сначала укажите участника.":!ageOk(d,r,rows,ctx.calcMode)?(d.id==="lazarus-wcq50"?"Укажите возраст участника (14-90 лет).":"Выберите класс перед вводом ответов."):"Укажите пол участника.")+'</p>';
+ if(d.id==="razuvaeva-osr29")out+='<label class="psy-711-version">Ключ обработки<select id="school711RazKey">'+
+ '<option value="kmc-seven" '+(r.razuvaevaKey!=="method-six"?"selected":"")+'>Ключ А – КМЦ (7 пунктов)</option>'+
+ '<option value="method-six" '+(r.razuvaevaKey==="method-six"?"selected":"")+'>Ключ Б – методические материалы (6 пунктов)</option></select></label>'+
+ '<p class="psy-mspss-small">Опубликованные ключи расходятся по пунктам 17 и 21. Ключ А сохраняет прежний расчет и выдает до 7,0 по социальному пессимизму. Ключ Б – до 6,0. Для всех участников одного обследования используйте одинаковый ключ.</p>';
  if(d.id==="eysenck-40")out+='<label class="psy-711-version">Редакция опросника<select id="school711Version">'+
  '<option value="interleaved" '+(r.eysenckVersion!=="block"?"selected":"")+'>Версия 2 – чередование шкал (твой бланк)</option>'+
  '<option value="block" '+(r.eysenckVersion==="block"?"selected":"")+'>Версия 1 – шкалы по блокам</option></select></label>';
@@ -1006,6 +1012,8 @@ function guide(d){
  return '<section class="psy-mspss-manual psy-711-manual"><h3>Цель</h3><p>'+esc(mtd.goal)+'</p><h3>Инструкция обследуемому</h3><div class="psy-mspss-script">'+esc(ins)+'</div><h3>Обработка</h3><p>'+esc(mtd.scoring)+'</p>'+
  '<h3>Шкалы</h3><div class="psy-mspss-key-wrap"><table class="psy-mspss-key"><thead><tr><th>Шкала</th><th>Пункты</th>'+(d.id==="razuvaeva-osr29"?"<th>Коэффициент</th>":"")+'</tr></thead><tbody>'+
  sc.map(s=>'<tr><td>'+esc(s.name)+'</td><td>'+s.q.join(", ")+'</td>'+(d.id==="razuvaeva-osr29"?'<td>'+s.factor+'</td>':"")+'</tr>').join("")+'</tbody></table></div>'+
+ (d.id==="razuvaeva-osr29"?'<h3>Другой опубликованный ключ – Б</h3><p>Сохраняется тот же бланк из 29 вопросов, но меняются номера трех шкал. Для сопоставления выбирайте ключ по пособию, которым пользуетесь.</p><div class="psy-mspss-key-wrap"><table class="psy-mspss-key"><thead><tr><th>Шкала</th><th>Пункты (ключ Б)</th></tr></thead><tbody>'+
+ [["Несостоятельность","2, 3, 6, 7, 21"],["Социальный пессимизм","5, 11, 13, 15, 22, 25"],["Антисуицидальный фактор","17, 19"]].map(row=>'<tr><td>'+row[0]+'</td><td>'+row[1]+'</td></tr>').join("")+'</tbody></table></div><p><a href="https://infourok.ru/o-provedenii-socialno-psihologicheskogo-testirovaniya-obuchayushihsya-8-9-klassov-5680637.html" target="_blank" rel="noopener noreferrer">Опубликованный альтернативный ключ</a></p>':"")+
  (d.id==="razuvaeva-osr29"?'<p class="psy-711-safety">При возможной угрозе безопасности требуется очная профессиональная оценка. Баллы опросника не заменяют ее.</p>':"")+
  '<div class="psy-mspss-manual-actions"><button type="button" class="btn" data-711-print="guide">Без бланка</button><button type="button" class="btn primary" data-711-print="combined">С бланком</button></div></section>';
 }
@@ -1045,6 +1053,12 @@ function bind(d,ctx){
   if(ctx.calcMode==="class"&&initial&&ctx.onGenderAssigned){ctx.onGenderAssigned();return;}
   ctx.onRender?.();
  }));
+ document.getElementById("school711RazKey")?.addEventListener("change",e=>{
+  if(d.id!=="razuvaeva-osr29")return;
+  const next=e.target.value==="method-six"?"method-six":"kmc-seven";
+  if(r.razuvaevaKey===next)return;
+  r.razuvaevaKey=next;ctx.onRender?.();
+ });
  document.getElementById("school711Version")?.addEventListener("change",e=>{
   if((r.eysenckVersion||"interleaved")===e.target.value)return;
   if(present(d,r)&&!confirm("Редакции имеют другой порядок вопросов. Очистить ответы и сменить?")){e.target.value=r.eysenckVersion||"interleaved";return}
@@ -1078,7 +1092,7 @@ function csv(d,rows){
  const head=["№","Участник",...scales.flatMap(s=>isWCQ?[s.name+" (Т-балл)",s.name+" (сырой)"]:[s.name])];
  const cell=v=>{let x=String(v??"");if(/^\s*[=+@-]/.test(x))x="'"+x;return '"'+x.replace(/"/g,'""')+'"'};
  const lines=[head,...rows.map((r,i)=>{const scores=scored(d,r)?.scales||scales.map(()=>null);
-  return [i+1,r.name||"У-"+(i+1),...scores.flatMap(s=>isWCQ?[s?.tScore??"",s?.raw??""]:[s?num(d,s):""])];
+  return [i+1,(r.name||"У-"+(i+1))+(d.id==="razuvaeva-osr29"?" ["+razLabel(d,r)+"]":""),...scores.flatMap(s=>isWCQ?[s?.tScore??"",s?.raw??""]:[s?num(d,s):""])];
  })];
  return "\uFEFF"+lines.map(row=>row.map(cell).join(";")).join("\r\n");
 }
@@ -1095,7 +1109,7 @@ function report(d,rows,mode,index){
  const scales=cfg(d).scales||cfg(d).versions?.[0]?.scales||[],rowsData=[],fill=[];
  for(let i=0;i<people.length;i++){
   const row=people[i],z=scored(d,row);
-  rowsData.push([String(i+1),row.name||"У-"+(i+1),...scales.map((s,j)=>{
+  rowsData.push([String(i+1),(row.name||"У-"+(i+1))+(d.id==="razuvaeva-osr29"?" ["+razLabel(d,row)+"]":""),...scales.map((s,j)=>{
    const v=z?.scales?.[j];if(!v)return "";
    return d.id==="lazarus-wcq50"?(v.tScore===null?"Сырой "+v.raw:"Т "+v.tScore+" (сырой "+v.raw+")"):num(d,v);
   })]);
