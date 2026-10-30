@@ -13,14 +13,16 @@ const levels=t=>t>70?"Очень значительно превышает ср�
 function norm(raw,age,sex){
  const n=Number(age),key=(sex==="m"||sex==="f")?(sex+(Number.isInteger(n)&&n>=7&&n<=12?"7":Number.isInteger(n)&&n>=13&&n<=17?"13":"")):"";
  if(!tables[key])return {status:"missing-details",t:null,message:"Для Т-балла укажите возраст 7-17 лет и пол, указанный в таблице источника."};
- if(key==="m7"&&(raw===27||raw===28))return {status:"source-error",t:null,message:"В загруженном PDF нарушен порядок Т-баллов для сырых 27 и 28 (73 и 72). Уточните норму по надежному изданию. Сырой балл рассчитан."};
+ // The published table has conflicting assignments for raw 27 and 28 in boys 7-12.
+ // Both cells are intentionally null in the selected source; use nearestT below,
+ // exactly as for other unlisted raw totals, rather than aborting the result.
  if(!Number.isInteger(raw)||raw<0||raw>54)return {status:"invalid-raw",t:null,message:"Сумма должна быть целым числом от 0 до 54."};
  return nearestT(tables[key],raw,"общего показателя");
 }
 /* A nearby published RAW value is a pragmatic estimate, never an exact norm.
    When equidistant, choose the smaller raw value (conservative deterministic rule).
    Keep provenance so UI/Word/CSV can distinguish estimates from table cells.
-   Disputed source data (boys 7-12 raw 27-28) is handled separately above. */
+   Disputed source data (boys 7-12 raw 27-28) is handled by the same nearest lookup. */
 function nearestT(table,raw,description){
  const exact=table[raw];
  if(Number.isInteger(exact))return {status:"ok",t:exact,sourceRaw:raw,raw,level:levels(exact),message:"Т-балл по нормативной таблице."};
