@@ -944,13 +944,14 @@ function analytical711(d,rows){
   });
   lines.push({kind:"body",text:"Уровни отражают выраженность соответствующих состояний по используемым границам методики и не являются диагнозом."});
  }else{
-  const factors=names.map((factor,i)=>({name:factor.name,mean:scores.reduce((acc,x)=>acc+(x.scales[i]?.percent||0),0)/n})).sort((a,b)=>b.mean-a.mean);
+  const allNormed=d.id==="lazarus-wcq50"&&scores.every(x=>x.scales.every(v=>v.tScore!==null));
+  const factors=names.map((factor,i)=>({name:factor.name,mean:scores.reduce((acc,x)=>acc+(allNormed?x.scales[i].tScore:(x.scales[i]?.percent||0)),0)/n})).sort((a,b)=>b.mean-a.mean);
   lines.push({kind:"body",text:d.id==="lazarus-wcq50"?
-   "В группе наиболее выражены следующие способы совладающего поведения (средний процент от максимума шкалы):":
+   (allNormed?"Средние стандартизированные Т-баллы по возрастно-половым нормам 14-60 лет:":"Не все участники имеют подходящие возрастно-половые нормы; приведена средняя доля максимума каждой шкалы:"):
    "Групповые средние значения наиболее выраженных факторов (в процентах от максимума шкалы):"});
-  factors.slice(0,4).forEach(x=>lines.push({kind:"factor",text:x.name+" – "+Math.round(x.mean)+"%."}));
+  factors.slice(0,4).forEach(x=>lines.push({kind:"factor",text:x.name+" – "+Math.round(x.mean)+(allNormed?" Т-баллов":"%")+"."}));
   lines.push({kind:"body",text:d.id==="lazarus-wcq50"?
-   "Проценты описывают долю от максимума шкалы, не являются возрастными нормами и клиническими порогами. Способы совладания могут сочетаться.":
+   (allNormed?"По таблицам Вассермана и соавт. (2009): Т менее 40 – редкое, от 40 до 60 – умеренное, свыше 60 – выраженное использование. Это не клинический диагноз.":"Проценты представлены только описательно, не как возрастные нормы. Для нормативных Т-баллов укажите возраст 14-60 лет и пол каждого участника."):
    "Факторные баллы не определяют вероятность суицида. Автоматическая категория риска не присваивается; при подозрении на угрозу необходима очная оценка безопасности."});
  }
  return {lines,n,total};
@@ -1017,7 +1018,7 @@ function printable(d,mode){
  const md=cfg(d),b='<section class="'+(mode==="combined"?"newpage":"")+'"><h1>'+esc(md.name)+'</h1>'+(d.id==="eysenck-40"?"<p>Бланк версии 2</p>":"")+ '<p>Участник: ________________________ Класс: ______ Дата: ____________</p>'+
  '<p>'+(d.id==="lazarus-wcq50"?"Оказавшись в трудной ситуации, я...":"")+'</p><p>'+esc(childOpts(d))+'</p><table><thead><tr><th>№</th><th>Утверждение</th><th>Ответ</th></tr></thead><tbody>'+
  items[d.id].map((q,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(q)+'</td><td></td></tr>').join("")+'</tbody></table></section>';
- const g='<h1>'+esc(md.name)+'</h1><h2>Цель</h2><p>'+esc(md.goal)+'</p><h2>Инструкция</h2><p>'+esc(md.instruction)+'</p><h2>Подсчет</h2><p>'+esc(md.scoring)+'</p>';
+ const g='<h1>'+esc(md.name)+'</h1><h2>Цель</h2><p>'+esc(md.goal)+'</p><h2>Инструкция</h2><p>'+esc(md.instruction)+'</p><h2>Подсчет</h2><p>'+esc(md.scoring)+'</p><h2>Интерпретация</h2><p>'+esc(md.interpret)+'</p>';
  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>'+esc(md.name)+'</title><style>@page{size:A4;margin:14mm}body{font:10pt/1.4 Arial}table{width:100%;border-collapse:collapse}td,th{border:1px solid #9bb2a5;padding:5px;vertical-align:top}td:first-child{width:35px}td:last-child{width:70px}tr{break-inside:avoid}.newpage{break-before:page}</style></head><body>'+(mode==="blank"?b:g)+(mode==="combined"?b:"")+'</body></html>';
 }
 function bind(d,ctx){
@@ -1073,9 +1074,12 @@ function bind(d,ctx){
 }
 
 function csv(d,rows){
- const head=["№","Участник",...(cfg(d).scales||cfg(d).versions?.[0]?.scales||[]).map(s=>s.name)];
+ const isWCQ=d.id==="lazarus-wcq50",scales=(cfg(d).scales||cfg(d).versions?.[0]?.scales||[]);
+ const head=["№","Участник",...scales.flatMap(s=>isWCQ?[s.name+" (Т-балл)",s.name+" (сырой)"]:[s.name])];
  const cell=v=>{let x=String(v??"");if(/^\s*[=+@-]/.test(x))x="'"+x;return '"'+x.replace(/"/g,'""')+'"'};
- const lines=[head,...rows.map((r,i)=>[i+1,r.name||"У-"+(i+1),...(scored(d,r)?.scales||head.slice(2).map(()=>null)).map(s=>s?num(d,s):"")])];
+ const lines=[head,...rows.map((r,i)=>{const scores=scored(d,r)?.scales||scales.map(()=>null);
+  return [i+1,r.name||"У-"+(i+1),...scores.flatMap(s=>isWCQ?[s?.tScore??"",s?.raw??""]:[s?num(d,s):""])];
+ })];
  return "\uFEFF"+lines.map(row=>row.map(cell).join(";")).join("\r\n");
 }
 /* Create a real OOXML Word file without remote services. */
@@ -1091,8 +1095,13 @@ function report(d,rows,mode,index){
  const scales=cfg(d).scales||cfg(d).versions?.[0]?.scales||[],rowsData=[],fill=[];
  for(let i=0;i<people.length;i++){
   const row=people[i],z=scored(d,row);
-  rowsData.push([String(i+1),row.name||"У-"+(i+1),...scales.map((s,j)=>z?num(d,z.scales[j]):"")]);
-  fill.push([null,null,...scales.map((s,j)=>{const factor=z?.scales?.[j];if(!factor)return null;const kind=tone(d,factor);return kind==="high"?"FF6868":kind==="middle"?"FFF14D":"4BE878"})]);
+  rowsData.push([String(i+1),row.name||"У-"+(i+1),...scales.map((s,j)=>{
+   const v=z?.scales?.[j];if(!v)return "";
+   return d.id==="lazarus-wcq50"?(v.tScore===null?"Сырой "+v.raw:"Т "+v.tScore+" (сырой "+v.raw+")"):num(d,v);
+  })]);
+  fill.push([null,null,...scales.map((s,j)=>{const factor=z?.scales?.[j];if(!factor)return null;
+   if(d.id==="lazarus-wcq50"&&factor.tScore===null)return null;
+   const kind=tone(d,factor);return kind==="high"?"FF6868":kind==="middle"?"FFF14D":"4BE878"})]);
  }
  const grade=people.find(r=>Number(r.schoolGrade)>=7&&Number(r.schoolGrade)<=11)?.schoolGrade;
  const analytic=mode==="analysis"?analytical711(d,rows):null;
@@ -1110,7 +1119,7 @@ function report(d,rows,mode,index){
   body=para(cfg(d).name)+para(mode==="class"?"Результаты "+(grade?grade+" класса":"класса"):"Результат участника")+para("Дата: "+new Date().toLocaleDateString("ru-RU"));
   body+=table([["№","Участник",...scales.map(s=>s.name)],...rowsData],fill);
   if(d.id==="eysenck-40")body+=para("Интервалы каждой шкалы:")+table([["Баллы","Уровень"],["0-7","Низкий"],["8-14","Средний"],["15-20","Высокий"]],[["E4F1FB","E4F1FB"],["FFF0CF","FFF0CF"],["F9DEDC","F9DEDC"]]);
-  else if(d.id==="lazarus-wcq50")body+=para("Числа – сырые баллы по каждой копинг-стратегии. Цвета показывают условную долю максимума: до 33%, 34-66%, свыше 66%. Это не клинические пороги и не возрастные нормативы.");
+  else if(d.id==="lazarus-wcq50")body+=para("Т – стандартные Т-баллы по таблицам Вассермана и соавт. (2009), с учетом пола и возраста 14-60 лет. В скобках – сырые баллы. Т<40 – редкое, 40-60 – умеренное, Т>60 – выраженное использование стратегии. Если нормы отсутствуют, показан только сырой балл.");
   else body+=para("Факторы представлены с коэффициентами. Это не расчет вероятности суицида; при необходимости нужна очная оценка безопасности.");
  }
  const documentXml='<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+
