@@ -509,10 +509,10 @@
   if(ctx.calcMode==="class"){
    const nextAvailable=(start)=>{for(let step=1;step<rows.length;step++){const j=(start+step)%rows.length;if(rows[j].attendance!=="absent")return j;}return -1;};
    const nextIndex=nextAvailable(ctx.rowIndex);
-   const chooser=type(d)==="ph"?'<label class="psy-ph-bottom-chooser" for="cpBottomPerson">Участник <select id="cpBottomPerson" aria-label="Перейти к участнику">'+rows.map((person,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+esc((i+1)+". "+(person.name||"Участник "+(i+1))+(person.attendance==="absent"?" (отсутствует)":""))+'</option>').join("")+'</select></label>':'';
-   h+='<div class="psy-mspss-after-questions psy-cp-next-actions '+(type(d)==="ph"?"psy-ph-bottom-nav":"")+'">'+chooser+
+   const chooser='<label class="psy-ph-bottom-chooser" for="cpBottomPerson">Выбрать ученика <select id="cpBottomPerson" aria-label="Перейти к участнику">'+rows.map((person,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+esc((i+1)+". "+(person.name||"Участник "+(i+1))+(person.attendance==="absent"?" (отсутствует)":""))+'</option>').join("")+'</select></label>';
+   h+='<div class="psy-mspss-after-questions psy-cp-next-actions psy-ph-bottom-nav">'+chooser+
     '<button type="button" class="btn" id="cpAbsent" '+(!allowDetails?"disabled":"")+' >'+(r.attendance==="absent"?"Вернуть в список присутствующих":"Отсутствовал – следующий")+'</button>'+
-    '<button type="button" class="btn primary" id="cpNext" '+(nextIndex<0||!allowDetails?"disabled":"")+' >'+(type(d)==="ph"&&nextIndex>=0?"Следующий: "+esc(rows[nextIndex].name||"Участник "+(nextIndex+1))+" →":"Следующий участник →")+'</button></div>';
+    '<button type="button" class="btn primary" id="cpNext" '+(nextIndex<0||!allowDetails?"disabled":"")+' >'+(nextIndex>=0?"Следующий: "+esc(rows[nextIndex].name||"Участник "+(nextIndex+1))+" →":"Следующий участник →")+'</button></div>';
   }
   h+='<div id="cpResult">'+result(d,r)+'</div></div>';
   if(ctx.calcMode==="class")h+='</div><div id="cpGroup">'+group(d,rows)+'</div>';
