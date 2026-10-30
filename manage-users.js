@@ -8,9 +8,17 @@
  const previous=document.getElementById("usersPrevious");
  const next=document.getElementById("usersNext");
  const pageLabel=document.getElementById("usersPageLabel");
+ const mfaPanel=document.getElementById("usersMfaRequired");
  let client=null,page=1,lastPage=1,users=[],ownerId="",busy=false,searchMode=false,requestSeq=0;
  function say(text,error=false){
   status.textContent=text;status.classList.toggle("error",error);
+ }
+ function requireMfa(){
+  // AAL2 can lapse after the page was opened. Hide sensitive controls
+  // rather than leave an apparently usable search with an error banner.
+  ++requestSeq;busy=false;users=[];searchMode=false;
+  panel.hidden=true;mfaPanel.hidden=false;list.replaceChildren();
+  say("Для поиска аккаунтов и назначения модератора подтвердите защиту «Вендиго».");
  }
  function element(tag,className,text){
   const el=document.createElement(tag);
@@ -39,11 +47,10 @@
   // Do not expose a list of email addresses to an aal1 owner session.
   const {data:aal,error:aalError}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
   if(aalError || aal?.currentLevel!=="aal2"){
-   document.getElementById("usersMfaRequired").hidden=false;
-   say("Для управления участниками необходимо подтвердить защиту «Вендиго».");
+   requireMfa();
    return;
   }
-  panel.hidden=false;
+  mfaPanel.hidden=true;panel.hidden=false;
   say(roleData.role==="shadow"?"Вы вошли как Тень. Защита подтверждена.":"Вы вошли как Владелец. Защита подтверждена.");
  }catch(_){say("Не удалось проверить аккаунт.",true);return;}
 
@@ -51,17 +58,28 @@
   const {data,error}=await client.functions.invoke("manage-user-roles",{body});
   if(error){
    let reason="Ошибка запроса к серверу. Проверьте подключение.";
-   try{const details=await error.context?.json?.();if(typeof details?.error==="string")reason=details.error;}catch(_){}
-   throw new Error(reason);
+   let code="";
+   try{
+    const details=await error.context?.json?.();
+    if(typeof details?.error==="string")reason=details.error;
+    if(typeof details?.code==="string")code=details.code;
+   }catch(_){}
+   if(code==="mfa_required"||/подтвердите код|второй фактор/i.test(reason))requireMfa();
+   const authFailure=new Error(reason);authFailure.code=code;
+   throw authFailure;
   }
-  if(data?.error)throw new Error(data.error);
+  if(data?.error){
+   if(data.code==="mfa_required")requireMfa();
+   const authFailure=new Error(data.error);authFailure.code=data.code||"";
+   throw authFailure;
+  }
   return data;
  }
  function draw(){
   list.replaceChildren();
   const q=search.value.trim().toLocaleLowerCase("ru");
   const shown=searchMode?users:users.filter(u=>String(u.email).toLocaleLowerCase("ru").includes(q));
-  if(!shown.length)list.appendChild(element("div","psy-empty","На этой странице пользователи не найдены."));
+  if(!shown.length)list.appendChild(element("div","psy-empty",searchMode?"Аккаунт по указанной почте не найден. Проверьте адрес и подтверждение регистрации.":"На этой странице пользователи не найдены."));
   for(const user of shown){
    const row=element("article","psy-users-row");
    const main=element("div","psy-user-main");
@@ -113,7 +131,7 @@
    page=targetPage;
    lastPage=Math.max(1,Number(data?.totalPages)||1);
    say("Права участников доступны только Владельцу и Тени после подтверждения защиты.");
-  }catch(e){if(sequence===requestSeq)say(e.message||"Не удалось загрузить список участников.",true)}
+  }catch(e){if(sequence===requestSeq&&e.code!=="mfa_required")say(e.message||"Не удалось загрузить список участников.",true)}
   finally{if(sequence===requestSeq){busy=false;draw();}}
  }
  async function findByEmail(email){
@@ -126,7 +144,7 @@
    users=Array.isArray(data?.users)?data.users:[];
    page=1;lastPage=1;
    say(users.length?"Аккаунт найден. Выберите роль и сохраните изменение.":"Такой подтвержденный или неподтвержденный аккаунт не найден.");
-  }catch(e){if(sequence===requestSeq){users=[];say(e.message||"Поиск временно недоступен.",true)}}
+  }catch(e){if(sequence===requestSeq&&e.code!=="mfa_required"){users=[];say(e.message||"Поиск временно недоступен.",true)}}
   finally{if(sequence===requestSeq){busy=false;draw();}}
  }
  search.addEventListener("input",()=>{
