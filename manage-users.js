@@ -43,37 +43,45 @@
    .select("role").eq("user_id",ownerId).maybeSingle();
   if(roleError){say("Не удалось подтвердить полномочия.",true);return;}
   if(roleData?.role!=="owner"&&roleData?.role!=="shadow"){say("Управление доступно Владельцу и Тени.",true);return;}
-  // The Edge Function independently verifies the JWT assurance level.
-  // Do not expose a list of email addresses to an aal1 owner session.
-  const {data:aal,error:aalError}=await client.auth.mfa.getAuthenticatorAssuranceLevel();
-  if(aalError || aal?.currentLevel!=="aal2"){
-   requireMfa();
-   return;
-  }
-  mfaPanel.hidden=true;panel.hidden=false;
-  say(roleData.role==="shadow"?"Вы вошли как Тень. Защита подтверждена.":"Вы вошли как Владелец. Защита подтверждена.");
+  // The browser's local AAL can be stale immediately after MFA or
+  // navigation. Ask the server to validate the *actual* authorization token
+  // before exposing any directory entries. list() is AAL2-protected there.
+  mfaPanel.hidden=true;panel.hidden=true;
+  say("Проверяем защиту на сервере...");
  }catch(_){say("Не удалось проверить аккаунт.",true);return;}
 
  async function call(body){
-  const {data,error}=await client.functions.invoke("manage-user-roles",{body});
-  if(error){
-   let reason="Ошибка запроса к серверу. Проверьте подключение.";
-   let code="";
-   try{
-    const details=await error.context?.json?.();
-    if(typeof details?.error==="string")reason=details.error;
-    if(typeof details?.code==="string")code=details.code;
-   }catch(_){}
-   if(code==="mfa_required"||/подтвердите код|второй фактор/i.test(reason))requireMfa();
-   const authFailure=new Error(reason);authFailure.code=code;
-   throw authFailure;
+  // Never trust a browser-only MFA flag for account administration. The
+  // Edge Function authorizes every request, including list and search.
+  // Retry once with a newly refreshed session token if the old JWT has an
+  // outdated AAL claim after returning from the second-factor page.
+  for(let attempt=0;attempt<2;attempt++){
+   const {data,error}=await client.functions.invoke("manage-user-roles",{body});
+   let reason="",code="";
+   if(error){
+    reason="Ошибка обращения к серверу. Проверьте подключение.";
+    try{
+     const details=await error.context?.json?.();
+     if(typeof details?.error==="string")reason=details.error;
+     if(typeof details?.code==="string")code=details.code;
+    }catch(_){}
+    if(!code&&error.context?.status===401)code="not_signed_in";
+   }else if(data?.error){
+    reason=String(data.error);code=String(data.code||"");
+   }else return data;
+   const mfaRequired=code==="mfa_required"||/подтвердите код|второй фактор/i.test(reason);
+   if(mfaRequired&&attempt===0){
+    try{
+     const {data:refresh,error:refreshError}=await client.auth.refreshSession();
+     if(!refreshError&&refresh?.session)continue;
+    }catch(_){}
+   }
+   if(mfaRequired)requireMfa();
+   const issue=new Error(reason||"Не удалось проверить доступ к управлению.");
+   issue.code=mfaRequired?"mfa_required":code;
+   throw issue;
   }
-  if(data?.error){
-   if(data.code==="mfa_required")requireMfa();
-   const authFailure=new Error(data.error);authFailure.code=data.code||"";
-   throw authFailure;
-  }
-  return data;
+  throw new Error("Не удалось подтвердить доступ к управлению.");
  }
  function draw(){
   list.replaceChildren();
@@ -128,6 +136,9 @@
    const data=await call({action:"list",page:targetPage});
    if(sequence!==requestSeq)return;
    users=Array.isArray(data?.users)?data.users:[];
+   // Reveal the moderator directory only after the protected server
+   // endpoint successfully authorizes this request.
+   mfaPanel.hidden=true;panel.hidden=false;
    page=targetPage;
    lastPage=Math.max(1,Number(data?.totalPages)||1);
    say("Права участников доступны только Владельцу и Тени после подтверждения защиты.");
