@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="manage-users.css?v=20261027mfa1">
 <script defer src="auth-config.js?v=20261028metolaria1"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
-<script defer src="manage-users.js?v=20261030role-email-search2"></script>
+<script defer src="manage-users.js?v=20261030mfa-panel1"></script>
 </head>
 <body>
 <header class="auth-header">
@@ -27,8 +27,8 @@
  <div id="usersStatus" role="status" aria-live="polite" class="auth-note">Проверяем доступ...</div>
  <section id="usersMfaRequired" hidden class="psy-users-panel" aria-labelledby="usersMfaHeading">
   <h2 id="usersMfaHeading">Подтвердите защиту «Вендиго»</h2>
-  <p>Для просмотра участников и назначения модераторов Владелец должен подтвердить второй фактор через приложение-аутентификатор.</p>
-  <a class="auth-button-link" href="owner-mfa.html">Подключить защиту или ввести код</a>
+  <p>Вход в аккаунт уже выполнен. Чтобы увидеть пользователей и назначить модератора, сначала подтвердите текущую сессию шестизначным кодом из приложения-аутентификатора.</p>
+  <a class="auth-button-link" href="owner-mfa.html">Подтвердить код и вернуться к управлению</a>
  </section>
  <section id="usersPanel" hidden aria-labelledby="usersTitle" class="psy-users-panel">
   <div class="psy-users-heading">
