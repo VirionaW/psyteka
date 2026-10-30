@@ -18,9 +18,9 @@
    if(identity.user?.email_confirmed_at&&["owner","shadow"].includes(identity.role))link.hidden=false;
    return;
   }
-  const client=window.supabase.createClient(config.url,config.publishableKey,{
+  const client=window.PSY_AUTH_CLIENT||(window.PSY_AUTH_CLIENT=window.supabase.createClient(config.url,config.publishableKey,{
    auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
-  });
+  }));
   const {data,error}=await client.auth.getUser();
   if(error||!data?.user||data.user.is_anonymous||!data.user.email_confirmed_at)return;
   const {data:permissions,error:readError}=await client.from("psy_account_roles")
