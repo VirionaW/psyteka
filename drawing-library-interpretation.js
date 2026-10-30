@@ -122,25 +122,25 @@ function combine(input){
  if(related){
   const sharpDetails=short(labels(related,group(related,"sharp")),3)||"острые детали";
   const damageDetails=short(labels(related,group(related,"damage")),3)||"повреждение";
-  interpretation.push("У "+mentioned(related)+" одновременно выделены "+sharpDetails+" и "+damageDetails+". Это сочетание задает сюжетный вопрос: защищается ли персонаж, угрожает кому-то или сам нуждается в помощи. Необходимо узнать, как ребенок объясняет обе детали.");
+  interpretation.push("В изображении "+mentioned(related)+" одновременно выделены "+sharpDetails+" и "+damageDetails+". Это сочетание задает сюжетный вопрос: защищается ли персонаж, угрожает кому-то или сам нуждается в помощи. Необходимо узнать, как ребенок объясняет обе детали.");
  }else if(sharp.length&&damage.length){
-  interpretation.push("У "+mentioned(sharp[0])+" выделены "+(short(labels(sharp[0],group(sharp[0],"sharp")),3)||"острые детали")+", а у "+mentioned(damage[0])+" – "+(short(labels(damage[0],group(damage[0],"damage")),3)||"повреждение")+". Стоит уточнить, связаны ли эти персонажи одним событием и кто какую роль выполняет.");
+  interpretation.push("В изображении "+mentioned(sharp[0])+" выделены "+(short(labels(sharp[0],group(sharp[0],"sharp")),3)||"острые детали")+", а в изображении "+mentioned(damage[0])+" – "+(short(labels(damage[0],group(damage[0],"damage")),3)||"повреждение")+". Стоит уточнить, связаны ли эти персонажи одним событием и кто какую роль выполняет.");
  }else if(sharp.length){
   const x=sharp[0];
-  interpretation.push("У "+mentioned(x)+" отмечены "+(short(labels(x,group(x,"sharp")),3)||"острые детали")+". По рассказу ребенка следует уточнить их назначение: внешняя особенность, защита или действие против другого героя.");
+  interpretation.push("В изображении "+mentioned(x)+" отмечены "+(short(labels(x,group(x,"sharp")),3)||"острые детали")+". По рассказу ребенка следует уточнить их назначение: внешняя особенность, защита или действие против другого героя.");
  }else if(damage.length){
-  const x=damage[0];interpretation.push("У "+mentioned(x)+" изображены "+(short(labels(x,group(x,"damage")),3)||"следы повреждения")+". Для понимания сцены важно установить причину, последствия и наличие помощи в истории.");
+  const x=damage[0];interpretation.push("В изображении "+mentioned(x)+" изображены "+(short(labels(x,group(x,"damage")),3)||"следы повреждения")+". Для понимания сцены важно установить причину, последствия и наличие помощи в истории.");
  }
  const contact=rows.filter(x=>group(x,"connection").length),separation=rows.filter(x=>group(x,"separation").length);
  if(contact.length&&separation.length){
   if(contact.some(x=>separation.includes(x))){
    const x=contact.find(y=>separation.includes(y));
    interpretation.push("Для "+mentioned(x)+" отмечены и признаки взаимодействия, и признаки отделения. Нужно уточнить, с кем именно связан каждый признак и какие события изображены.");
-  }else interpretation.push("У "+mentioned(contact[0])+" показан контакт, а "+mentioned(separation[0])+" расположен отдельно или отделен преградой. Это может относиться к разным отношениям в сюжете; важно выяснить, как ребенок описывает участников.");
+  }else interpretation.push("Для персонажа "+mentioned(contact[0])+" показан контакт, а "+mentioned(separation[0])+" расположен отдельно или отделен преградой. Это может относиться к разным отношениям в сюжете; важно выяснить, как ребенок описывает участников.");
  }else if(separation.length){
   interpretation.push(mentioned(separation[0])+" отделен от других объектов или персонажей. Уточнить, связано ли это с сюжетом, расположением сцены или отношениями героев.");
  }else if(contact.length){
-  interpretation.push("У "+mentioned(contact[0])+" показан контакт или присутствие других участников. Уточнить, кто взаимодействует, что они делают вместе и как завершается эпизод.");
+  interpretation.push("Для персонажа "+mentioned(contact[0])+" показан контакт или присутствие других участников. Уточнить, кто взаимодействует, что они делают вместе и как завершается эпизод.");
  }
  const sizeBig=rows.filter(x=>x.size==="large"),sizeSmall=rows.filter(x=>x.size==="small");
  if(sizeBig.length&&sizeSmall.length)interpretation.push("Размеры заметно различаются: "+mentioned(sizeBig[0])+" занимает больше места на листе, чем "+mentioned(sizeSmall[0])+". Стоит уточнить, связано ли это с ролью в сюжете, расстоянием или замыслом автора.");
@@ -151,7 +151,7 @@ function combine(input){
  if(moved&&!related)interpretation.push("Для "+mentioned(moved)+" показано движение ("+(short(labels(moved,group(moved,"motion")),2)||"активность")+"). Нужно уточнить, куда и зачем направляется герой.");
  const supported=rows.find(x=>group(x,"support").length);
  if(supported&&!moved){
-  interpretation.push("У "+mentioned(supported)+" отдельно отмечен способ опоры или положение относительно земли. Уточнить, стоит ли персонаж, движется, летит или находится в условном пространстве.");
+  interpretation.push("В изображении "+mentioned(supported)+" отдельно отмечен способ опоры или положение относительно земли. Уточнить, стоит ли персонаж, движется, летит или находится в условном пространстве.");
  }
  const distinctColors=rows.filter(x=>x.colorKeys.length);
  if(distinctColors.length>=2){
@@ -162,8 +162,8 @@ function combine(input){
  }
  if(!interpretation.length){
   const x=rows.find(y=>y.colorKeys.length>1);
-  if(x)interpretation.push("У "+mentioned(x)+" используются несколько цветов: "+x.colorKeys.map(k=>colors[k]).join(", ")+". Уточнить, какие части окрашены каждым цветом и почему.");
-  else interpretation.push("У "+mentioned(rows[0])+" пока не отмечены сочетания признаков, требующие отдельного анализа. Полезнее уточнить, что обозначают выбранные детали и какую роль объект играет в сюжете.");
+  if(x)interpretation.push("При изображении "+mentioned(x)+" использовано несколько цветов: "+x.colorKeys.map(k=>colors[k]).join(", ")+". Уточнить, какие части окрашены каждым цветом и почему.");
+  else interpretation.push("По "+mentioned(rows[0])+" пока недостаточно характеристик для сопоставления деталей. Уточните, что изображено и как этот объект участвует в сюжете.");
  }
  sections.push({title:"Анализ сочетаний",text:interpretation.slice(0,4).join("\n\n")});
  const questions=[];
@@ -178,7 +178,7 @@ function combine(input){
  if(questions.length<3&&left.length&&right.length)questions.push("Как связаны объекты "+mentioned(left[0])+" и "+mentioned(right[0])+"?");
  sections.push({title:"Вопросы ребенку",text:unique(questions).slice(0,3).map((q,i)=>(i+1)+". "+q).join("\n")});
  const actions=[profile.action];
- if(related)actions.push("Отдельно записать объяснение деталей "+(short(labels(related,group(related,"sharp")),2)||"острых частей")+" и "+(short(labels(related,group(related,"damage")),2)||"повреждения")+" у "+mentioned(related)+".");
+ if(related)actions.push("Отдельно записать объяснение деталей "+(short(labels(related,group(related,"sharp")),2)||"острых частей")+" и "+(short(labels(related,group(related,"damage")),2)||"повреждения")+" на изображении "+mentioned(related)+".");
  else if(sharp.length||damage.length)actions.push("Выяснить функцию необычных деталей в истории и зафиксировать ответ ребенка дословно.");
  if(contact.length||separation.length)actions.push("Зафиксировать со слов ребенка, кто с кем связан и какое действие происходит между персонажами.");
  else if(sizeBig.length&&sizeSmall.length)actions.push("Проверить объяснение различий в размерах через рассказ о героях и расстоянии между ними.");
