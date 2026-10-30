@@ -239,3 +239,7 @@ html.dark{color-scheme:dark;--paper:#17251e;--surface:#25382d;--ink:#f0f8ee;--so
 .work-dash{margin:0 7px;color:var(--soft)}
 @media(max-width:800px){.work-school-grid,.work-emotion-grid{grid-template-columns:1fr}.work-situation{padding:14px}.work-school-groups{gap:16px}}
 @media print{.work-school-grid,.work-emotion-grid{display:block!important}.work-school-group,.work-situation,.work-emotion-card{break-inside:avoid;page-break-inside:avoid}.work-situation,.work-emotion-card{margin-bottom:10px}.work-swatch{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+.work-personal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:18px 0 5px}
+@media(max-width:800px){.work-personal-grid{grid-template-columns:1fr}}
+@media print{.work-personal-grid{display:block!important}.work-personal-grid .work-situation{margin-bottom:10px}}
