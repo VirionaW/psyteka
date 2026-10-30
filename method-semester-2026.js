@@ -5,6 +5,7 @@ const EYSENCK_FIRST="https://azps.ru/tests/tests_eysenck_so.html";
 const EYSENCK_SECOND="https://chain-ddt.dou.tomsk.ru/wp-content/uploads/2025/04/Diagnostika-suitsidalnogo-povedeniya-podrostkov-modifikatsiya-Ajzenka.pdf";
 const WCQ_SOURCE="https://nevapmsc.ru/wp-content/uploads/rmoppmk51.pdf";
 const RAZ_SOURCE="https://kmc23.ru/press-center/psihologicheskaya-kopilka/903";
+const RAZ_ALT_SOURCE="https://infourok.ru/o-provedenii-socialno-psihologicheskogo-testirovaniya-obuchayushihsya-8-9-klassov-5680637.html";
 const CDI_SOURCE="https://mhpssknowledgehub.sph.cuny.edu/measures/childrens-depression-inventory-cdi/";
 const CDI_RIGHTS="https://storefront.mhs.com/collections/cdi-2";
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
@@ -41,7 +42,7 @@ const methods=[
   instruction:"Обследование проводит подготовленный специалист с предусмотренным порядком действий по безопасности. По каждому пункту исходной 29-пунктной формы фиксируйте согласие (1) или несогласие (0).",
   scoring:"По каждой из девяти шкал подсчитываются ответы «да» в соответствующих пунктах и умножаются на опубликованный коэффициент. Показатели шкал не суммируются в общий риск. Отсутствующие ответы нельзя считать отрицательными.",
   interpret:"Только отдельные описательные показатели. Ни один суммарный балл или сочетание баллов не исключает опасности и не заменяет непосредственной оценки суицидальных мыслей, намерений, плана, средств и доступности помощи.",
-  notice:"Опросник не предназначен для автоматического определения низкого или высокого риска, особенно у несовершеннолетних. При признаках угрозы безопасности необходима незамедлительная очная оценка по протоколу организации. В источнике встречаются расхождения по максимальному баллу и нумерации некоторых пунктов: здесь использована таблица ключей, без интерпретационных порогов.",
+  notice:"В опубликованных ключах есть существенные различия. Ключ А (методический центр) учитывает семь пунктов социального пессимизма, хотя в той же таблице указан максимум 6. Ключ Б (другие методические материалы) учитывает шесть пунктов и иначе распределяет № 17 и № 21. Выбирайте ключ по конкретному проверенному пособию, не смешивайте при сравнении детей. Общая автоматическая категория суицидального риска не выводится; требуется очная профессиональная оценка безопасности.",
   scales:[
    {name:"Демонстративность",q:[12,14,20,22,27],factor:1.2},
    {name:"Аффективность",q:[1,10,20,23,28,29],factor:1.1},
@@ -52,6 +53,15 @@ const methods=[
    {name:"Максимализм",q:[4,16],factor:3.2},
    {name:"Временная перспектива",q:[2,3,12,24,26,27],factor:1.1},
    {name:"Антисуицидальный фактор",q:[19,21],factor:3.2}
+  ],
+  keyVariants:[
+   {id:"kmc-seven",title:"Ключ А – КМЦ (7 пунктов социального пессимизма)",source:RAZ_SOURCE},
+   {id:"method-six",title:"Ключ Б – методические материалы (6 пунктов)",source:RAZ_ALT_SOURCE,
+    changes:{
+     "Несостоятельность":[2,3,6,7,21],
+     "Социальный пессимизм":[5,11,13,15,22,25],
+     "Антисуицидальный фактор":[17,19]
+    }}
   ]}
 ];
 const byId=Object.fromEntries(methods.map(m=>[m.id,m]));
@@ -67,7 +77,14 @@ methods.forEach(m=>{
 });
 function cfg(d){return byId[d?.id]}
 function getVersion(m,row){return m.versions?.find(v=>v.id===row?.eysenckVersion)||m.versions?.[0]}
-function effectiveScales(m,row){return getVersion(m,row)?.scales||m.scales||[]}
+function getRazKey(m,row){return m.keyVariants?.find(v=>v.id===row?.razuvaevaKey)||m.keyVariants?.[0]}
+function effectiveScales(m,row){
+ if(m.id==="razuvaeva-osr29"){
+  const changes=getRazKey(m,row)?.changes||{};
+  return m.scales.map(s=>changes[s.name]?{...s,q:changes[s.name]}:s);
+ }
+ return getVersion(m,row)?.scales||m.scales||[];
+}
 function complete(m,a){return Array.isArray(a)&&Array.from({length:m.n},(_,i)=>a[i]).every(v=>(typeof v==="number"&&Number.isInteger(v)&&v>=0&&v<=m.max)||(typeof v==="string"&&/^\d$/.test(v)&&+v<=m.max))}
 function count(m,a){return Array.from({length:m.n},(_,i)=>a?.[i]).filter(v=>(typeof v==="number"&&Number.isInteger(v)&&v>=0&&v<=m.max)||(typeof v==="string"&&/^\d$/.test(v)&&+v<=m.max)).length}
 function score(d,a,row){
@@ -82,7 +99,7 @@ function score(d,a,row){
  return {complete:true,scales,answers,raw:null};
 }
 function link(url,title){return '<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(title)+'</a>'}
-function intro(m){return '<div class="notice psy-semester-note">'+esc(m.notice)+'</div><p>Подлинный текст и редакция: '+link(m.source,"Открыть опубликованный источник")+(m.rights?' · '+link(m.rights,"Правообладатель"):'')+(m.id==="lazarus-wcq50"?' · '+link(window.PSY_WCQ_NORMS_2026?.source||"https://lektsia.com/14x819f.html","Таблица перевода в Т-баллы"):"")+'</p>'}
+function intro(m){return '<div class="notice psy-semester-note">'+esc(m.notice)+'</div><p>Подлинный текст и редакция: '+link(m.source,"Открыть опубликованный источник")+(m.rights?' · '+link(m.rights,"Правообладатель"):'')+(m.id==="lazarus-wcq50"?' · '+link(window.PSY_WCQ_NORMS_2026?.source||"https://lektsia.com/14x819f.html","Таблица перевода в Т-баллы"):"")+(m.id==="razuvaeva-osr29"?' · '+link(RAZ_ALT_SOURCE,"Альтернативная опубликованная таблица ключей"):"")+'</p>'}
 function instruction(d){const m=cfg(d);if(!m)return "";
  return '<h3>Цель</h3><p>'+esc(m.goal)+'</p><h3>Инструкция для специалиста</h3><p>'+esc(m.instruction)+'</p>'+
  '<h3>Инструкция для участника</h3><blockquote class="kid-instruction">Внимательно прочитай утверждения на выданном бланке и выбери один ответ для каждого номера. Здесь нет правильных или неправильных ответов. Если формулировка непонятна, обратись к специалисту.</blockquote>'+
@@ -98,6 +115,7 @@ function materials(d){const m=cfg(d);if(!m)return "";
 function processing(d){const m=cfg(d);if(!m)return "";
  let html='<h3>Подсчет</h3><p>'+esc(m.scoring)+'</p>';
  if(m.versions)html+=m.versions.map(v=>'<h4>'+esc(v.title)+'</h4>'+scaleTable(v.scales)).join("");
+ else if(m.keyVariants)html+=m.keyVariants.map(v=>'<h4>'+esc(v.title)+'</h4>'+scaleTable(effectiveScales(m,{razuvaevaKey:v.id}))+'<p>Источник: '+link(v.source,"Публикация ключа")+'</p>').join("");
  else if(m.scales)html+=scaleTable(m.scales);
  else html+='<p><b>Сумма закодированных ответов 0-2; максимум 54.</b> Исходные ответы должны быть закодированы по точному официальному ключу 27-пунктной формы, без автоматической подмены редакции.</p>';
  return html+'<h3>Интерпретация</h3><p>'+esc(m.interpret)+'</p>'+intro(m);
