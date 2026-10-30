@@ -47,16 +47,26 @@ Deno.serve(async (request: Request) => {
     if (permission?.role !== "owner" && permission?.role !== "shadow")
       return output(403, { error: "Управление ролями доступно только владельцу." });
 
-    // Verified AAL2 is mandatory for both reading private account emails
-    // and changing moderator permissions. This check runs server-side
-    // against the caller's signed JWT, not a client-supplied flag.
-    const { data: aal, error: aalError } =
-      await admin.auth.mfa.getAuthenticatorAssuranceLevel(jwt);
-    if (aalError || aal?.currentLevel !== "aal2")
-      return output(403, {
-        code: "mfa_required",
-        error: "Подтвердите код «Вендиго» в настройках защиты Владельца."
-      });
+    // Only a server-verified Supabase access JWT may authorize moderation.
+    // getUser(jwt) above validates the signed token and its subject. Use its
+    // signed AAL claim: checking auth.mfa.getAuthenticatorAssuranceLevel()
+    // on the service-role client can yield an unrelated/empty local session.
+    // Parsing is safe ONLY after Supabase has verified this exact JWT.
+    let claims: { sub?: string; aal?: string; exp?: number; session_id?: string };
+    try {
+      const segment = jwt.split(".")[1];
+      if (!segment) throw new Error("missing JWT payload");
+      const decoded = atob(segment.replace(/-/g, "+").replace(/_/g, "/"));
+      claims = JSON.parse(decoded);
+    } catch {
+      return output(401, { code: "invalid_session", error: "Не удалось проверить сессию. Войдите повторно." });
+    }
+    if (claims.sub !== verified.user.id || typeof claims.exp !== "number" ||
+        claims.exp <= Math.floor(Date.now() / 1000) || !claims.session_id)
+      return output(401, { code: "invalid_session", error: "Сессия недействительна. Войдите повторно." });
+    if (claims.aal !== "aal2")
+      return output(403, { code: "mfa_required",
+        error: "Подтвердите код «Вендиго» в настройках защиты Владельца." });
 
     const body = await request.json().catch(() => null);
     if (!body || typeof body !== "object" || Array.isArray(body))
