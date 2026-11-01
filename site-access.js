@@ -46,6 +46,15 @@
  const client=window.PSY_AUTH_CLIENT||(window.PSY_AUTH_CLIENT=window.supabase.createClient(config.url,config.publishableKey,{
   auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
  }));
+ function withTimeout(request,ms){
+  return new Promise((resolve,reject)=>{
+   const timer=setTimeout(()=>reject(new Error("Превышено время ожидания сети")),ms);
+   Promise.resolve(request).then(
+    value=>{clearTimeout(timer);resolve(value)},
+    error=>{clearTimeout(timer);reject(error)}
+   );
+  });
+ }
  function temporaryFailure(){
   // A network/authorization-service outage is not a sign-out: never discard
   // the refresh session or pretend access was denied.
@@ -70,15 +79,15 @@
  }
  (async()=>{
   try{
-   const {data,error}=await client.auth.getUser();
+   const {data,error}=await withTimeout(client.auth.getUser(),10000);
    if(error){temporaryFailure();return}
    if(!data?.user||data.user.is_anonymous){goHome();return}
    const uid=data.user.id;
-   const [r,t,p]=await Promise.all([
+   const [r,t,p]=await withTimeout(Promise.all([
     client.from("psy_account_roles").select("role").eq("user_id",uid).maybeSingle(),
     client.from("psy_trial_access").select("expires_at").eq("user_id",uid).maybeSingle(),
     client.from("psy_paid_access").select("plan,expires_at").eq("user_id",uid).maybeSingle()
-   ]);
+   ]),10000);
    if(r.error||t.error||p.error){temporaryFailure();return}
    if(["owner","shadow","moderator"].includes(r.data?.role)){
     // Reading the library is not an administrative action.
