@@ -267,7 +267,10 @@
  // processing form still requires one independent answer field for each
  // of the 58 verified question numbers. Never derive field count from topics.
  const subjects=d=>type(d)==="cdi"?Array(27).fill("Ответ по выбранной форме"):
-  Array.from({length:58},(_,i)=>phillips.topics?.[i]||"Ответ «Да» / «Нет»");
+  Array.from({length:58},(_,i)=>{
+   const q=String(phillips.topics?.[i]||"").replace(/^\s*\d{1,2}[.)]\s*/,"").trim();
+   return q||"См. вопрос № "+(i+1)+" в опубликованном опроснике";
+  });
  /* The original uploaded 27-item handout supplies statement positions and their
     actual 0-2 codes. Do not conflate position with raw score or apply this key
     to another edition/CDI 2. Internally persist ONLY normalized 0-2 scores. */
@@ -509,7 +512,7 @@
     ' Используйте порядок утверждений именно из предоставленного 27-пунктного PDF.</small></div>';
   }
   if(type(d)==="cdi")h+='<details class="psy-cdi-student-note psy-cdi-specialist-note"><summary>Как вводить баллы</summary><p>Вводите 0, 1 или 2 по ключу оригинального опросника, а не номер выбранного утверждения.</p></details>';
-  if(type(d)==="ph")h+='<p class="psy-mspss-small"><strong>Ответы на 58 вопросов Филлипса.</strong> Введите 1 – Да или 0 – Нет по каждому номеру. <a href="'+esc(phillips.fullQuestionnaireUrl)+'" target="_blank" rel="noopener noreferrer">Открыть текст вопросов</a>. Уже сохраненные ответы показаны ниже.</p>';
+  if(type(d)==="ph")h+='<p class="psy-mspss-small"><strong>Ответы на 58 вопросов Филлипса.</strong> Подписи ниже – краткие смысловые ориентиры, а не дословный текст методики. Переносите ответы из оригинального бланка: 1 – Да, 0 – Нет. <a href="'+esc(phillips.fullQuestionnaireUrl)+'" target="_blank" rel="noopener noreferrer">Открыть подлинный текст вопросов</a>. Сохраненные ответы останутся на своих местах.</p>';
   if(!canAnswer)h+='<p class="psy-cdi-lock-note" id="cdiLockNote" '+(canAnswer?'hidden':'')+'>'+
    (!r.name?.trim()?"Сначала укажите участника.":type(d)==="cdi"&&!cdiAgeReady(r,rows,ctx.calcMode)?"Выберите возраст или класс.":"Выберите пол ребенка.")+'</p>';
   h+='<p class="psy-mspss-progress" id="cpProgress">Заполнено '+n+' из '+total+'</p>';
