@@ -2,6 +2,7 @@
 "use strict";
 const DETAILS=window.PSY_FULL_METHODS||{};
 let methodNow=null, tabNow="overview", calcMode="one", rowIndex=0;
+let lastRenderedScoreStudent=null;
 let rows=[{name:"",answers:[]}];
 let modeSnapshots={one:[{name:"",answers:[]}],class:[{name:"",answers:[]}]};
 let modeIndices={one:0,class:0};
@@ -264,7 +265,9 @@ function bindBottomParticipantChooser(){
 function setTab(name){
  if(name!=="overview"&&window.PSY_PORTFOLIO_VISUAL?.canLeave?.()===false)return;
  const previousTab=tabNow;
- const preserveScroll=previousTab===name&&(name==="score"||name==="processing");
+ const studentKey=name==="score"&&methodNow?methodNow.name+"|"+calcMode+"|"+rowIndex:null;
+ const studentChanged=calcMode==="class"&&name==="score"&&studentKey!==lastRenderedScoreStudent;
+ const preserveScroll=previousTab===name&&(name==="score"||name==="processing")&&!studentChanged;
  const previousScroll=preserveScroll?($("#modalBody")?.scrollTop||0):0;
  if((name==="score"||name==="processing")&&window.PSY_GUIDE_STANDARD?.selectionUnsupported(methodNow?.name))name="instruction";
  tabNow=name;
@@ -367,6 +370,21 @@ function setTab(name){
  if(name==='score'&&['semester2026','phillips58'].includes(DETAILS[methodNow.name]?.workflow)&&!window.PSY_MATCH_MSPSS?.supports(DETAILS[methodNow.name])){
   const inputs=[...document.querySelectorAll('.psy-semester-grid select:not(:disabled), .psy-ph-grid select:not(:disabled)')];
   const input=inputs.find(x=>x.value==='')||inputs[0];if(input)input.focus({preventScroll:true});
+ }
+ if(name==="score")lastRenderedScoreStudent=studentKey;
+ if(studentChanged){
+  // Direct the user to the actual first question, not the page header or results table.
+  const first=body.querySelector('[data-711-answer="0"]:not(:disabled),[data-cp-answer="0"]:not(:disabled),[data-ph-answer="0"]:not(:disabled),[data-sanswer="0"]:not(:disabled),input[data-mspss="0"]:not(:disabled),.answer-input[data-n="0"]:not(:disabled)');
+  const fallback=body.querySelector('#school711Age:not(:disabled),#cdiAge:not(:disabled),#cpAge:not(:disabled),[data-711-sex]:not(:disabled),[data-cp-sex]:not(:disabled),#school711Grade:not(:disabled)');
+  const field=first||fallback;
+  if(field){
+   try{
+    const view=body.getBoundingClientRect(),point=field.getBoundingClientRect();
+    body.scrollTop=Math.max(0,body.scrollTop+point.top-view.top-26);
+    field.focus({preventScroll:true});
+    if(first&&typeof first.select==="function")first.select();
+   }catch(_){field.focus({preventScroll:true})}
+  }
  }
  updateLuriaFooter();
  window.dispatchEvent(new CustomEvent("psy-processing-view-change",{detail:{methodName:methodNow.name,tab:tabNow,mode:calcMode}}));
