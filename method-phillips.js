@@ -4,7 +4,7 @@
  const METHOD_NAME="Тест школьной тревожности Филлипса";
  const SOURCE="https://psmetodiki.ru/index.php/mladshie-shkolniki/prochee/253-test-shkolnoj-trevozhnosti-fillipsa";
  const SECOND="https://www.azps.ru/tests/tests_philips.html";
- const PUBLIC_58="https://sch1450u.mskobr.ru/files/metodika_diagnostiki_urovnya_shkol_noj_trevozhnosti_fillipsa1.pdf";
+ const PUBLIC_58="https://azps.ru/tests/tests_philips.html";
  const STUDENT_INSTRUCTION="Прочитай или послушай каждый вопрос о том, как ты чувствуешь себя в школе. Для каждого вопроса отметь один ответ: «Да», если согласен, или «Нет», если не согласен. Правильных и неправильных ответов нет. Отвечай искренне и не задумывайся слишком долго.";
  const YES=[11,20,22,24,25,30,35,36,38,39,41,43,44];
  const KEY=Array.from({length:58},(_,i)=>YES.includes(i+1)?"yes":"no");
@@ -66,7 +66,7 @@
   return '<div class="psy-ph-links">'+
    '<a class="btn primary" href="phillips-print.html?kind=guide" target="_blank" rel="noopener noreferrer">Без бланка</a>'+
    '<a class="btn" href="phillips-print.html?kind=combined" target="_blank" rel="noopener noreferrer">С бланком</a>'+
-   '<a class="btn" href="'+PUBLIC_58+'" target="_blank" rel="noopener noreferrer">Полный опросник · 58 вопросов (PDF)</a></div>';
+   '<a class="btn" href="'+PUBLIC_58+'" target="_blank" rel="noopener noreferrer">Полный опросник · 58 вопросов</a></div>';
  }
  function instruction(){
   return '<h3>Инструкция для чтения ученику</h3>'+
@@ -84,7 +84,7 @@
    '<p>В регистрационном бланке номера 1-58. Варианты идут в порядке: сначала «Да», затем «Нет».</p>'+
    '<div class="psy-ph-links">'+
    '<a class="btn primary" href="phillips-print.html?kind=blank" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать</a>'+
-   '<a class="btn" href="'+PUBLIC_58+'" target="_blank" rel="noopener noreferrer">Полные вопросы · PDF</a></div>';
+   '<a class="btn" href="'+PUBLIC_58+'" target="_blank" rel="noopener noreferrer">Полные вопросы · источник</a></div>';
  }
  function processing(){
   let html='<h3>Ключ и подсчет</h3><p>«Да» в ключе: <b>'+YES.join(", ")+'</b>. «Нет» в ключе: остальные пункты (1–58).</p>'+
