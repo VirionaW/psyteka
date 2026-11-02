@@ -106,7 +106,7 @@
     const result=original.call(this,m,...args)||{};
     for(const [key,source] of [["author","author"],["type","type"],["age","age"],["count","quantity"],["summary","summary"]]){
      const value=get(m,key);
-     if(value!==null)result[source]=value;
+     if(value!==null)result[source]=key==="summary"?value.slice(0,150):value;
     }
     return result;
    };
