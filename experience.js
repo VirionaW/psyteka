@@ -1052,6 +1052,24 @@ function openMethod(m){
  $('#modal').hidden=false;$('#shade').hidden=false;setTab('overview');
 }
 window.openMethod=openMethod;
+// Shared read/write bridge for private, version-tolerant drafts.
+window.PSY_DRAFT_BRIDGE={
+ get:()=>methodNow?{methodName:methodNow.name,snapshot:{
+  calcMode,rowIndex,rows:JSON.parse(JSON.stringify(rows))
+ }}:null,
+ restore:({methodName,snapshot})=>{
+  if(!methodNow||methodNow.name!==methodName||!snapshot||!["one","class"].includes(snapshot.calcMode))return false;
+  calcMode=snapshot.calcMode;rows=JSON.parse(JSON.stringify(snapshot.rows||[]));
+  if(!rows.length)rows=[{name:"",answers:[]}];
+  rowIndex=Math.max(0,Math.min(rows.length-1,snapshot.rowIndex||0));
+  modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
+  activeSavedAssessmentId=null;activeSavedAssessmentTitle="";
+  savedModeRecords[calcMode]={id:null,title:"",baseline:null};
+  methodSessions[methodName]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords};
+  setTab("score");
+  return true;
+ }
+};
 window.PSY_PROCESSING_NOTEBOOK={
  getState:()=>({
   methodName:methodNow?.name||"",tab:tabNow,mode:calcMode,
