@@ -3,6 +3,7 @@
 const DETAILS=window.PSY_FULL_METHODS||{};
 let methodNow=null, tabNow="overview", calcMode="one", rowIndex=0;
 let lastRenderedScoreStudent=null;
+let nextStudentFocusMode=null;
 let rows=[{name:"",answers:[]}];
 let modeSnapshots={one:[{name:"",answers:[]}],class:[{name:"",answers:[]}]};
 let modeIndices={one:0,class:0};
@@ -267,6 +268,8 @@ function setTab(name){
  const previousTab=tabNow;
  const studentKey=name==="score"&&methodNow?methodNow.name+"|"+calcMode+"|"+rowIndex:null;
  const studentChanged=calcMode==="class"&&name==="score"&&studentKey!==lastRenderedScoreStudent;
+ const pendingStudentFocus=studentChanged?nextStudentFocusMode:null;
+ nextStudentFocusMode=null;
  const preserveScroll=previousTab===name&&(name==="score"||name==="processing")&&!studentChanged;
  const previousScroll=preserveScroll?($("#modalBody")?.scrollTop||0):0;
  if((name==="score"||name==="processing")&&window.PSY_GUIDE_STANDARD?.selectionUnsupported(methodNow?.name))name="instruction";
@@ -373,16 +376,22 @@ function setTab(name){
  }
  if(name==="score")lastRenderedScoreStudent=studentKey;
  if(studentChanged){
-  // Direct the user to the actual first question, not the page header or results table.
+  // If the previous child's sex was just selected, show the next child's sex
+  // controls instead of scrolling into question 1. Otherwise focus question 1.
+  const d=DETAILS[methodNow.name];
+  const missingGender=['cdi-27','lazarus-wcq50'].includes(d?.id)&&!['f','m'].includes(rows[rowIndex]?.sex);
+  const sexField=body.querySelector('[data-711-sex="f"]:not(:disabled),[data-cp-sex="f"]:not(:disabled),#cdiSex:not(:disabled)');
   const first=body.querySelector('[data-711-answer="0"]:not(:disabled),[data-cp-answer="0"]:not(:disabled),[data-ph-answer="0"]:not(:disabled),[data-sanswer="0"]:not(:disabled),input[data-mspss="0"]:not(:disabled),.answer-input[data-n="0"]:not(:disabled)');
-  const fallback=body.querySelector('#school711Age:not(:disabled),#cdiAge:not(:disabled),#cpAge:not(:disabled),[data-711-sex]:not(:disabled),[data-cp-sex]:not(:disabled),#school711Grade:not(:disabled)');
-  const field=first||fallback;
+  const fallback=body.querySelector('#school711Age:not(:disabled),#cdiAge:not(:disabled),#cpAge:not(:disabled),#school711Grade:not(:disabled),[data-711-sex]:not(:disabled),[data-cp-sex]:not(:disabled)');
+  const wantGender=missingGender||(pendingStudentFocus==="gender"&&!!sexField);
+  const field=(wantGender?sexField:null)||first||fallback;
   if(field){
    try{
+    // modalBody, not window, is the scroll container.
     const view=body.getBoundingClientRect(),point=field.getBoundingClientRect();
-    body.scrollTop=Math.max(0,body.scrollTop+point.top-view.top-26);
+    body.scrollTop=Math.max(0,body.scrollTop+point.top-view.top-30);
     field.focus({preventScroll:true});
-    if(first&&typeof first.select==="function")first.select();
+    if(field===first&&typeof first.select==="function")first.select();
    }catch(_){field.focus({preventScroll:true})}
   }
  }
@@ -849,7 +858,11 @@ function bindControls(){
  if(DETAILS[methodNow.name]?.workflow==='schoolAdaptObserve')window.PSY_SCHOOL_ADAPT.bind(DETAILS[methodNow.name],{rows,rowIndex,calcMode});
  const d=DETAILS[methodNow.name];
  if(window.PSY_MATCH_MSPSS?.supports(d)){
-  const go=i=>{rowIndex=i;modeIndices.class=i;setTab('score');};
+  const go=(i,focusMode=null)=>{
+   if(!Number.isInteger(i)||i<0||i>=rows.length)return;
+   nextStudentFocusMode=focusMode;
+   rowIndex=i;modeIndices.class=i;setTab('score');
+  };
   const addNames=names=>{
    if(!names?.length)return;
    const grade=(d.id==='cdi-27'||window.PSY_SCHOOL_711_UI?.supports(d))?rows.find(x=>Number(x.schoolGrade)>=1&&Number(x.schoolGrade)<=11)?.schoolGrade:null;
@@ -881,7 +894,7 @@ function bindControls(){
     }
     if(next>=0){
      rows.genderNote="Пол сохранен: "+currentName+". Далее: "+(rows[next].name||"участник "+(next+1))+".";
-     go(next);
+     go(next,"gender");
     }else{
      let first=rows.findIndex(x=>x.attendance!=='absent'&&x.name?.trim());
      if(first<0)first=0;
