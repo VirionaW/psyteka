@@ -5,8 +5,19 @@
   if(!user||user.is_anonymous)return false;
   const signIn=Date.parse(user.last_sign_in_at||"");
   // A server-provided sign-in date avoids resetting the clock on each refresh.
+  const key="psy-login-age-v1:"+user.id;
+  let local=NaN;
+  try{local=Number(localStorage.getItem(key))}catch(_){}
   if(Number.isFinite(signIn)&&signIn>Date.now()+300000)return false;
-  if(Number.isFinite(signIn)&&Date.now()-signIn>MAX_AGE){
+  if(Number.isFinite(signIn)&&signIn>0){
+   if(!Number.isFinite(local)||local<=0||signIn>local+60000)
+    try{localStorage.setItem(key,String(signIn))}catch(_){}
+  }else if(!Number.isFinite(local)||local<=0){
+   local=Date.now();
+   try{localStorage.setItem(key,String(local))}catch(_){}
+  }
+  const started=Number.isFinite(signIn)&&signIn>0?signIn:local;
+  if(Date.now()-started>MAX_AGE){
    try{await client.auth.signOut({scope:"local"})}catch(_){}
    return false;
   }
