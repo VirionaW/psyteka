@@ -100,9 +100,15 @@
   if(!user||!client)throw Error("Войдите в аккаунт");
   title=String(title||"").trim().slice(0,120);methodName=String(methodName||"").trim().slice(0,220);
   if(!title||!methodName)throw Error("Укажите название обследования");
-  const payload={user_id:user.id,title,method_name:methodName,snapshot:validSnapshot(snapshot),updated_at:new Date().toISOString()};
+  const checked=validSnapshot(snapshot);
+  // Postgres checks the UTF-8 byte length of jsonb, not JavaScript character count.
+  // Leave a margin for jsonb's normalized serialization. Never truncate a pupil's answers.
+  const bytes=new TextEncoder().encode(JSON.stringify(checked)).length;
+  if(bytes>920000)throw Error("Превышен размер облачного сохранения. Разделите обследование на несколько групп и повторите попытку.");
+  const payload={user_id:user.id,title,method_name:methodName,snapshot:checked,updated_at:new Date().toISOString()};
   if(id)payload.id=id;
-  const {data,error}=await client.from("psy_saved_assessments").upsert(payload).select("id,title").single();
+  const {data,error}=await client.from("psy_saved_assessments")
+   .upsert(payload,{onConflict:"id"}).select("id,title").single();
   if(error)throw error;
   return data;
  }
