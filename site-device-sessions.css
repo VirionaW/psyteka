@@ -1,5 +1,6 @@
 /* Device and session history – profile > Security only. */
 #psyDeviceSessions[hidden]{display:none!important}
+body.psy-device-exit-ready #psyAccountSignOut{display:none!important}
 #psyDeviceSessions{display:grid;gap:13px;margin:0 0 16px;min-width:0}
 #psyDeviceSessions .psy-device-top{display:flex;align-items:flex-start;justify-content:space-between;gap:15px}
 #psyDeviceSessions h3{margin:0 0 5px;font-size:19px;color:#254a38}
