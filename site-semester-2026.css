@@ -905,3 +905,21 @@ html.dark .library-page #modal.psy-mspss-example .psy-cp-gender-feedback{
 .library-page #modal.psy-mspss-example .psy-cdi-entry-mode select:focus-visible{
  outline:3px solid #d9aa5a;outline-offset:2px;
 }
+
+/* Связное краткое заключение WCQ – читаемый текст после восьми шкал. */
+.library-page #modal .psy-711-wcq-profile{
+ margin:16px 0 5px;
+ padding:15px 18px;
+ border:1px solid var(--line);
+ border-radius:14px;
+ background:var(--soft);
+ color:var(--ink);
+}
+.library-page #modal .psy-711-wcq-profile h4{
+ margin:0 0 8px;
+ color:var(--green);
+ font-size:16px;
+ font-weight:750;
+}
+.library-page #modal .psy-711-wcq-profile p{margin:0;line-height:1.65;max-width:88ch}
+@media(max-width:620px){.library-page #modal .psy-711-wcq-profile{padding:13px}}
