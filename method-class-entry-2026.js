@@ -263,7 +263,11 @@
  const type=d=>d?.id==="cdi-27"?"cdi":d?.workflow==="phillips58"?"ph":null;
  const max=d=>type(d)==="cdi"?2:1;
  const size=d=>type(d)==="cdi"?27:58;
- const subjects=d=>type(d)==="cdi"?Array(27).fill("Ответ по выбранной форме"):phillips.topics;
+ // The original Phillips source has no embedded text questions, but the
+ // processing form still requires one independent answer field for each
+ // of the 58 verified question numbers. Never derive field count from topics.
+ const subjects=d=>type(d)==="cdi"?Array(27).fill("Ответ по выбранной форме"):
+  Array.from({length:58},(_,i)=>phillips.topics?.[i]||"Ответ «Да» / «Нет»");
  /* The original uploaded 27-item handout supplies statement positions and their
     actual 0-2 codes. Do not conflate position with raw score or apply this key
     to another edition/CDI 2. Internally persist ONLY normalized 0-2 scores. */
@@ -351,7 +355,9 @@
  const cdiRoster=rows=>rows.some(x=>!!x?.name?.trim());
  const cdiAgeReady=(r,rows,mode)=>!!(gradeAge(mode==="class"?classGrade(rows):r?.schoolGrade)||(Number.isInteger(Number(r?.ageYears))&&Number(r?.ageYears)>=7&&Number(r?.ageYears)<=17));
  const cdiContextReady=(d,r,rows,mode)=>type(d)!=="cdi"||((mode!=="class"||cdiRoster(rows))&&cdiAgeReady(r,rows,mode)&&r?.attendance!=="absent");
- const cdiReady=(d,r,rows,mode)=>!!r?.name?.trim()&&r?.attendance!=="absent"&&cdiContextReady(d,r,rows,mode)&&(type(d)!=="cdi"||["m","f"].includes(r?.sex));
+ const cdiReady=(d,r,rows,mode)=>type(d)==="ph"?
+  !!r&&r.attendance!=="absent":
+  !!r?.name?.trim()&&r?.attendance!=="absent"&&cdiContextReady(d,r,rows,mode)&&["m","f"].includes(r?.sex);
  function cdiClassRow(d,r,i){
   const z=scoring(d,r),overall=z?norms.norm(z.raw,r.ageYears,r.sex):null;
   const scales=z?norms.scaleScores(r.answers):null;
@@ -455,7 +461,7 @@
   return '<section class="psy-mspss-group psy-ph-class-results"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th scope="col">№</th><th scope="col">Участник</th>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div></section>'+analyticPreview(d,rows);
  }
  function calculator(d,ctx){
-  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],a=r.answers||[],n=done(d,a),total=size(d),canAnswer=cdiReady(d,r,rows,ctx.calcMode),hasRoster=cdiRoster(rows),cdiClass=type(d)==="cdi"&&ctx.calcMode==="class",allowDetails=ctx.calcMode!=="class"||hasRoster,allowGender=allowDetails&&cdiContextReady(d,r,rows,ctx.calcMode);
+  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0],a=Array.isArray(r.answers)?r.answers:[],n=done(d,a),total=size(d),canAnswer=cdiReady(d,r,rows,ctx.calcMode),hasRoster=type(d)==="ph"||cdiRoster(rows),cdiClass=type(d)==="cdi"&&ctx.calcMode==="class",allowDetails=ctx.calcMode!=="class"||hasRoster,allowGender=allowDetails&&cdiContextReady(d,r,rows,ctx.calcMode);
   let h='<section class="psy-mspss-calculator psy-cp-calculator"><div class="calc-mode psy-mspss-modes">'+
    '<button type="button" class="btn '+(ctx.calcMode==="one"?"primary":"")+'" data-cmode="one">Один участник</button>'+
    '<button type="button" class="btn '+(ctx.calcMode==="class"?"primary":"")+'" data-cmode="class">Группа / класс</button></div>';
@@ -470,7 +476,7 @@
     '<button type="button" class="btn psy-mspss-delete-all" id="cpDeleteAll" '+(!allowDetails?"disabled":"")+' >Удалить всех участников</button>'+
     window.PSY_ANALYTIC_SIGNATURES.fields(rows)+'</aside><div class="psy-mspss-entry">';
   }else h+='<div class="psy-mspss-entry">';
-  if(ctx.calcMode==="class"&&!hasRoster){
+  if(type(d)==="cdi"&&ctx.calcMode==="class"&&!hasRoster){
    h+='<div class="psy-cp-empty-state"><h3>Добавьте участников</h3><p>Введите имена или коды слева, каждый с новой строки, и нажмите «Добавить в список».</p></div></div></div></section>';
    return h;
   }
@@ -497,6 +503,7 @@
     ' Используйте порядок утверждений именно из предоставленного 27-пунктного PDF.</small></div>';
   }
   if(type(d)==="cdi")h+='<details class="psy-cdi-student-note psy-cdi-specialist-note"><summary>Как вводить баллы</summary><p>Вводите 0, 1 или 2 по ключу оригинального опросника, а не номер выбранного утверждения.</p></details>';
+  if(type(d)==="ph")h+='<p class="psy-mspss-small"><strong>Ответы на 58 вопросов Филлипса.</strong> Введите 1 – Да или 0 – Нет по каждому номеру. <a href="'+esc(phillips.fullQuestionnaireUrl)+'" target="_blank" rel="noopener noreferrer">Открыть текст вопросов</a>. Уже сохраненные ответы показаны ниже.</p>';
   if(!canAnswer)h+='<p class="psy-cdi-lock-note" id="cdiLockNote" '+(canAnswer?'hidden':'')+'>'+
    (!r.name?.trim()?"Сначала укажите участника.":type(d)==="cdi"&&!cdiAgeReady(r,rows,ctx.calcMode)?"Выберите возраст или класс.":"Выберите пол ребенка.")+'</p>';
   h+='<p class="psy-mspss-progress" id="cpProgress">Заполнено '+n+' из '+total+'</p>';
