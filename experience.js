@@ -10,40 +10,81 @@ const methodSessions={};
 
 let activeSavedAssessmentId=null,activeSavedAssessmentTitle="";
 let savedModeRecords={one:{id:null,title:"",baseline:null},class:{id:null,title:"",baseline:null}};
+let assessmentSaveDialogOpen=false;
 async function saveCurrentAssessment(){
  const cloud=window.PSY_CLOUD;
  if(!methodNow||!cloud){alert("Войдите в аккаунт для облачного сохранения.");return}
+ if(assessmentSaveDialogOpen)return;
+ assessmentSaveDialogOpen=true;
+ const originalMethod=methodNow.name,originalMode=calcMode;
+ let stableId=activeSavedAssessmentId||null;
  const dialog=document.createElement("dialog");dialog.className="psy-save-assessment-dialog";
  const form=document.createElement("form"),h=document.createElement("h3"),description=document.createElement("p"),label=document.createElement("label"),name=document.createElement("input"),actions=document.createElement("div"),cancel=document.createElement("button"),submit=document.createElement("button");
- h.textContent="Сохранить результат";description.textContent="Результат появится в вашем профиле. Рекомендуем использовать условные коды вместо ФИО детей.";
- label.textContent="Название";name.type="text";name.required=true;name.maxLength=120;name.value=activeSavedAssessmentTitle||((calcMode==="class"?"Класс – ":"Участник – ")+methodNow.name);
- cancel.type="button";cancel.textContent="Отмена";submit.type="submit";submit.textContent="Сохранить в профиль";submit.className="btn primary";actions.className="psy-save-assessment-actions";
- label.append(name);actions.append(cancel,submit);form.append(h,description,label,actions);dialog.append(form);document.body.append(dialog);
- const close=()=>{dialog.close();dialog.remove()};cancel.onclick=close;
+ h.textContent="Сохранить результат";
+ description.textContent="Результат появится в вашем профиле. Рекомендуем использовать условные коды вместо ФИО детей.";
+ label.textContent="Название";name.type="text";name.required=true;name.maxLength=120;
+ name.value=activeSavedAssessmentTitle||((calcMode==="class"?"Класс – ":"Участник – ")+methodNow.name);
+ cancel.type="button";cancel.textContent="Отмена";submit.type="submit";submit.textContent=stableId?"Сохранить изменения":"Сохранить в профиль";submit.className="btn primary";
+ actions.className="psy-save-assessment-actions";label.append(name);actions.append(cancel,submit);
+ form.append(h,description,label,actions);dialog.append(form);document.body.append(dialog);
+ const close=()=>{if(dialog.open)dialog.close();dialog.remove();assessmentSaveDialogOpen=false};
+ cancel.onclick=close;
  form.onsubmit=async e=>{
-  e.preventDefault();if(!name.value.trim())return;
+  e.preventDefault();
+  if(submit.disabled||!name.value.trim())return;
+  if(!methodNow||methodNow.name!==originalMethod||calcMode!==originalMode){
+   description.textContent="Методика или режим изменились. Закройте окно и откройте сохранение заново.";return;
+  }
   submit.disabled=true;submit.textContent="Сохранение…";
   try{
-   const title=name.value.trim(),data=await cloud.saveAssessment({
-    id:activeSavedAssessmentId,title,methodName:methodNow.name,
-    snapshot:{calcMode,rowIndex,rows:rows.map(r=>({...r,answers:Array.isArray(r.answers)?r.answers.slice():[]})),
-     scoreArchive:{savedAt:new Date().toISOString(),workflow:DETAILS[methodNow.name]?.workflow||"",
-      results:rows.map((r)=>{
-       try{
-        const d=DETAILS[methodNow.name],value=d?getScores(d,r.answers||[]):null;
-        return value?JSON.parse(JSON.stringify(value)):null;
-       }catch(_){return null}
-      })}}
-   });
-   activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=title;
-   savedModeRecords[calcMode]={id:data.id,title,baseline:JSON.stringify(rows)};
+   // The same ID survives a timeout or a second click: retrying cannot create another record.
+   if(!stableId){
+    if(!globalThis.crypto?.getRandomValues)throw Error("Ваш браузер не поддерживает безопасное создание идентификатора. Обновите браузер.");
+    stableId=typeof crypto.randomUUID==="function"?crypto.randomUUID():
+     "10000000-1000-4000-8000-100000000000".replace(/[018]/g,n=>(Number(n)^crypto.getRandomValues(new Uint8Array(1))[0]&(15>>Number(n)/4)).toString(16));
+   }
+   const title=name.value.trim();
+   const snapshotRows=rows.map(r=>({...r,answers:Array.isArray(r.answers)?r.answers.slice():[]}));
+   const baseline=JSON.stringify(snapshotRows);
+   const detail=DETAILS[originalMethod];
+   const snapshot={calcMode:originalMode,rowIndex,rows:snapshotRows,
+    scoreArchive:{savedAt:new Date().toISOString(),workflow:detail?.workflow||"",
+     results:snapshotRows.map(r=>{
+      try{
+       const value=detail?.workflow==="semester2026"
+        ?window.PSY_SEMESTER_2026.score(detail,r.answers||[],r)
+        :detail?getScores(detail,r.answers||[]):null;
+       return value?JSON.parse(JSON.stringify(value)):null;
+      }catch(_){return null}
+     })}};
+   const args={id:stableId,title,methodName:originalMethod,snapshot};
+   let data;
+   try{data=await cloud.saveAssessment(args)}
+   catch(err){
+    if(!/fetch|network|timeout|failed to fetch|load failed|соединен|сеть|недоступн/i.test(String(err?.message||"")))throw err;
+    submit.textContent="Повторяем сохранение…";
+    data=await cloud.saveAssessment(args);
+   }
+   if(methodNow?.name===originalMethod&&calcMode===originalMode){
+    activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=title;
+    savedModeRecords[originalMode]={id:data.id,title,baseline};
+   }
    close();
-   window.dispatchEvent(new CustomEvent("psy-assessment-saved",{detail:{id:data.id,methodName:methodNow.name,calcMode}}));
+   window.dispatchEvent(new CustomEvent("psy-assessment-saved",{detail:{id:data.id,methodName:originalMethod,calcMode:originalMode}}));
    const btn=document.getElementById("cpSaveBottom")||document.getElementById("mspssSaveBottom");
-   if(btn){btn.textContent="Сохранено ✓";btn.classList.add("psy-is-saved")}
-  }catch(err){description.textContent="Сохранение не выполнено: "+err.message;submit.disabled=false;submit.textContent="Повторить";}
+   if(btn){
+    const current=JSON.stringify(rows)===baseline;
+    btn.textContent=current?"Сохранено ✓":"Сохранить изменения";
+    btn.classList.toggle("psy-is-saved",current);
+   }
+  }catch(err){
+   description.textContent="Не удалось сохранить: "+String(err?.message||"Проверьте подключение и повторите попытку.")+
+    " Повторение не создаст вторую запись.";
+   submit.disabled=false;submit.textContent="Повторить сохранение";
+  }
  };
- dialog.addEventListener("close",()=>dialog.remove(),{once:true});dialog.showModal();name.focus();name.select();
+ dialog.addEventListener("close",()=>{assessmentSaveDialogOpen=false;dialog.remove()},{once:true});
+ dialog.showModal();name.focus();name.select();
 }
 
 const categoryIcons={
