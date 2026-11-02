@@ -1,0 +1,62 @@
+/* Owner's copy editor. Keeps account theme and works on phones. */
+body[data-account="owner-editor"]{background:#f7f8f1;color:#2d4838}
+body[data-account="owner-editor"] [hidden]{display:none!important}
+.psy-owner-gate{width:min(760px,calc(100% - 32px));margin:60px auto;background:#fff;border:1px solid #e0e8dc;color:#375341;border-radius:18px;padding:28px;text-align:center;line-height:1.5}
+.psy-editor-root{width:min(1210px,calc(100% - 36px));margin:32px auto 70px;font:15px/1.55 system-ui,sans-serif}
+.psy-editor-hero{padding:33px 40px;border-radius:24px;background:linear-gradient(110deg,#183f2e,#315f45);color:#fff;margin-bottom:24px;box-shadow:0 14px 33px #274b3324}
+.psy-editor-hero>span{font-size:11px;letter-spacing:.13em;color:#d7ceaa;font-weight:800}
+.psy-editor-hero h1{font-size:clamp(29px,4vw,42px);color:#fff;line-height:1.15;margin:10px 0}
+.psy-editor-hero p{max-width:780px;color:#e0f0e5;margin:0}
+.psy-editor-layout{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);align-items:start;gap:20px}
+.psy-editor-card{display:grid;gap:12px;border-radius:20px;border:1px solid #dee6d9;background:#fff;padding:clamp(18px,3vw,29px);min-width:0;box-shadow:0 6px 20px #25432c0b}
+.psy-editor-card h2{font-size:24px;color:#244832;margin:0}
+.psy-editor-card h3{font-size:17px;color:#32553e;margin:7px 0 0}
+.psy-editor-card label{font-size:13px;font-weight:800;color:#41634c;margin-bottom:-6px}
+.psy-editor-card textarea,.psy-editor-card input,.psy-editor-card select{width:100%;box-sizing:border-box;border-radius:11px;border:1px solid #bccfbe;background:#fcfdf8;color:#284535;font:14px/1.5 system-ui,sans-serif;padding:12px 13px;min-height:43px}
+.psy-editor-card textarea{resize:vertical;min-height:100px}
+.psy-editor-card textarea:focus-visible,.psy-editor-card input:focus-visible,.psy-editor-card select:focus-visible{outline:3px solid #c9ba8a;outline-offset:2px}
+.psy-editor-modes{display:grid;grid-template-columns:1fr 1fr;background:#ecf3eb;border-radius:13px;padding:4px;gap:3px}
+.psy-editor-modes button{min-height:42px;background:none;border:0;color:#55755c;font-weight:800;cursor:pointer;border-radius:10px}
+.psy-editor-modes button[aria-pressed="true"]{background:#fff;box-shadow:0 3px 12px #1b43221b;color:#245f3d}
+#ownerEditMethodGroup{display:grid;gap:9px}
+.psy-editor-hint{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;color:#728474;font-size:12px;margin-top:-5px}
+.psy-editor-actions,.psy-editor-issue-foot{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.psy-editor-card button{font:750 13px/1.35 system-ui,sans-serif;cursor:pointer}
+.psy-editor-actions button,.psy-editor-card form button{min-height:43px;border-radius:11px;border:1px solid #c1d1bf;padding:12px 15px;background:#edf4eb;color:#315b3e}
+.psy-editor-card button.psy-editor-primary{background:#286d4c;color:#fff;border:1px solid #286d4c}
+.psy-editor-card button:disabled{opacity:.6;cursor:not-allowed}
+.psy-editor-card button:not(:disabled):hover{filter:brightness(.97)}
+.psy-editor-card button:focus-visible{outline:3px solid #bca777;outline-offset:3px}
+.psy-editor-status{min-height:21px;font-size:13px;color:#35744e;margin:0}
+.psy-editor-status.is-error{color:#ac4735}
+.psy-editor-history{display:grid;gap:11px;border-top:1px solid #e1e9e0;padding-top:13px;margin-top:9px}
+.psy-editor-version{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #dee8dd;background:#f8faf6;border-radius:12px;padding:11px 12px}
+.psy-editor-version-info{min-width:0;overflow-wrap:anywhere}
+.psy-editor-version-info strong{font-size:12px;color:#48664d}
+.psy-editor-version-info p{margin:5px 0 0;color:#5a6d60;font-size:12px;max-height:62px;overflow:hidden;white-space:pre-line}
+.psy-editor-version button{border:1px solid #a9c3ab;border-radius:9px;padding:9px 11px;color:#2b6745;background:#fff;flex-shrink:0}
+.psy-editor-description,.psy-editor-footer-note{color:#718173;font-size:13px;line-height:1.6;margin:0}
+.psy-editor-card form{display:grid;gap:13px}
+.psy-editor-issue{border:1px solid #e0e7df;background:#fbfcf9;border-radius:12px;padding:14px;margin:9px 0}
+.psy-editor-issue.is-resolved{opacity:.79}
+.psy-editor-issue-head{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.psy-editor-issue-head strong{font-size:14px;overflow-wrap:anywhere}
+.psy-editor-issue-state{border-radius:100px;padding:3px 7px;background:#f7e8cf;color:#845922;font-size:11px;white-space:nowrap}
+.psy-editor-issue.is-resolved .psy-editor-issue-state{background:#e0f0e4;color:#2d6847}
+.psy-editor-issue>p{white-space:pre-wrap;font-size:13px;color:#5b7160;overflow-wrap:anywhere;margin:9px 0}
+.psy-editor-issue-foot{justify-content:space-between;font-size:12px;color:#77907b}
+.psy-editor-issue-foot button{border:0;border-radius:8px;background:#e8f2e8;padding:9px 11px;color:#346847}
+.psy-editor-footer-note{margin:17px 5px}
+html.dark body[data-account="owner-editor"]{background:#14251d;color:#e8f2e7}
+html.dark .psy-owner-gate,html.dark .psy-editor-card{background:#1e3328;border-color:#456350;color:#e9f3e8}
+html.dark .psy-editor-card h2,html.dark .psy-editor-card h3,html.dark .psy-editor-card label{color:#d9ebdd}
+html.dark .psy-editor-card textarea,html.dark .psy-editor-card input,html.dark .psy-editor-card select{background:#162a20;color:#f4faf4;border-color:#5d8067}
+html.dark .psy-editor-modes{background:#142b1e}
+html.dark .psy-editor-modes button[aria-pressed="true"]{background:#355d40;color:#eff8ec}
+html.dark .psy-editor-version,html.dark .psy-editor-issue{background:#263e30;border-color:#526b58}
+html.dark .psy-editor-version-info strong,html.dark .psy-editor-version-info p,html.dark .psy-editor-issue>p{color:#d4e5d7}
+html.dark .psy-editor-version button{background:#2f5038;color:#e7f5e7;border-color:#678670}
+html.dark .psy-editor-card .psy-editor-actions button:not(.psy-editor-primary){background:#37533c;color:#e7f5e7;border-color:#65816e}
+html.dark .psy-editor-issue-foot button{background:#385b42;color:#e5f1e5}
+@media(max-width:900px){.psy-editor-layout{grid-template-columns:1fr}}
+@media(max-width:600px){.psy-editor-root{width:calc(100% - 22px);margin-top:14px}.psy-editor-hero{padding:22px}.psy-editor-card{padding:19px}.psy-editor-actions{display:grid;grid-template-columns:1fr}.psy-editor-actions button{width:100%}.psy-editor-card .psy-editor-modes button{padding:7px;font-size:12px}}
