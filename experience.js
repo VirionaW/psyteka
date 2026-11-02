@@ -1148,7 +1148,14 @@ async function openRequestedLibraryMethod(){
   return;
  }
  if(!requestedMethodOpened||document.querySelector("#modal")?.hidden){openMethod(found);requestedMethodOpened=true;}
- if(!assessment)return;
+ if(!assessment){
+  const draftMode=q.get("draft");
+  if(["one","class"].includes(draftMode)){
+   calcMode=draftMode;rows=modeSnapshots[draftMode];rowIndex=modeIndices[draftMode]||0;
+   setTab("score");
+  }
+  return;
+ }
  try{
   const cloud=window.PSY_CLOUD;
   if(!cloud)throw Error("Облачное хранилище не загружено");
