@@ -32,7 +32,13 @@
  try{
   const {data,error}=await client.auth.getUser();
   const user=data?.user;
-  if(error||!user||user.is_anonymous||!user.email_confirmed_at){
+  const policy=window.PSY_AUTH_PROTECTION;
+  const protectedReady=!error&&user&&!user.is_anonymous&&(!policy||
+   await policy.keepSession(client,user));
+  if(protectedReady&&policy&&await policy.secondFactorNeeded(client)){
+   hidePrivate();location.replace(policy.challengeUrl("profile.html"));return;
+  }
+  if(!protectedReady||!user.email_confirmed_at){
    hidePrivate();message("Чтобы управлять аккаунтом и модераторами, войдите с подтвержденной почтой.");return;
   }
   const {data:roleData,error:roleError}=await client.from("psy_account_roles")
