@@ -51,7 +51,9 @@
  const cancel=el("button","psy-dev-cancel","Отмена");
  const copy=el("button","psy-dev-copy","Скопировать задачу для Артема");
  copy.hidden=true;
- actions.append(submit,cancel,copy);
+ const removeTask=el("button","psy-dev-delete-task","Удалить задачу");
+ removeTask.type="button";removeTask.hidden=true;
+ actions.append(submit,cancel,copy,removeTask);
  panel.append(title,subtitle,selectedHeader,selectedList,noteLabel,screenshotLabel,warning,status,actions);
  toolbar.append(main,chooseBtn,list);
  app.append(toolbar,hint,panel);
@@ -59,7 +61,7 @@
  const highlight=el("div","psy-dev-outline");
  highlight.hidden=true;highlight.dataset.psyDevUi="true";
  document.body.append(highlight);
- let enabled=false,picking=false,locationInfo=null,latestId=null,submitting=false;
+ let enabled=false,picking=false,locationInfo=null,latestId=null,latestScreenshotPath=null,submitting=false;
  const selectedTargets=[];
  const overlays=[highlight];
  let drawing=false;
@@ -135,7 +137,8 @@
     selectedTargets.splice(i,1);
     if(!selectedTargets.length){panel.hidden=true;locationInfo=null;copy.hidden=true}
     else{subTitle();}
-    syncLocation();latestId=null;copy.hidden=true;submit.disabled=false;
+    syncLocation();latestId=null;latestScreenshotPath=null;
+    removeTask.hidden=true;copy.hidden=true;submit.disabled=false;
     updateSelectedList();showHighlights();
    });
    row.append(name,remove);selectedList.append(row);
@@ -158,10 +161,11 @@
  }
  function startPick(additive=false){
   if(!enabled)return;
-  if(!additive){selectedTargets.length=0;locationInfo=null;panel.hidden=true;latestId=null;
-   copy.hidden=true;submit.disabled=false;note.value="";screenshot.value="";setStatus("")}
+  if(!additive){selectedTargets.length=0;locationInfo=null;panel.hidden=true;latestId=null;latestScreenshotPath=null;
+   removeTask.hidden=true;copy.hidden=true;submit.disabled=false;note.value="";screenshot.value="";setStatus("")}
   if(selectedTargets.length>=15)return;
-  latestId=null;copy.hidden=true;submit.disabled=false;
+  latestId=null;latestScreenshotPath=null;removeTask.hidden=true;
+  copy.hidden=true;submit.disabled=false;
   picking=true;chooseBtn.textContent="Отменить выбор";
   addMore.textContent="Отменить выбор";
   document.body.classList.add("psy-dev-picking");
@@ -176,7 +180,7 @@
   main.setAttribute("aria-pressed",String(on));
   main.textContent=on?"Режим включен · Выключить":"Показать Артему";
   chooseBtn.hidden=!on;list.hidden=!on;
-  if(!on){stopPick();panel.hidden=true;selectedTargets.length=0;latestId=null;locationInfo=null;
+  if(!on){stopPick();panel.hidden=true;selectedTargets.length=0;latestId=null;latestScreenshotPath=null;locationInfo=null;removeTask.hidden=true;
    updateSelectedList()}
   hint.textContent=on?"Нажми «Выделить элемент», затем выбери место на странице.":"";
   try{localStorage.setItem(FLAG,on?"on":"off")}catch(_){}
@@ -222,8 +226,8 @@
   if(event.key==="Escape"&&picking)stopPick();
  });
  cancel.addEventListener("click",()=>{
-  panel.hidden=true;selectedTargets.length=0;locationInfo=null;latestId=null;
-  stopPick();updateSelectedList();
+  panel.hidden=true;selectedTargets.length=0;locationInfo=null;latestId=null;latestScreenshotPath=null;
+  removeTask.hidden=true;stopPick();updateSelectedList();
  });
  async function clip(t){
   try{await navigator.clipboard.writeText(t);return true}
@@ -234,6 +238,21 @@
   const q="Артем, исправь замечание Метоларии MT-"+latestId+" (таблица psy_dev_annotations). Страница: "+locationInfo.page_path+". Элементы: "+selectedTargets.map(x=>x.selector).join("; ")+". Задача: "+note.value.trim()+". После исправления сообщи результат.";
   await clip(q);
   setStatus("Номер задачи скопирован. Отправь его мне в чат.");
+ });
+ removeTask.addEventListener("click",async()=>{
+  if(submitting||latestId===null)return;
+  const taskId=latestId;
+  if(!window.confirm("Удалить замечание MT-"+taskId+" без восстановления?"))return;
+  submitting=true;removeTask.disabled=true;setStatus("Удаляем задачу...");
+  try{
+   const {data,error}=await client.from("psy_dev_annotations").delete()
+    .eq("id",taskId).select("id").single();
+   if(error||!data)throw error||Error("Не удалось найти задачу");
+   if(latestScreenshotPath)await client.storage.from("psy-dev-attachments").remove([latestScreenshotPath]);
+   latestId=null;latestScreenshotPath=null;copy.hidden=true;removeTask.hidden=true;
+   submit.disabled=false;setStatus("Задача удалена. Можно сохранить новое замечание.");
+  }catch(err){setStatus("Не удалось удалить: "+(err?.message||"Нет подключения"),true)}
+  finally{submitting=false;removeTask.disabled=false}
  });
  submit.addEventListener("click",async()=>{
   if(submitting||!locationInfo||!selectedTargets.length)return;
@@ -265,9 +284,10 @@
       screenshot_path:path,updated_at:new Date().toISOString()
      }).eq("id",latestId);
      if(linked.error)fileIssue=true;
+     else latestScreenshotPath=path;
     }
    }
-   copy.hidden=false;submit.disabled=true;
+   copy.hidden=false;removeTask.hidden=false;submit.disabled=true;
    setStatus("Задача MT-"+latestId+" сохранена"+(fileIssue?", но снимок прикрепить не удалось":"")+
     ". Нажми «Скопировать задачу для Артема» и отправь мне в чат.",fileIssue);
   }catch(err){setStatus("Не удалось сохранить: "+(err?.message||"Проблема соединения"),true)}
