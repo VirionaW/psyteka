@@ -1,0 +1,23 @@
+/* Owner-only affordances. Added only after a server-confirmed owner role. */
+.psy-inline-edit{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:5px;margin:7px 0 0;padding:7px 11px;min-height:33px;border:1px solid #a8c7b2;background:#f3faf3;border-radius:9px;color:#266245;font:750 12px/1.35 system-ui,sans-serif;cursor:pointer}
+.psy-inline-edit:hover{background:#e2f1e6}
+.psy-inline-edit:focus-visible{outline:3px solid #c9ae79;outline-offset:2px}
+article.method .actions .psy-inline-edit{margin:0;min-height:38px;white-space:normal}
+.psy-inline-dialog{box-sizing:border-box;width:min(610px,calc(100vw - 22px));max-height:calc(100vh - 36px);overflow:auto;border:1px solid #b6d0bc;border-radius:18px;background:#fefefa;color:#284c38;padding:25px;box-shadow:0 19px 70px #132c2580}
+.psy-inline-dialog::backdrop{background:#102f2799}
+.psy-inline-dialog h2{font:800 24px/1.2 system-ui,sans-serif;margin:0 0 10px;color:#244a36}
+.psy-inline-dialog p{font:14px/1.5 system-ui,sans-serif;color:#5b755e;margin:0 0 16px}
+.psy-inline-dialog textarea{box-sizing:border-box;width:100%;min-height:155px;padding:13px;font:15px/1.6 system-ui,sans-serif;resize:vertical;background:#fff;color:#284c38;border:1px solid #b7c8b8;border-radius:10px}
+.psy-inline-dialog .psy-inline-status{min-height:20px;margin:9px 0;color:#3b7652}
+.psy-inline-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px}
+.psy-inline-actions button,.psy-inline-actions a{padding:10px 14px;min-height:40px;border:1px solid #c6d7ca;background:#f6faf6;color:#305941;font:750 13px/1.5 system-ui,sans-serif;text-decoration:none;border-radius:10px;cursor:pointer}
+.psy-inline-actions .psy-inline-save{background:#2c7551;border-color:#2c7551;color:#fff}
+.psy-inline-actions button:disabled{opacity:.6;cursor:wait}
+html.dark .psy-inline-edit{background:#294b35;border-color:#5c8066;color:#e6f5e7}
+html.dark .psy-inline-dialog{background:#1d3227;color:#e5f2e6;border-color:#64836c}
+html.dark .psy-inline-dialog h2{color:#eff8eb}
+html.dark .psy-inline-dialog p{color:#c5dbc8}
+html.dark .psy-inline-dialog textarea{background:#162b20;border-color:#5d8065;color:#f5f9f4}
+html.dark .psy-inline-actions button,html.dark .psy-inline-actions a{background:#35543c;border-color:#75927b;color:#f3f8f1}
+html.dark .psy-inline-actions .psy-inline-save{background:#38845b;color:#fff}
+@media(max-width:550px){.psy-inline-dialog{padding:18px}.psy-inline-actions{display:grid;grid-template-columns:1fr}.psy-inline-actions>*{text-align:center;width:100%;box-sizing:border-box}}
