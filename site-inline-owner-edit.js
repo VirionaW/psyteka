@@ -5,7 +5,7 @@
  const identity=window.PSY_IDENTITY;
  if(!identity?.client)return;
  await identity.ready;
- if(!identity.user?.email_confirmed_at||identity.role!=="owner")return;
+ if(!identity.user?.email_confirmed_at||!["owner","shadow","moderator"].includes(identity.role))return;
  const client=identity.client;
  const editable=[
   ["home:hero:lead",".hero-copy > p"],
@@ -144,10 +144,10 @@
    const card=button.closest("article.method");
    if(!card||card.dataset.psyOwnerMethod)continue;
    card.dataset.psyOwnerMethod="true";
-   const edit=$("button","psy-inline-edit","✎ Изменить карточку");
+   const edit=$("button","psy-inline-edit","✎ Открыть портфолио");
    edit.type="button";
    edit.addEventListener("click",event=>{
-    event.preventDefault();event.stopPropagation();openMethod(m,"type");
+    event.preventDefault();event.stopPropagation();button.click();
    });
    card.querySelector(".actions")?.append(edit);
   }
@@ -156,22 +156,5 @@
  if(catalogRoot){
   decorateCatalog();
   new MutationObserver(decorateCatalog).observe(catalogRoot,{childList:true});
- }
- const modalBody=document.getElementById("modalBody");
- if(modalBody){
-  function decoratePortfolio(){
-   const modal=document.getElementById("modal");
-   const overview=modal?.querySelector('#methodTabs button[data-tab="overview"].active');
-   if(!overview||modal?.hidden||modalBody.querySelector(".psy-inline-portfolio-edit"))return;
-   const m=findMethod();if(!m)return;
-   const edit=$("button","psy-inline-edit psy-inline-portfolio-edit","✎ Редактировать портфолио");
-   edit.type="button";
-   edit.addEventListener("click",e=>{
-    e.preventDefault();e.stopPropagation();openMethod(m,"age");
-   });
-   modalBody.prepend(edit);
-  }
-  new MutationObserver(decoratePortfolio).observe(modalBody,{childList:true});
-  decoratePortfolio();
  }
 })();
