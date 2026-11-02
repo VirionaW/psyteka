@@ -207,3 +207,10 @@ html.dark .stimulus-paper .word-matrix,.stimulus-paper .odd-print-item{color:#26
 .diag03-actions button:disabled{opacity:.45;cursor:not-allowed}
 .diag03-actions button{white-space:normal}
 @media(max-width:750px){.diag03-section{padding:12px}.diag03-answer-grid{grid-template-columns:1fr}.diag03-result{padding:13px}.diag03-result .diag-questions-table{font-size:12px}}
+
+/* Переход к следующему ученику под вопросами в групповом режиме. */
+#modalBody .psy-universal-bottom-nav{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin:18px 0 22px;padding:14px 16px;border:1px solid var(--line,#d5ddd6);border-radius:14px;background:var(--paper,#f8faf8);max-width:100%;box-sizing:border-box}
+#modalBody .psy-universal-bottom-nav label{display:flex;flex:1 1 240px;flex-direction:column;gap:7px;font-weight:600;font-size:14px;min-width:0;color:var(--ink,#263b30)}
+#modalBody .psy-universal-bottom-nav select{box-sizing:border-box;width:100%;min-width:0;max-width:100%;padding:10px 12px;border:1px solid var(--line,#cad5cb);border-radius:9px;background:var(--bg,#fff);color:var(--ink,#263b30);font:inherit;font-weight:400}
+#modalBody .psy-universal-bottom-nav .btn{flex:0 0 auto;white-space:normal}
+@media(max-width:580px){#modalBody .psy-universal-bottom-nav{padding:12px}#modalBody .psy-universal-bottom-nav .btn{flex:1 1 100%}}
