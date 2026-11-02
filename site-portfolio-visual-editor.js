@@ -45,7 +45,9 @@
     if(!/^(b[0-9]{1,3}|c[a-z0-9]{3,16})$/.test(id)||!style||typeof style!=="object")continue;
     out.styles[id]={
      align:["left","center","right"].includes(style.align)?style.align:"left",
-     width:["100","75","50"].includes(String(style.width))?String(style.width):"100"
+     width:["100","75","50"].includes(String(style.width))?String(style.width):"100",
+     x:Number.isFinite(Number(style.x))?Math.max(-120,Math.min(120,Math.round(Number(style.x)))):0,
+     y:Number.isFinite(Number(style.y))?Math.max(-120,Math.min(120,Math.round(Number(style.y)))):0
     };
    }
   }
@@ -118,6 +120,8 @@
   for(const [id,node] of blocks){
    const style=data.styles[id]||{align:"left",width:"100"};
    node.style.setProperty("--psy-v-width",style.width+"%");
+   node.style.setProperty("--psy-v-x",(style.x||0)+"px");
+   node.style.setProperty("--psy-v-y",(style.y||0)+"px");
    node.classList.toggle("psy-v-align-center",style.align==="center");
    node.classList.toggle("psy-v-align-right",style.align==="right");
    node.classList.toggle("psy-v-align-left",style.align==="left");
@@ -177,7 +181,7 @@
  function updateSelection(){
   if(!editor)return;
   const {panel,selection,selectedBlock,selectedText,draft}=editor;
-  panel.querySelectorAll("[data-action='up'],[data-action='down'],[data-action='remove'],[data-action='align-left'],[data-action='align-center'],[data-action='align-right'],[data-action='width-100'],[data-action='width-75'],[data-action='width-50']")
+  panel.querySelectorAll("[data-action='up'],[data-action='down'],[data-action='remove'],[data-action='align-left'],[data-action='align-center'],[data-action='align-right'],[data-action='width-100'],[data-action='width-75'],[data-action='width-50'],[data-action='nudge-left'],[data-action='nudge-right'],[data-action='nudge-up'],[data-action='nudge-down']")
    .forEach(b=>b.disabled=!selectedBlock);
   panel.querySelectorAll("[data-action='remove']").forEach(b=>b.disabled=!selectedBlock||!selectedBlock.dataset.psyVisualBlock.startsWith("c"));
   const label=panel.querySelector("#psyVSelected");
@@ -313,6 +317,8 @@
    ["up","↑ Выше"],["down","↓ Ниже"],
    ["align-left","⇤ Слева"],["align-center","↔ По центру"],["align-right","⇥ Справа"],
    ["width-100","100%"],["width-75","75%"],["width-50","50%"],
+   ["nudge-left","← 8 px"],["nudge-right","8 px →"],
+   ["nudge-up","↑ 8 px"],["nudge-down","8 px ↓"],
    ["remove","Удалить блок"],["reset","Исходный макет"]
   ];
   for(const [action,label] of buttons){
@@ -392,10 +398,16 @@
     [order[at],order[other]]=[order[other],order[at]];
     editor.draft.order=order;applyDraft();markDirty();return;
    }
-   if(action.startsWith("align-")||action.startsWith("width-")){
-    const style=editor.draft.styles[id]||{align:"left",width:"100"};
+   if(action.startsWith("align-")||action.startsWith("width-")||action.startsWith("nudge-")){
+    const style=editor.draft.styles[id]||{align:"left",width:"100",x:0,y:0};
     if(action.startsWith("align-"))style.align=action.replace("align-","");
-    else style.width=action.replace("width-","");
+    else if(action.startsWith("width-"))style.width=action.replace("width-","");
+    else{
+     const direction=action.replace("nudge-","");
+     const axis=direction==="left"||direction==="right"?"x":"y";
+     const sign=direction==="left"||direction==="up"?-1:1;
+     style[axis]=Math.max(-120,Math.min(120,(style[axis]||0)+sign*8));
+    }
     editor.draft.styles[id]=style;applyDraft();markDirty();
    }
   });
