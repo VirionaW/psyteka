@@ -93,8 +93,13 @@ function score(d,a,row){
  if(m.id==="cdi-27")return {raw:answers.reduce((x,y)=>x+y,0),max:54,complete:true,answers};
  const scales=effectiveScales(m,row).map((s,index)=>{
   const raw=s.q.reduce((sum,n)=>sum+answers[n-1],0),max=s.q.length*m.max,factor=s.factor||1;
-  const tScore=m.id==="lazarus-wcq50"?(window.PSY_WCQ_NORMS_2026?.tScore(index,raw,row?.ageYears,row?.sex)??null):null;
-  return {name:s.name,raw,max,factor,adjusted:Math.round(raw*factor*100)/100,percent:raw/max*100,tScore,q:s.q};
+  const actualAge=row?.ageYears===null||row?.ageYears===undefined?NaN:Number(row.ageYears);
+  // Requested reference comparison for 12-13-year-olds. These scores must
+  // never be presented as norms validated for their actual age.
+  const referenceOnly=m.id==="lazarus-wcq50"&&(actualAge===12||actualAge===13);
+  const ageForTable=referenceOnly?14:row?.ageYears;
+  const tScore=m.id==="lazarus-wcq50"?(window.PSY_WCQ_NORMS_2026?.tScore(index,raw,ageForTable,row?.sex)??null):null;
+  return {name:s.name,raw,max,factor,adjusted:Math.round(raw*factor*100)/100,percent:raw/max*100,tScore,referenceOnly:referenceOnly&&tScore!==null,q:s.q};
  });
  return {complete:true,scales,answers,raw:null};
 }
@@ -128,12 +133,12 @@ function scoreTone(m,s){
 }
 function scoreDescription(m,s){
  if(m.id==="eysenck-40")return s.raw<=7?"Низкая выраженность":s.raw<=14?"Средняя выраженность":"Высокая выраженность";
- if(m.id==="lazarus-wcq50")return s.tScore===null?"Сырой балл; возрастно-половая норма недоступна":window.PSY_WCQ_NORMS_2026.level(s.tScore)+" (Т-балл)";
+ if(m.id==="lazarus-wcq50")return s.tScore===null?"Нормативный Т-балл не рассчитывается":s.referenceOnly?"Условное сравнение с нормами 14-20 лет, не возрастная норма":window.PSY_WCQ_NORMS_2026.level(s.tScore)+" (Т-балл)";
  return "Факторный показатель, не категория риска";
 }
 function resultTable(m,z){
  return '<div class="psy-semester-table psy-semester-result-table"><table><thead><tr><th>Шкала</th><th>Баллы</th><th>Интерпретация показателя</th></tr></thead><tbody>'+
- z.scales.map(s=>'<tr><td><b>'+esc(s.name)+'</b></td><td><span class="psy-semester-score '+scoreTone(m,s)+'">'+(m.id==="razuvaeva-osr29"?s.adjusted.toFixed(2).replace(".",","):m.id==="lazarus-wcq50"&&s.tScore!==null?s.tScore:s.raw)+'</span><span class="psy-semester-denom">'+(m.id==="razuvaeva-osr29"?" (сырой: "+s.raw+" / "+s.max+")":m.id==="lazarus-wcq50"&&s.tScore!==null?" Т-балл (сырой: "+s.raw+" / "+s.max+")":" / "+s.max)+'</span></td><td>'+esc(scoreDescription(m,s))+'</td></tr>').join("")+'</tbody></table></div>';
+ z.scales.map(s=>'<tr><td><b>'+esc(s.name)+'</b></td><td><span class="psy-semester-score '+scoreTone(m,s)+'">'+(m.id==="razuvaeva-osr29"?s.adjusted.toFixed(2).replace(".",","):m.id==="lazarus-wcq50"&&s.tScore!==null?s.tScore:s.raw)+'</span><span class="psy-semester-denom">'+(m.id==="razuvaeva-osr29"?" (сырой: "+s.raw+" / "+s.max+")":m.id==="lazarus-wcq50"&&s.tScore!==null?(s.referenceOnly?" Т* (условно по 14-20 годам)":" Т-балл")+" (сырой: "+s.raw+" / "+s.max+")":" / "+s.max)+'</span></td><td>'+esc(scoreDescription(m,s))+'</td></tr>').join("")+'</tbody></table></div>';
 }
 function result(d,row){const m=cfg(d),n=count(m,row.answers),z=score(d,row.answers,row);
  if(row.attendance==="absent")return '<div class="psy-semester-status is-skipped">Отсутствовал – результаты не рассчитываются</div>';
