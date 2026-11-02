@@ -256,7 +256,7 @@
   {value:"program",label:"Программы и подборки"}
  ];
  function classify(m,d,profile,standard){
-  const type=compose(m,d,profile,standard).type.toLowerCase();
+  const type=(window.PSY_SCHOOL_CARDS?.compose?.(m,d,profile,standard)||compose(m,d,profile,standard)).type.toLowerCase();
   if(/рисуночн(?!ый тест фрустрации)|рисунок семьи/.test(type))return "drawing";
   if(/графическ|социограмм/.test(type))return "graphic";
   if(/проективн|проективная|цветовая/.test(type))return "projective";
