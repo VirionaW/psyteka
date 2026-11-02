@@ -31,9 +31,11 @@
  const selectedHeader=el("div","psy-dev-selection-heading");
  const selectedCount=el("strong",null,"Выбранные элементы: 0");
  const addMore=el("button","psy-dev-add-more","＋ Добавить элемент");
- const clearAll=el("button","psy-dev-clear-all","Очистить");
- addMore.type="button";clearAll.type="button";
- selectedHeader.append(selectedCount,addMore,clearAll);
+ const undoLast=el("button","psy-dev-undo-last","↶ Отменить последнее");
+ const clearAll=el("button","psy-dev-clear-all","Очистить все");
+ addMore.type="button";undoLast.type="button";clearAll.type="button";
+ undoLast.title="Убрать только последний выбранный элемент";
+ selectedHeader.append(selectedCount,addMore,undoLast,clearAll);
  const selectedList=el("div","psy-dev-selection-list");
  selectedList.setAttribute("aria-live","polite");
  const noteLabel=el("label",null,"Комментарий для Артема");
@@ -122,6 +124,16 @@
    viewport:{width:innerWidth,height:innerHeight,...first.rect}
   };
  }
+ function removeSelection(index){
+  if(submitting||index<0||index>=selectedTargets.length)return;
+  selectedTargets.splice(index,1);
+  syncLocation();
+  latestId=null;latestScreenshotPath=null;
+  removeTask.hidden=true;copy.hidden=true;submit.disabled=false;
+  if(!selectedTargets.length){panel.hidden=true;stopPick()}
+  else subTitle();
+  updateSelectedList();
+ }
  function updateSelectedList(){
   selectedList.replaceChildren();
   selectedCount.textContent="Выбранные элементы: "+selectedTargets.length+" / 15";
@@ -133,16 +145,10 @@
    name.title=info.selector;
    const remove=el("button","psy-dev-remove-selected","×");
    remove.type="button";remove.setAttribute("aria-label","Убрать элемент "+(i+1)+" из выбора");
-   remove.addEventListener("click",()=>{
-    selectedTargets.splice(i,1);
-    if(!selectedTargets.length){panel.hidden=true;locationInfo=null;copy.hidden=true}
-    else{subTitle();}
-    syncLocation();latestId=null;latestScreenshotPath=null;
-    removeTask.hidden=true;copy.hidden=true;submit.disabled=false;
-    updateSelectedList();showHighlights();
-   });
+   remove.addEventListener("click",()=>removeSelection(i));
    row.append(name,remove);selectedList.append(row);
   }
+  undoLast.disabled=!selectedTargets.length;
   clearAll.disabled=!selectedTargets.length;
   showHighlights();
  }
@@ -154,10 +160,10 @@
  }
  function stopPick(){
   picking=false;document.body.classList.remove("psy-dev-picking");
-  chooseBtn.textContent="Выделить элемент";
+  chooseBtn.textContent=selectedTargets.length?"Добавить еще элемент":"Выделить элемент";
   addMore.textContent="＋ Добавить элемент";
   subTitle();showHighlights();
-  hint.textContent=enabled?"Рамки закреплены за выбранными элементами. Для объединения нажми «Добавить элемент».":"";
+  hint.textContent=enabled?(selectedTargets.length?"Рамки закреплены. Нажми «Добавить еще элемент», чтобы продолжить, или «Отменить последнее».":"Нажми «Выделить элемент» для выбора."):"";
  }
  function startPick(additive=false){
   if(!enabled)return;
@@ -187,8 +193,9 @@
  }
  setMode((()=>{try{return localStorage.getItem(FLAG)==="on"}catch(_){return false}})());
  main.addEventListener("click",()=>setMode(!enabled));
- chooseBtn.addEventListener("click",()=>picking?stopPick():startPick(false));
+ chooseBtn.addEventListener("click",()=>picking?stopPick():startPick(selectedTargets.length>0));
  addMore.addEventListener("click",()=>picking?stopPick():startPick(true));
+ undoLast.addEventListener("click",()=>removeSelection(selectedTargets.length-1));
  clearAll.addEventListener("click",()=>{
   if(submitting)return;
   selectedTargets.length=0;locationInfo=null;panel.hidden=true;stopPick();updateSelectedList();
@@ -202,7 +209,14 @@
   event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
   const locator=selectorFor(target);
   if(!locator)return;
-  if(!selectedTargets.some(x=>x.selector===locator)){
+  const existingIndex=selectedTargets.findIndex(x=>x.selector===locator);
+  if(existingIndex>=0){
+   // Repeatedly clicking an already selected element toggles it off.
+   removeSelection(existingIndex);
+   if(!event.shiftKey)stopPick();
+   return;
+  }
+  if(existingIndex<0){
    if(selectedTargets.length>=15){stopPick();setStatus("Можно объединить не более 15 элементов.",true);return}
    const tab=document.querySelector("#methodTabs [data-tab].active")?.dataset.tab||"";
    const methodId=modal&&!modal.hidden?String(window.PSY_ACTIVE_METHOD_ID||""):"";
@@ -223,7 +237,13 @@
   setStatus("");
  },true);
  document.addEventListener("keydown",event=>{
-  if(event.key==="Escape"&&picking)stopPick();
+  if(event.key==="Escape"&&picking){stopPick();return}
+  // A keyboard alternative when the comment panel is active. Do not steal
+  // Ctrl+Z from textareas or inputs used to write the annotation.
+  if(!picking&&enabled&&!panel.hidden&&event.ctrlKey&&!event.altKey&&!event.metaKey&&event.key.toLowerCase()==="z"&&
+    !(event.target?.closest?.("textarea,input,[contenteditable]"))&&selectedTargets.length){
+   event.preventDefault();removeSelection(selectedTargets.length-1);
+  }
  });
  cancel.addEventListener("click",()=>{
   panel.hidden=true;selectedTargets.length=0;locationInfo=null;latestId=null;latestScreenshotPath=null;
