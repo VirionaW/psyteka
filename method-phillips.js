@@ -4,7 +4,7 @@
  const METHOD_NAME="Тест школьной тревожности Филлипса";
  const SOURCE="https://psmetodiki.ru/index.php/mladshie-shkolniki/prochee/253-test-shkolnoj-trevozhnosti-fillipsa";
  const SECOND="https://www.azps.ru/tests/tests_philips.html";
- const PUBLIC_58="https://azps.ru/tests/tests_philips.html";
+ const PUBLIC_58=SOURCE;
  const STUDENT_INSTRUCTION="Прочитай или послушай каждый вопрос о том, как ты чувствуешь себя в школе. Для каждого вопроса отметь один ответ: «Да», если согласен, или «Нет», если не согласен. Правильных и неправильных ответов нет. Отвечай искренне и не задумывайся слишком долго.";
  const YES=[11,20,22,24,25,30,35,36,38,39,41,43,44];
  const KEY=Array.from({length:58},(_,i)=>YES.includes(i+1)?"yes":"no");
