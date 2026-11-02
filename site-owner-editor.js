@@ -68,8 +68,8 @@
    case "count":return String(card.quantity||profile.count||extra.count||method.count||"");
    case "summary":return String(card.summary||method.summary||method.goal||"");
    case "goal":return String(profile.goal||extra.goal||method.goal||"");
-   case "indicators":return Array.isArray(profile.indicators)?profile.indicators.join("\\n"):
-    Array.isArray(extra.scales)?extra.scales.map(x=>typeof x==="string"?x:x.name||"").filter(Boolean).join("\\n"):"";
+   case "indicators":return Array.isArray(profile.indicators)?profile.indicators.join("\n"):
+    Array.isArray(extra.scales)?extra.scales.map(x=>typeof x==="string"?x:x.name||"").filter(Boolean).join("\n"):"";
    default:return "";
   }
  }
