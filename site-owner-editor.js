@@ -225,7 +225,16 @@
   await Promise.all([fetchHomeSources(),fetchValues()]);
   await switchMode("home");
   await loadIssues();
-  const requested=new URL(location.href).searchParams.get("field");
-  if(requested&&homeFields.some(row=>row[0]===requested)){field.value=requested;await selectContent()}
+  const params=new URL(location.href).searchParams;
+  const requested=params.get("field");
+  const requestedMethod=params.get("method_id");
+  if(requestedMethod&&methodsById.has(requestedMethod)){
+   await switchMode("method");
+   methodSelect.value=requestedMethod;
+   if(["summary","goal"].includes(requested))field.value=requested;
+   await selectContent();
+  }else if(requested&&homeFields.some(row=>row[0]===requested)){
+   field.value=requested;await selectContent();
+  }
  }catch(err){gate.textContent="Не удалось открыть редактор: "+(err?.message||"Ошибка подключения");}
 })();
