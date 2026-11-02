@@ -40,3 +40,12 @@ html.dark .psy-dev-review-location,html.dark .psy-dev-review-item code{color:#c1
 html.dark .psy-dev-review-item code{background:#263f30}
 html.dark .psy-dev-review-state select,html.dark .psy-dev-review-resolution,html.dark .psy-dev-review-filters select{background:#1b3826;color:#edf6ec;border-color:#5d8066}
 @media(max-width:600px){.psy-dev-review{padding:0 10px;margin-top:15px}.psy-dev-review-intro{padding:22px}.psy-dev-review-state{display:grid;grid-template-columns:1fr}.psy-dev-review-actions{display:grid;grid-template-columns:1fr}.psy-dev-review-actions>*{text-align:center}.psy-dev-review-resolution{min-width:0}}
+
+/* Multi-element note and deliberate deletion. */
+.psy-dev-review-targets{display:grid;gap:6px;min-width:0}
+.psy-dev-review-targets>strong{font-size:12px;color:#446f51}
+.psy-dev-review-targets code{overflow-wrap:anywhere;word-break:break-word}
+.psy-dev-review-actions .psy-dev-review-delete{margin-left:auto;border-color:#dec6c1;background:#fbf2ef;color:#973f33}
+.psy-dev-review-actions .psy-dev-review-delete:disabled{opacity:.5;cursor:wait}
+html.dark .psy-dev-review-targets>strong{color:#c5d9c7}
+html.dark .psy-dev-review-actions .psy-dev-review-delete{background:#55322f;color:#f7d5cd;border-color:#a56760}
