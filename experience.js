@@ -192,6 +192,8 @@ function setTab(name){
    if(!['phillips58','semester2026','mspss','orekhovaHouses8','luscherHub'].includes(DETAILS[methodNow.name]?.workflow))body.innerHTML=window.PSY_GUIDE_STANDARD.supplement(methodNow.name,DETAILS[methodNow.name],methodNow,body.innerHTML);
    window.PSY_GUIDE_STANDARD.bind(()=>setTab('instruction'));
  }
+ if(DETAILS[methodNow.name]?.workflow==="phillips58"&&["instruction","materials"].includes(name))
+   void window.PSY_METHOD_ASSETS?.mount?.(methodNow,name,body);
  if(name==="overview")window.PSY_CONTENT_OVERRIDES?.applyPortfolioDOM?.(methodNow,body);
  if(name==="overview")void window.PSY_PORTFOLIO_VISUAL?.onRender?.(methodNow,body);
  body.scrollTop=preserveScroll?previousScroll:0;
@@ -968,6 +970,11 @@ function printMaterial(blank){
  if(DETAILS[methodNow?.name]?.workflow==='specialSheet'){window.PSY_SPECIAL.print(DETAILS[methodNow.name],blank);return;}
  if(DETAILS[methodNow?.name]?.workflow==='preschoolSheet'){window.PSY_PRESCHOOL.print(DETAILS[methodNow.name],blank);return;}
  const d=DETAILS[methodNow?.name];if(!d)return;
+ if(d.workflow==="phillips58"){
+  const kind=blank==="combined"?"combined":blank===true||blank==="blank"?"blank":"guide";
+  window.open("phillips-print.html?kind="+kind,"_blank","noopener,noreferrer");
+  return;
+ }
  if(['colorRelations8','digitSpanPsy','dynamicPraxisLuria','simpleAnalogies12','pairedAssoc20'].includes(d.workflow)){window.open(blank?d.answerFile:d.guideFile,'_blank','noopener');return;}
  const html=makePrintPage(d,blank===true||blank==='blank',blank==='combined');
  let f=document.getElementById('psyPrint');if(f)f.remove();
