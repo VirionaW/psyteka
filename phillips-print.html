@@ -7,10 +7,25 @@
 <style>
 @page{size:A4 portrait;margin:13mm}
 *{box-sizing:border-box}
-body{margin:0 auto;max-width:970px;padding:21px 25px;background:#fff;color:#243c2e;font:14px/1.5 Arial,Helvetica,sans-serif}
+body{margin:0 auto;max-width:970px;padding:21px 25px;background:#f6f9f6;color:#243c2e;font:14px/1.5 Arial,Helvetica,sans-serif}
 .tools{position:sticky;top:0;z-index:5;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:13px 0;background:#fff;border-bottom:1px solid #d5e3d8;margin-bottom:20px}
 .tools a,.tools button{display:inline-flex;padding:10px 16px;background:#f2f8f3;color:#285f43;border-radius:9px;border:1px solid #bad4c2;text-decoration:none;font-weight:750;cursor:pointer}
 .tools button{background:#276d4c;color:#fff}
+.tools button[aria-pressed="true"]{background:#276d4c;color:#fff}
+.tools button[aria-pressed="false"]{background:#eef6ee;color:#285f43}
+.psy-print-asset-area{border:1px solid #d3e3d7;padding:15px 19px;border-radius:12px;margin-top:20px;background:#fff}
+.psy-print-published h2{font-size:17px;margin:4px 0 10px}
+.psy-print-published-links{display:flex;gap:9px;flex-wrap:wrap}
+.psy-print-published-link{display:inline-block;border:1px solid #bed5c5;border-radius:9px;padding:8px 12px;color:#256747;text-decoration:none}
+.psy-print-file-notice,.psy-print-warning,.psy-print-upload-status{color:#5c735e;font-size:12px;line-height:1.6}
+.psy-print-admin-upload{margin-top:16px;padding:12px;background:#f2f7f2;border:1px solid #d5e5d8;border-radius:10px}
+.psy-print-admin-upload summary{cursor:pointer;font-weight:700;color:#235f42}
+.psy-print-admin-upload form{display:grid;gap:12px;margin-top:13px;max-width:570px}
+.psy-print-admin-upload label{display:grid;gap:6px}
+.psy-print-admin-upload select,.psy-print-admin-upload input{padding:9px;border:1px solid #cadace;border-radius:8px;background:#fff}
+.psy-print-action{background:#276d4c;color:white;padding:10px 15px;border:0;border-radius:9px;cursor:pointer;font-weight:700}
+.psy-print-published[hidden]{display:none}
+
 h1{font-size:23px;margin:0 0 5px;line-height:1.25;color:#214c35}h2{font-size:16px;margin:19px 0 8px}
 .subtitle{color:#60786b;font-size:13px;margin:0 0 18px}
 .instruction{border:1px solid #b8d2bf;border-left:4px solid #337e52;background:#f5faf5;padding:12px 15px;margin:15px 0;line-height:1.6}
@@ -32,7 +47,7 @@ td:nth-child(2),td:nth-child(3){width:33%}
 @media(max-width:640px){body{padding:13px}.answer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.meta{gap:8px}h1{font-size:20px}}
 @media print{
  body{padding:0;max-width:none;font-size:11pt;line-height:1.36}
- .tools{display:none!important}
+ .tools,.psy-print-asset-area{display:none!important}
  h1{font-size:18pt}h2{font-size:12pt;margin:13px 0 5px}
  .subtitle{margin-bottom:8px}.instruction{padding:8px 10px;margin:9px 0}
  .meta{margin:10px 0}
@@ -44,18 +59,28 @@ td:nth-child(2),td:nth-child(3){width:33%}
 </style>
 </head>
 <body>
-<div class="tools"><a href="library.html">Вернуться в библиотеку</a><button id="printNow" type="button">Распечатать А4</button><a id="originalLink" rel="noopener noreferrer" target="_blank">Полный опросник · 58 вопросов</a></div>
-<main id="printContent"><h1>Филлипс</h1><p>Подготовка страницы для печати...</p></main>
-<script src="method-phillips.js?v=20261102phprint4"></script>
+<div class="tools"><a href="library.html">← В библиотеку</a>
+ <button id="printWithout" type="button" aria-pressed="false">Без бланка</button>
+ <button id="printWith" type="button" aria-pressed="true">С бланком</button>
+ <button id="printNow" type="button">Распечатать А4</button>
+ <a id="originalLink" rel="noopener noreferrer" target="_blank">Подлинные 58 вопросов · источник</a></div>
+<main id="printContent"><h1>Филлипс</h1><p>Подготовка страницы для печати...</p></main><section class="psy-print-asset-area" id="psyPrintAssets"></section>
+<script src="auth-config.js?v=20261102"></script>
+<script src="vendor/supabase-2.58.0.min.js?v=20261102"></script>
+<script src="site-account-identity.js?v=20261102auth4"></script>
+<script src="method-phillips.js?v=20261102phprint5"></script>
+<script src="site-method-asset-manager.js?v=20261102printmove1"></script>
 <script>
 (function(){
  const m=window.PSY_PHILLIPS;
  const kind=new URLSearchParams(location.search).get("kind");
- const variant=["guide","combined","blank"].includes(kind)?kind:"blank";
+ let variant=["guide","combined","blank"].includes(kind)?kind:"combined";
  const esc=s=>String(s??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
  const source=m.fullQuestionnaireUrl;
  document.getElementById("originalLink").href=source;
  document.getElementById("printNow").addEventListener("click",()=>window.print());
+ document.getElementById("printWithout").addEventListener("click",()=>{variant="guide";render()});
+ document.getElementById("printWith").addEventListener("click",()=>{variant="combined";render()});
  const intro=esc(m.studentInstruction);
  const grid='<div class="answer-grid">'+Array.from({length:4},(_,col)=>{
    const start=col*15+1,end=Math.min(58,start+14);
@@ -77,7 +102,13 @@ td:nth-child(2),td:nth-child(3){width:33%}
  '<h2>Восемь факторов</h2><table class="factors"><thead><tr><th>Фактор</th><th>Номера вопросов</th><th>Макс.</th></tr></thead><tbody>'+
  m.scales.map(s=>'<tr><td>'+esc(s.name)+'</td><td>'+s.q.join(", ")+'</td><td>'+s.q.length+'</td></tr>').join("")+'</tbody></table>'+
  '<p class="source"><strong>Полный текст вопросов:</strong> '+esc(source)+'</p></article>';
- document.getElementById("printContent").innerHTML=(variant==="blank"?"":guide)+(variant==="guide"?"":paper);
+ function render(){
+  document.getElementById("printWithout").setAttribute("aria-pressed",String(variant==="guide"));
+  document.getElementById("printWith").setAttribute("aria-pressed",String(variant!=="guide"));
+  document.getElementById("printContent").innerHTML=(variant==="blank"?"":guide)+(variant==="guide"?"":paper);
+ }
+ render();
+ window.PSY_METHOD_ASSETS?.printMount({methodId:"Тревожность-2",root:document.getElementById("psyPrintAssets")});
 })();
 </script>
 </body>
