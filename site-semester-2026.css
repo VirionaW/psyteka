@@ -923,3 +923,31 @@ html.dark .library-page #modal.psy-mspss-example .psy-cp-gender-feedback{
 }
 .library-page #modal .psy-711-wcq-profile p{margin:0;line-height:1.65;max-width:88ch}
 @media(max-width:620px){.library-page #modal .psy-711-wcq-profile{padding:13px}}
+
+/* WCQ – заметное возрастное предупреждение до анкеты, а не скрытая сноска. */
+.library-page #modal .psy-wcq-age-warning{
+ border:1px solid #d3a453;
+ border-left:5px solid #bd8b37;
+ border-radius:12px;
+ background:#fff5de;
+ color:#624310;
+ margin:14px 0 17px;
+ padding:13px 16px;
+ font-size:14px;
+ line-height:1.5;
+}
+.library-page #modal .psy-wcq-age-warning strong{
+ display:block;
+ font-weight:800;
+ color:#6c4818;
+ margin-bottom:4px;
+}
+.library-page #modal .psy-wcq-age-warning p{
+ margin:0;
+ color:inherit;
+ line-height:1.55;
+}
+@media(prefers-color-scheme:dark){
+ .library-page #modal .psy-wcq-age-warning{background:#382f20;color:#f1d9ad;border-color:#8c6c36;border-left-color:#d9ae5a}
+ .library-page #modal .psy-wcq-age-warning strong{color:#f6da9c}
+}
