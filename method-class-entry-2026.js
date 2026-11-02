@@ -889,7 +889,8 @@ const cfg=d=>m.methods.find(x=>x.id===d.id);
 const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const size=d=>cfg(d).n,limit=d=>cfg(d).max;
 const present=(d,r)=>Array.from({length:size(d)},(_,i)=>r?.answers?.[i]).filter(v=>v!==null&&v!==undefined&&v!==""&&/^[0-9]$/.test(String(v))&&Number(v)<=limit(d)).length;
-const scored=(d,r)=>r?.attendance!=="absent"&&present(d,r)===size(d)?m.score(d,r.answers,r):null;
+const scored=(d,r)=>r?.attendance!=="absent"&&present(d,r)===size(d)&&
+ (d.id!=="lazarus-wcq50"||["f","m"].includes(r.sex))?m.score(d,r.answers,r):null;
 const roster=rows=>rows.some(x=>!!x?.name?.trim());
 const gradeOf=rows=>Number(rows.find(x=>Number(x.schoolGrade)>=7&&Number(x.schoolGrade)<=11)?.schoolGrade||0);
 const classAge=grade=>Number.isInteger(Number(grade))&&Number(grade)>=7&&Number(grade)<=11?Number(grade)+6:null;
@@ -972,7 +973,10 @@ const preciseRazMaximum=s=>(s.max*s.factor).toFixed(1).replace(".",",");
 const maximum=(d,s)=>d.id==="razuvaeva-osr29"?String(Math.ceil(s.max*s.factor)):String(s.max);
 function result(d,r){
  if(r?.attendance==="absent")return '<section class="psy-711-result">Участник отсутствовал. Результаты не рассчитываются.</section>';
- const z=scored(d,r);if(!z)return '<section class="psy-711-result">Заполнено '+present(d,r)+' из '+size(d)+'. Для подсчета нужны все ответы.</section>';
+ const z=scored(d,r);
+ if(!z&&d.id==="lazarus-wcq50"&&present(d,r)===size(d)&&!["f","m"].includes(r?.sex))
+  return '<section class="psy-711-result"><h3>Ответы заполнены</h3><p>Выберите пол участника выше, чтобы рассчитать Т-баллы по таблице возраста. Ответы сохранены в текущем протоколе.</p></section>';
+ if(!z)return '<section class="psy-711-result">Заполнено '+present(d,r)+' из '+size(d)+'. Для подсчета нужны все ответы.</section>';
  return '<section class="psy-711-result"><h3>Результаты участника'+(d.id==="razuvaeva-osr29"?" · "+razLabel(d,r):"")+'</h3><div class="psy-711-scale-grid">'+z.scales.map(s=>
  '<div class="psy-711-scale psy-711-'+tone(d,s)+'"><b>'+esc(s.name)+'</b><strong>'+(d.id==="lazarus-wcq50"?wcqValue(s):num(d,s)+' / '+maximum(d,s))+'</strong><span>'+
  esc(d.id==="razuvaeva-osr29"?"Коэффициент "+s.factor+" · точный максимум "+preciseRazMaximum(s):
@@ -1066,7 +1070,10 @@ function calculator(d,ctx){
  if(rows.genderNote&&ctx.calcMode==="class")out+='<p class="psy-cp-gender-feedback" role="status">'+esc(rows.genderNote)+'</p>';
  if(ctx.calcMode!=="class")out+='<label class="psy-cp-class-label">Класс<select id="school711Grade"><option value="">Не выбран</option>'+[7,8,9,10,11].map(g=>'<option value="'+g+'" '+(Number(r.schoolGrade)===g?"selected":"")+'>'+g+' класс</option>').join("")+'</select></label>';
  if(d.id==="lazarus-wcq50")out+='<div class="psy-cp-demographics"><label>Возраст (полных лет)<input id="school711Age" type="number" min="1" max="120" step="1" value="'+(Number(r.ageYears)>=7&&Number(r.ageYears)<=90?Number(r.ageYears):"")+'" placeholder="Например, 12 или 13"></label><div class="psy-cp-sex-field"><span>Пол участника</span><div class="psy-cp-sex-buttons" role="group" aria-label="Пол"><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="f"?"is-selected":"")+'" data-711-sex="f" aria-pressed="'+(r.sex==="f")+'" '+(!hasRoster||!ageOk(d,r,rows,ctx.calcMode)?"disabled":"")+'>Девочка / женщина</button><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="m"?"is-selected":"")+'" data-711-sex="m" aria-pressed="'+(r.sex==="m")+'" '+(!hasRoster||!ageOk(d,r,rows,ctx.calcMode)?"disabled":"")+'>Мальчик / мужчина</button></div></div></div>';
- if(d.id==="lazarus-wcq50")out+='<p class="psy-mspss-small">Класс дает предварительный возраст (класс + 6 лет); фактический возраст можно изменить. Для 12-13 лет условные Т* рассчитываются по группе 14-20 лет при выбранном поле. Нормативных Т-баллов для 12-13 лет у этой редакции нет.</p>';
+ if(d.id==="lazarus-wcq50"){
+  if(!["f","m"].includes(r.sex))out+='<p class="psy-wcq-gender-hint">Выберите пол участника, чтобы получить Т-баллы. Можно сначала ввести ответы – они не пропадут.</p>';
+  out+='<p class="psy-mspss-small">Класс дает предварительный возраст (класс + 6 лет); фактический возраст можно изменить. Для 12-13 лет условные Т* рассчитываются по группе 14-20 лет при выбранном поле. Нормативных Т-баллов для 12-13 лет у этой редакции нет.</p>';
+ }
  if(locked)out+='<p class="psy-cdi-lock-note">'+(ctx.calcMode==="class"&&!hasRoster?"Сначала добавьте хотя бы одного участника.":!r.name?.trim()?"Сначала укажите участника.":!ageOk(d,r,rows,ctx.calcMode)?(d.id==="lazarus-wcq50"?"Укажите фактический возраст участника.":"Выберите класс перед вводом ответов."):"Укажите пол участника.")+'</p>';
  if(d.id==="razuvaeva-osr29")out+='<label class="psy-711-version">Ключ обработки<select id="school711RazKey">'+
  '<option value="kmc-seven" '+(r.razuvaevaKey!=="method-six"?"selected":"")+'>Ключ А – КМЦ (7 пунктов)</option>'+
