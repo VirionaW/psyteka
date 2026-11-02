@@ -37,12 +37,41 @@
     text(title,item.title);text(meta,item.method_name+" · "+new Date(item.updated_at).toLocaleDateString("ru-RU"));
     desc.append(title,meta);
     const open=make("a","site-btn");open.href="library.html?area=school&method="+encodeURIComponent(item.method_name)+"&assessment="+encodeURIComponent(item.id);text(open,"Открыть");
+    const preview=make("button","site-btn");preview.type="button";text(preview,"Просмотреть");
+    preview.onclick=async()=>{
+     preview.disabled=true;
+     try{
+      const saved=await cloud.getAssessment(item.id);
+      const dialog=make("dialog","psy-assessment-preview");
+      dialog.style.cssText="width:min(800px,96vw);max-height:88vh;overflow:auto;border:1px solid #a9c4b5;border-radius:16px;padding:23px;background:var(--card,#fff);color:var(--ink,#233a2f)";
+      const heading=make("h2");text(heading,saved.title);
+      const subtitle=make("p");text(subtitle,saved.method_name+" · "+(saved.snapshot.calcMode==="class"?"Группа / класс":"Индивидуальная обработка"));
+      const hint=make("p");text(hint,"Архив ответов, сохраненный независимо от изменений каталога. Для интерпретации используйте версию методики, по которой проводилось обследование.");
+      dialog.append(heading,subtitle,hint);
+      saved.snapshot.rows.forEach((record,index)=>{
+       const section=make("section"),head=make("h3"),body=make("pre");
+       text(head,record.name||"Участник "+(index+1));
+       body.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;padding:12px;border:1px solid #d8e5db;border-radius:10px";
+       const answers=Array.isArray(record.answers)?record.answers.map((v,i)=>v!==""&&v!=null?(i+1)+": "+String(v):null).filter(Boolean):[];
+       const meta=Object.fromEntries(Object.entries(record).filter(([k])=>k!=="name"&&k!=="answers"));
+       text(body,(answers.length?"Ответы: "+answers.join("; "):"Ответы не заполнены")+
+        (Object.keys(meta).length?"\nДополнительные данные: "+JSON.stringify(meta,null,2):""));
+       section.append(head,body);dialog.append(section);
+      });
+      const close=make("button","site-btn");close.type="button";text(close,"Закрыть");
+      close.onclick=()=>dialog.close();
+      dialog.append(close);document.body.append(dialog);
+      dialog.addEventListener("close",()=>dialog.remove(),{once:true});
+      dialog.showModal();
+     }catch(e){alert("Не удалось открыть архив: "+e.message)}
+     finally{preview.disabled=false}
+    };
     const del=make("button","psy-saved-delete");del.type="button";text(del,"Удалить");
     del.onclick=async()=>{
      if(!confirm("Удалить сохраненное обследование «"+item.title+"»? Это действие нельзя отменить."))return;
      del.disabled=true;try{await cloud.deleteAssessment(item.id);await refresh()}catch(e){alert("Не удалось удалить: "+e.message);del.disabled=false}
     };
-    actions.append(open,del);row.append(desc,actions);list.append(row);
+    actions.append(open,preview,del);row.append(desc,actions);list.append(row);
    }
   }catch(e){text(list,"Не удалось загрузить результаты. "+e.message)}
  }
