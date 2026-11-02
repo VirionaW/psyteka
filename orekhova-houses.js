@@ -583,6 +583,16 @@
  function themeText(){$("toggleTheme").textContent=document.documentElement.classList.contains("dark")?"Светлая тема":"Темная тема";}
  $("toggleTheme").addEventListener("click",()=>{document.documentElement.classList.toggle("dark");try{localStorage.setItem(themeKey,document.documentElement.classList.contains("dark")?"dark":"light");}catch(_){}themeText();});
  themeText();renderInitialPreview();render();
+ window.PSY_STANDALONE_DRAFT={
+  name:"Домики Ореховой (рабочий протокол)",
+  get:()=>JSON.parse(JSON.stringify(state)),
+  restore:data=>{
+   if(!data||!Array.isArray(data.students))return;
+   Object.keys(state).forEach(k=>delete state[k]);
+   Object.assign(state,{mode:"one",students:[],selected:0,groupName:"",clipboard:null,step:1,activeColor:"blue"},data);
+   render();
+  }
+ };
  // Exact scoring fixtures: reference sequence CO=0, reverse sequence CO=32.
  const reference=emptyStudent("Проверка",7);reference.ranking=[...NORM];const reverse=emptyStudent("Проверка",7);reverse.ranking=[...NORM].reverse();
  if(calculate(reference).co!==0||calculate(reverse).co!==32)throw new Error("Неверный расчет СО");
