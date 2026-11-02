@@ -5,6 +5,15 @@
  const queue=new Map(),saved=new Map(),prompted=new Set();
  let timer=null;
  const bridge=()=>window.PSY_DRAFT_BRIDGE;
+ function status(message,failed){
+  if(modal.hidden)return;
+  let n=modal.querySelector("#psyDraftStatus");
+  if(!n){n=document.createElement("small");n.id="psyDraftStatus";n.setAttribute("role","status");
+   n.style.cssText="display:inline-block;padding:4px 7px;font:12px/1.3 system-ui";
+   modal.querySelector(".modalhead")?.append(n);
+  }
+  n.textContent=message;n.style.color=failed?"#a04424":"#557460";
+ }
  function filled(s){return (s?.rows||[]).some(r=>String(r.name||"").trim()||Array.isArray(r.answers)&&r.answers.some(v=>v!==""&&v!=null)||Object.keys(r).some(k=>!["name","answers","ageYears","sex","schoolGrade","ageManual","attendance"].includes(k)&&r[k]!=null&&JSON.stringify(r[k])!=="{}"))}
  function take(){try{let d=bridge()?.get?.();return d&&filled(d.snapshot)?d:null}catch(_){return null}}
  function flush(){
@@ -14,8 +23,13 @@
   const key=draft.methodName+"::"+draft.snapshot.calcMode,raw=JSON.stringify(draft.snapshot);
   if(saved.get(key)===raw)return;
   const next=(queue.get(key)||Promise.resolve()).catch(()=>{}).then(()=>cloud.upsertDraft(draft)).then(()=>{
-   saved.set(key,raw);window.dispatchEvent(new Event("psy-draft-saved"));
-  }).catch(()=>{});
+    saved.set(key,raw);
+   if(bridge()?.get?.()?.methodName===draft.methodName)status("Черновик сохранен в профиле",false);
+   window.dispatchEvent(new Event("psy-draft-saved"));
+  }).catch(()=>{
+   if(bridge()?.get?.()?.methodName===draft.methodName)
+    status("Не удалось сохранить черновик. Сохраните результат вручную.",true);
+  });
   queue.set(key,next);
  }
  function schedule(){if(modal.hidden)return;clearTimeout(timer);timer=setTimeout(flush,800)}
