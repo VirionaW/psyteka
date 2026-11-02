@@ -5,6 +5,7 @@
 #modal .psy-visual-entry:hover{background:#daecdd}
 #modal .psy-v-layout{position:relative;min-width:0}
 #modal .psy-v-layout > .psy-v-layout-block{box-sizing:border-box;max-width:var(--psy-v-width,100%);width:var(--psy-v-width,100%);min-width:0}
+#modal .psy-v-layout > .psy-v-layout-block{position:relative;left:var(--psy-v-x,0px);top:var(--psy-v-y,0px)}
 #modal .psy-v-layout > .psy-v-align-left{margin-left:0;margin-right:auto;text-align:left}
 #modal .psy-v-layout > .psy-v-align-center{margin-left:auto;margin-right:auto;text-align:center}
 #modal .psy-v-layout > .psy-v-align-right{margin-left:auto;margin-right:0;text-align:right}
@@ -69,3 +70,5 @@ html.dark #modal .psy-visual-entry{background:#315d41;color:#ecf7ed;border-color
  #modal .psy-visual-toolbar span{display:none}
  #modal .psy-v-layout > .psy-v-layout-block{max-width:100%;width:100%}
 }
+
+@media(max-width:540px){#modal .psy-v-layout > .psy-v-layout-block{left:0;top:var(--psy-v-y,0px)}}
