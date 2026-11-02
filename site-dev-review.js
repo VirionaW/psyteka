@@ -59,7 +59,7 @@
   const copyButton=e("button",null,"Передать Артему");
   copyButton.type="button";
   copyButton.addEventListener("click",async()=>{
-   await copy("Артем, исправь замечание Метоларии MT-"+row.id+" в Supabase (таблица psy_dev_annotations). Проверь страницу и выбранный элемент. После исправления сообщи результат.");
+   await copy("Артем, исправь замечание Метоларии MT-"+row.id+" (таблица psy_dev_annotations). Страница: "+row.page_path+". Элемент: "+row.selector+". Задача: "+row.note+". После исправления сообщи результат.");
    copyButton.textContent="Номер скопирован";
   });
   const sLabel=e("label","psy-dev-review-status-label","Статус");
