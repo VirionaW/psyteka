@@ -882,7 +882,7 @@ function bindControls(){
  const nextMode=b.dataset.cmode;
  if(nextMode===calcMode)return;
  savedModeRecords[calcMode]={...savedModeRecords[calcMode],id:activeSavedAssessmentId,title:activeSavedAssessmentTitle};
- calcMode=nextMode;rows=modeSnapshots[calcMode];rowIndex=modeIndices[calcMode]||0;
+ window.PSY_DRAFTS?.flush?.();calcMode=nextMode;rows=modeSnapshots[calcMode];rowIndex=modeIndices[calcMode]||0;
  activeSavedAssessmentId=savedModeRecords[calcMode]?.id||null;
  activeSavedAssessmentTitle=savedModeRecords[calcMode]?.title||"";
  setTab("score");
@@ -1089,7 +1089,7 @@ window.PSY_PROCESSING_NOTEBOOK={
   modeSnapshots[calcMode]=rows;
   modeIndices[calcMode]=rowIndex;
   activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=data.title;
-  rows=data.snapshot.rows.length?data.snapshot.rows:[{name:"",answers:[]}];
+  window.PSY_DRAFTS?.flush?.();rows=data.snapshot.rows.length?data.snapshot.rows:[{name:"",answers:[]}];
   savedModeRecords[calcMode]={id:data.id,title:data.title,baseline:JSON.stringify(rows)};
   rowIndex=Math.max(0,Math.min(rows.length-1,data.snapshot.rowIndex||0));
   modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
@@ -1111,7 +1111,7 @@ window.PSY_PROCESSING_NOTEBOOK={
   const changed=saved.baseline!==null&&saved.baseline!==undefined
    ?JSON.stringify(rows)!==saved.baseline:hasEnteredData;
   if(changed&&!confirm("Вернуться к чистому бланку? Несохраненные изменения текущей обработки будут потеряны. Сохраненные в профиле результаты останутся."))return false;
-  rows=[{name:"",answers:[]}];
+  window.PSY_DRAFTS?.flush?.();rows=[{name:"",answers:[]}];
   rowIndex=0;
   modeSnapshots[calcMode]=rows;
   modeIndices[calcMode]=0;
