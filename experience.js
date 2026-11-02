@@ -973,7 +973,7 @@ function openMethod(m){
  if(window.PSY_PMPK_OBJECT56?.catalog?.some(x=>x.title===m.name)){const item=window.PSY_PMPK_OBJECT56.catalog.find(x=>x.title===m.name);window.PSY_PMPK_OBJECT56.open(item.object56Id);return;}
  if(window.PSY_PMPK_IVANOVA?.has?.(m.name)){window.PSY_PMPK_IVANOVA.open();return;}
  if(window.PSY_PMPK_PROVERBS?.has?.(m.name)){window.PSY_PMPK_PROVERBS.open();return;}
- if(methodNow?.name){methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords}};
+ if(methodNow?.name){window.PSY_DRAFTS?.flush?.();methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords}};
  methodNow=m;tabNow='overview';activeSavedAssessmentId=null;activeSavedAssessmentTitle='';
  const saved=methodSessions[m.name];
  calcMode=saved?.calcMode||'one';
