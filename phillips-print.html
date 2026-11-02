@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Филлипс – материалы для печати</title>
+<style>
+@page{size:A4 portrait;margin:13mm}
+*{box-sizing:border-box}
+body{margin:0 auto;max-width:970px;padding:21px 25px;background:#fff;color:#243c2e;font:14px/1.5 Arial,Helvetica,sans-serif}
+.tools{position:sticky;top:0;z-index:5;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:13px 0;background:#fff;border-bottom:1px solid #d5e3d8;margin-bottom:20px}
+.tools a,.tools button{display:inline-flex;padding:10px 16px;background:#f2f8f3;color:#285f43;border-radius:9px;border:1px solid #bad4c2;text-decoration:none;font-weight:750;cursor:pointer}
+.tools button{background:#276d4c;color:#fff}
+h1{font-size:23px;margin:0 0 5px;line-height:1.25;color:#214c35}h2{font-size:16px;margin:19px 0 8px}
+.subtitle{color:#60786b;font-size:13px;margin:0 0 18px}
+.instruction{border:1px solid #b8d2bf;border-left:4px solid #337e52;background:#f5faf5;padding:12px 15px;margin:15px 0;line-height:1.6}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:17px 0}
+.meta label{display:block;font-size:12px;color:#4b6759}
+.line{height:24px;border-bottom:1px solid #91ab99}
+.answer-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px;align-items:start}
+table{border-collapse:collapse;width:100%;table-layout:fixed}
+th,td{border:1px solid #aec6b5;padding:5px;text-align:center;height:27px}
+th{background:#eaf4eb;color:#305b40;font-size:13px}
+td:first-child{font-weight:700;width:33%}
+td:nth-child(2),td:nth-child(3){width:33%}
+.guide p,.guide li{margin:7px 0}
+.source{font-size:11px;color:#546c5c;overflow-wrap:anywhere}
+.factors th,.factors td{text-align:left;height:auto;padding:7px}
+.factors td:last-child{text-align:center}
+.print-student.is-combined{break-before:page;page-break-before:always}
+.print-student{break-inside:avoid}
+@media(max-width:640px){body{padding:13px}.answer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.meta{gap:8px}h1{font-size:20px}}
+@media print{
+ body{padding:0;max-width:none;font-size:11pt;line-height:1.36}
+ .tools{display:none!important}
+ h1{font-size:18pt}h2{font-size:12pt;margin:13px 0 5px}
+ .subtitle{margin-bottom:8px}.instruction{padding:8px 10px;margin:9px 0}
+ .meta{margin:10px 0}
+ .answer-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+ th,td{height:25px;padding:4px;font-size:10pt}
+ .source{font-size:8pt}
+ .guide{font-size:10pt}
+}
+</style>
+</head>
+<body>
+<div class="tools"><a href="library.html">Вернуться в библиотеку</a><button id="printNow" type="button">Распечатать А4</button><a id="originalLink" rel="noopener noreferrer" target="_blank">Полный опросник · 58 вопросов (PDF)</a></div>
+<main id="printContent"><h1>Филлипс</h1><p>Подготовка страницы для печати...</p></main>
+<script src="method-phillips.js?v=20261102phprint1"></script>
+<script>
+(function(){
+ const m=window.PSY_PHILLIPS;
+ const kind=new URLSearchParams(location.search).get("kind");
+ const variant=["guide","combined","blank"].includes(kind)?kind:"blank";
+ const esc=s=>String(s??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
+ const source=m.fullQuestionnaireUrl;
+ document.getElementById("originalLink").href=source;
+ document.getElementById("printNow").addEventListener("click",()=>window.print());
+ const intro=esc(m.studentInstruction);
+ const grid='<div class="answer-grid">'+Array.from({length:4},(_,col)=>{
+   const start=col*15+1,end=Math.min(58,start+14);
+   return '<table><thead><tr><th>№</th><th>Да</th><th>Нет</th></tr></thead><tbody>'+
+    Array.from({length:end-start+1},(_,i)=>'<tr><td>'+(start+i)+'</td><td></td><td></td></tr>').join("")+'</tbody></table>';
+ }).join("")+'</div>';
+ const paper='<section class="print-student'+(variant==="combined"?' is-combined':'')+'">'+
+ '<h1>Лист ответов · 58 вопросов</h1><p class="subtitle">Тест школьной тревожности Филлипса</p>'+
+ '<div class="meta"><label>Код ученика<div class="line"></div></label><label>Класс<div class="line"></div></label><label>Дата<div class="line"></div></label></div>'+
+ '<div class="instruction"><strong>Инструкция ученику:</strong> '+intro+'</div>'+grid+
+ '<p class="source">На этом листе регистрируются ответы на исходные 58 вопросов. Текст вопросов предъявляется отдельно из опубликованного опросника.</p></section>';
+ const keyYes=m.key.map((val,i)=>val==="yes"?i+1:null).filter(Boolean).join(", ");
+ const guide='<article class="guide"><h1>Тест школьной тревожности Филлипса</h1><p class="subtitle">Руководство специалиста · 58 вопросов · ответы «Да» / «Нет»</p>'+
+ '<h2>Цель</h2><p>Исследование характера школьной тревожности, связанной с учебой, проверкой знаний и отношениями в школе.</p>'+
+ '<h2>Инструкция для чтения ученику</h2><div class="instruction">'+intro+'</div>'+
+ '<h2>Проведение</h2><p>Предъявите все 58 вопросов исходного опросника в установленном порядке. Ученик отмечает «Да» или «Нет» на листе ответов. Проверьте отсутствие пропусков перед обработкой.</p>'+
+ '<h2>Ключ и подсчет</h2><p>В ключе «Да»: '+esc(keyYes)+'. В остальных пунктах ключ «Нет». За каждый ответ, не совпадающий с ключом, начисляется 1 балл. Общая сумма – 0-58.</p>'+
+ '<p>Общий показатель выше 50% – повышенная тревожность; выше 75% – высокая. Ровно 50% и 75% не пересекают соответствующие границы. По каждому фактору используйте его собственный набор вопросов.</p>'+
+ '<h2>Восемь факторов</h2><table class="factors"><thead><tr><th>Фактор</th><th>Номера вопросов</th><th>Макс.</th></tr></thead><tbody>'+
+ m.scales.map(s=>'<tr><td>'+esc(s.name)+'</td><td>'+s.q.join(", ")+'</td><td>'+s.q.length+'</td></tr>').join("")+'</tbody></table>'+
+ '<p class="source"><strong>Полный текст вопросов:</strong> '+esc(source)+'</p></article>';
+ document.getElementById("printContent").innerHTML=(variant==="blank"?"":guide)+(variant==="guide"?"":paper);
+})();
+</script>
+</body>
+</html>
