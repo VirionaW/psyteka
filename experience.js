@@ -169,6 +169,7 @@ function bindAnswerCopyControls(){
  else entry.querySelector(".psy-cp-grid")?.insertAdjacentElement("afterend",box);
 }
 function setTab(name){
+ if(name!=="overview"&&window.PSY_PORTFOLIO_VISUAL?.canLeave?.()===false)return;
  const previousTab=tabNow;
  const preserveScroll=previousTab===name&&(name==="score"||name==="processing");
  const previousScroll=preserveScroll?($("#modalBody")?.scrollTop||0):0;
