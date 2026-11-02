@@ -110,6 +110,16 @@
   drawing=true;
   requestAnimationFrame(()=>{drawing=false;showHighlights()});
  }
+ function syncLocation(){
+  const first=selectedTargets[0];
+  if(!first){locationInfo=null;return}
+  locationInfo={
+   page_path:location.pathname.slice(0,350),selector:first.selector,
+   element_tag:first.tag,element_label:first.label,
+   method_id:first.method_id,tab_name:first.tab_name,
+   viewport:{width:innerWidth,height:innerHeight,...first.rect}
+  };
+ }
  function updateSelectedList(){
   selectedList.replaceChildren();
   selectedCount.textContent="Выбранные элементы: "+selectedTargets.length+" / 15";
@@ -125,6 +135,7 @@
     selectedTargets.splice(i,1);
     if(!selectedTargets.length){panel.hidden=true;locationInfo=null;copy.hidden=true}
     else{subTitle();}
+    syncLocation();latestId=null;copy.hidden=true;submit.disabled=false;
     updateSelectedList();showHighlights();
    });
    row.append(name,remove);selectedList.append(row);
@@ -150,11 +161,12 @@
   if(!additive){selectedTargets.length=0;locationInfo=null;panel.hidden=true;latestId=null;
    copy.hidden=true;submit.disabled=false;note.value="";screenshot.value="";setStatus("")}
   if(selectedTargets.length>=15)return;
+  latestId=null;copy.hidden=true;submit.disabled=false;
   picking=true;chooseBtn.textContent="Отменить выбор";
   addMore.textContent="Отменить выбор";
   document.body.classList.add("psy-dev-picking");
   hint.textContent=selectedTargets.length?
-   "Нажми на следующий элемент, чтобы добавить его в общее замечание. Esc – отмена выбора.":
+   "Нажми на следующий элемент. Shift + щелчок позволяет выбирать несколько подряд. Esc – отмена выбора.":
    "Нажми на нужный элемент. Рамка закрепится после щелчка. Esc – отмена.";
   updateSelectedList();
  }
@@ -198,16 +210,10 @@
     rect:{x:Math.round(r.x),y:Math.round(r.y),w:Math.round(r.width),h:Math.round(r.height)}
    };
    selectedTargets.push(entry);
-   if(selectedTargets.length===1){
-    locationInfo={
-     page_path:location.pathname.slice(0,350),selector:entry.selector,
-     element_tag:entry.tag,element_label:entry.label,
-     method_id:entry.method_id,tab_name:entry.tab_name,
-     viewport:{width:innerWidth,height:innerHeight,...entry.rect}
-    };
-   }
+   syncLocation();
   }
-  stopPick();updateSelectedList();
+  if(!event.shiftKey)stopPick();
+  updateSelectedList();
   panel.hidden=false;
   if(!note.value.trim())note.focus();
   setStatus("");
