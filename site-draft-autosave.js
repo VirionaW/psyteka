@@ -10,7 +10,7 @@
   let n=modal.querySelector("#psyDraftStatus");
   if(!n){n=document.createElement("small");n.id="psyDraftStatus";n.setAttribute("role","status");
    n.style.cssText="display:inline-block;padding:4px 7px;font:12px/1.3 system-ui";
-   modal.querySelector(".modalhead")?.append(n);
+   (modal.querySelector("#modalAuthor")||modal.querySelector(".modalhead"))?.append(n);
   }
   n.textContent=message;n.style.color=failed?"#a04424":"#557460";
  }
