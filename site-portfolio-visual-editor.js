@@ -108,6 +108,9 @@
  }
  function decorateLayout(context,data){
   const root=context.root;
+  // Rebuild only custom blocks; native source markup remains untouched.
+  root.querySelectorAll(":scope > .psy-v-custom").forEach(el=>el.remove());
+  root.classList.add("psy-v-layout");
   const blocks=new Map(context.native.map(el=>[el.dataset.psyVisualBlock,el]));
   for(const entry of data.custom){
    const node=createCustom(entry);
@@ -119,6 +122,7 @@
    node.classList.toggle("psy-v-align-center",style.align==="center");
    node.classList.toggle("psy-v-align-right",style.align==="right");
    node.classList.toggle("psy-v-align-left",style.align==="left");
+   node.classList.add("psy-v-layout-block");
    if(context.editing)node.classList.add("psy-v-block");
   }
   const orderedIds=[...data.order.filter(id=>blocks.has(id)),...Array.from(blocks.keys()).filter(id=>!data.order.includes(id))];
@@ -147,6 +151,8 @@
   if(!editor)return;
   const context=editor.context;
   context.editing=false;
+  context.controller.abort();
+  document.getElementById("modal")?.classList.remove("psy-v-edit-mode");
   context.root.classList.remove("psy-visual-editing");
   context.root.querySelectorAll(".psy-v-drag-handle").forEach(el=>el.remove());
   context.root.querySelectorAll(".psy-v-block").forEach(el=>{
@@ -283,6 +289,7 @@
   if(!administrator||!isOverview())return;
   cleanup();
   context.editing=true;
+  context.controller=new AbortController();
   const draft=normalized(context.saved);
   const panel=dom("aside","psy-v-panel");
   panel.setAttribute("aria-label","Панель визуального редактирования");
@@ -446,6 +453,7 @@
    if(token!==revision||active!==context||!body.isConnected)return;
    // Keep the original published portfolio if layouts cannot be loaded.
   }
+  try{await Promise.resolve(identity?.ready)}catch(_){}
   if(!administrator||token!==revision||!isOverview()||!body.isConnected)return;
   const bar=dom("div","psy-visual-toolbar");
   const b=dom("button","psy-visual-entry","✎ Редактировать");
