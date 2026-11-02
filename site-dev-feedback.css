@@ -1,0 +1,42 @@
+/* Temporary site-wide admin feedback. No layout shifts or changes to student controls. */
+#psyDevWidget[hidden],#psyDevWidget [hidden],.psy-dev-outline[hidden]{display:none!important}
+#psyDevWidget{position:fixed;left:14px;bottom:14px;z-index:9999990;pointer-events:none;max-width:min(390px,calc(100vw - 28px));color:#234733;font:14px/1.45 system-ui,-apple-system,Arial,sans-serif}
+#psyDevWidget > *{pointer-events:auto}
+#psyDevWidget .psy-dev-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:7px;background:#fff;border:1px solid #b5d1c0;box-shadow:0 6px 24px #123b2a36;border-radius:14px;padding:8px}
+#psyDevWidget button,#psyDevWidget a{font:750 13px/1.35 system-ui,sans-serif;text-decoration:none;cursor:pointer}
+#psyDevWidget .psy-dev-toolbar button,#psyDevWidget .psy-dev-toolbar a{border-radius:9px;padding:9px 12px;min-height:38px;border:1px solid #b8d1be;background:#eaf4eb;color:#2b6849}
+#psyDevWidget .psy-dev-mode{background:#29714f!important;color:#fff!important;border-color:#29714f!important}
+#psyDevWidget .psy-dev-mode[aria-pressed="true"]{background:#7d5835!important;border-color:#7d5835!important}
+#psyDevWidget .psy-dev-toolbar button:hover,#psyDevWidget .psy-dev-toolbar a:hover{filter:brightness(.95)}
+#psyDevWidget .psy-dev-hint{font-size:12px;line-height:1.45;color:#f7fff6;background:#274739e8;padding:6px 9px;margin:6px 0;border-radius:9px;max-width:380px}
+#psyDevWidget .psy-dev-hint:empty{display:none}
+#psyDevWidget .psy-dev-panel{background:#fff;border:1px solid #a8cbb2;border-radius:17px;box-shadow:0 16px 50px #132d2480;padding:19px;margin-top:8px;max-height:min(68vh,630px);overflow-y:auto;min-width:min(350px,calc(100vw - 28px))}
+#psyDevWidget .psy-dev-panel h3{font-size:18px;line-height:1.3;margin:0 0 8px;color:#274e38}
+#psyDevWidget .psy-dev-target{font:11px/1.4 ui-monospace,monospace;max-height:48px;overflow:auto;color:#5c7867;background:#f4f7f1;padding:7px;border-radius:8px;overflow-wrap:anywhere}
+#psyDevWidget .psy-dev-panel label{display:grid;gap:7px;font-size:13px;font-weight:750;margin:12px 0 0;color:#315742}
+#psyDevWidget .psy-dev-panel textarea,#psyDevWidget .psy-dev-panel input{width:100%;min-width:0;box-sizing:border-box;border:1px solid #b3cdbb;border-radius:9px;padding:11px;background:#fff;color:#234934;font:14px/1.45 system-ui,sans-serif}
+#psyDevWidget .psy-dev-panel textarea{min-height:90px;resize:vertical}
+#psyDevWidget .psy-dev-privacy{margin:10px 0 4px;color:#856039;font-size:12px;line-height:1.4}
+#psyDevWidget .psy-dev-status{margin:9px 0;font-size:13px;color:#296849;line-height:1.5}
+#psyDevWidget .psy-dev-status.is-error{color:#a74130}
+#psyDevWidget .psy-dev-panel-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+#psyDevWidget .psy-dev-panel-actions button{border-radius:9px;border:1px solid #b7d0bc;padding:10px 14px;background:#f5faf5;color:#315c45;min-height:42px}
+#psyDevWidget .psy-dev-panel-actions .psy-dev-send{background:#2b7450;color:#fff;border-color:#2b7450}
+#psyDevWidget button:disabled{opacity:.55;cursor:default}
+#psyDevWidget button:focus-visible,#psyDevWidget a:focus-visible{outline:3px solid #d9bc77;outline-offset:2px}
+.psy-dev-outline{position:fixed;z-index:9999988;pointer-events:none;border:3px solid #e9a83d;border-radius:4px;outline:2px solid #fff;background:rgba(229,175,64,.09);box-shadow:0 0 0 3px #7347187d}
+body.psy-dev-picking{cursor:crosshair!important}
+body.psy-dev-picking *:not(#psyDevWidget):not(#psyDevWidget *){cursor:crosshair!important}
+.psy-dev-located{outline:4px solid #edae41!important;outline-offset:4px!important;animation:psy-dev-found .9s ease-in-out 3}
+@keyframes psy-dev-found{50%{outline-color:#356c48}}
+html.dark #psyDevWidget .psy-dev-toolbar,html.dark #psyDevWidget .psy-dev-panel{background:#1c3629;border-color:#4d7860;color:#e4f2e7}
+html.dark #psyDevWidget .psy-dev-panel h3,html.dark #psyDevWidget .psy-dev-panel label{color:#e1f1e3}
+html.dark #psyDevWidget .psy-dev-panel input,html.dark #psyDevWidget .psy-dev-panel textarea{background:#142b20;border-color:#5c8064;color:#f5f9f5}
+html.dark #psyDevWidget .psy-dev-target{background:#264534;color:#ccded0}
+@media(max-width:640px){
+ #psyDevWidget{left:8px;right:8px;bottom:8px;max-width:none}
+ #psyDevWidget .psy-dev-toolbar{gap:5px;padding:6px}
+ #psyDevWidget .psy-dev-toolbar button,#psyDevWidget .psy-dev-toolbar a{padding:9px;flex:1 1 auto;font-size:12px}
+ #psyDevWidget .psy-dev-panel{min-width:0;padding:14px;max-height:65vh}
+}
+@media(prefers-reduced-motion:reduce){.psy-dev-located{animation:none}}
