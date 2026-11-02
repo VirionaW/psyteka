@@ -235,7 +235,7 @@
   const {data:roleData,error:roleError}=await client.from("psy_account_roles")
    .select("role").eq("user_id",user.id).maybeSingle();
   if(roleError)throw roleError;
-  if(roleData?.role!=="owner")throw Error("Редактор доступен только владельцу.");
+  if(!["owner","shadow","moderator"].includes(roleData?.role))throw Error("Редактор доступен только администрации.");
   root.hidden=false;gate.hidden=true;
   fillMethods();
   await Promise.all([fetchHomeSources(),fetchValues()]);
