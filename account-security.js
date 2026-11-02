@@ -22,7 +22,10 @@
  $("accountMfaContinue").href=safeNext();
  async function refresh(){
   const {data:person,error:userError}=await client.auth.getUser();
-  if(userError||!person?.user||person.user.is_anonymous){show("accountMfaGuest");note("Войдите по электронной почте");return}
+  if(userError||!person?.user||person.user.is_anonymous||
+    (window.PSY_AUTH_PROTECTION&&!(await window.PSY_AUTH_PROTECTION.keepSession(client,person.user)))){
+   show("accountMfaGuest");note("Войдите по электронной почте");return;
+  }
   const [list,aal]=await Promise.all([client.auth.mfa.listFactors(),client.auth.mfa.getAuthenticatorAssuranceLevel()]);
   if(list.error||aal.error)throw list.error||aal.error;
   const factors=(list.data?.totp||[]).filter(f=>f.status==="verified");
