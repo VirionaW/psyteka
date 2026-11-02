@@ -37,6 +37,58 @@
   const changed=get(m,"indicators");
   return changed===null?fallback:String(changed).split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,30);
  }
+ function applyPortfolioDOM(m,body){
+  if(!m||!body)return;
+  const modal=document.getElementById("modal");
+  const heading=modal?.querySelector("#modalTitle");
+  if(heading)heading.textContent=display(m,"name",m.name);
+  const edits=["name","author","type","age","count","goal","indicators"]
+   .filter(key=>get(m,key)!==null);
+  if(!edits.length)return;
+  const labels={name:/^(Методика|Программа|Материал)$/i,author:/^(Автор|Разработчик|Составитель)$/i,
+   type:/^Вид$/i,age:/^(Возраст|Целевая аудитория)$/i,count:/^Количество вопросов \/ заданий$/i};
+  const rows=Array.from(body.querySelectorAll(".psy-profile-row"));
+  for(const row of rows){
+   const label=row.querySelector("strong")?.textContent?.trim()||"";
+   const span=row.querySelector("span");
+   if(!span)continue;
+   for(const [field,pattern] of Object.entries(labels)){
+    if(pattern.test(label)&&get(m,field)!==null)span.textContent=get(m,field);
+   }
+  }
+  const goal=body.querySelector(".psy-profile-description");
+  if(goal&&get(m,"goal")!==null)goal.textContent=get(m,"goal");
+  const indicatorsBox=body.querySelector(".psy-profile-indicators");
+  if(indicatorsBox&&get(m,"indicators")!==null){
+   indicatorsBox.replaceChildren();
+   for(const indicator of indicators(m,[])){
+    const item=document.createElement("div");item.className="psy-profile-indicator";
+    const span=document.createElement("span");span.textContent=indicator;
+    item.append(span);indicatorsBox.append(item);
+   }
+  }
+  // Some specialized portfolios render custom markup instead of the common rows.
+  // Show one authoritative summary of corrections rather than rewriting their
+  // scripts, stimulus material or scoring implementation.
+  if(!rows.length){
+   const shown=edits.filter(x=>x!=="name"&&x!=="indicators");
+   if(shown.length){
+    let panel=body.querySelector(".psy-owner-published-fields");
+    if(!panel){
+     panel=document.createElement("section");panel.className="psy-owner-published-fields";
+     body.prepend(panel);
+    }
+    panel.replaceChildren();
+    const h=document.createElement("h3");h.textContent="Обновленные сведения";panel.append(h);
+    const captions={author:"Автор",type:"Вид",age:"Возраст",count:"Количество заданий",goal:"Цель"};
+    for(const field of shown){
+     const p=document.createElement("p");
+     const bold=document.createElement("strong");bold.textContent=captions[field]+": ";
+     p.append(bold,document.createTextNode(get(m,field)));panel.append(p);
+    }
+   }
+  }
+ }
  function apply(){
   for(const [key,selector] of Object.entries(home)){
    const el=document.querySelector(selector);
@@ -62,6 +114,7 @@
    composer.compose=wrapped;
   }
   if(typeof window.PSY_RENDER_CATALOG==="function")window.PSY_RENDER_CATALOG();
+  window.PSY_REFRESH_METHOD_OVERVIEW?.();
  }
  async function load(){
   const client=getClient();
@@ -74,6 +127,6 @@
    loadFailed=false;apply();
   }catch(_){loadFailed=true;/* Original copy remains available if cloud is offline. */}
  }
- window.PSY_CONTENT_OVERRIDES={load,apply,get,display,indicators,methodKey,get failed(){return loadFailed}};
+ window.PSY_CONTENT_OVERRIDES={load,apply,get,display,indicators,methodKey,applyPortfolioDOM,get failed(){return loadFailed}};
  void load();
 })();
