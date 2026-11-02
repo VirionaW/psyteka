@@ -75,16 +75,16 @@
  function validSnapshot(snapshot){
   if(!snapshot||!["one","class"].includes(snapshot.calcMode))throw Error("Неверный режим");
   if(!Array.isArray(snapshot.rows)||snapshot.rows.length>300)throw Error("В одном сохранении допускается не более 300 участников");
-  const rows=snapshot.rows.map(r=>({
-   name:String(r.name||"").slice(0,120),
-   answers:Array.isArray(r.answers)?r.answers.slice(0,100):[],
-   ageYears:Number.isInteger(r.ageYears)?r.ageYears:null,
-   sex:r.sex==="m"||r.sex==="f"?r.sex:null,
-   schoolGrade:Number.isInteger(r.schoolGrade)?r.schoolGrade:null,
-   ageManual:r.ageManual===true,
-   ...(r.razuvaevaKey==="method-six"||r.razuvaevaKey==="kmc-seven"?{razuvaevaKey:r.razuvaevaKey}:{}),
-   attendance:r.attendance==="absent"?"absent":"present"
-  }));
+  // Preserve workflow-specific notes, answer sets and variants. The previous
+  // reducer discarded these fields when saving, losing diagnostic data.
+  const serialized=JSON.stringify(snapshot.rows);
+  if(!serialized||serialized.length>850000)throw Error("Слишком большой объем результатов");
+  const rows=JSON.parse(serialized).map(r=>{
+   if(!r||typeof r!=="object"||Array.isArray(r))throw Error("Неверная запись участника");
+   r.name=String(r.name||"").slice(0,120);
+   r.answers=Array.isArray(r.answers)?r.answers.slice(0,500):[];
+   return r;
+  });
   return {calcMode:snapshot.calcMode,rows,rowIndex:Math.min(rows.length-1,Math.max(0,Number(snapshot.rowIndex)||0))};
  }
  async function saveAssessment({id=null,title,methodName,snapshot}){
@@ -122,5 +122,42 @@
   const {error}=await client.from("psy_saved_assessments").delete().eq("user_id",user.id).eq("id",id);
   if(error)throw error;
  }
- window.PSY_CLOUD={ready,saveCollections,saveAssessment,listAssessments,getAssessment,deleteAssessment,readCollections:readLocal,isReady:()=>!loading};
+ // Drafts are independent of manually saved assessments. Autosave cannot
+ // overwrite or delete a named result, even if the method changes later.
+ async function upsertDraft({methodName,snapshot}){
+  await ready;
+  if(!client||!user)throw Error("Войдите в аккаунт");
+  methodName=String(methodName||"").trim().slice(0,220);
+  if(!methodName)throw Error("Не выбрана методика");
+  const safe=validSnapshot(snapshot);
+  const {error}=await client.from("psy_assessment_drafts").upsert({
+   user_id:user.id,method_name:methodName,calc_mode:safe.calcMode,
+   snapshot:safe,updated_at:new Date().toISOString()
+  },{onConflict:"user_id,method_name,calc_mode"});
+  if(error)throw error;
+ }
+ async function listDrafts(){
+  await ready;if(!client||!user)throw Error("Войдите в аккаунт");
+  const {data,error}=await client.from("psy_assessment_drafts")
+   .select("method_name,calc_mode,updated_at").eq("user_id",user.id)
+   .order("updated_at",{ascending:false}).limit(250);
+  if(error)throw error;return data||[];
+ }
+ async function getDraft(methodName,mode){
+  await ready;if(!client||!user)throw Error("Войдите в аккаунт");
+  if(!["one","class"].includes(mode))throw Error("Неверный режим");
+  const {data,error}=await client.from("psy_assessment_drafts")
+   .select("method_name,calc_mode,snapshot,updated_at").eq("user_id",user.id)
+   .eq("method_name",String(methodName||"")).eq("calc_mode",mode).maybeSingle();
+  if(error)throw error;return data?{...data,snapshot:validSnapshot(data.snapshot)}:null;
+ }
+ async function deleteDraft(methodName,mode){
+  await ready;if(!client||!user)throw Error("Войдите в аккаунт");
+  if(!["one","class"].includes(mode))throw Error("Неверный режим");
+  const {error}=await client.from("psy_assessment_drafts").delete()
+   .eq("user_id",user.id).eq("method_name",String(methodName||"")).eq("calc_mode",mode);
+  if(error)throw error;
+ }
+ window.PSY_CLOUD={ready,saveCollections,saveAssessment,listAssessments,getAssessment,deleteAssessment,
+  upsertDraft,listDrafts,getDraft,deleteDraft,readCollections:readLocal,isReady:()=>!loading};
 })();
