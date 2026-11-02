@@ -1,0 +1,72 @@
+<!doctype html><html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<title>Редактор сайта – Метолария</title>
+<link rel="icon" href="brand-favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="site-v2.css">
+<link rel="stylesheet" href="site-unified.css?v=20261028wordmark2">
+<link rel="stylesheet" href="site-owner-editor.css?v=20261102edit1">
+</head><body class="site-landing" data-account="owner-editor">
+<header class="site-header">
+<a class="site-logo" href="index.html?home=1"><img src="brand-mark.svg" width="44" height="44" alt=""><span class="psy-wordmark"><span class="psy-word-start">Мето</span><span class="psy-word-end">лария</span></span></a>
+<nav><a href="profile.html#psySecurity">Мой кабинет</a><a href="library.html">Библиотека</a></nav>
+</header>
+<div class="psy-owner-gate" id="ownerEditorGate" role="status" aria-live="polite">Проверяем доступ владельца...</div>
+<main class="psy-editor-root" id="ownerEditorRoot" hidden>
+ <div class="psy-editor-hero">
+  <span>ЛИЧНЫЙ КАБИНЕТ ВЛАДЕЛЬЦА</span>
+  <h1>Редактор Метоларии</h1>
+  <p>Исправляйте описания и тексты без изменения программного кода. Каждая опубликованная редакция сохраняется в истории.</p>
+ </div>
+ <div class="psy-editor-layout">
+  <section class="psy-editor-card" aria-labelledby="ownerEditTitle">
+   <h2 id="ownerEditTitle">Изменить текст</h2>
+   <div class="psy-editor-modes" role="group" aria-label="Раздел редактора">
+    <button type="button" id="ownerEditHome" aria-pressed="true">Главная страница</button>
+    <button type="button" id="ownerEditMethod" aria-pressed="false">Методики</button>
+   </div>
+   <div id="ownerEditMethodGroup" hidden>
+    <label for="ownerEditMethodSelect">Методика</label>
+    <input id="ownerEditSearch" type="search" placeholder="Найти методику..." aria-label="Поиск методики">
+    <select id="ownerEditMethodSelect" size="1"></select>
+   </div>
+   <label for="ownerEditField">Что изменить</label>
+   <select id="ownerEditField"></select>
+   <label for="ownerEditText">Текст для посетителей</label>
+   <textarea id="ownerEditText" rows="7" maxlength="5000" spellcheck="true"></textarea>
+   <div class="psy-editor-hint"><span id="ownerEditCount">0 / 5000</span><span>Только текст. Без HTML и программного кода.</span></div>
+   <div class="psy-editor-actions">
+    <button type="button" class="psy-editor-primary" id="ownerEditSave">Сохранить и опубликовать</button>
+    <button type="button" id="ownerEditOriginal">Вернуть исходный текст</button>
+   </div>
+   <p class="psy-editor-status" role="status" aria-live="polite" id="ownerEditStatus"></p>
+   <div class="psy-editor-history">
+    <h3>История изменений</h3>
+    <div id="ownerEditHistory"><p>Выберите текст.</p></div>
+   </div>
+  </section>
+  <aside class="psy-editor-card" aria-labelledby="ownerIssuesTitle">
+   <h2 id="ownerIssuesTitle">Журнал ошибок</h2>
+   <p class="psy-editor-description">Записывайте замечания по страницам и методикам, отмечайте исправленные. Программные ошибки по-прежнему требуют изменения кода.</p>
+   <form id="ownerIssueForm">
+    <label for="ownerIssueTitle">Название ошибки</label>
+    <input id="ownerIssueTitle" maxlength="180" required minlength="3" placeholder="Например, опечатка в названии">
+    <label for="ownerIssueDetails">Где находится и что исправить</label>
+    <textarea id="ownerIssueDetails" maxlength="4000" rows="3" placeholder="Страница, методика, описание проблемы"></textarea>
+    <button type="submit" class="psy-editor-primary">Добавить замечание</button>
+   </form>
+   <p id="ownerIssueStatus" class="psy-editor-status" role="status" aria-live="polite"></p>
+   <h3>Мои замечания</h3>
+   <div id="ownerIssuesList"><p>Загрузка...</p></div>
+  </aside>
+ </div>
+ <p class="psy-editor-footer-note">В этом редакторе доступны тексты главной страницы и описания школьного каталога. Диагностические вопросы, инструкции, ключи, нормы и результаты учеников не редактируются.</p>
+</main>
+<script src="auth-config.js?v=20261028metolaria1"></script>
+<script src="vendor/supabase-2.58.0.min.js?v=20261102"></script>
+<script src="site-auth-protection.js?v=20261102safety3"></script>
+<script src="site-account-identity.js?v=20261102auth4"></script>
+<script src="catalog.js?v=20261029luscher1"></script>
+<script src="site-descriptions.js?v=20261028metolaria1"></script>
+<script src="site-owner-editor.js?v=20261102edit1"></script>
+</body></html>
