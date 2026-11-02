@@ -23,7 +23,7 @@
   if(loading||document.hidden)return;
   loading=true;refreshBtn.disabled=true;count.textContent="Обновляем...";
   try{
-   let query=client.from("psy_dev_annotations").select("id,page_path,selector,element_tag,element_label,method_id,tab_name,viewport,note,status,resolution,screenshot_path,created_at,updated_at")
+   let query=client.from("psy_dev_annotations").select("id,page_path,selector,targets,element_tag,element_label,method_id,tab_name,viewport,note,status,resolution,screenshot_path,created_at,updated_at")
     .order("id",{ascending:false}).limit(150);
    if(filter.value!=="all")query=query.eq("status",filter.value);
    const {data,error}=await query;
@@ -50,7 +50,14 @@
   heading.append(badge,date);
   const desc=e("p","psy-dev-review-note",row.note);
   const locationText=e("p","psy-dev-review-location",row.page_path+" · "+(row.method_id||row.tab_name||row.element_tag));
-  const sel=e("code",null,row.selector);
+  const targets=Array.isArray(row.targets)&&row.targets.length?row.targets.filter(x=>x&&typeof x.selector==="string").slice(0,15):[{selector:row.selector,tag:row.element_tag}];
+  const sel=e("div","psy-dev-review-targets");
+  const countLabel=e("strong",null,"Выделенные элементы: "+targets.length);
+  sel.append(countLabel);
+  for(let i=0;i<targets.length;i++){
+   const selector=e("code",null,(i+1)+". "+targets[i].selector);
+   sel.append(selector);
+  }
   const action=e("div","psy-dev-review-actions");
   const locationUrl=new URL(row.page_path,location.origin);
   locationUrl.searchParams.set("psyDevIssue",row.id);
@@ -59,7 +66,7 @@
   const copyButton=e("button",null,"Передать Артему");
   copyButton.type="button";
   copyButton.addEventListener("click",async()=>{
-   await copy("Артем, исправь замечание Метоларии MT-"+row.id+" (таблица psy_dev_annotations). Страница: "+row.page_path+". Элемент: "+row.selector+". Задача: "+row.note+". После исправления сообщи результат.");
+   await copy("Артем, исправь замечание Метоларии MT-"+row.id+" (таблица psy_dev_annotations). Страница: "+row.page_path+". Выделенные элементы: "+targets.map(x=>x.selector).join("; ")+". Задача: "+row.note+". После исправления сообщи результат.");
    copyButton.textContent="Номер скопирован";
   });
   const sLabel=e("label","psy-dev-review-status-label","Статус");
@@ -83,6 +90,30 @@
    save.disabled=false;
   });
   action.append(link,copyButton);
+  const remove=e("button","psy-dev-review-delete","Удалить задачу");
+  remove.type="button";
+  remove.addEventListener("click",async()=>{
+   if(!window.confirm("Удалить задачу MT-"+row.id+" без возможности восстановления?"))return;
+   remove.disabled=true;message.textContent="Удаляем задачу...";
+   try{
+    const {data,error}=await client.from("psy_dev_annotations").delete()
+     .eq("id",row.id).select("id").single();
+    if(error)throw error;
+    if(!data)throw Error("Задача не найдена или недостаточно прав");
+    if(row.screenshot_path){
+     const {error:fileError}=await client.storage.from("psy-dev-attachments").remove([row.screenshot_path]);
+     if(fileError)count.textContent="Задача удалена, но файл снимка остался в хранилище.";
+    }
+    article.remove();
+    if(!list.querySelector(".psy-dev-review-item"))
+     list.append(e("p","psy-dev-review-empty","В этом разделе больше нет замечаний."));
+    if(!row.screenshot_path)count.textContent="Задача MT-"+row.id+" удалена.";
+   }catch(err){
+    message.textContent="Не удалось удалить: "+(err?.message||"Ошибка соединения");
+    remove.disabled=false;
+   }
+  });
+  action.append(remove);
   if(row.screenshot_path){
    const shot=e("button",null,"Посмотреть скриншот");
    shot.type="button";
