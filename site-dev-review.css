@@ -1,0 +1,42 @@
+body[data-account="development-notes"]{background:#f7faf5;color:#294b38}
+.psy-dev-review{max-width:1140px;margin:35px auto 80px;padding:0 18px;min-height:60vh}
+.psy-dev-review-intro{padding:28px 35px;background:#254e3a;border-radius:21px;color:#fff;margin-bottom:24px}
+.psy-dev-review-intro span{font-size:11px;color:#c9dfce;letter-spacing:.12em;font-weight:800}
+.psy-dev-review-intro h1{font-size:clamp(27px,4vw,40px);line-height:1.3;margin:8px 0}
+.psy-dev-review-intro p{margin:0;max-width:850px;color:#e0eee2;font-size:15px}
+#psyDevReviewGate{padding:25px;background:#fff;border:1px solid #d9e8dc;border-radius:13px}
+#psyDevReviewMain[hidden]{display:none}
+.psy-dev-review-filters{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin-bottom:20px}
+.psy-dev-review-filters label{display:grid;gap:5px;font-size:13px;color:#4a7057;font-weight:700}
+.psy-dev-review-filters select{padding:10px 13px;min-width:170px;border:1px solid #b7d5c0;border-radius:9px;background:#fff;color:#29523c}
+.psy-dev-review-filters button{min-height:40px;border:1px solid #b7d4be;background:#edf5ef;color:#2c6645;padding:10px 15px;border-radius:9px;cursor:pointer;font-weight:750}
+#psyDevReviewCount{font-size:13px;color:#6a806d}
+.psy-dev-review-list{display:grid;gap:13px}
+.psy-dev-review-item{background:#fff;border:1px solid #dae8db;border-radius:17px;padding:clamp(15px,3vw,24px);box-shadow:0 4px 15px #253f280a;min-width:0}
+.psy-dev-review-heading{display:flex;flex-wrap:wrap;align-items:center;gap:11px}
+.psy-dev-review-heading strong{font-size:18px;color:#265e41}
+.psy-dev-review-heading>span:last-child{font-size:12px;color:#748475}
+.psy-dev-review-badge{border-radius:100px;padding:5px 10px;font-size:11px;font-weight:800}
+.psy-dev-review-badge.is-new{background:#f7ead4;color:#895622}
+.psy-dev-review-badge.is-progress{background:#e7eef8;color:#315f99}
+.psy-dev-review-badge.is-done{background:#e1f2e6;color:#347348}
+.psy-dev-review-note{white-space:pre-wrap;overflow-wrap:anywhere;font-size:16px;color:#304a3b;margin:14px 0 9px}
+.psy-dev-review-location{font-size:12px;color:#657f6a;margin:0 0 9px;overflow-wrap:anywhere}
+.psy-dev-review-item code{display:block;background:#f4f8f2;padding:9px;border-radius:8px;overflow-wrap:anywhere;font-size:11px;color:#526b5b;white-space:normal}
+.psy-dev-review-actions{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0}
+.psy-dev-review-actions>a,.psy-dev-review-actions>button,.psy-dev-review-save{border-radius:9px;background:#eff6ef;color:#266849;padding:10px 13px;border:1px solid #b4d0b8;cursor:pointer;text-decoration:none;font:750 13px/1.4 system-ui,sans-serif}
+.psy-dev-review-actions>a{background:#2d7451;color:#fff;border-color:#2d7451}
+.psy-dev-review-state{display:flex;gap:9px;align-items:end;flex-wrap:wrap;border-top:1px solid #e2eae1;padding-top:12px}
+.psy-dev-review-status-label{display:grid;gap:5px;font-size:12px;font-weight:750;color:#496b53}
+.psy-dev-review-state select{min-width:150px;padding:10px;border:1px solid #bbd0bf;border-radius:9px;background:#fff;color:#28543b}
+.psy-dev-review-resolution{flex:1 1 260px;min-height:43px;min-width:180px;resize:vertical;padding:9px;border:1px solid #bed3c2;border-radius:9px;color:#294939;font:13px/1.4 system-ui,sans-serif}
+.psy-dev-review-message{min-height:14px;color:#2c7150;font-size:12px;margin:9px 0 0}
+.psy-dev-review-empty,.psy-dev-review-error{border:1px dashed #b2d1bd;border-radius:12px;padding:25px;text-align:center;background:#fff;color:#63796b}
+.psy-dev-review-foot{font-size:13px;line-height:1.6;color:#687a6b;margin-top:25px}
+html.dark body[data-account="development-notes"]{background:#15291f;color:#e9f4e8}
+html.dark .psy-dev-review-item,html.dark #psyDevReviewGate{background:#1b3326;border-color:#4d7055;color:#e7f2e6}
+html.dark .psy-dev-review-note,html.dark .psy-dev-review-heading strong{color:#e5f3e6}
+html.dark .psy-dev-review-location,html.dark .psy-dev-review-item code{color:#c1d7c5}
+html.dark .psy-dev-review-item code{background:#263f30}
+html.dark .psy-dev-review-state select,html.dark .psy-dev-review-resolution,html.dark .psy-dev-review-filters select{background:#1b3826;color:#edf6ec;border-color:#5d8066}
+@media(max-width:600px){.psy-dev-review{padding:0 10px;margin-top:15px}.psy-dev-review-intro{padding:22px}.psy-dev-review-state{display:grid;grid-template-columns:1fr}.psy-dev-review-actions{display:grid;grid-template-columns:1fr}.psy-dev-review-actions>*{text-align:center}.psy-dev-review-resolution{min-width:0}}
