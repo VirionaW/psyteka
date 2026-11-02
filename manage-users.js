@@ -37,7 +37,10 @@
  }});
  try{
   const {data:userData,error:userError}=await client.auth.getUser();
-  if(userError||!userData?.user){say("Сначала войдите в личный аккаунт.");return;}
+  if(userError||!userData?.user||
+    (window.PSY_AUTH_PROTECTION&&!(await window.PSY_AUTH_PROTECTION.keepSession(client,userData.user)))){
+    say("Срок входа истек. Войдите в аккаунт повторно.");return;
+  }
   ownerId=userData.user.id;
   const {data:roleData,error:roleError}=await client.from("psy_account_roles")
    .select("role").eq("user_id",ownerId).maybeSingle();
