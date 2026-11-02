@@ -40,3 +40,19 @@ html.dark #psyDevWidget .psy-dev-target{background:#264534;color:#ccded0}
  #psyDevWidget .psy-dev-panel{min-width:0;padding:14px;max-height:65vh}
 }
 @media(prefers-reduced-motion:reduce){.psy-dev-located{animation:none}}
+
+/* Закрепленные рамки выбора: остаются на элементах при движении мыши. */
+#psyDevWidget .psy-dev-selection-heading{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:11px 0 5px}
+#psyDevWidget .psy-dev-selection-heading strong{font-size:12px;color:#2d6846;margin-right:auto}
+#psyDevWidget .psy-dev-selection-heading button{font:700 11px/1.35 system-ui,sans-serif;border:1px solid #afccb8;background:#f1f8f1;color:#2d6345;padding:7px 9px;border-radius:8px;min-height:32px;cursor:pointer}
+#psyDevWidget .psy-dev-selection-heading button:disabled{opacity:.5}
+#psyDevWidget .psy-dev-selection-list{display:grid;gap:5px;max-height:135px;overflow:auto}
+#psyDevWidget .psy-dev-selected-row{display:flex;align-items:center;gap:7px;padding:6px 8px;background:#edf5ee;border:1px solid #d2e1d5;border-radius:8px}
+#psyDevWidget .psy-dev-selected-row span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:11px/1.4 ui-monospace,monospace;color:#3b6549}
+#psyDevWidget .psy-dev-selected-row button{flex:0 0 25px;width:25px;height:25px;display:grid;place-items:center;line-height:1;border:1px solid #a6c5af;border-radius:7px;background:white;color:#59715e;font-size:16px}
+.psy-dev-outline{transition:none!important;will-change:auto!important}
+body.psy-dev-picking{user-select:none}
+html.dark #psyDevWidget .psy-dev-selection-heading strong{color:#d5e9da}
+html.dark #psyDevWidget .psy-dev-selected-row{background:#264833;border-color:#51775c}
+html.dark #psyDevWidget .psy-dev-selected-row span{color:#d2e5d4}
+html.dark #psyDevWidget .psy-dev-selection-heading button,html.dark #psyDevWidget .psy-dev-selected-row button{background:#2e543d;color:#ecf7ee;border-color:#60856d}
