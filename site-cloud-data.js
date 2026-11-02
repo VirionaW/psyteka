@@ -85,7 +85,15 @@
    r.answers=Array.isArray(r.answers)?r.answers.slice(0,500):[];
    return r;
   });
-  return {calcMode:snapshot.calcMode,rows,rowIndex:Math.min(rows.length-1,Math.max(0,Number(snapshot.rowIndex)||0))};
+  // Keep a read-only record of the calculation at save time, independent
+  // of later changes to keys, norms or method rendering.
+  let scoreArchive=null;
+  if(snapshot.scoreArchive&&typeof snapshot.scoreArchive==="object"){
+   const raw=JSON.stringify(snapshot.scoreArchive);
+   if(raw.length<=100000)scoreArchive=JSON.parse(raw);
+  }
+  return {calcMode:snapshot.calcMode,rows,rowIndex:Math.min(rows.length-1,Math.max(0,Number(snapshot.rowIndex)||0)),
+   ...(scoreArchive?{scoreArchive}:{})};
  }
  async function saveAssessment({id=null,title,methodName,snapshot}){
   await ready;
