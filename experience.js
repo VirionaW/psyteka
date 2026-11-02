@@ -85,16 +85,19 @@ function render(){
  const age=card?.age||window.PSY_GUIDE_STANDARD?.cardAge(m.name,d,m)||d?.age||m.age;
  const description=card?.summary||profileGoal(m,d,window.PSY_PORTFOLIO_EDITS?.[m.name]||{})||m.summary||m.goal||'';
  const kind=d?.workflow==='diagnostic03'?'scale':d?.special==='memory10'?'memory':d?.special==='odd4'?'cognitive':(d?.graphic==='drawing'||d?.graphic==='sociogram')?'drawing':(d?.graphic==='dictation'||d?.graphic==='schulte'||d?.graphic==='dembo'||d?.graphic==='ladder')?'graphic':(d?.calculator?'scale':'other');
+ const copy=window.PSY_CONTENT_OVERRIDES;
+ const visibleName=copy?.display?.(m,'name',m.name)||m.name;
  const author=(card?.author||d?.author||m.author||'');
  const matchMSPSS=['simpleAnalogies12','pairedAssoc20','schulte5'].includes(d?.workflow);
  const credited=author&&!/сведения об авторе уточняются/i.test(author)?'<p class="method-card-author">'+escapeHTML(author)+'</p>':'<p class="method-card-author">Автор не установлен</p>';
  const count=card?.quantity||d?.count||m.count;
  const countTag=count?'<span class="tag">'+escapeHTML(count)+'</span>':'';
- return '<article class="method'+(matchMSPSS?' psy-mspss-card':'')+'" data-kind="'+kind+'"><div class="head"><div class="glyph">'+artForMethod(m)+'</div><div><h3>'+escapeHTML(m.name)+'</h3>'+credited+'</div></div><div class="tags"><span class="tag">'+escapeHTML(card?.type||m.format)+'</span><span class="tag">'+escapeHTML(age)+'</span>'+countTag+'</div><p class="method-card-summary">'+escapeHTML(description)+'</p><div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">Открыть методику</button>'+'</div></article>';
+ return '<article class="method'+(matchMSPSS?' psy-mspss-card':'')+'" data-kind="'+kind+'"><div class="head"><div class="glyph">'+artForMethod(m)+'</div><div><h3>'+escapeHTML(visibleName)+'</h3>'+credited+'</div></div><div class="tags"><span class="tag">'+escapeHTML(card?.type||m.format)+'</span><span class="tag">'+escapeHTML(age)+'</span>'+countTag+'</div><p class="method-card-summary">'+escapeHTML(description)+'</p><div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">Открыть методику</button>'+'</div></article>';
  }).join("") || '<p>Не найдено материалов по выбранным параметрам.</p>';
  document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openMethod(C.find(m=>m.id===b.dataset.open)));
 
 }
+window.PSY_RENDER_CATALOG=render;
 function enhanceMethodView(tab,html){
  const d=DETAILS[methodNow?.name];
  if(!d||typeof html!=='string')return html;
@@ -188,6 +191,7 @@ function setTab(name){
    if(!['phillips58','semester2026','mspss','orekhovaHouses8','luscherHub'].includes(DETAILS[methodNow.name]?.workflow))body.innerHTML=window.PSY_GUIDE_STANDARD.supplement(methodNow.name,DETAILS[methodNow.name],methodNow,body.innerHTML);
    window.PSY_GUIDE_STANDARD.bind(()=>setTab('instruction'));
  }
+ if(name==="overview")window.PSY_CONTENT_OVERRIDES?.applyPortfolioDOM?.(methodNow,body);
  body.scrollTop=preserveScroll?previousScroll:0;
  const bottom=$("#bottomProcessing");
  if(bottom){
@@ -345,12 +349,14 @@ function viewOverview(m){
  if(DETAILS[m.name]?.workflow==='specialSheet')return window.PSY_SPECIAL.portfolio(DETAILS[m.name],m);
  if(DETAILS[m.name]?.workflow==='preschoolSheet'&&DETAILS[m.name].portfolioFilled)return window.PSY_PRESCHOOL.portfolio(DETAILS[m.name]);
  const d=DETAILS[m.name]||{},o=window.PSY_PORTFOLIO_EDITS?.[m.name]||{};
- const author=profileText(o.author||d.author||m.author||"");
+ const copy=window.PSY_CONTENT_OVERRIDES;
+ const shown=(field,fallback)=>copy?.display?.(m,field,fallback)??fallback;
+ const author=profileText(shown("author",o.author||d.author||m.author||""));
  const verifiedAuthor=author&&!/сведения об авторе уточняются/i.test(author)?author:"Автор не установлен";
- const age=profileText(d.workflow==="orekhovaHouses8"?(d.age||m.age||""):window.PSY_GUIDE_STANDARD?.age(m.name,DETAILS[m.name],m)||o.age||d.age||m.age||"");
- const kind=profileText(o.kind||d.kind||m.format||"");
- const count=profileText(o.count||d.count||m.count||"");
- const name=profileText(m.name);
+ const age=profileText(shown("age",d.workflow==="orekhovaHouses8"?(d.age||m.age||""):window.PSY_GUIDE_STANDARD?.age(m.name,DETAILS[m.name],m)||o.age||d.age||m.age||""));
+ const kind=profileText(shown("type",o.kind||d.kind||m.format||""));
+ const count=profileText(shown("count",o.count||d.count||m.count||""));
+ const name=profileText(shown("name",m.name));
  const isProgram=m.theme==="Программы";
  const isRegister=isProgram&&/реестр/i.test(kind);
  const fields=[
@@ -361,9 +367,9 @@ function viewOverview(m){
  ];
  if(count&&count!=="Не уточнено")fields.push(["Количество вопросов / заданий",count]);
  const fieldHtml=fields.filter(([,v])=>!!v).map(([label,value])=>'<div class="psy-profile-row"><strong>'+escapeHTML(label)+'</strong><span>'+escapeHTML(value)+'</span></div>').join("");
- const description=profileText(profileGoal(m,d,o));
+ const description=profileText(shown("goal",profileGoal(m,d,o)));
  const indicators=portfolioIndicators(m,d);
- const rawIndicators=Array.isArray(o.indicators)?o.indicators:indicators.items;
+ const rawIndicators=copy?.indicators?.(m,Array.isArray(o.indicators)?o.indicators:indicators.items) || (Array.isArray(o.indicators)?o.indicators:indicators.items);
  const items=[...new Set((rawIndicators||[]).map(profileText).filter(Boolean))];
  const indicatorHtml=items.length?'<h3>'+escapeHTML(profileText(o.indicatorsTitle||indicators.title||"Шкалы и показатели"))+'</h3><div class="psy-profile-indicators">'+items.map((t,i)=>'<div class="psy-profile-indicator" data-profile-index="'+i+'"><span>'+escapeHTML(t)+'</span></div>').join("")+'</div>':"";
  const goalHtml=description?'<h3>'+(m.theme==="Программы"?"Цель программы":d.goal||o.goal?"Цель методики":"Назначение материала")+'</h3><p class="psy-profile-description">'+escapeHTML(description)+'</p>':"";
@@ -990,7 +996,7 @@ function openMethod(m){
  savedModeRecords=saved?.savedModeRecords||{one:{id:null,title:"",baseline:null},class:{id:null,title:"",baseline:null}};
  activeSavedAssessmentId=savedModeRecords[calcMode]?.id||null;
  activeSavedAssessmentTitle=savedModeRecords[calcMode]?.title||"";
- const d=DETAILS[m.name];$('#modalTitle').textContent=m.name;$('#modalAuthor').textContent='Сведения о методике';
+ const d=DETAILS[m.name];$('#modalTitle').textContent=window.PSY_CONTENT_OVERRIDES?.display?.(m,'name',m.name)||m.name;$('#modalAuthor').textContent='Сведения о методике';
  $('#modalBody').innerHTML='';
  const header=$('#modal').querySelector('.modalhead');
  let old=$('#methodTabs');if(old)old.remove();
