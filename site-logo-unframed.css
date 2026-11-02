@@ -1,0 +1,67 @@
+/* 2026-11-02 · Metolaria: unframed logo in footer and library sidebar.
+   Both SVG marks have a transparent background. Preserve their original
+   two-color artwork; do not recolor the logo with CSS filters. */
+
+/* Footer has a dark surface in BOTH interface themes. Use the light SVG in
+   index.html, not a dark mark on a white square. */
+body.site-landing .site-footer .psy-footer-brand img.psy-brand-mark {
+  display:block!important;
+  width:46px!important;
+  height:46px!important;
+  min-width:46px!important;
+  padding:0!important;
+  margin:0!important;
+  object-fit:contain!important;
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+
+/* In light theme the library's mark and wordmark sit directly on the sidebar,
+   just as they already do in dark theme: no separate white brand card. */
+html:not(.dark) body.library-page #sidebar .brand > a.psy-library-brand {
+  display:flex!important;
+  align-items:center!important;
+  width:100%!important;
+  min-height:72px!important;
+  gap:12px!important;
+  padding:10px 1px!important;
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  text-decoration:none;
+}
+html:not(.dark) body.library-page #sidebar .brand > a.psy-library-brand:hover,
+html:not(.dark) body.library-page #sidebar .brand > a.psy-library-brand:focus-visible {
+  background:transparent!important;
+  box-shadow:none!important;
+}
+body.library-page #sidebar .brand img.psy-brand-mark,
+body.library-page #sidebar .brand img.psy-brand-mark-dark {
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  padding:0!important;
+  filter:none!important;
+  object-fit:contain!important;
+}
+
+/* Preserve dark mode's light mark, contrast, and intentionally unframed logo. */
+html.dark body.library-page #sidebar .brand > a.psy-library-brand {
+  background:transparent!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+@media(max-width:820px){
+  html:not(.dark) body.library-page #sidebar .brand > a.psy-library-brand{
+    min-height:65px!important;
+    gap:9px!important;
+    padding:8px 1px!important;
+  }
+}
