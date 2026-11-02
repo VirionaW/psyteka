@@ -85,4 +85,4 @@ function closeModal(){
    history.replaceState(history.state,'',url.pathname+url.search+url.hash);
   }
  }catch(_){}
-}$('#closeModal').onclick=closeModal;$('#closeFooter').onclick=closeModal;$('#shade').onclick=closeModal;document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});$('#menuBtn').onclick=()=>$('#sidebar').classList.toggle('open');render();highlight();
+}window.PSY_RENDER_CATALOG=render;$('#closeModal').onclick=closeModal;$('#closeFooter').onclick=closeModal;$('#shade').onclick=closeModal;document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});$('#menuBtn').onclick=()=>$('#sidebar').classList.toggle('open');render();highlight();
