@@ -57,8 +57,10 @@
        body.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;padding:12px;border:1px solid #d8e5db;border-radius:10px";
        const answers=Array.isArray(record.answers)?record.answers.map((v,i)=>v!==""&&v!=null?(i+1)+": "+String(v):null).filter(Boolean):[];
        const meta=Object.fromEntries(Object.entries(record).filter(([k])=>k!=="name"&&k!=="answers"));
+       const storedScore=saved.snapshot.scoreArchive?.results?.[index];
+       const scoreLabel=storedScore?"\nЗафиксированный при сохранении расчет: "+JSON.stringify(storedScore,null,2):"";
        text(body,(answers.length?"Ответы: "+answers.join("; "):"Ответы не заполнены")+
-        (Object.keys(meta).length?"\nДополнительные данные: "+JSON.stringify(meta,null,2):""));
+        scoreLabel+(Object.keys(meta).length?"\nДополнительные данные: "+JSON.stringify(meta,null,2):""));
        section.append(head,body);dialog.append(section);
       });
       const close=make("button","site-btn");close.type="button";text(close,"Закрыть");
