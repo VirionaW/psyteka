@@ -177,6 +177,13 @@
     else step("psyEntryEmail");
     show();return;
    }
+   const policy=window.PSY_AUTH_PROTECTION;
+   if(policy&&!(await policy.keepSession(client,data.user))){
+    currentUser=null;step("psyEntryEmail");show();return;
+   }
+   if(policy&&await policy.secondFactorNeeded(client)){
+    location.assign(policy.challengeUrl(destination));return;
+   }
    currentUser=data.user;
    const [r,t,p]=await withTimeout(Promise.all([
     client.from("psy_account_roles").select("role").eq("user_id",currentUser.id).maybeSingle(),
