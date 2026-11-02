@@ -41,6 +41,7 @@
   return el;
  }
  const methodKey=(m,f)=>"method:"+encodeURIComponent(String(m.id))+":"+f;
+ const methodFields=[["name","Название на карточке и в портфолио"],["author","Автор"],["type","Вид методики"],["age","Возраст на карточке и в портфолио"],["count","Количество вопросов / заданий"],["summary","Краткое описание на карточке"],["goal","Цель в портфолио"],["indicators","Показатели в портфолио (каждый с новой строки)"]];
  async function fetchHomeSources(){
   try{
    const response=await fetch("index.html",{cache:"no-store"});
@@ -55,7 +56,22 @@
  function baseValue(){
   if(mode==="home")return baseHome.get(activeKey)||"";
   const method=methodsById.get(methodSelect.value);
-  return method?(field.value==="summary"?String(method.summary||method.goal||""):String(method.goal||"")):"";
+  if(!method)return "";
+  const extra=window.PSY_FULL_METHODS?.[method.name]||{};
+  const profile=window.PSY_PORTFOLIO_EDITS?.[method.name]||{};
+  const card=window.PSY_SCHOOL_CARDS?.compose?.(method,extra,profile,window.PSY_GUIDE_STANDARD)||{};
+  switch(field.value){
+   case "name":return method.name;
+   case "author":return String(card.author||profile.author||extra.author||method.author||"");
+   case "type":return String(card.type||profile.kind||extra.kind||method.format||"");
+   case "age":return String(card.age||profile.age||extra.age||method.age||"");
+   case "count":return String(card.quantity||profile.count||extra.count||method.count||"");
+   case "summary":return String(card.summary||method.summary||method.goal||"");
+   case "goal":return String(profile.goal||extra.goal||method.goal||"");
+   case "indicators":return Array.isArray(profile.indicators)?profile.indicators.join("\\n"):
+    Array.isArray(extra.scales)?extra.scales.map(x=>typeof x==="string"?x:x.name||"").filter(Boolean).join("\\n"):"";
+   default:return "";
+  }
  }
  function resetFieldOptions(){
   field.replaceChildren();
@@ -64,7 +80,7 @@
     const option=node("option",label);option.value=key;field.append(option);
    });
   }else{
-   for(const [key,label] of [["summary","Краткое описание в карточке"],["goal","Назначение методики в каталоге"]]){
+   for(const [key,label] of methodFields){
     const option=node("option",label);option.value=key;field.append(option);
    }
   }
@@ -231,7 +247,7 @@
   if(requestedMethod&&methodsById.has(requestedMethod)){
    await switchMode("method");
    methodSelect.value=requestedMethod;
-   if(["summary","goal"].includes(requested))field.value=requested;
+   if(methodFields.some(([key])=>key===requested))field.value=requested;
    await selectContent();
   }else if(requested&&homeFields.some(row=>row[0]===requested)){
    field.value=requested;await selectContent();
