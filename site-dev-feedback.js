@@ -276,7 +276,7 @@
  const params=new URLSearchParams(location.search),targetId=params.get("psyDevIssue");
  if(targetId&&/^\d{1,15}$/.test(targetId)){
   try{
-   const {data}=await client.from("psy_dev_annotations").select("page_path,selector,method_id,tab_name").eq("id",targetId).maybeSingle();
+   const {data}=await client.from("psy_dev_annotations").select("page_path,selector,targets,method_id,tab_name").eq("id",targetId).maybeSingle();
    if(data&&data.page_path===location.pathname){
     if(data.method_id&&typeof window.openMethod==="function"){
      const method=(window.PSY_CATALOG||[]).find(m=>String(m.id)===data.method_id);
@@ -284,14 +284,24 @@
     }
     if(data.tab_name)document.querySelector('#methodTabs [data-tab="'+data.tab_name+'"]')?.click();
     const locate=()=>{
-     let target=null;try{target=document.querySelector(data.selector)}catch(_){}
-     if(!target)return false;
-     target.scrollIntoView({behavior:"smooth",block:"center"});
-     target.classList.add("psy-dev-located");
-     setTimeout(()=>target.classList.remove("psy-dev-located"),5000);
+     const selectors=(Array.isArray(data.targets)&&data.targets.length?
+      data.targets.map(x=>x?.selector):[data.selector]).filter(x=>typeof x==="string");
+     const found=[];
+     for(const selector of selectors){
+      try{
+       const target=document.querySelector(selector);
+       if(target&&!found.includes(target))found.push(target);
+      }catch(_){}
+     }
+     if(!found.length)return false;
+     found[0].scrollIntoView({behavior:"smooth",block:"center"});
+     for(const target of found){
+      target.classList.add("psy-dev-located");
+      setTimeout(()=>target.classList.remove("psy-dev-located"),6000);
+     }
      return true;
     };
-    if(!locate())setTimeout(locate,400);
+    if(!locate())setTimeout(locate,650);
    }
   }catch(_){}
  }
