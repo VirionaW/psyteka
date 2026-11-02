@@ -4,6 +4,8 @@
  const METHOD_NAME="Тест школьной тревожности Филлипса";
  const SOURCE="https://psmetodiki.ru/index.php/mladshie-shkolniki/prochee/253-test-shkolnoj-trevozhnosti-fillipsa";
  const SECOND="https://www.azps.ru/tests/tests_philips.html";
+ const PUBLIC_58="https://sch1450u.mskobr.ru/files/metodika_diagnostiki_urovnya_shkol_noj_trevozhnosti_fillipsa1.pdf";
+ const STUDENT_INSTRUCTION="Прочитай или послушай каждый вопрос о том, как ты чувствуешь себя в школе. Для каждого вопроса отметь один ответ: «Да», если согласен, или «Нет», если не согласен. Правильных и неправильных ответов нет. Отвечай искренне и не задумывайся слишком долго.";
  const YES=[11,20,22,24,25,30,35,36,38,39,41,43,44];
  const KEY=Array.from({length:58},(_,i)=>YES.includes(i+1)?"yes":"no");
  // Cited published edition (Kostina, 2006, via psmetodiki.ru): factor 1 includes 4, not 3.
@@ -18,7 +20,7 @@
   {id:"teachers",name:"Проблемы и страхи в отношениях с учителями",q:[2,6,11,32,35,41,44,47]}
  ];
  const NOTE="Третий фактор (фрустрация потребности в достижении успеха) рассчитан по 13 пунктам, включая вопрос № 1. В PDF Н. Ф. Гребень (2007) в перечне пропущен № 1, хотя указан итог 13; полный перечень сверён с опубликованными ключами Филлипса.";
- const WARN="Текст 58 вопросов предоставлен в источнике по ссылке. Локальный бланк содержит только номера и варианты «Да»/«Нет» и предназначен для регистрации ответов при предъявлении полного опросника. Никаких диагнозов или автоматического направления к специалисту по порогам не формируется.";
+ const WARN="Бланк содержит номера 1-58 и варианты «Да» / «Нет». Тематические подписи не заменяют подлинные вопросы опросника.";
  const TOPICS=["Темп учебы относительно класса","Волнение перед проверкой знаний","Выполнение требований учителя","Сон о незнании урока","Физические действия одноклассников","Темп объяснения учителя","Волнение при ответе и задании","Страх ошибки при ответе","Дрожь коленей при ответе","Насмешки одноклассников в играх","Оценка ниже ожидаемой","Беспокойство о повторном годе","Отвержение в командных играх","Дрожь при вызове к доске","Ощущение непонимания в классе","Волнение перед началом задания","Ожидания родителей об оценках","Страх плохого самочувствия в классе","Насмешки за ошибку при ответе","Сходство с одноклассниками","Беспокойство за качество выполненного","Уверенность в запоминании","Сон о невозможности ответить","Дружелюбие одноклассников","Сравнение учебных результатов","Желание меньше волноваться","Страх вступать в спор","Сердцебиение перед проверкой","Оценка друзьями хороших отметок","Общение с популярными одноклассниками","Обидные слова ребят","Отношение к неуспевающим","Недостаток внимания сверстников","Страх выглядеть нелепо","Отношение учителей","Участие матери в школьных делах","Переживания из-за мнения других","Надежда улучшить учебу","Одежда и сравнение со сверстниками","Чужое мнение во время ответа","Привилегии способных учеников","Реакция класса на успех","Отношение одноклассников","Комфорт наедине с учителем","Насмешки над внешностью и поведением","Беспокойство о школе","Слезы при невозможности ответить","Волнение о завтрашнем дне","Забывание известного при трудном задании","Дрожь руки во время задания","Волнение перед заданием класса","Страх проверки знаний","Страх не справиться с заданием","Сон о превосходстве одноклассников","Другие понимают материал лучше","Волнение перед проверочной работой","Ощущение неуспеха при выполнении","Дрожь руки при работе у доски"];
   const LABELS=["Да","Нет"];
  const DATA={
@@ -27,14 +29,14 @@
   kind:"Опросник самоотчета школьника, 58 вопросов, ответы «Да» / «Нет»",
   count:"58 вопросов; общий показатель и 8 факторов тревожности",
   goal:"Выявление тем школьного беспокойства в ситуациях учебы, оценивания, общения со сверстниками и учителями.",
-  instructions:"Инструкция из PDF: ответьте на 58 вопросов о переживаниях в школе, отмечая «Да» либо «Нет». Проведение возможно индивидуально или письменно. Проверьте полноту ответов и соответствие ключа источнику.",
+  instructions:STUDENT_INSTRUCTION,
   scoring:"Сравните каждый ответ с ключом: показатель тревожности = количество ответов, НЕ совпадающих с ключом. Общий результат 0–58, проценты = несовпадения / 58 × 100. Для каждого из 8 факторов рассчитайте число несовпадений и процент от количества пунктов этого фактора. Факторы пересекаются; их суммы нельзя складывать для получения общего балла.",
   interpret:"Чем больше несовпадений с ключом, тем более выражены признаки школьного беспокойства по данной версии. В распространенной схеме >50% означает повышенное, >75% — высокое значение, однако возрастные нормы и клиническая диагностическая валидность зависят от версии. Не используйте результаты как диагноз и не делайте выводов по одному опроснику.",
   warning:WARN+" "+NOTE,
   versionNote:NOTE,questions:Array.from({length:58},(_,i)=>"Вопрос "+(i+1)+" (смотрите полный текст источника)"),
   options:LABELS,source:SOURCE,sourceComparison:SECOND,officialBlank:SOURCE,
-  guideFile:"downloads/phillips_school_anxiety_guide.docx",
-  answerFile:"downloads/phillips_school_anxiety_student.html",
+  guideFile:"phillips-print.html?kind=guide",
+  answerFile:"phillips-print.html?kind=blank",
   calculator:true,workflow:"phillips58",
   scales:SCALES,
   sourceDescription:"Пользовательский PDF: Н. Ф. Гребень (сост.). Психологические тесты для профессионалов. Минск, 2007, с. 1-5 фрагмента. Третий фактор дополнен вопросом № 1 до 13 пунктов после сверки с опубликованными ключами Филлипса.",
@@ -60,24 +62,29 @@
   return {raw:total,max:58,percent:total/58*100,scales,complete:true,mismatches,answers:a};
  }
  function count(a){return Array.from({length:58},(_,i)=>a?.[i]).filter(valid).length}
- function links(){return '<div class="psy-ph-links">'+
-   '<a class="btn primary" download href="'+DATA.guideFile+'">Руководство · Word</a>'+
-   '<a class="btn" target="_blank" rel="noopener noreferrer" href="'+DATA.answerFile+'">Бланк ученика · А4</a>'+
-   '<a class="btn" target="_blank" rel="noopener noreferrer" href="'+SOURCE+'">Сверка ключа Филлипса ↗</a></div>'}
+ function links(){
+  return '<div class="psy-ph-links">'+
+   '<a class="btn primary" href="phillips-print.html?kind=guide" target="_blank" rel="noopener noreferrer">Без бланка</a>'+
+   '<a class="btn" href="phillips-print.html?kind=combined" target="_blank" rel="noopener noreferrer">С бланком</a>'+
+   '<a class="btn" href="'+PUBLIC_58+'" target="_blank" rel="noopener noreferrer">Полный опросник · 58 вопросов (PDF)</a></div>';
+ }
  function instruction(){
-  return '<h3>Инструкция для проведения</h3><ol>'+
-   '<li>Используйте предоставленный PDF Н. Ф. Гребень (2007). В третьем факторе учитывайте все 13 пунктов, включая вопрос № 1, подтвержденный опубликованными ключами Филлипса.</li>'+
-   '<li>Выдайте ребенку напечатанный лист ответов, где есть номера 1–58 и два варианта «Да» и «Нет». Можно проводить индивидуально или в небольшой группе с учетом возраста и конфиденциальности.</li>'+
-   '<li>Объясните, что правильных и неправильных ответов нет. Предложите отвечать самостоятельно и отмечать один вариант на каждый вопрос.</li>'+
-   '<li>Соберите и проверьте бланки; в калькуляторе перенесите ответы в том же порядке. Пропуски не приравниваются к «Нет».</li>'+
-   '<li>Смотрите общую долю несовпадений и профиль восьми факторов. Интерпретируйте вместе с наблюдением и беседой, не сообщая ребенку формальных ярлыков.</li></ol>'+
-   '<h3>Слова для ученика</h3><blockquote class="kid-instruction">Ответь на вопросы о том, как ты чувствуешь себя в школе. У каждого номера выбери «Да», если согласен, или «Нет», если не согласен. Здесь нет хороших и плохих ответов. Старайся отвечать самостоятельно.</blockquote>'+
-   '<div class="notice psy-ph-note">'+esc(NOTE)+'</div>'+links();
+  return '<h3>Инструкция для чтения ученику</h3>'+
+   '<blockquote class="kid-instruction">'+esc(STUDENT_INSTRUCTION)+'</blockquote>'+
+   '<h3>Порядок проведения</h3><ol>'+
+   '<li>Откройте полный опросник из проверенного источника. Он содержит 58 вопросов с ответами «Да» или «Нет».</li>'+
+   '<li>Предъявляйте подлинные вопросы в исходном порядке, устно или письменно.</li>'+
+   '<li>Ученик отмечает ровно один вариант для каждого номера.</li>'+
+   '<li>При переносе в обработку сохраняйте номера и ответы. Пропуск не равен «Нет».</li></ol>'+
+   links();
  }
  function materials(){
-  return '<h3>Вопросы и бланк ученика</h3><p>Полный текст из предоставленного PDF содержит 58 вопросов. При расчете третьего фактора учитываются 13 пунктов, включая вопрос № 1, пропущенный в перечне PDF Гребень (2007).</p>'+
-   '<p>В бланке: код вместо ФИО, класс, дата, 58 строк с выбором «Да» / «Нет» и место для заметок специалиста. При необходимости вопросы читает ведущий, а ученик отмечает ответы.</p>'+
-   links()+'<div class="notice psy-ph-note">'+esc(WARN)+'</div>';
+  return '<h3>Бланк ученика</h3>'+
+   '<blockquote class="kid-instruction">'+esc(STUDENT_INSTRUCTION)+'</blockquote>'+
+   '<p>В регистрационном бланке номера 1-58. Варианты идут в порядке: сначала «Да», затем «Нет».</p>'+
+   '<div class="psy-ph-links">'+
+   '<a class="btn primary" href="phillips-print.html?kind=blank" target="_blank" rel="noopener noreferrer">Посмотреть и распечатать</a>'+
+   '<a class="btn" href="'+PUBLIC_58+'" target="_blank" rel="noopener noreferrer">Полные вопросы · PDF</a></div>';
  }
  function processing(){
   let html='<h3>Ключ и подсчет</h3><p>«Да» в ключе: <b>'+YES.join(", ")+'</b>. «Нет» в ключе: остальные пункты (1–58).</p>'+
@@ -121,8 +128,12 @@
   if(ctx.calcMode==="class"){
    html+='<div class="group-tools"><label>Ученик<select id="participantSelect">'+rows.map((x,i)=>'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+esc(x.name||"У-"+(i+1))+'</option>').join("")+'</select></label><label>Код ребенка<input id="participantName" maxlength="50" value="'+esc(r.name||"")+'" placeholder="У-01"></label><button class="btn" id="addParticipant">Добавить ученика</button></div>';
   }else html+='<label class="psy-ph-code">Код ученика<input id="phSingleCode" maxlength="50" value="'+esc(r.name||"")+'" placeholder="Например, У-01"></label>';
-  html+='<h3>Ответы на 58 вопросов</h3><p><b>Ключ Филлипса.</b> 0 – Нет, 1 – Да. Третий фактор включает 13 вопросов (в том числе № 1); перечень сверён с опубликованными ключами.</p>'+
-   '<p class="psy-ph-small">Подписи к номерам – краткие темы пунктов для удобного переноса ответов, а не полный текст утверждений. Предъявляйте ребенку исходный PDF.</p><div class="psy-ph-grid">'+Array.from({length:58},(_,i)=>'<label class="psy-ph-item"><span><b>'+String(i+1).padStart(2,"0")+'.</b> '+esc(TOPICS[i])+'</span><input type="text" inputmode="numeric" autocomplete="off" maxlength="1" pattern="[01]" placeholder="0/1" data-ph-answer="'+i+'" aria-label="Вопрос '+(i+1)+': 1 – Да, 0 – Нет" value="'+(a[i]==="yes"?"1":a[i]==="no"?"0":"")+'"></label>').join("")+'</div>'+
+  html+='<h3>Ответы на 58 вопросов</h3><p>Перенесите ответы из полного опросника: 1 – Да, 0 – Нет. Не используйте краткие темы вместо вопросов.</p>'+
+   '<p class="psy-ph-small"><a href="'+PUBLIC_58+'" target="_blank" rel="noopener noreferrer">Открыть подлинный текст всех 58 вопросов</a>. Здесь вводятся только ответы по номерам.</p>'+
+   '<div class="psy-ph-grid">'+Array.from({length:58},(_,i)=>
+    '<label class="psy-ph-item"><span><b>'+String(i+1).padStart(2,"0")+'.</b> Вопрос '+(i+1)+'</span>'+
+    '<input type="text" inputmode="numeric" autocomplete="off" maxlength="1" pattern="[01]" placeholder="0/1" data-ph-answer="'+i+'" aria-label="Вопрос '+(i+1)+': 1 – Да, 0 – Нет" value="'+(a[i]==="yes"?"1":a[i]==="no"?"0":"")+'"></label>').join("")+'</div>'+
+
    '<div id="phResults">'+report(a,r)+'</div>'+
    '<div class="psy-ph-actions"><button class="btn" id="phClear">Очистить ответы</button><button class="btn primary" id="phDownloadReport">Скачать индивидуальный протокол</button></div>';
   if(ctx.calcMode==="class")html+='<h3>Результаты класса</h3><div id="phClassResults">'+table(rows)+'</div><div class="psy-ph-actions"><button class="btn" id="phLegacyNext" hidden>Следующий ребенок</button><button class="btn primary" id="phDownloadCsv">Скачать таблицу Excel / CSV</button></div>';
@@ -165,5 +176,5 @@
    save("Phillips_school_anxiety_class.csv",csv(out),"text/csv;charset=utf-8");
   });
  }
- window.PSY_PHILLIPS={score,count,instruction,materials,processing,calculator,bind,report,table,topics:TOPICS,key:KEY,scales:SCALES};
+ window.PSY_PHILLIPS={score,count,instruction,materials,processing,calculator,bind,report,table,topics:TOPICS,key:KEY,scales:SCALES,studentInstruction:STUDENT_INSTRUCTION,fullQuestionnaireUrl:PUBLIC_58};
 })();
