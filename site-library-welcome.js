@@ -58,10 +58,12 @@
    const url=new URL(location.href);
    url.searchParams.set('area',area);
    history.replaceState(history.state,'',url.pathname+url.search+url.hash);
-   if(area==='school'){
-    const tree=document.getElementById('schoolTree');if(tree)tree.hidden=false;
-    button.setAttribute('aria-expanded','true');
-    // Let the existing view handlers finish and cards finish rendering.
+   // The catalog's own click handler is the only source of truth for
+   // expanding/collapsing School. Forcing it open here immediately undid
+   // the user's click when School was already expanded.
+   if(area==='school'&&button.getAttribute('aria-expanded')==='true'){
+    // Scroll to the method list only when School has just been opened,
+    // never on a second click that collapses it.
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
      const target=document.querySelector('#schoolView .filters')||document.getElementById('schoolView');
      if(target&&!target.hidden){
