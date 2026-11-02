@@ -28,6 +28,14 @@
  panel.setAttribute("aria-label","Отправить замечание о выбранном элементе");
  const title=el("h3",null,"Что здесь изменить?");
  const subtitle=el("p","psy-dev-target");
+ const selectedHeader=el("div","psy-dev-selection-heading");
+ const selectedCount=el("strong",null,"Выбранные элементы: 0");
+ const addMore=el("button","psy-dev-add-more","＋ Добавить элемент");
+ const clearAll=el("button","psy-dev-clear-all","Очистить");
+ addMore.type="button";clearAll.type="button";
+ selectedHeader.append(selectedCount,addMore,clearAll);
+ const selectedList=el("div","psy-dev-selection-list");
+ selectedList.setAttribute("aria-live","polite");
  const noteLabel=el("label",null,"Комментарий для Артема");
  const note=el("textarea");
  note.rows=4;note.maxLength=3000;note.placeholder="Например: перемести эту кнопку вправо и не изменяй другие блоки";
@@ -44,14 +52,17 @@
  const copy=el("button","psy-dev-copy","Скопировать задачу для Артема");
  copy.hidden=true;
  actions.append(submit,cancel,copy);
- panel.append(title,subtitle,noteLabel,screenshotLabel,warning,status,actions);
+ panel.append(title,subtitle,selectedHeader,selectedList,noteLabel,screenshotLabel,warning,status,actions);
  toolbar.append(main,chooseBtn,list);
  app.append(toolbar,hint,panel);
  document.body.append(app);
  const highlight=el("div","psy-dev-outline");
  highlight.hidden=true;highlight.dataset.psyDevUi="true";
  document.body.append(highlight);
- let enabled=false,picking=false,selected=null,locationInfo=null,latestId=null,submitting=false;
+ let enabled=false,picking=false,locationInfo=null,latestId=null,submitting=false;
+ const selectedTargets=[];
+ const overlays=[highlight];
+ let drawing=false;
  function setStatus(t,error=false){status.textContent=t;status.classList.toggle("is-error",error)}
  const modal=document.getElementById("modal");
  function allowedTarget(node){
@@ -76,16 +87,76 @@
   }
   return parts.join(" > ").slice(0,600);
  }
- function updateRect(element){
-  const r=element.getBoundingClientRect();
-  Object.assign(highlight.style,{left:Math.max(0,r.left)+"px",top:Math.max(0,r.top)+"px",width:Math.max(1,r.width)+"px",height:Math.max(1,r.height)+"px"});
-  highlight.hidden=false;
+ function showHighlights(){
+  const active=enabled&&selectedTargets.length>0;
+  while(overlays.length<selectedTargets.length){
+   const frame=el("div","psy-dev-outline");frame.dataset.psyDevUi="true";
+   document.body.append(frame);overlays.push(frame);
+  }
+  for(let i=0;i<overlays.length;i++){
+   const frame=overlays[i],node=selectedTargets[i]?.element;
+   if(!active||!node?.isConnected){frame.hidden=true;continue}
+   const r=node.getBoundingClientRect();
+   if(r.width<=0||r.height<=0){frame.hidden=true;continue}
+   Object.assign(frame.style,{
+    left:Math.round(r.left)+"px",top:Math.round(r.top)+"px",
+    width:Math.round(r.width)+"px",height:Math.round(r.height)+"px"
+   });
+   frame.hidden=false;
+  }
+ }
+ function scheduleHighlights(){
+  if(drawing)return;
+  drawing=true;
+  requestAnimationFrame(()=>{drawing=false;showHighlights()});
+ }
+ function updateSelectedList(){
+  selectedList.replaceChildren();
+  selectedCount.textContent="Выбранные элементы: "+selectedTargets.length+" / 15";
+  addMore.disabled=selectedTargets.length>=15;
+  for(let i=0;i<selectedTargets.length;i++){
+   const info=selectedTargets[i];
+   const row=el("div","psy-dev-selected-row");
+   const name=el("span",null,(i+1)+". "+info.tag+" · "+info.selector.slice(0,80));
+   name.title=info.selector;
+   const remove=el("button","psy-dev-remove-selected","×");
+   remove.type="button";remove.setAttribute("aria-label","Убрать элемент "+(i+1)+" из выбора");
+   remove.addEventListener("click",()=>{
+    selectedTargets.splice(i,1);
+    if(!selectedTargets.length){panel.hidden=true;locationInfo=null;copy.hidden=true}
+    else{subTitle();}
+    updateSelectedList();showHighlights();
+   });
+   row.append(name,remove);selectedList.append(row);
+  }
+  clearAll.disabled=!selectedTargets.length;
+  showHighlights();
+ }
+ function subTitle(){
+  const first=selectedTargets[0];
+  subtitle.textContent=first?
+   selectedTargets.length===1?"Элемент: "+first.tag+" · "+first.selector.slice(0,140):
+   "Общее замечание для "+selectedTargets.length+" выбранных элементов":"";
  }
  function stopPick(){
   picking=false;document.body.classList.remove("psy-dev-picking");
   chooseBtn.textContent="Выделить элемент";
-  if(!panel.hidden&&selected)updateRect(selected);else highlight.hidden=true;
-  hint.textContent=enabled?"Выдели элемент кнопкой или открой журнал задач.":"";
+  addMore.textContent="＋ Добавить элемент";
+  subTitle();showHighlights();
+  hint.textContent=enabled?"Рамки закреплены за выбранными элементами. Для объединения нажми «Добавить элемент».":"";
+ }
+ function startPick(additive=false){
+  if(!enabled)return;
+  if(!additive){selectedTargets.length=0;locationInfo=null;panel.hidden=true;latestId=null;
+   copy.hidden=true;submit.disabled=false;note.value="";screenshot.value="";setStatus("")}
+  if(selectedTargets.length>=15)return;
+  picking=true;chooseBtn.textContent="Отменить выбор";
+  addMore.textContent="Отменить выбор";
+  document.body.classList.add("psy-dev-picking");
+  hint.textContent=selectedTargets.length?
+   "Нажми на следующий элемент, чтобы добавить его в общее замечание. Esc – отмена выбора.":
+   "Нажми на нужный элемент. Рамка закрепится после щелчка. Esc – отмена.";
+  updateSelectedList();
  }
  function setMode(on){
   enabled=on;
@@ -93,66 +164,73 @@
   main.setAttribute("aria-pressed",String(on));
   main.textContent=on?"Режим включен · Выключить":"Показать Артему";
   chooseBtn.hidden=!on;list.hidden=!on;
-  if(!on){stopPick();panel.hidden=true;selected=null;latestId=null}
+  if(!on){stopPick();panel.hidden=true;selectedTargets.length=0;latestId=null;locationInfo=null;
+   updateSelectedList()}
   hint.textContent=on?"Нажми «Выделить элемент», затем выбери место на странице.":"";
   try{localStorage.setItem(FLAG,on?"on":"off")}catch(_){}
  }
  setMode((()=>{try{return localStorage.getItem(FLAG)==="on"}catch(_){return false}})());
  main.addEventListener("click",()=>setMode(!enabled));
- chooseBtn.addEventListener("click",()=>{
-  if(!enabled)return;
-  if(picking){stopPick();return}
-  panel.hidden=true;selected=null;latestId=null;
-  picking=true;chooseBtn.textContent="Отменить выделение";
-  document.body.classList.add("psy-dev-picking");
-  hint.textContent="Наведись на нужный элемент и нажми. Esc отменяет выбор.";
+ chooseBtn.addEventListener("click",()=>picking?stopPick():startPick(false));
+ addMore.addEventListener("click",()=>picking?stopPick():startPick(true));
+ clearAll.addEventListener("click",()=>{
+  if(submitting)return;
+  selectedTargets.length=0;locationInfo=null;panel.hidden=true;stopPick();updateSelectedList();
  });
- document.addEventListener("pointermove",event=>{
-  if(!picking)return;
-  const target=allowedTarget(event.target);
-  if(target)updateRect(target);
- },true);
+ window.addEventListener("scroll",scheduleHighlights,{capture:true,passive:true});
+ window.addEventListener("resize",scheduleHighlights,{passive:true});
  document.addEventListener("click",event=>{
   if(!picking)return;
   const target=allowedTarget(event.target);
   if(!target)return;
   event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
-  selected=target;stopPick();updateRect(target);
-  const tab=document.querySelector("#methodTabs [data-tab].active")?.dataset.tab||"";
-  const methodId=modal&&!modal.hidden?String(window.PSY_ACTIVE_METHOD_ID||""):"";
   const locator=selectorFor(target);
-  locationInfo={
-   page_path:location.pathname.slice(0,350),
-   selector:locator,
-   element_tag:target.tagName.toLowerCase(),
-   element_label:((target.getAttribute("aria-label")||target.getAttribute("title")||target.tagName)+"").slice(0,180),
-   method_id:methodId.slice(0,180),tab_name:tab.slice(0,55),
-   viewport:{width:innerWidth,height:innerHeight,
-    x:Math.round(target.getBoundingClientRect().x),
-    y:Math.round(target.getBoundingClientRect().y),
-    w:Math.round(target.getBoundingClientRect().width),
-    h:Math.round(target.getBoundingClientRect().height)}
-  };
-  subtitle.textContent="Элемент: "+locationInfo.element_tag+" · "+locator.slice(0,140);
-  note.value="";screenshot.value="";copy.hidden=true;setStatus("");
-  panel.hidden=false;note.focus();
+  if(!locator)return;
+  if(!selectedTargets.some(x=>x.selector===locator)){
+   if(selectedTargets.length>=15){stopPick();setStatus("Можно объединить не более 15 элементов.",true);return}
+   const tab=document.querySelector("#methodTabs [data-tab].active")?.dataset.tab||"";
+   const methodId=modal&&!modal.hidden?String(window.PSY_ACTIVE_METHOD_ID||""):"";
+   const r=target.getBoundingClientRect();
+   const entry={
+    element:target,selector:locator,tag:target.tagName.toLowerCase(),
+    label:String(target.getAttribute("aria-label")||target.getAttribute("title")||target.tagName).slice(0,180),
+    method_id:methodId.slice(0,180),tab_name:tab.slice(0,55),
+    rect:{x:Math.round(r.x),y:Math.round(r.y),w:Math.round(r.width),h:Math.round(r.height)}
+   };
+   selectedTargets.push(entry);
+   if(selectedTargets.length===1){
+    locationInfo={
+     page_path:location.pathname.slice(0,350),selector:entry.selector,
+     element_tag:entry.tag,element_label:entry.label,
+     method_id:entry.method_id,tab_name:entry.tab_name,
+     viewport:{width:innerWidth,height:innerHeight,...entry.rect}
+    };
+   }
+  }
+  stopPick();updateSelectedList();
+  panel.hidden=false;
+  if(!note.value.trim())note.focus();
+  setStatus("");
  },true);
  document.addEventListener("keydown",event=>{
   if(event.key==="Escape"&&picking)stopPick();
  });
- cancel.addEventListener("click",()=>{panel.hidden=true;selected=null;stopPick()});
+ cancel.addEventListener("click",()=>{
+  panel.hidden=true;selectedTargets.length=0;locationInfo=null;latestId=null;
+  stopPick();updateSelectedList();
+ });
  async function clip(t){
   try{await navigator.clipboard.writeText(t);return true}
   catch(_){window.prompt("Скопируй текст:",t);return false}
  }
  copy.addEventListener("click",async()=>{
   if(latestId===null)return;
-  const q="Артем, исправь замечание Метоларии MT-"+latestId+" (таблица psy_dev_annotations). Страница: "+locationInfo.page_path+". Элемент: "+locationInfo.selector+". Задача: "+note.value.trim()+". После исправления сообщи результат.";
+  const q="Артем, исправь замечание Метоларии MT-"+latestId+" (таблица psy_dev_annotations). Страница: "+locationInfo.page_path+". Элементы: "+selectedTargets.map(x=>x.selector).join("; ")+". Задача: "+note.value.trim()+". После исправления сообщи результат.";
   await clip(q);
   setStatus("Номер задачи скопирован. Отправь его мне в чат.");
  });
  submit.addEventListener("click",async()=>{
-  if(submitting||!locationInfo)return;
+  if(submitting||!locationInfo||!selectedTargets.length)return;
   const message=note.value.trim(),file=screenshot.files?.[0];
   if(message.length<3){setStatus("Напиши, что нужно изменить.",true);note.focus();return}
   if(file&&(!(["image/png","image/jpeg","image/webp"].includes(file.type))||file.size>3145728)){
@@ -161,7 +239,11 @@
   submitting=true;submit.disabled=true;setStatus("Сохраняем...");
   try{
    const {data,error}=await client.from("psy_dev_annotations")
-    .insert({...locationInfo,note:message}).select("id").single();
+    .insert({...locationInfo,
+     targets:selectedTargets.map(({selector,tag,label,method_id,tab_name,rect})=>({
+      selector,tag,label,method_id,tab_name,rect
+     })),
+     note:message}).select("id").single();
    if(error)throw error;
    latestId=data.id;
    let fileIssue=false;
