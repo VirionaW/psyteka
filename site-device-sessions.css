@@ -1,0 +1,47 @@
+/* Device and session history – profile > Security only. */
+#psyDeviceSessions[hidden]{display:none!important}
+#psyDeviceSessions{display:grid;gap:13px;margin:0 0 16px;min-width:0}
+#psyDeviceSessions .psy-device-top{display:flex;align-items:flex-start;justify-content:space-between;gap:15px}
+#psyDeviceSessions h3{margin:0 0 5px;font-size:19px;color:#254a38}
+#psyDeviceSessions .psy-device-help{margin:0;font-size:13px;line-height:1.55;color:#637c6c}
+#psyDevicesStatus{font-size:13px;line-height:1.4;color:#3e7654;min-height:1em;margin:0}
+#psyDevicesStatus[data-error="1"]{color:#a14b2e}
+#psyDeviceList{display:grid;gap:10px;min-width:0}
+.psy-device-row{display:flex;align-items:center;gap:12px;padding:15px;border-radius:14px;border:1px solid #d8e3d8;background:#fafbf6;min-width:0}
+.psy-device-row.is-current{border-color:#a4c9ae;background:#f0f8f0}
+.psy-device-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:12px;background:#e3ece4;color:#356749;font-size:23px;line-height:1}
+.psy-device-row.is-current .psy-device-icon{background:#dcefe0}
+.psy-device-info{flex:1;min-width:0}
+.psy-device-heading{display:flex;align-items:center;flex-wrap:wrap;gap:7px 9px;margin-bottom:5px}
+.psy-device-heading strong{font-size:14px;line-height:1.35;overflow-wrap:anywhere;color:#294c3c}
+.psy-device-current{border-radius:20px;border:1px solid #b5d3bc;padding:3px 8px;color:#326e48;font-size:11px;font-weight:800;white-space:nowrap}
+.psy-device-info p{margin:2px 0;color:#526b5e;font-size:13px;line-height:1.45}
+.psy-device-info .psy-device-secondary{font-size:12px;color:#6a8173}
+#psyDeviceSessions .psy-device-signout{border:1px solid #afcbb7;background:#fff;color:#315e45;border-radius:10px;font-size:13px;font-weight:800;padding:10px 15px;cursor:pointer;white-space:nowrap;min-height:40px}
+#psyDeviceSessions .psy-device-actions{display:flex;flex-wrap:wrap;gap:10px}
+#psyDeviceSessions .psy-device-actions button{border:1px solid #bfd0c4;border-radius:10px;background:transparent;color:#2f6b4f;padding:11px 15px;font:750 13px/1.4 system-ui,sans-serif;cursor:pointer}
+#psyDeviceSessions #psyOtherSessionsExit{background:#f5eee6;border-color:#d9c2a7;color:#72553a}
+#psyDeviceSessions button:hover:not(:disabled){filter:brightness(.97)}
+#psyDeviceSessions button:focus-visible{outline:3px solid #b69c6c;outline-offset:2px}
+#psyDeviceSessions button:disabled{opacity:.6;cursor:wait}
+#psyDeviceSessions .psy-device-footnote{font-size:12px;line-height:1.5;color:#6a806f;margin:0}
+html.dark #psyDeviceSessions{color:#e7f0e8}
+html.dark #psyDeviceSessions h3,html.dark .psy-device-heading strong{color:#e1f1e4}
+html.dark #psyDeviceSessions .psy-device-help,html.dark #psyDeviceSessions .psy-device-footnote{color:#b5d1c1}
+html.dark #psyDevicesStatus{color:#b5dbbc}
+html.dark .psy-device-row{background:#1b3027;border-color:#4f6957}
+html.dark .psy-device-row.is-current{background:#203d30;border-color:#729d7b}
+html.dark .psy-device-icon{background:#365847;color:#e1f3e2}
+html.dark .psy-device-info p{color:#bfd5c4}
+html.dark .psy-device-current{color:#cde4cf;border-color:#759e7e}
+html.dark #psyDeviceSessions .psy-device-signout{background:#264936;color:#d8ebdc;border-color:#628b69}
+html.dark #psyDeviceSessions .psy-device-actions button{color:#c9e2ce;border-color:#698773}
+html.dark #psyDeviceSessions #psyOtherSessionsExit{background:#493827;color:#f1d7b4;border-color:#8c6d49}
+@media(max-width:640px){
+ .psy-device-row{flex-wrap:wrap;align-items:flex-start;padding:13px}
+ .psy-device-info{flex:1 1 calc(100% - 56px)}
+ #psyDeviceSessions .psy-device-signout{margin-left:54px;flex:1 1 100%;width:auto}
+ #psyDeviceSessions .psy-device-actions{display:grid;grid-template-columns:1fr}
+ #psyDeviceSessions .psy-device-actions button{width:100%}
+}
+@media(prefers-reduced-motion:reduce){#psyDeviceSessions button{transition:none}}
