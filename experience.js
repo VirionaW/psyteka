@@ -988,6 +988,9 @@ function openMethod(m){
  if(window.PSY_PMPK_PROVERBS?.has?.(m.name)){window.PSY_PMPK_PROVERBS.open();return;}
  if(methodNow?.name){window.PSY_DRAFTS?.flush?.();methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords}};
  methodNow=m;tabNow='overview';activeSavedAssessmentId=null;activeSavedAssessmentTitle='';
+ // Public copy editor references a stable ID; the user-facing name may change.
+ window.PSY_ACTIVE_METHOD_ID=m.id;
+ window.PSY_REFRESH_METHOD_OVERVIEW=()=>{if(methodNow&&tabNow==="overview")setTab("overview");};
  const saved=methodSessions[m.name];
  calcMode=saved?.calcMode||'one';
  modeSnapshots=saved?.modeSnapshots||{one:[{name:"",answers:[]}],class:[{name:"",answers:[]}]};
