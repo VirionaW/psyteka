@@ -28,7 +28,7 @@
   try{
    // Supabase signOut invalidates the refresh session. No local profile,
    // favorites, diagnostic worksheets or theme preferences are deleted.
-   const {error}=await client.auth.signOut();
+   const {error}=await client.auth.signOut({scope:"local"});
    if(error)throw error;
    forgetNavigation();
    show(false);
