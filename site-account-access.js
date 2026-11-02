@@ -63,7 +63,7 @@
   roleBadge.textContent=role==="owner"?"👑 Владелец":role==="shadow"?"Тень":role==="moderator"?"Модератор":"Участник";
   roleBadge.className="psy-role-badge "+role;roleBadge.hidden=false;
   login.hidden=true;signOut.hidden=false;if(accountMfa)accountMfa.hidden=false;
-  if(editor)editor.hidden=role!=="owner";
+  if(editor)editor.hidden=!["owner","shadow","moderator"].includes(role);
   if(role==="owner"||role==="shadow"){
    manage.hidden=false;security.hidden=false;ownerNote.hidden=false;
    message(role==="shadow"?"Вы вошли как Тень. Управление пользователями защищено кодом «Вендиго».":"Вы вошли как Владелец. Управление пользователями защищено кодом «Вендиго».");
