@@ -73,7 +73,7 @@
   signOut.addEventListener("click",async()=>{
    signOut.disabled=true;
    try{
-    const {error:logoutError}=await client.auth.signOut();
+    const {error:logoutError}=await client.auth.signOut({scope:"local"});
     if(logoutError)throw logoutError;
     hidePrivate();message("Вы вышли из аккаунта.");
     try{sessionStorage.removeItem("psy-intended-destination");sessionStorage.removeItem("psy-demo-entry");}catch(_){}
