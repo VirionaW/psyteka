@@ -22,6 +22,7 @@
  }
  function printMount({methodId,root,onUpdate}){
   if(!root||!validMethodId(methodId))return;
+  root.hidden=true;
   const area=document.createElement("section");
   area.className="psy-print-published";
   area.setAttribute("aria-label","Опубликованные материалы");
@@ -35,6 +36,8 @@
     current=await load(methodId);
     links.replaceChildren();
     if(current.length){
+     root.hidden=false;
+     heading.hidden=false;
      for(const kind of order){
       const entry=current.find(x=>x.kind===kind);
       if(!entry)continue;
@@ -47,7 +50,7 @@
      }
      info.textContent="Опубликованные документы открываются отдельно. Для PDF используйте печать из просмотрщика.";
     }else{
-     heading.hidden=true;info.hidden=true;
+     root.hidden=true;heading.hidden=true;info.hidden=true;
     }
     onUpdate?.(current);
    }catch(_){
@@ -57,7 +60,7 @@
   void refresh();
   Promise.resolve(identity?.ready).then(()=>{
    if(!area.isConnected||!identity?.user?.email_confirmed_at||!ADMIN.has(identity.role))return;
-   heading.hidden=false;
+   root.hidden=false;heading.hidden=false;
    const details=document.createElement("details");details.className="psy-print-admin-upload";
    const summary=document.createElement("summary");summary.textContent="Администрирование · загрузить материалы";
    const form=document.createElement("form");
