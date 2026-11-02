@@ -12,7 +12,23 @@
  const config=window.PSY_AUTH_CONFIG||{};
  const identity=window.PSY_IDENTITY;
  const client=identity?.client||window.PSY_AUTH_CLIENT;
- let loadedAt=0,busy=false;
+ let loadedAt=0,busy=false,exiting=false;
+ async function exitHere(button){
+  if(exiting)return;
+  exiting=true;button.disabled=true;say("Завершаем текущий сеанс...");
+  try{
+   const {error}=await client.auth.signOut({scope:"local"});
+   if(error)throw error;
+   try{
+    sessionStorage.removeItem("psy-intended-destination");
+    sessionStorage.removeItem("psy-demo-entry");
+   }catch(_){}
+   location.replace("index.html?home=1&entry=1");
+  }catch(_){
+   exiting=false;button.disabled=false;
+   say("Не удалось выйти. Проверьте подключение и повторите попытку.",true);
+  }
+ }
  const make=(tag,klass,text)=>{
   const node=document.createElement(tag);
   if(klass)node.className=klass;
@@ -47,6 +63,7 @@
   return new Intl.DateTimeFormat("ru-RU",{day:"numeric",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(date);
  };
  function showGuest(){
+  document.body.classList.remove("psy-device-exit-ready");
   root.hidden=true;list.replaceChildren();othersButton.hidden=true;
  }
  function render(entries){
@@ -74,11 +91,11 @@
     detail.append(update);
    }
    card.append(visual,detail);
-   if(row.is_current&&currentLogout){
-    currentLogout.textContent="Выйти";
-    currentLogout.title="Выйти только с этого устройства";
-    currentLogout.classList.add("psy-device-signout");
-    card.append(currentLogout);
+   if(row.is_current){
+    const exit=make("button","psy-device-signout","Выйти");
+    exit.type="button";exit.title="Выйти только с этого устройства";
+    exit.addEventListener("click",()=>void exitHere(exit));
+    card.append(exit);
    }
    list.append(card);
   }
@@ -87,9 +104,9 @@
   }
   othersButton.hidden=items.filter(x=>!x.is_current).length===0;
   othersButton.disabled=false;
-  if(!currentFound&&currentLogout&&!currentLogout.isConnected){
-   document.getElementById("psyAccountAccess")?.querySelector(".psy-access-actions")?.append(currentLogout);
-  }
+  // Keep the old account-card exit as a fallback when session history
+  // is unavailable, and avoid two identical buttons when it has loaded.
+  document.body.classList.toggle("psy-device-exit-ready",currentFound);
   say(items.length?"Показано активных сеансов: "+items.length+".":"");
  }
  async function load(force=false){
