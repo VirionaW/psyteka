@@ -338,7 +338,7 @@
  });
  el("psyEntrySignOut").addEventListener("click",async()=>{
   if(!client)return;
-  const {error:signError}=await client.auth.signOut();
+  const {error:signError}=await client.auth.signOut({scope:"local"});
   if(signError){error("Не удалось выйти. Повторите попытку.");return}
   currentUser=null;trial=null;paid=null;role="participant";ownerNeedsMfa=false;if(timer)clearInterval(timer);
   el("psyHomeTrial").hidden=true;step("psyEntryEmail");
