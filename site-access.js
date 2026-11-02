@@ -82,6 +82,11 @@
    const {data,error}=await withTimeout(client.auth.getUser(),10000);
    if(error){temporaryFailure();return}
    if(!data?.user||data.user.is_anonymous){goHome();return}
+   const policy=window.PSY_AUTH_PROTECTION;
+   if(policy&&!(await policy.keepSession(client,data.user))){goHome();return}
+   if(policy&&await policy.secondFactorNeeded(client)){
+    location.replace(policy.challengeUrl(location.pathname+location.search+location.hash));return;
+   }
    const uid=data.user.id;
    const [r,t,p]=await withTimeout(Promise.all([
     client.from("psy_account_roles").select("role").eq("user_id",uid).maybeSingle(),
