@@ -342,5 +342,16 @@ $("print").addEventListener("click",()=>{const p=person();if(!p)return;$("printR
 $("theme").addEventListener("click",()=>{document.documentElement.classList.toggle("dark");const dark=document.documentElement.classList.contains("dark");$("theme").textContent=dark?"Светлая тема":"Темная тема";try{sessionStorage.setItem("metolaria_luscher_dark",dark?"1":"0");}catch(_){};});
 try{if(sessionStorage.getItem("metolaria_luscher_dark")==="1"){document.documentElement.classList.add("dark");$("theme").textContent="Светлая тема";}}catch(_){}
 if(state.variant&&!state.chooser)render();
+ window.PSY_STANDALONE_DRAFT={
+  name:"Тест Люшера (рабочий протокол)",
+  get:()=>JSON.parse(JSON.stringify(state)),
+  restore:data=>{
+   if(!data||!Array.isArray(data.people))return;
+   state={...initial(),...data};
+   save();
+   if(state.variant&&!state.chooser){$("versionScreen").hidden=true;$("workspace").hidden=false;render()}
+   else{$("workspace").hidden=true;$("versionScreen").hidden=false}
+  }
+ };
 window.PSY_LUSCHER_TEST={analyze,versions:VERSIONS,colors:COLORS};
 })();
