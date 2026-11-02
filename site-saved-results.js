@@ -19,7 +19,10 @@
      text(title,draft.method_name);text(meta,(draft.calc_mode==="class"?"Группа / класс":"Один участник")+" · "+new Date(draft.updated_at).toLocaleString("ru-RU"));
      desc.append(title,meta);
      const open=make("a","site-btn");
-     open.href="library.html?area=school&method="+encodeURIComponent(draft.method_name)+"&draft="+encodeURIComponent(draft.calc_mode);
+     const standalone=draft.method_name==="Домики Ореховой (рабочий протокол)"?"orekhova-houses.html"
+       :draft.method_name==="Тест Люшера (рабочий протокол)"?"luscher-tests.html":null;
+     open.href=standalone?standalone+"?draft=one":
+       "library.html?area=school&method="+encodeURIComponent(draft.method_name)+"&draft="+encodeURIComponent(draft.calc_mode);
      text(open,"Продолжить");
      const del=make("button","psy-saved-delete");del.type="button";text(del,"Удалить черновик");
      del.onclick=async()=>{
