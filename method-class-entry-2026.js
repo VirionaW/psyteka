@@ -301,10 +301,16 @@
   return j<0?"":mode==="letter"?cdiLetters[j]:String(j+1);
  };
  const status=r=>r?.attendance==="absent"?"Отсутствовал":"Присутствует";
- const valid=(v,d)=>type(d)==="cdi"?[0,1,2,"0","1","2"].includes(v):v==="yes"||v==="no";
+ const phStored=v=>v==="yes"||v==="1"||v===1?"yes":v==="no"||v==="0"||v===0?"no":v;
+ const valid=(v,d)=>type(d)==="cdi"?[0,1,2,"0","1","2"].includes(v):["yes","no"].includes(phStored(v));
  function done(d,answers){return Array.from({length:size(d)},(_,i)=>answers?.[i]).filter(v=>valid(v,d)).length;}
- function scoring(d,r){if(!r||r.attendance==="absent")return null;return type(d)==="cdi"?semester.score(d,r.answers||[],r):phillips.score(d,r.answers||[]);}
- function value(d,raw){return type(d)==="ph"?(raw==="yes"?"1":raw==="no"?"0":""):valid(raw,d)?String(raw):"";}
+ function scoring(d,r){
+  if(!r||r.attendance==="absent")return null;
+  if(type(d)==="cdi")return semester.score(d,r.answers||[],r);
+  // Read legacy 0/1 snapshots without rewriting any stored answers.
+  return phillips.score(d,Array.from({length:58},(_,i)=>phStored(r.answers?.[i])));
+ }
+ function value(d,raw){return type(d)==="ph"?(phStored(raw)==="yes"?"1":phStored(raw)==="no"?"0":""):valid(raw,d)?String(raw):"";}
  function interpretation(p){return p>75?"Высокий показатель":p>50?"Повышенный показатель":"Не превышает 50%";}
  function progress(n,total){return '<div class="psy-mspss-track"><span style="width:'+Math.max(0,Math.min(100,n/total*100))+'%"></span></div>';}
  function palette(i){return ["psy-cp-purple","psy-cp-green","psy-cp-blue"][i%3];}
@@ -470,7 +476,7 @@
     '<label class="psy-mspss-label" for="cpBulkNames">Участники (по одному в строке)</label><textarea id="cpBulkNames" rows="10" placeholder="Иванов Иван&#10;Петрова Анна&#10;Сидоров Алексей"></textarea>'+
     '<button type="button" class="btn primary psy-mspss-add" id="cpAddNames">Добавить в список</button>'+
     '<button type="button" class="btn psy-mspss-sort" id="cpSort" '+(!allowDetails?"disabled":"")+' >По алфавиту А - Я</button>'+
-    '<div class="psy-mspss-person-list">'+rows.map((u,i)=>(u.name?.trim()||done(d,u.answers))?
+    '<div class="psy-mspss-person-list">'+rows.map((u,i)=>(type(d)==="ph"||u.name?.trim()||done(d,u.answers))?
       '<div class="psy-mspss-person-row '+(type(d)==="cdi"?(u.sex==="f"?"psy-cp-girl":u.sex==="m"?"psy-cp-boy":""):"")+'"><button type="button" class="psy-mspss-person '+(i===ctx.rowIndex?"active":"")+'" data-cp-person="'+i+'"><span>'+esc(u.name||"Участник "+(i+1))+'</span><small>'+(u.attendance==="absent"?"Отсутствует":done(d,u.answers)+"/"+total)+'</small></button>'+
       '<button type="button" class="psy-mspss-delete-person" title="Удалить ученика" aria-label="Удалить '+esc(u.name||"ученика")+'" data-cp-delete="'+i+'">×</button></div>':"").join("")+'</div>'+
     '<button type="button" class="btn psy-mspss-delete-all" id="cpDeleteAll" '+(!allowDetails?"disabled":"")+' >Удалить всех участников</button>'+
