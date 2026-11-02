@@ -10,6 +10,7 @@
  const manage=document.getElementById("psyOwnerManage");
  const security=document.getElementById("psyOwnerSecurity");
  const accountMfa=document.getElementById("psyAccountMfa");
+ const editor=document.getElementById("psyOwnerEditor");
  const ownerNote=document.getElementById("psyAccountOwnerHint");
  const login=document.getElementById("psyAccountLogin");
  const signOut=document.getElementById("psyAccountSignOut");
@@ -18,7 +19,7 @@
  login.textContent=config.registrationEnabled===true?"Войти или зарегистрироваться":"Проверить вход по почте";
  function message(t){hint.textContent=t;}
  function hidePrivate(){
-  manage.hidden=true;security.hidden=true;if(accountMfa)accountMfa.hidden=true;ownerNote.hidden=true;email.hidden=true;roleBadge.hidden=true;signOut.hidden=true;login.hidden=false;
+  manage.hidden=true;security.hidden=true;if(editor)editor.hidden=true;if(accountMfa)accountMfa.hidden=true;ownerNote.hidden=true;email.hidden=true;roleBadge.hidden=true;signOut.hidden=true;login.hidden=false;
   const reveal=document.getElementById("psyEmailReveal");if(reveal)reveal.hidden=true;
  }
  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||"")||
@@ -62,6 +63,7 @@
   roleBadge.textContent=role==="owner"?"👑 Владелец":role==="shadow"?"Тень":role==="moderator"?"Модератор":"Участник";
   roleBadge.className="psy-role-badge "+role;roleBadge.hidden=false;
   login.hidden=true;signOut.hidden=false;if(accountMfa)accountMfa.hidden=false;
+  if(editor)editor.hidden=role!=="owner";
   if(role==="owner"||role==="shadow"){
    manage.hidden=false;security.hidden=false;ownerNote.hidden=false;
    message(role==="shadow"?"Вы вошли как Тень. Управление пользователями защищено кодом «Вендиго».":"Вы вошли как Владелец. Управление пользователями защищено кодом «Вендиго».");
