@@ -40,6 +40,7 @@
  async function requireOwner(){
   const {data,error}=await client.auth.getUser();
   if(error||!data?.user||data.user.is_anonymous)return false;
+  if(window.PSY_AUTH_PROTECTION&&!(await window.PSY_AUTH_PROTECTION.keepSession(client,data.user)))return false;
   const {data:role,error:roleError}=await client.from("psy_account_roles")
     .select("role").eq("user_id",data.user.id).maybeSingle();
   if(roleError)throw roleError;
