@@ -26,7 +26,14 @@ async function saveCurrentAssessment(){
   try{
    const title=name.value.trim(),data=await cloud.saveAssessment({
     id:activeSavedAssessmentId,title,methodName:methodNow.name,
-    snapshot:{calcMode,rowIndex,rows:rows.map(r=>({...r,answers:Array.isArray(r.answers)?r.answers.slice():[]}))}
+    snapshot:{calcMode,rowIndex,rows:rows.map(r=>({...r,answers:Array.isArray(r.answers)?r.answers.slice():[]})),
+     scoreArchive:{savedAt:new Date().toISOString(),workflow:DETAILS[methodNow.name]?.workflow||"",
+      results:rows.map((r)=>{
+       try{
+        const d=DETAILS[methodNow.name],value=d?getScores(d,r.answers||[]):null;
+        return value?JSON.parse(JSON.stringify(value)):null;
+       }catch(_){return null}
+      })}}
    });
    activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=title;
    savedModeRecords[calcMode]={id:data.id,title,baseline:JSON.stringify(rows)};
