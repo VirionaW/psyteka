@@ -209,6 +209,58 @@ function bindAnswerCopyControls(){
  if(actions){const next=actions.querySelector("#cpNext");if(next)actions.insertBefore(box,next);else actions.append(box);}
  else entry.querySelector(".psy-cp-grid")?.insertAdjacentElement("afterend",box);
 }
+/* Shared bottom class chooser for methods without their own Phillips-style selector.
+   Uses the existing rows, never copies or resets the chosen child's answers. */
+function bindBottomParticipantChooser(){
+ if(tabNow!=="score"||calcMode!=="class"||!rows.length)return;
+ const body=document.getElementById("modalBody");
+ if(!body||body.querySelector("#cpBottomPerson,#school711BottomPerson,#phBottomPerson,.psy-ph-bottom-nav select,.psy-universal-bottom-nav"))return;
+ const box=document.createElement("nav");
+ box.className="psy-universal-bottom-nav";
+ box.setAttribute("aria-label","Переключение участников после заполнения");
+ const label=document.createElement("label");
+ label.textContent="Выбрать ученика";
+ const select=document.createElement("select");
+ select.setAttribute("aria-label","Выбрать ученика без прокрутки вверх");
+ rows.forEach((person,i)=>{
+  const option=document.createElement("option");
+  option.value=String(i);
+  option.textContent=(i+1)+". "+(person.name||"Участник "+(i+1))+
+    (person.attendance==="absent"?" (отсутствует)":"");
+  option.selected=i===rowIndex;
+  select.append(option);
+ });
+ label.append(select);box.append(label);
+ select.addEventListener("change",()=>{
+  const i=Number(select.value);
+  if(!Number.isInteger(i)||i<0||i>=rows.length||i===rowIndex)return;
+  rowIndex=i;modeIndices[calcMode]=i;
+  setTab("score");
+  document.getElementById("psyUniversalParticipantSelect")?.focus({preventScroll:true});
+ });
+ select.id="psyUniversalParticipantSelect";
+ const existingNext=body.querySelector("#nextParticipant,#cpNext,#school711Next,#phNext,#psyNextChild");
+ if(rows.length>1&&!existingNext){
+  const next=document.createElement("button");
+  next.type="button";next.className="btn primary";
+  next.textContent="Следующий участник →";
+  next.addEventListener("click",()=>{
+   const candidate=rows.findIndex((person,i)=>i>rowIndex&&person.attendance!=="absent");
+   if(candidate<0)return;
+   rowIndex=candidate;modeIndices[calcMode]=candidate;setTab("score");
+  });
+  next.disabled=!rows.some((person,i)=>i>rowIndex&&person.attendance!=="absent");
+  box.append(next);
+ }
+ const grids=body.querySelectorAll(".psy-mspss-grid,.psy-ph-grid,.psy-semester-grid,.psy-711-grid,.psy-cp-grid,.dictation-score-grid,.score-grid,.diagnostic-grid,.answers-grid,table.psy-score-table");
+ const last=grids.length?grids[grids.length-1]:null;
+ if(last&&last.parentElement)last.insertAdjacentElement("afterend",box);
+ else{
+  const results=body.querySelector("#semesterResult,#phResult,#cpResult,#school711Result,.score-section,.results-table");
+  if(results&&results.parentElement)results.insertAdjacentElement("beforebegin",box);
+  else body.append(box);
+ }
+}
 function setTab(name){
  if(name!=="overview"&&window.PSY_PORTFOLIO_VISUAL?.canLeave?.()===false)return;
  const previousTab=tabNow;
@@ -302,6 +354,7 @@ function setTab(name){
  bindControls();
  bindAnswerCopyControls();
  if(!window.PSY_MATCH_MSPSS?.supports(DETAILS[methodNow.name]))window.PSY_CLASS_ENTRY_2026?.bind(DETAILS[methodNow.name],quickEntryContext);
+ bindBottomParticipantChooser();
  if(DETAILS[methodNow?.name]?.workflow==='semester2026')window.PSY_SEMESTER_2026.syncFooter(DETAILS[methodNow.name],rows,rowIndex);
  if(DETAILS[methodNow?.name]?.workflow==='preschoolSheet')window.PSY_PRESCHOOL.updateFooter(DETAILS[methodNow.name],mainTab);
  if(DETAILS[methodNow?.name]?.workflow==='specialSheet')window.PSY_SPECIAL.updateFooter(DETAILS[methodNow.name],mainTab);
