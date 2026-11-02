@@ -1,0 +1,32 @@
+<!doctype html><html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<title>Замечания по разработке – Метолария</title>
+<link rel="icon" href="brand-favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="site-v2.css">
+<link rel="stylesheet" href="site-unified.css?v=20261028wordmark2">
+<link rel="stylesheet" href="site-dev-review.css?v=20261102dev1">
+</head><body data-account="development-notes" class="site-landing">
+<header class="site-header"><a class="site-logo" href="index.html"><img src="brand-mark.svg" width="42" height="42" alt=""><span class="psy-wordmark"><span class="psy-word-start">Мето</span><span class="psy-word-end">лария</span></span></a><nav><a href="library.html">Библиотека</a><a href="profile.html#psySecurity">Профиль</a></nav></header>
+<main class="psy-dev-review">
+ <section class="psy-dev-review-intro"><span>ВРЕМЕННО · РАЗРАБОТКА</span>
+  <h1>Замечания по сайту</h1>
+  <p>Все отмеченные элементы и просьбы администрации в одном месте. Можно найти нужное место, проверить исправления и сообщить Артему номер задачи.</p>
+ </section>
+ <p id="psyDevReviewGate" role="status">Проверяем права доступа...</p>
+ <section id="psyDevReviewMain" hidden>
+  <div class="psy-dev-review-filters">
+   <label>Показать<select id="psyDevReviewStatus"><option value="all">Все задачи</option><option value="new">Новые</option><option value="progress">В работе</option><option value="done">Исправленные</option></select></label>
+   <button type="button" id="psyDevReviewRefresh">Обновить список</button>
+   <span id="psyDevReviewCount" role="status" aria-live="polite"></span>
+  </div>
+  <div id="psyDevReviewList" class="psy-dev-review-list"></div>
+ </section>
+ <p class="psy-dev-review-foot">Исправления не выполняются автоматически. Отправь номер задачи в открытый чат с Артемом. После обновления сайта можно вернуться к отмеченному элементу и проверить результат.</p>
+</main>
+<script src="auth-config.js?v=20261028metolaria1"></script>
+<script src="vendor/supabase-2.58.0.min.js?v=20261102"></script>
+<script src="site-auth-protection.js?v=20261102safety3"></script>
+<script src="site-account-identity.js?v=20261102auth4"></script>
+<script src="site-dev-review.js?v=20261102dev1"></script>
+</body></html>
