@@ -909,7 +909,7 @@ const tone=(d,s)=>d.id==="eysenck-40"?(s.raw<=7?"low":s.raw<=14?"middle":"high")
 const label=(d,s)=>d.id==="razuvaeva-osr29"?"Без автоматического диагностического уровня":d.id==="eysenck-40"?(s.raw<=7?"Низкий уровень":s.raw<=14?"Средний уровень":"Высокий уровень"):(s.percent<=33?"До 33% максимума":s.percent<=66?"34-66% максимума":"Свыше 66% максимума");
 const num=(d,s)=>d.id==="razuvaeva-osr29"?s.adjusted.toFixed(1).replace(".",","):d.id==="lazarus-wcq50"&&s.tScore!==null?String(s.tScore):String(s.raw);
 
-const wcqValue=s=>s.tScore!==null?String(s.tScore)+" Т":String(Math.round(s.percent))+"%";
+const wcqValue=s=>s.tScore!==null?String(s.tScore)+(s.referenceOnly?" Т*":" Т"):String(Math.round(s.percent))+"%";
 const wcqColor=s=>s.tScore===null?"neutral":s.tScore<40?"low":s.tScore<=60?"middle":"high";
 const wcqMeaning={
  "Конфронтация":"отстаивание своей позиции",
@@ -921,31 +921,48 @@ const wcqMeaning={
  "Планирование решения проблемы":"обдумывание конкретных действий",
  "Положительная переоценка":"поиск полезного опыта в трудной ситуации"
 };
+const wcqYears=r=>r?.ageYears===null||r?.ageYears===undefined||r?.ageYears===""?NaN:Number(r.ageYears);
+const wcqOutsideNorm=r=>Number.isInteger(wcqYears(r))&&(wcqYears(r)<14||wcqYears(r)>60);
+function wcqNormNote(r){
+ const age=wcqYears(r);
+ if(age===12||age===13)return ["m","f"].includes(r.sex)
+  ?"Т* – условное сравнение с возрастной группой 14-20 лет по указанному полу. Для "+age+" лет эти нормативы не проверены; не используйте уровни как возрастное заключение."
+  :"Для условного пересчета по таблице 14-20 лет укажите пол. Пока показана доля максимума каждой шкалы, без нормативного уровня.";
+ if(Number.isInteger(age)&&age<12)return "Для возраста младше 12 лет выбранная редакция не имеет подтвержденных норм. Т-баллы не рассчитываются; проценты носят только описательный характер.";
+ if(Number.isInteger(age)&&age>60)return "Таблица норм заканчивается на 60 годах. Т-баллы для этого возраста не рассчитываются.";
+ if(!["m","f"].includes(r?.sex))return "Для получения Т-баллов по возрастной таблице укажите пол.";
+ return "Т – нормативный Т-балл по полу и возрасту 14-60 лет; Т менее 40 – редкое, 40-60 – умеренное, свыше 60 – выраженное использование.";
+}
+function wcqAgeWarning(r){
+ const age=wcqYears(r);
+ if(!wcqOutsideNorm(r))return "";
+ const reference=age===12||age===13;
+ const text=reference?
+  "Возраст "+age+" лет ниже возрастной группы опубликованных норм (14-60 лет). По вашему выбору используется условное сравнение с таблицей 14-20 лет. Это не стандартизированный результат для "+age+" лет и не основание для возрастных выводов.":
+  "Возраст "+age+" лет находится за пределами норм используемой редакции (14-60 лет). Нормативный результат для этого возраста получить нельзя.";
+ return '<div class="psy-wcq-age-warning" role="note"><strong>Внимание: возраст вне диапазона норм</strong><p>'+esc(text)+'</p></div>';
+}
 function wcqProfile(z){
  if(!z?.scales?.length)return "";
- const ordered=z.scales.slice().sort((a,b)=>b.percent-a.percent);
- const first=ordered[0],second=ordered[1],last=ordered[ordered.length-1],spread=first.percent-last.percent;
- const headline=spread<10?
-  "Ответы распределены относительно равномерно между стратегиями.":
-  "Внутри этого профиля чаще отмечены «"+first.name+"» ("+Math.round(first.percent)+"%) и «"+second.name+"» ("+Math.round(second.percent)+"%).";
- let detail=spread<10?"Выраженной ведущей стратегии по ответам не выделяется. ":
-  "Это указывает на относительное преобладание таких способов, как "+(wcqMeaning[first.name]||first.name.toLowerCase())+
+ const allT=z.scales.every(s=>Number.isInteger(s.tScore));
+ const isReference=allT&&z.scales.some(s=>s.referenceOnly);
+ const metric=s=>allT?s.tScore:s.percent;
+ const shown=s=>allT?(s.tScore+(isReference?" Т*":" Т")):Math.round(s.percent)+"%";
+ const ordered=z.scales.slice().sort((a,b)=>metric(b)-metric(a));
+ const first=ordered[0],second=ordered[1],last=ordered[ordered.length-1],spread=metric(first)-metric(last);
+ const almostEqual=spread<(allT?4:10);
+ const headline=almostEqual?
+  "Показатели восьми стратегий расположены близко друг к другу.":
+  "Наиболее высокие показатели профиля – «"+first.name+"» ("+shown(first)+") и «"+second.name+"» ("+shown(second)+").";
+ let detail=almostEqual?"По ответам нет резко выделяющейся стратегии. ":
+  "Чаще других в сравнении проявляются "+(wcqMeaning[first.name]||first.name.toLowerCase())+
   " и "+(wcqMeaning[second.name]||second.name.toLowerCase())+". ";
- if(spread>=15)detail+="Реже отмечена стратегия «"+last.name+"» ("+Math.round(last.percent)+"%). ";
- if(z.scales.some(s=>s.name==="Бегство-избегание"&&s.percent>=60))
-  detail+="Уточните, бывают ли ситуации, когда решение откладывается, и что помогает вернуться к действиям.";
- else if(z.scales.some(s=>s.name==="Поиск социальной поддержки"&&s.percent>=60))
-  detail+="Уточните, к кому участник может обратиться и получает ли необходимую помощь.";
- else if(z.scales.some(s=>s.name==="Планирование решения проблемы"&&s.percent>=60))
-  detail+="Выясните, какие способы планирования помогают справляться со школьными трудностями.";
+ if(spread>=(allT?8:15))detail+="Самый низкий показатель – «"+last.name+"» ("+shown(last)+"). ";
+ if(z.scales.some(s=>s.name==="Бегство-избегание"&&metric(s)>=(allT?60:60)))detail+="Стоит уточнить, когда участник откладывает решение проблемы и что помогает действовать.";
+ else if(z.scales.some(s=>s.name==="Поиск социальной поддержки"&&metric(s)>=(allT?60:60)))detail+="Уточните, к кому участник обращается за помощью и получает ли ее.";
+ else if(z.scales.some(s=>s.name==="Планирование решения проблемы"&&metric(s)>=(allT?60:60)))detail+="Уточните, какие способы планирования помогают справляться со школьными трудностями.";
+ if(isReference)detail+=" Сопоставление выполнено по более старшей группе и требует особой осторожности.";
  return '<div class="psy-711-wcq-profile"><h4>Краткий анализ профиля</h4><p>'+esc(headline+" "+detail.trim())+'</p></div>';
-}
-function wcqNormNote(r){
- const age=r?.ageYears===null||r?.ageYears===undefined?NaN:Number(r.ageYears);
- if(Number.isInteger(age)&&age<14)return "Для "+age+" лет эта редакция не стандартизирована. Ответы рассчитаны, но проценты отражают только профиль ответов, не нормативные уровни. Уточните стратегии в беседе с ребенком.";
- if(Number.isInteger(age)&&age>60)return "Для возраста старше 60 лет в выбранной таблице Т-норм нет; проценты являются описательными показателями.";
- if(Number.isInteger(age)&&age>=14&&age<=60&&!["m","f"].includes(r?.sex))return "Для нормативных Т-баллов укажите пол. Пока показаны проценты от максимума шкалы.";
- return "Т – нормативный Т-балл по возрасту и полу. % – описательная доля максимума шкалы, когда подходящих норм нет.";
 }
 const razKey=(d,r)=>d.id==="razuvaeva-osr29"?(r?.razuvaevaKey==="method-six"?"Б":"А"):"";
 const razLabel=(d,r)=>razKey(d,r)?"Ключ "+razKey(d,r):"";
