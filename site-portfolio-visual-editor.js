@@ -166,6 +166,11 @@
   editor.panel.remove();
   editor=null;
  }
+ function canLeave(){
+  if(!editor)return true;
+  if(editor.dirty&&!window.confirm("Есть неопубликованные изменения. Закрыть редактор без сохранения?"))return false;
+  leave(false);return true;
+ }
  function leave(restore){
   const context=editor?.context;
   cleanup();
@@ -479,5 +484,5 @@
    ready=true;
   }).catch(()=>{ready=true});
  }
- window.PSY_PORTFOLIO_VISUAL={onRender,canEdit:()=>administrator,reset:()=>{cache.clear()}};
+ window.PSY_PORTFOLIO_VISUAL={onRender,canLeave,canEdit:()=>administrator,reset:()=>{cache.clear()}};
 })();
