@@ -899,7 +899,7 @@ const ageOk=(d,r,rows,mode)=>{
  const age=r?.ageYears===null||r?.ageYears===undefined||r?.ageYears===""?null:Number(r.ageYears);
  return age!==null&&Number.isInteger(age)&&age>=1&&age<=120;
 };
-const ready=(d,r,rows,mode)=>!!r?.name?.trim()&&r.attendance!=="absent"&&(mode!=="class"||roster(rows))&&ageOk(d,r,rows,mode)&&(d.id!=="lazarus-wcq50"||["f","m"].includes(r.sex));
+const ready=(d,r,rows,mode)=>!!r?.name?.trim()&&r.attendance!=="absent"&&(mode!=="class"||roster(rows))&&ageOk(d,r,rows,mode);
 const topic=(d,i,r)=>d.id==="eysenck-40"&&r?.eysenckVersion==="block"?"Вопрос "+(i+1):items[d.id][i];
 const opts=d=>d.id==="eysenck-40"?"0 – не подходит · 1 – бывает иногда · 2 – бывает часто":d.id==="lazarus-wcq50"?"0 – никогда · 1 – редко · 2 – иногда · 3 – часто":"0 – Нет · 1 – Да";
 const childOpts=d=>d.id==="razuvaeva-osr29"?"Для каждого утверждения отметь «Да» или «Нет».":opts(d);
@@ -908,6 +908,45 @@ const tone=(d,s)=>d.id==="eysenck-40"?(s.raw<=7?"low":s.raw<=14?"middle":"high")
  (s.percent<=33?"low":s.percent<=66?"middle":"high");
 const label=(d,s)=>d.id==="razuvaeva-osr29"?"Без автоматического диагностического уровня":d.id==="eysenck-40"?(s.raw<=7?"Низкий уровень":s.raw<=14?"Средний уровень":"Высокий уровень"):(s.percent<=33?"До 33% максимума":s.percent<=66?"34-66% максимума":"Свыше 66% максимума");
 const num=(d,s)=>d.id==="razuvaeva-osr29"?s.adjusted.toFixed(1).replace(".",","):d.id==="lazarus-wcq50"&&s.tScore!==null?String(s.tScore):String(s.raw);
+
+const wcqValue=s=>s.tScore!==null?String(s.tScore)+" Т":String(Math.round(s.percent))+"%";
+const wcqColor=s=>s.tScore===null?"neutral":s.tScore<40?"low":s.tScore<=60?"middle":"high";
+const wcqMeaning={
+ "Конфронтация":"отстаивание своей позиции",
+ "Дистанцирование":"снижение значимости проблемы",
+ "Самоконтроль":"контроль эмоциональных реакций",
+ "Поиск социальной поддержки":"обращение за советом и помощью",
+ "Принятие ответственности":"признание своей роли в происходящем",
+ "Бегство-избегание":"откладывание решения трудностей или уход от них",
+ "Планирование решения проблемы":"обдумывание конкретных действий",
+ "Положительная переоценка":"поиск полезного опыта в трудной ситуации"
+};
+function wcqProfile(z){
+ if(!z?.scales?.length)return "";
+ const ordered=z.scales.slice().sort((a,b)=>b.percent-a.percent);
+ const first=ordered[0],second=ordered[1],last=ordered[ordered.length-1],spread=first.percent-last.percent;
+ const headline=spread<10?
+  "Ответы распределены относительно равномерно между стратегиями.":
+  "Внутри этого профиля чаще отмечены «"+first.name+"» ("+Math.round(first.percent)+"%) и «"+second.name+"» ("+Math.round(second.percent)+"%).";
+ let detail=spread<10?"Выраженной ведущей стратегии по ответам не выделяется. ":
+  "Это указывает на относительное преобладание таких способов, как "+(wcqMeaning[first.name]||first.name.toLowerCase())+
+  " и "+(wcqMeaning[second.name]||second.name.toLowerCase())+". ";
+ if(spread>=15)detail+="Реже отмечена стратегия «"+last.name+"» ("+Math.round(last.percent)+"%). ";
+ if(z.scales.some(s=>s.name==="Бегство-избегание"&&s.percent>=60))
+  detail+="Уточните, бывают ли ситуации, когда решение откладывается, и что помогает вернуться к действиям.";
+ else if(z.scales.some(s=>s.name==="Поиск социальной поддержки"&&s.percent>=60))
+  detail+="Уточните, к кому участник может обратиться и получает ли необходимую помощь.";
+ else if(z.scales.some(s=>s.name==="Планирование решения проблемы"&&s.percent>=60))
+  detail+="Выясните, какие способы планирования помогают справляться со школьными трудностями.";
+ return '<div class="psy-711-wcq-profile"><h4>Краткий анализ профиля</h4><p>'+esc(headline+" "+detail.trim())+'</p></div>';
+}
+function wcqNormNote(r){
+ const age=r?.ageYears===null||r?.ageYears===undefined?NaN:Number(r.ageYears);
+ if(Number.isInteger(age)&&age<14)return "Для "+age+" лет в выбранной редакции нет опубликованных возрастных Т-норм: показаны проценты от максимума шкалы, а не нормативные уровни. Ответы рассчитаны.";
+ if(Number.isInteger(age)&&age>60)return "Для возраста старше 60 лет в выбранной таблице Т-норм нет; проценты являются описательными показателями.";
+ if(Number.isInteger(age)&&age>=14&&age<=60&&!["m","f"].includes(r?.sex))return "Для нормативных Т-баллов укажите пол. Пока показаны проценты от максимума шкалы.";
+ return "Т – нормативный Т-балл по возрасту и полу. % – описательная доля максимума шкалы, когда подходящих норм нет.";
+}
 const razKey=(d,r)=>d.id==="razuvaeva-osr29"?(r?.razuvaevaKey==="method-six"?"Б":"А"):"";
 const razLabel=(d,r)=>razKey(d,r)?"Ключ "+razKey(d,r):"";
 // PsyTests rounds the chart's upper axis tick upward. The mathematically
@@ -918,12 +957,12 @@ function result(d,r){
  if(r?.attendance==="absent")return '<section class="psy-711-result">Участник отсутствовал. Результаты не рассчитываются.</section>';
  const z=scored(d,r);if(!z)return '<section class="psy-711-result">Заполнено '+present(d,r)+' из '+size(d)+'. Для подсчета нужны все ответы.</section>';
  return '<section class="psy-711-result"><h3>Результаты участника'+(d.id==="razuvaeva-osr29"?" · "+razLabel(d,r):"")+'</h3><div class="psy-711-scale-grid">'+z.scales.map(s=>
- '<div class="psy-711-scale psy-711-'+tone(d,s)+'"><b>'+esc(s.name)+'</b><strong>'+(d.id==="lazarus-wcq50"&&s.tScore!==null?num(d,s)+" Т-балл":num(d,s)+' / '+maximum(d,s))+'</strong><span>'+
+ '<div class="psy-711-scale psy-711-'+tone(d,s)+'"><b>'+esc(s.name)+'</b><strong>'+(d.id==="lazarus-wcq50"?wcqValue(s):num(d,s)+' / '+maximum(d,s))+'</strong><span>'+
  esc(d.id==="razuvaeva-osr29"?"Коэффициент "+s.factor+" · точный максимум "+preciseRazMaximum(s):
- d.id==="lazarus-wcq50"?(s.tScore!==null?"Сырой: "+s.raw+" / "+s.max+" · "+window.PSY_WCQ_NORMS_2026.level(s.tScore):"Сырой: "+s.raw+" / "+s.max+" · нормативный Т-балл недоступен"):label(d,s))+'</span>'+
- '<div class="psy-711-track"><span style="width:'+(d.id==="lazarus-wcq50"&&s.tScore!==null?Math.max(0,Math.min(100,s.tScore/90*100)):s.percent)+'%"></span></div></div>').join("")+'</div>'+
+ d.id==="lazarus-wcq50"?(s.tScore!==null?window.PSY_WCQ_NORMS_2026.level(s.tScore):"Доля максимума шкалы"):label(d,s))+'</span>'+
+ '<div class="psy-711-track"><span style="width:'+s.percent+'%"></span></div></div>').join("")+'</div>'+
  (d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Верхняя граница после косой черты округлена вверх, как на ПсиТесте. Точные максимумы указаны под результатами. Баллы и коэффициенты не округляются.</p><p class="psy-711-safety">Показатели факторов не определяют вероятность суицида и не исключают опасности. При признаках угрозы необходима очная профессиональная оценка безопасности.</p>':
- '<p class="psy-mspss-small">'+(d.id==="eysenck-40"?"Диапазоны по каждой шкале: 0-7, 8-14, 15-20.":"Проценты показывают долю от максимума шкалы, а не возрастные нормативы или Т-баллы.")+'</p>')+'</section>';
+ (d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">'+esc(wcqNormNote(r))+'</p>'+wcqProfile(z):'<p class="psy-mspss-small">Диапазоны по каждой шкале: 0-7, 8-14, 15-20.</p>'))+'</section>';
 }
 
 function analytical711(d,rows){
@@ -973,9 +1012,9 @@ function analytical711Preview(d,rows){
 function group(d,rows){
  const keys=(cfg(d).versions?.[0]?.scales||cfg(d).scales);
  return '<section class="psy-mspss-group psy-711-group psy-711-'+d.id+'"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th>'+keys.map(s=>'<th>'+esc(s.name)+'</th>').join("")+'</tr></thead><tbody>'+
- rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+(d.id==="razuvaeva-osr29"?'<small style="display:block;font-size:11px">'+razLabel(d,r)+'</small>':"")+'</td>'+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="psy-711-score-cell">'+(v?'<span class="psy-711-number psy-711-'+tone(d,v)+'">'+num(d,v)+'</span>'+(d.id==="lazarus-wcq50"?'<small style="display:block;font-size:11px">Сырой '+v.raw+'/'+v.max+'</small>':""):"")+'</td>'}).join("")+'</tr>'}).join("")+
+ rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+(d.id==="razuvaeva-osr29"?'<small style="display:block;font-size:11px">'+razLabel(d,r)+'</small>':"")+'</td>'+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="psy-711-score-cell">'+(v?'<span class="psy-711-number psy-711-'+(d.id==="lazarus-wcq50"?wcqColor(v):tone(d,v))+'">'+(d.id==="lazarus-wcq50"?wcqValue(v):num(d,v))+'</span>':"")+'</td>'}).join("")+'</tr>'}).join("")+
  '</tbody></table></div>'+(d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Цвет чисел обозначает только долю максимума по выбранному ключу, а не уровень суицидального риска. Категория риска автоматически не присваивается.'+
- (new Set(rows.filter(r=>!!scored(d,r)).map(r=>razKey(d,r))).size>1?' В группе выбраны разные ключи (А и Б). Приведите участников к одному ключу, иначе аналитическая справка не формируется.':'')+'</p>':d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">Основные числа – стандартизированные Т-баллы (для возраста 14-60 лет при указанном поле), ниже – сырые баллы. Если возрастная норма недоступна, показан только сырой балл. Т менее 40 – редкое, 40-60 – умеренное, выше 60 – выраженное использование стратегии.</p>':"")+analytical711Preview(d,rows)+'</section>';
+ (new Set(rows.filter(r=>!!scored(d,r)).map(r=>razKey(d,r))).size>1?' В группе выбраны разные ключи (А и Б). Приведите участников к одному ключу, иначе аналитическая справка не формируется.':'')+'</p>':d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">Т – нормативный Т-балл для возраста и пола (14-60 лет). % – доля максимума шкалы при отсутствии подходящих норм, не возрастной уровень. Т менее 40 – редкое, 40-60 – умеренное, свыше 60 – выраженное использование.</p>':"")+analytical711Preview(d,rows)+'</section>';
 }
 function calculator(d,ctx){
  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0];
@@ -1119,10 +1158,10 @@ function bind(d,ctx){
 
 function csv(d,rows){
  const isWCQ=d.id==="lazarus-wcq50",scales=(cfg(d).scales||cfg(d).versions?.[0]?.scales||[]);
- const head=["№","Участник",...scales.flatMap(s=>isWCQ?[s.name+" (Т-балл)",s.name+" (сырой)"]:[s.name])];
+ const head=["№","Участник",...scales.map(s=>s.name+(isWCQ?" (Т / %)":""))];
  const cell=v=>{let x=String(v??"");if(/^\s*[=+@-]/.test(x))x="'"+x;return '"'+x.replace(/"/g,'""')+'"'};
  const lines=[head,...rows.map((r,i)=>{const scores=scored(d,r)?.scales||scales.map(()=>null);
-  return [i+1,(r.name||"У-"+(i+1))+(d.id==="razuvaeva-osr29"?" ["+razLabel(d,r)+"]":""),...scores.flatMap(s=>isWCQ?[s?.tScore??"",s?.raw??""]:[s?num(d,s):""])];
+  return [i+1,(r.name||"У-"+(i+1))+(d.id==="razuvaeva-osr29"?" ["+razLabel(d,r)+"]":""),...scores.map(s=>s?(isWCQ?wcqValue(s):num(d,s)):"")];
  })];
  return "\uFEFF"+lines.map(row=>row.map(cell).join(";")).join("\r\n");
 }
@@ -1141,7 +1180,7 @@ function report(d,rows,mode,index){
   const row=people[i],z=scored(d,row);
   rowsData.push([String(i+1),(row.name||"У-"+(i+1))+(d.id==="razuvaeva-osr29"?" ["+razLabel(d,row)+"]":""),...scales.map((s,j)=>{
    const v=z?.scales?.[j];if(!v)return "";
-   return d.id==="lazarus-wcq50"?(v.tScore===null?"Сырой "+v.raw:"Т "+v.tScore+" (сырой "+v.raw+")"):num(d,v);
+   return d.id==="lazarus-wcq50"?wcqValue(v):num(d,v);
   })]);
   fill.push([null,null,...scales.map((s,j)=>{const factor=z?.scales?.[j];if(!factor)return null;
    if(d.id==="lazarus-wcq50"&&factor.tScore===null)return null;
@@ -1163,7 +1202,7 @@ function report(d,rows,mode,index){
   body=para(cfg(d).name)+para(mode==="class"?"Результаты "+(grade?grade+" класса":"класса"):"Результат участника")+para("Дата: "+new Date().toLocaleDateString("ru-RU"));
   body+=table([["№","Участник",...scales.map(s=>s.name)],...rowsData],fill);
   if(d.id==="eysenck-40")body+=para("Интервалы каждой шкалы:")+table([["Баллы","Уровень"],["0-7","Низкий"],["8-14","Средний"],["15-20","Высокий"]],[["E4F1FB","E4F1FB"],["FFF0CF","FFF0CF"],["F9DEDC","F9DEDC"]]);
-  else if(d.id==="lazarus-wcq50")body+=para("Т – стандартные Т-баллы по таблицам Вассермана и соавт. (2009), с учетом пола и возраста 14-60 лет. В скобках – сырые баллы. Т<40 – редкое, 40-60 – умеренное, Т>60 – выраженное использование стратегии. Если нормы отсутствуют, показан только сырой балл.");
+  else if(d.id==="lazarus-wcq50")body+=para("Т – нормативный балл по таблицам Вассермана и соавт. (14-60 лет). % – доля максимума стратегии при отсутствии возрастной нормы; не используйте процент как нормативный уровень.");
   else body+=para("Факторы представлены с коэффициентами. Это не расчет вероятности суицида; при необходимости нужна очная оценка безопасности.");
  }
  const documentXml='<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+
