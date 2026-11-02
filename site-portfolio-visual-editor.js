@@ -70,8 +70,7 @@
  }
  function findRoot(body){
   return body.querySelector(".psy-portfolio-unified")||
-   body.querySelector(".psy-portfolio-reference")||
-   body.firstElementChild||body;
+   body.querySelector(".psy-portfolio-reference")||body;
  }
  function plainTargets(root){
   const all=Array.from(root.querySelectorAll("h2,h3,h4,p,strong,span"));
