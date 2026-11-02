@@ -17,6 +17,13 @@
   try{
    const {data,error}=await client.auth.getUser();
    if(error||!data?.user||data.user.is_anonymous)return state;
+   const policy=window.PSY_AUTH_PROTECTION;
+   if(policy&&!(await policy.keepSession(client,data.user)))return state;
+   if(policy&&await policy.secondFactorNeeded(client)){
+    if(["profile.html","settings.html"].includes(location.pathname.split("/").pop()))
+     location.replace(policy.challengeUrl(location.pathname+location.search+location.hash));
+    return state;
+   }
    state.user=data.user;
    const {data:role,error:readError}=await client.from("psy_account_roles")
     .select("role").eq("user_id",state.user.id).maybeSingle();
