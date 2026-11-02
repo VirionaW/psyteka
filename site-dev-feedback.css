@@ -56,3 +56,7 @@ html.dark #psyDevWidget .psy-dev-selection-heading strong{color:#d5e9da}
 html.dark #psyDevWidget .psy-dev-selected-row{background:#264833;border-color:#51775c}
 html.dark #psyDevWidget .psy-dev-selected-row span{color:#d2e5d4}
 html.dark #psyDevWidget .psy-dev-selection-heading button,html.dark #psyDevWidget .psy-dev-selected-row button{background:#2e543d;color:#ecf7ee;border-color:#60856d}
+
+/* Removing a saved annotation requires explicit confirmation. */
+#psyDevWidget .psy-dev-panel-actions .psy-dev-delete-task{background:#fff2ef;color:#963c32;border:1px solid #d9aaa2}
+html.dark #psyDevWidget .psy-dev-panel-actions .psy-dev-delete-task{background:#563029;color:#f5d3ce;border-color:#aa6c62}
