@@ -21,3 +21,16 @@ html.dark .psy-inline-dialog textarea{background:#162b20;border-color:#5d8065;co
 html.dark .psy-inline-actions button,html.dark .psy-inline-actions a{background:#35543c;border-color:#75927b;color:#f3f8f1}
 html.dark .psy-inline-actions .psy-inline-save{background:#38845b;color:#fff}
 @media(max-width:550px){.psy-inline-dialog{padding:18px}.psy-inline-actions{display:grid;grid-template-columns:1fr}.psy-inline-actions>*{text-align:center;width:100%;box-sizing:border-box}}
+
+/* One editor for every visible card field and the portfolio summary. */
+.psy-inline-dialog label{display:grid;gap:7px;margin-bottom:12px;color:#355743;font:750 13px/1.45 system-ui,sans-serif}
+.psy-inline-dialog label[hidden]{display:none!important}
+.psy-inline-dialog .psy-inline-select{appearance:auto;display:block;width:100%;min-height:43px;border-radius:10px;border:1px solid #b7c8b8;background:#fff;color:#284c38;padding:9px 11px;font:15px/1.5 system-ui,sans-serif}
+.psy-inline-portfolio-edit{display:flex;max-width:max-content;margin:0 0 17px auto}
+.psy-owner-published-fields{border:1px solid #b6d6c0;background:#eff8f1;border-radius:13px;padding:14px 18px;margin-bottom:17px}
+.psy-owner-published-fields h3{margin:0 0 10px;font-size:17px;color:#2c6343}
+.psy-owner-published-fields p{margin:7px 0;line-height:1.5;color:#335843;overflow-wrap:anywhere}
+html.dark .psy-inline-dialog .psy-inline-select{background:#162b20;border-color:#5d8065;color:#f5f9f4}
+html.dark .psy-inline-dialog label{color:#d7ead8}
+html.dark .psy-owner-published-fields{background:#203f2c;border-color:#507e5d}
+html.dark .psy-owner-published-fields h3,html.dark .psy-owner-published-fields p{color:#e4f5e5}
