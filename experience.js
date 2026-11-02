@@ -192,6 +192,7 @@ function setTab(name){
    window.PSY_GUIDE_STANDARD.bind(()=>setTab('instruction'));
  }
  if(name==="overview")window.PSY_CONTENT_OVERRIDES?.applyPortfolioDOM?.(methodNow,body);
+ if(name==="overview")void window.PSY_PORTFOLIO_VISUAL?.onRender?.(methodNow,body);
  body.scrollTop=preserveScroll?previousScroll:0;
  const bottom=$("#bottomProcessing");
  if(bottom){
