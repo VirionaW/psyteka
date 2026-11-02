@@ -153,10 +153,10 @@
  if(!window.PSY_IDENTITY||document.getElementById("psyDevWidget"))return;
  const stylesheet=document.createElement("link");
  stylesheet.rel="stylesheet";
- stylesheet.href="site-dev-feedback.css?v=20261102dev1";
+ stylesheet.href="site-dev-feedback.css?v=20261102dev2";
  document.head.appendChild(stylesheet);
  const script=document.createElement("script");
- script.src="site-dev-feedback.js?v=20261102dev1";
+ script.src="site-dev-feedback.js?v=20261102dev2";
  script.async=true;
  document.body.appendChild(script);
 })();
