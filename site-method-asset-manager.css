@@ -1,0 +1,18 @@
+.psy-admin-method-assets{border-top:1px solid var(--line,#dbe9dd);margin:25px 0 12px;padding:18px 4px 8px;display:grid;gap:12px}
+.psy-method-assets-heading h3{font-size:17px;color:var(--green,#276b4d);margin:0 0 5px}
+.psy-method-assets-heading p{margin:0;color:#64786c;font-size:13px}
+.psy-method-assets-links{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:#55715d;overflow-wrap:anywhere}
+.psy-method-assets-links a{white-space:normal;overflow-wrap:anywhere}
+.psy-method-admin-upload{margin-top:6px;border:1px solid #bfd8c5;border-radius:14px;padding:13px 15px;background:#f7faf6}
+.psy-method-admin-upload summary{cursor:pointer;color:#2c6d48;font-weight:800;font-size:14px;outline-offset:5px}
+.psy-method-admin-upload form{display:grid;gap:12px;margin-top:15px}
+.psy-method-admin-upload label{display:grid;gap:6px;color:#345f47;font-weight:650;font-size:13px}
+.psy-method-admin-upload input,.psy-method-admin-upload select{box-sizing:border-box;width:100%;min-height:41px;padding:8px 11px;border-radius:9px;border:1px solid #b6d1c0;background:#fff;color:#2f4f3b;font:14px system-ui,sans-serif}
+.psy-method-admin-upload .psy-method-asset-warning{font-size:12px;line-height:1.5;color:#80623d;margin:0}
+.psy-method-admin-upload button{justify-self:start;max-width:100%}
+.psy-method-upload-status{font-size:13px;line-height:1.45;color:#306d47;min-height:1em;margin:0}
+html.dark .psy-method-admin-upload{background:#1c3326;border-color:#456d51}
+html.dark .psy-method-admin-upload summary,html.dark .psy-method-admin-upload label{color:#d0e5d3}
+html.dark .psy-method-admin-upload select,html.dark .psy-method-admin-upload input{background:#15291b;border-color:#5c8066;color:#e9f5ea}
+html.dark .psy-method-assets-heading p,html.dark .psy-method-assets-links{color:#c2d9c7}
+@media(max-width:600px){.psy-admin-method-assets{margin-top:16px}.psy-method-assets-links{display:grid;gap:8px}.psy-method-assets-links a{width:100%}}
