@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://uwouubzabqpuujuovala.supabase.co wss://uwouubzabqpuujuovala.supabase.co; form-action 'self'; upgrade-insecure-requests">
+<title>Защита аккаунта | Метолария</title>
+<link rel="icon" type="image/svg+xml" href="brand-favicon.svg">
+<link rel="stylesheet" href="registration.css">
+<link rel="stylesheet" href="owner-mfa.css">
+<script defer src="auth-config.js"></script>
+<script defer src="vendor/supabase-2.58.0.min.js?v=20261102"></script>
+<script defer src="account-security.js?v=20261102"></script>
+</head>
+<body>
+<header class="auth-header">
+<a class="auth-brand" href="index.html?home=1"><img src="brand-mark.svg" width="42" height="42" alt=""><span><strong>Метолария</strong><small>Защита личного кабинета</small></span></a>
+<a class="auth-back" href="profile.html">К профилю</a>
+</header>
+<main class="psy-mfa-wrap">
+<div class="psy-mfa-intro"><p class="auth-eyebrow">Дополнительная защита</p><h1>Безопасность аккаунта</h1>
+<p>Подключите приложение-аутентификатор по QR-коду. При новом входе после кода из почты потребуется еще шесть цифр из приложения. Открытая сессия не проверяется на каждом переходе.</p></div>
+<section class="psy-mfa-card">
+<h2>Двухфакторная защита</h2>
+<p id="accountMfaMessage" class="psy-mfa-status" role="status" aria-live="polite">Проверяем аккаунт...</p>
+<div id="accountMfaGuest" hidden><p>Сначала войдите в подтвержденный аккаунт.</p><a class="psy-mfa-action" href="index.html?home=1&entry=1">Войти</a></div>
+<div id="accountMfaStart" hidden><p>Установите приложение Google Authenticator, Microsoft Authenticator или другое совместимое приложение.</p>
+<button id="accountMfaStartBtn" class="psy-mfa-action" type="button">Подключить через QR-код</button></div>
+<div id="accountMfaEnroll" hidden><h3>1. Отсканируйте QR-код</h3><p>Код содержит секрет. Не отправляйте его другим людям.</p>
+<img id="accountMfaQr" width="210" height="210" alt="QR-код для настройки аутентификатора">
+<details><summary>Ввести вручную</summary><code id="accountMfaSecret" class="psy-mfa-secret"></code></details>
+<h3>2. Подтвердите подключение</h3>
+<form id="accountMfaEnrollForm" class="psy-mfa-form"><label>Шесть цифр из приложения
+<input id="accountMfaEnrollCode" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label>
+<button type="submit" class="psy-mfa-action">Подтвердить</button></form>
+<button type="button" id="accountMfaCancel" class="psy-mfa-minor">Отменить настройку</button></div>
+<div id="accountMfaChallenge" hidden><p>Введите код из подключенного приложения для завершения входа.</p>
+<form id="accountMfaChallengeForm" class="psy-mfa-form"><label>Шестизначный код
+<input id="accountMfaChallengeCode" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label>
+<button type="submit" class="psy-mfa-action">Подтвердить вход</button></form></div>
+<div id="accountMfaReady" hidden><p class="psy-mfa-success">Дополнительная защита активна.</p>
+<a id="accountMfaContinue" class="psy-mfa-action" href="profile.html">Продолжить работу</a>
+<button type="button" id="accountMfaBackup" class="psy-mfa-minor">Добавить резервный аутентификатор</button></div>
+<p class="psy-mfa-advice">Важно: сохраните доступ к устройству с приложением. Рекомендуется подключить резервный аутентификатор. Без него при потере телефона может потребоваться восстановление доступа через поддержку.</p>
+</section></main>
+</body></html>
