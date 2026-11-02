@@ -1202,7 +1202,14 @@ function report(d,rows,mode,index){
   body=para(cfg(d).name)+para(mode==="class"?"Результаты "+(grade?grade+" класса":"класса"):"Результат участника")+para("Дата: "+new Date().toLocaleDateString("ru-RU"));
   body+=table([["№","Участник",...scales.map(s=>s.name)],...rowsData],fill);
   if(d.id==="eysenck-40")body+=para("Интервалы каждой шкалы:")+table([["Баллы","Уровень"],["0-7","Низкий"],["8-14","Средний"],["15-20","Высокий"]],[["E4F1FB","E4F1FB"],["FFF0CF","FFF0CF"],["F9DEDC","F9DEDC"]]);
-  else if(d.id==="lazarus-wcq50")body+=para("Т – нормативный балл по таблицам Вассермана и соавт. (14-60 лет). % – доля максимума стратегии при отсутствии возрастной нормы; не используйте процент как нормативный уровень.");
+  else if(d.id==="lazarus-wcq50"){
+   body+=para("Т – нормативный балл по таблицам Вассермана и соавт. (14-60 лет). % – доля максимума стратегии без возрастной нормы; не используйте процент как нормативный уровень.");
+   if(mode!=="class"&&scored(d,people[0])){
+    body+=para("Краткий анализ профиля");
+    body+=para(wcqProfile(scored(d,people[0])).replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim());
+    body+=para(wcqNormNote(people[0]));
+   }
+  }
   else body+=para("Факторы представлены с коэффициентами. Это не расчет вероятности суицида; при необходимости нужна очная оценка безопасности.");
  }
  const documentXml='<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+
