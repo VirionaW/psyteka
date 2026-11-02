@@ -35,3 +35,82 @@ html.dark .psy-info-card a{color:#b5e2c3}
 html.dark .psy-info-strap{background:#453929;color:#e9d6b8;border-color:#c6a26b}
 html.dark .psy-info-back{background:#203b31;color:#eff8ef;border-color:#557e63}
 @media(max-width:760px){.psy-info-container{padding:21px 14px 50px}.psy-info-hero{padding:30px 22px}.psy-info-grid{grid-template-columns:1fr}.psy-info-card{padding:20px}}
+
+/* Метолария: раздел об истории проекта */
+.psy-about-page{max-width:1200px}
+.psy-about-hero{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(260px,.85fr);gap:30px;align-items:center;min-height:350px;overflow:hidden;background:linear-gradient(125deg,#173d32 0%,#245d49 58%,#437c63 100%)}
+.psy-about-hero::before{content:"";position:absolute;inset:-130px -145px auto auto;width:460px;height:460px;border-radius:50%;border:1px solid rgba(255,255,255,.1);box-shadow:0 0 0 85px rgba(255,255,255,.028),0 0 0 180px rgba(255,255,255,.017);pointer-events:none}
+.psy-about-intro,.psy-about-identity{position:relative;z-index:1}
+.psy-about-hero h1{font-size:clamp(38px,5vw,62px);letter-spacing:-.035em;margin:16px 0 20px}
+.psy-about-hero p{margin:0 0 13px;color:#e1efe6;line-height:1.68;font-size:15px}
+.psy-about-hero p.psy-about-lead{font-size:clamp(18px,1.65vw,21px);font-weight:550;line-height:1.5;color:#fff}
+.psy-about-identity{align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:0;border-radius:20px;padding:24px;background:rgba(241,251,244,.10);border:1px solid rgba(241,251,244,.26);backdrop-filter:blur(5px)}
+.psy-about-identity-year{padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.22)}
+.psy-about-identity-year span,.psy-about-identity-line span{display:block;color:#d1e6d5;font-size:12px;letter-spacing:.065em;text-transform:uppercase;font-weight:750}
+.psy-about-identity-year strong{display:block;font-size:clamp(43px,5vw,59px);line-height:1.15;color:#f5f3e8;letter-spacing:-.05em;margin-top:7px;font-variant-numeric:tabular-nums}
+.psy-about-identity-line{padding-top:16px}
+.psy-about-identity-line strong{display:block;color:#fff;margin-top:6px;font-size:15px;line-height:1.5}
+.psy-about-section-heading{max-width:840px}
+.psy-about-section-heading>span,.psy-about-outlook-kicker{display:block;color:#a5794a;font-size:12px;font-weight:850;letter-spacing:.1em}
+.psy-about-section-heading h2{margin:8px 0 12px}
+.psy-about-section-lead,.psy-about-text{font-size:16px;color:#52715e;line-height:1.8;max-width:870px;margin:5px 0 21px}
+.psy-about-timeline{display:grid;gap:0;padding:13px 0 0}
+.psy-about-milestone{display:grid;grid-template-columns:185px minmax(0,1fr);gap:23px;border-top:1px solid #d6e7d9;padding:22px 0 22px}
+.psy-about-milestone:last-child{border-bottom:1px solid #d6e7d9}
+.psy-about-time{color:#a27648;font-size:13px;font-weight:850;padding-top:4px}
+.psy-about-milestone h3{color:#24513a;font-size:18px;line-height:1.4;margin:0 0 6px}
+.psy-about-milestone p{color:#56705e;font-size:15px;line-height:1.7;margin:0}
+.psy-about-author{display:grid;grid-template-columns:96px minmax(0,1fr);gap:25px;align-items:start;background:#edf5ee;border:1px solid #d4e5d8;border-radius:19px;padding:26px 30px}
+.psy-about-author-mark{height:86px;width:86px;border-radius:25px;background:#214f3e;display:grid;place-items:center;box-shadow:8px 8px 0 #cfddd2}
+.psy-about-author-mark span{color:#f6f1dc;font-size:57px;font-weight:800;line-height:1;font-family:Georgia,serif}
+.psy-about-author h3{color:#1d4a36;font-size:21px;margin:0 0 12px}
+.psy-about-author p{color:#4c6c59;font-size:15px;line-height:1.75;margin:0 0 11px}
+.psy-about-author p:last-child{margin-bottom:0}
+.psy-about-feature-grid{margin:26px 0 4px}
+.psy-about-feature-grid .psy-info-card{position:relative;min-height:182px}
+.psy-about-feature-num{display:inline-block;font-size:12px;font-weight:850;color:#a17c4d;letter-spacing:.1em;margin-bottom:9px}
+.psy-about-feature-grid .psy-info-card h3{font-size:20px;margin:0 0 10px}
+.psy-about-feature-grid .psy-info-card p{margin:0}
+.psy-about-principles{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:24px}
+.psy-about-principle{display:flex;align-items:flex-start;gap:18px;padding:23px;background:#fff;border:1px solid #d7e5db;border-radius:16px}
+.psy-about-principle-index{display:grid;place-items:center;min-width:35px;height:35px;border:1px solid #c9ddcb;border-radius:12px;background:#f0f7ef;color:#286147;font-size:12px;font-weight:850;font-variant-numeric:tabular-nums}
+.psy-about-principle h3{font-size:17px;color:#23513b;line-height:1.35;margin:2px 0 9px}
+.psy-about-principle p{color:#526e5d;font-size:14px;line-height:1.75;margin:0}
+.psy-about-outlook{display:flex;align-items:center;justify-content:space-between;gap:25px;padding:27px 31px;margin:20px 0 25px;background:#e9f0ea;border:1px solid #d2e2d5;border-radius:19px}
+.psy-about-outlook h2{font-size:25px;color:#234e3a;margin:5px 0 9px}
+.psy-about-outlook p{max-width:710px;color:#4d6b58;font-size:15px;line-height:1.65;margin:0}
+.psy-about-outlook-link{flex:none;display:inline-flex;align-items:center;gap:9px;color:#1d6544;border:1px solid #b9d2c0;background:#fff;border-radius:11px;padding:12px 16px;text-decoration:none;font-weight:750;font-size:14px}
+.psy-about-outlook-link:hover{background:#f6fcf6}
+.psy-about-disclaimer{color:#67553e;background:#f7f0e3;border-left:4px solid #b79b6d;border-radius:12px;padding:17px 22px;font-size:14px;line-height:1.7}
+.psy-about-actions{margin-top:22px}
+.psy-about-actions .psy-about-secondary{background:#fff!important;color:#28573e!important;border:1px solid #bfd6c6!important}
+.psy-about-page a:focus-visible{outline:3px solid #d8a765;outline-offset:3px}
+html.dark .psy-about-hero{background:linear-gradient(130deg,#143327,#235a46)}
+html.dark .psy-about-section-lead,html.dark .psy-about-text,html.dark .psy-about-milestone p,html.dark .psy-about-author p,html.dark .psy-about-principle p,html.dark .psy-about-outlook p{color:#c9dfcf}
+html.dark .psy-about-milestone,html.dark .psy-about-milestone:last-child{border-color:#476551}
+html.dark .psy-about-milestone h3,html.dark .psy-about-author h3,html.dark .psy-about-principle h3,html.dark .psy-about-outlook h2{color:#f2f8f1}
+html.dark .psy-about-author,html.dark .psy-about-principle,html.dark .psy-about-outlook{background:#1d372f;border-color:#4b6756}
+html.dark .psy-about-principle-index{background:#264d3c;border-color:#4f785c;color:#d7f0d7}
+html.dark .psy-about-outlook-link{background:#264638;color:#d9f0df;border-color:#587260}
+html.dark .psy-about-outlook-link:hover{background:#305b45}
+html.dark .psy-about-disclaimer{background:#403625;color:#ead8b9;border-color:#bea16e}
+html.dark .psy-about-actions .psy-about-secondary{background:#203b31!important;color:#eff8ef!important;border-color:#577461!important}
+@media(max-width:900px){
+ .psy-about-hero{grid-template-columns:1fr}
+ .psy-about-identity{display:grid;grid-template-columns:.8fr 1fr 1fr;align-items:center;gap:18px}
+ .psy-about-identity-year{padding-bottom:0;border-bottom:0;border-right:1px solid rgba(255,255,255,.22)}
+ .psy-about-identity-line{padding-top:0}
+ .psy-about-outlook{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:700px){
+ .psy-about-hero{gap:20px;padding:28px 22px}
+ .psy-about-identity{grid-template-columns:1fr;gap:14px;padding:18px}
+ .psy-about-identity-year{border-right:0;border-bottom:1px solid rgba(255,255,255,.22);padding-bottom:12px}
+ .psy-about-identity-line{padding-top:0}
+ .psy-about-milestone{grid-template-columns:1fr;gap:4px}
+ .psy-about-author{grid-template-columns:1fr;gap:18px;padding:23px}
+ .psy-about-author-mark{width:68px;height:68px;border-radius:18px}
+ .psy-about-author-mark span{font-size:46px}
+ .psy-about-principles{grid-template-columns:1fr}
+ .psy-about-outlook{padding:24px 21px}
+}
