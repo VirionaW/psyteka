@@ -147,7 +147,7 @@
  }
  copy.addEventListener("click",async()=>{
   if(latestId===null)return;
-  const q="Артем, проверь замечание Метоларии MT-"+latestId+" в Supabase (psy_dev_annotations) и исправь отмеченный элемент. После изменений сообщи, что сделано.";
+  const q="Артем, исправь замечание Метоларии MT-"+latestId+" (таблица psy_dev_annotations). Страница: "+locationInfo.page_path+". Элемент: "+locationInfo.selector+". Задача: "+note.value.trim()+". После исправления сообщи результат.";
   await clip(q);
   setStatus("Номер задачи скопирован. Отправь его мне в чат.");
  });
