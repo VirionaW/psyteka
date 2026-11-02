@@ -964,3 +964,26 @@ html.dark .library-page #modal.psy-mspss-example .psy-cp-gender-feedback{
  line-height:1.5;
  font-weight:600;
 }
+
+/* Разуваева: общий счет согласий, без диагностической категории. */
+.library-page #modal.psy-mspss-example .psy-711-overall{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px 18px;align-items:center;
+ margin:0 0 17px;padding:17px 20px;border:1px solid #bcd9c6;border-radius:14px;
+ background:#edf6f0;color:#285c3c;
+}
+.library-page #modal.psy-mspss-example .psy-711-overall b{font-size:16px;line-height:1.4}
+.library-page #modal.psy-mspss-example .psy-711-overall strong{font-size:25px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.library-page #modal.psy-mspss-example .psy-711-overall .psy-711-track{grid-column:1/-1;margin:0;height:9px;background:#d2e5d8}
+.library-page #modal.psy-mspss-example .psy-711-overall .psy-711-track span{background:#458463}
+.library-page #modal.psy-mspss-example .psy-711-overall p{grid-column:1/-1;font-size:12px;line-height:1.5;color:#536e5a;margin:0}
+.library-page #modal.psy-mspss-example .psy-711-result .psy-711-overall{max-width:none}
+.psy-semester-result-table tr.psy-semester-overall td{background:#edf6f0;color:#27573c}
+.psy-semester-result-table tr.psy-semester-overall strong{font-size:17px;font-variant-numeric:tabular-nums}
+html.dark .library-page #modal.psy-mspss-example .psy-711-overall{background:#1d3d2c;border-color:#547f60;color:#dbefdd}
+html.dark .library-page #modal.psy-mspss-example .psy-711-overall p{color:#b4cfbb}
+html.dark .psy-semester-result-table tr.psy-semester-overall td{background:#244433;color:#d9edde}
+@media(max-width:480px){
+ .library-page #modal.psy-mspss-example .psy-711-overall{padding:13px;gap:7px}
+ .library-page #modal.psy-mspss-example .psy-711-overall b{font-size:14px}
+ .library-page #modal.psy-mspss-example .psy-711-overall strong{font-size:20px}
+}
