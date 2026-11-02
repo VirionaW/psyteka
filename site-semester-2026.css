@@ -951,3 +951,16 @@ html.dark .library-page #modal.psy-mspss-example .psy-cp-gender-feedback{
  .library-page #modal .psy-wcq-age-warning{background:#382f20;color:#f1d9ad;border-color:#8c6c36;border-left-color:#d9ae5a}
  .library-page #modal .psy-wcq-age-warning strong{color:#f6da9c}
 }
+
+/* WCQ: prompt for demographics instead of misleading percentages. */
+.library-page #modal .psy-wcq-gender-hint{
+ margin:10px 0 15px;
+ padding:10px 13px;
+ background:var(--soft);
+ border:1px solid var(--line);
+ border-radius:10px;
+ color:var(--ink);
+ font-size:14px;
+ line-height:1.5;
+ font-weight:600;
+}
