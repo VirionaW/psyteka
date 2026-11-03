@@ -983,7 +983,7 @@ function wcqProfile(z){
  return '<div class="psy-711-wcq-profile"><h4>Краткий анализ профиля</h4><p>'+esc(headline+" "+detail.trim())+'</p></div>';
 }
 const razKey=(d,r)=>d.id==="razuvaeva-osr29"?(r?.razuvaevaKey==="method-six"?"Б":"А"):"";
-const maximum=(d,s)=>d.id==="razuvaeva-osr29"?razNumber(s.max*s.factor):String(s.max);
+const maximum=(d,s)=>d.id==="razuvaeva-osr29"?String(Math.ceil(s.max*s.factor-1e-9)):String(s.max);
 const razOverallTone=z=>z?.overallLevel?.code==="medium"?"middle":z?.overallLevel?.code==="high"?"high":"low";
 function razOverallHtml(z){
  const value=z.overallScore;
