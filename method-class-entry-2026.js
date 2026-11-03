@@ -983,10 +983,6 @@ function wcqProfile(z){
  return '<div class="psy-711-wcq-profile"><h4>Краткий анализ профиля</h4><p>'+esc(headline+" "+detail.trim())+'</p></div>';
 }
 const razKey=(d,r)=>d.id==="razuvaeva-osr29"?(r?.razuvaevaKey==="method-six"?"Б":"А"):"";
-const razLabel=(d,r)=>razKey(d,r)?"Ключ "+razKey(d,r):"";
-// PsyTests rounds the chart's upper axis tick upward. The mathematically
-// possible factor maximum is still raw max multiplied by the coefficient.
-const preciseRazMaximum=s=>razNumber(s.max*s.factor);
 const maximum=(d,s)=>d.id==="razuvaeva-osr29"?razNumber(s.max*s.factor):String(s.max);
 const razOverallTone=z=>z?.overallLevel?.code==="medium"?"middle":z?.overallLevel?.code==="high"?"high":"low";
 function razOverallHtml(z){
@@ -1104,7 +1100,7 @@ function calculator(d,ctx){
  if(d.id==="razuvaeva-osr29")out+='<label class="psy-711-version">Ключ обработки<select id="school711RazKey">'+
  '<option value="kmc-seven" '+(r.razuvaevaKey!=="method-six"?"selected":"")+'>Ключ А – КМЦ (7 пунктов)</option>'+
  '<option value="method-six" '+(r.razuvaevaKey==="method-six"?"selected":"")+'>Ключ Б – методические материалы (6 пунктов)</option></select></label>'+
- '<p class="psy-mspss-small">Опубликованные ключи расходятся по пунктам 17 и 21. Ключ А сохраняет прежний расчет и выдает до 7,0 по социальному пессимизму. Ключ Б – до 6,0. Для всех участников одного обследования используйте одинаковый ключ.</p>';
+ '<p class="psy-mspss-small">Для одной группы используйте одинаковый ключ. Выбор не меняет сохраненные ответы.</p>';
  if(d.id==="eysenck-40")out+='<label class="psy-711-version">Редакция опросника<select id="school711Version">'+
  '<option value="interleaved" '+(r.eysenckVersion!=="block"?"selected":"")+'>Версия 2 – чередование шкал (твой бланк)</option>'+
  '<option value="block" '+(r.eysenckVersion==="block"?"selected":"")+'>Версия 1 – шкалы по блокам</option></select></label>';
