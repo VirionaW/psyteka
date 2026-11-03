@@ -41,7 +41,7 @@
   if(!m||!body)return;
   const modal=document.getElementById("modal");
   const heading=modal?.querySelector("#modalTitle");
-  if(heading)heading.textContent=display(m,"name",m.name);
+  if(heading){const cardTitle=window.PSY_SCHOOL_CARDS?.compose?.(m,window.PSY_FULL_METHODS?.[m.name],window.PSY_PORTFOLIO_EDITS?.[m.name]||{},window.PSY_GUIDE_STANDARD)?.title||m.name;heading.textContent=display(m,"name",cardTitle);}
   const edits=["name","author","type","age","count","goal","indicators"]
    .filter(key=>get(m,key)!==null);
   if(!edits.length)return;
