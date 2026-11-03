@@ -278,8 +278,10 @@ function setTab(name){
  tabNow=name;
  document.querySelectorAll(".modal-tab").forEach(x=>{x.classList.toggle("active",x.dataset.tab===name);x.setAttribute("aria-selected",String(x.dataset.tab===name))});
  const body=$("#modalBody");
+ window.PSY_METHOD_TAB_EDITOR?.reset?.();
  const mainTab=['overview','instruction','materials'].includes(name);
  document.getElementById('modal')?.classList.toggle('psy-main-tabs',mainTab);
+ window.PSY_PORTFOLIO_VISUAL?.syncHeader?.();
  if(!methodNow){return}
  body.innerHTML=name==="overview"?viewOverview(methodNow):
  name==="instruction"?viewInstruction(methodNow):
