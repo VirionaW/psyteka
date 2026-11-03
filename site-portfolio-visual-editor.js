@@ -451,6 +451,37 @@
   status("Выберите текст для правки, перетащите блок мышью или используйте стрелки. Рабочие кнопки обработки защищены.");
   void loadHistory();
  }
+
+ // The editing action stays directly before Favorites in the modal header.
+ function headerEdit(){
+  if(!administrator)return null;
+  const head=document.querySelector("#modal .modalhead");
+  if(!head)return null;
+  let button=head.querySelector("#psyMethodEdit");
+  if(!button){
+   button=dom("button","psy-visual-entry","Редактировать");
+   button.id="psyMethodEdit";button.type="button";
+   button.setAttribute("aria-label","Редактировать текущий раздел методики");
+   button.addEventListener("click",()=>{
+    const tab=document.querySelector("#methodTabs .modal-tab.active")?.dataset.tab;
+    if(tab==="overview"&&active?.body?.isConnected)start(active);
+    else if(tab==="instruction"||tab==="materials")window.PSY_METHOD_TAB_EDITOR?.open?.();
+   });
+   head.insertBefore(button,head.querySelector(".psy-star-trigger")||document.getElementById("closeModal"));
+  }
+  const star=head.querySelector(".psy-star-trigger");
+  if(star&&button.nextElementSibling!==star)head.insertBefore(button,star);
+  return button;
+ }
+ function syncHeader(){
+  const button=headerEdit();
+  if(!button)return;
+  const tab=document.querySelector("#methodTabs .modal-tab.active")?.dataset.tab;
+  button.hidden=!!document.getElementById("modal")?.hidden||
+   !["overview","instruction","materials"].includes(tab);
+  button.disabled=!!editor||(tab==="overview"?!active?.body?.isConnected:
+   !window.PSY_METHOD_TAB_EDITOR?.canOpen?.());
+ }
  async function onRender(method,body){
   if(!method||!body)return;
   const id=methodId(method);
@@ -471,18 +502,14 @@
   }
   try{await Promise.resolve(identity?.ready)}catch(_){}
   if(!administrator||token!==revision||!isOverview()||!body.isConnected)return;
-  const bar=dom("div","psy-visual-toolbar");
-  const b=dom("button","psy-visual-entry","✎ Редактировать");
-  b.type="button";b.setAttribute("aria-label","Открыть визуальный редактор портфолио");
-  const note=dom("span",null,"Текст · блоки · кнопки");
-  bar.append(b,note);body.prepend(bar);
-  b.addEventListener("click",()=>start(context));
+  syncHeader();
  }
  if(identity?.ready){
   Promise.resolve(identity.ready).then(()=>{
    administrator=!!identity.user?.email_confirmed_at&&ROLES.has(identity.role);
    ready=true;
+   syncHeader();
   }).catch(()=>{ready=true});
  }
- window.PSY_PORTFOLIO_VISUAL={onRender,canLeave,canEdit:()=>administrator,reset:()=>{cache.clear()}};
+ window.PSY_PORTFOLIO_VISUAL={onRender,canLeave,syncHeader,canEdit:()=>administrator,reset:()=>{cache.clear()}};
 })();
