@@ -120,3 +120,11 @@ html.dark body.site-landing .site-header button.site-theme-btn.theme-switch{
 html.dark body.site-landing .site-header button.site-theme-btn.theme-switch:hover{
   background:#35543f!important;
 }
+
+/* Site-wide editing entry adjacent to the profile avatar. */
+.psy-global-edit{display:inline-flex!important;align-items:center;justify-content:center;flex:none;box-sizing:border-box;min-height:42px;margin-right:8px;border:1px solid #a8c7b2;border-radius:11px;padding:9px 14px;background:#eff7f0;color:#245e43!important;text-decoration:none!important;font:750 13px/1.3 system-ui,sans-serif;white-space:nowrap}
+.psy-global-edit:hover{background:#e2f1e6}
+.psy-global-edit:focus-visible{outline:3px solid #c9ae79;outline-offset:2px}
+html.dark .psy-global-edit{background:#294b35;border-color:#5c8066;color:#e6f5e7!important}
+html.dark .psy-global-edit:hover{background:#355a40}
+@media(max-width:550px){.psy-global-edit{min-height:38px;padding:8px 9px;font-size:12px;margin-right:5px}}
