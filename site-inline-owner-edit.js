@@ -135,26 +135,5 @@
   return catalog.find(m=>m.name===displayed||
    window.PSY_CONTENT_OVERRIDES?.display?.(m,"name",m.name)===displayed);
  }
- function decorateCatalog(){
-  const root=document.getElementById("catalog");
-  if(!root)return;
-  for(const button of root.querySelectorAll("button[data-open]")){
-   const m=catalog.find(x=>String(x.id)===button.dataset.open);
-   if(!m)continue;
-   const card=button.closest("article.method");
-   if(!card||card.dataset.psyOwnerMethod)continue;
-   card.dataset.psyOwnerMethod="true";
-   const edit=$("button","psy-inline-edit","✎ Открыть портфолио");
-   edit.type="button";
-   edit.addEventListener("click",event=>{
-    event.preventDefault();event.stopPropagation();button.click();
-   });
-   card.querySelector(".actions")?.append(edit);
-  }
- }
- const catalogRoot=document.getElementById("catalog");
- if(catalogRoot){
-  decorateCatalog();
-  new MutationObserver(decorateCatalog).observe(catalogRoot,{childList:true});
- }
+
 })();
