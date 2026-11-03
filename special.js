@@ -34,8 +34,8 @@
   root.querySelector("#specialCount").textContent="Найдено: "+matches.length;
   root.querySelector("#specialCards").innerHTML=matches.map(m=>{
    const pic=typeof iconSvg==="function"?iconSvg(m.group==="Коррекционно-развивающая работа"?"Программы":m.topic==="Эмоциональная сфера"?"Настроение":m.topic==="Саморегуляция"?"Внимание":m.topic==="Коммуникация"?"Общение":"Адаптация"):"";
-   return '<article class="method special-method" data-kind="'+(m.group==="Диагностика и наблюдение"?"scale":"other")+'"><div class="head"><div class="glyph" aria-hidden="true">'+pic+'</div><div><h3>'+esc(m.title)+'</h3><p class="method-card-author">'+esc(m.author||'Метолария')+'</p></div></div>'+
-   '<div class="tags"><span class="tag">'+esc(m.format)+'</span><span class="tag">'+esc(m.ageLabel)+'</span></div><p class="method-card-summary">'+esc(m.goal)+'</p>'+
+   return '<article class="method special-method" data-kind="'+(m.group==="Диагностика и наблюдение"?"scale":"other")+'"><div class="head"><div class="glyph" aria-hidden="true">'+pic+'</div><div><h3>'+esc(m.title)+'</h3>'+(m.author&&!/неизвестно|не установлен|уточняется/i.test(m.author)?'<p class="method-card-author">'+esc(m.author)+'</p>':'')+'</div></div>'+
+   '<div class="tags"><span class="tag">'+esc(m.format)+'</span><span class="tag">'+esc(m.ageLabel)+'</span>'+(m.count?'<span class="tag">'+esc(m.count)+'</span>':'')+'</div><p class="method-card-summary">'+esc(m.goal)+'</p>'+
    '<div class="actions"><button type="button" class="btn primary" data-special-open="'+esc(m.id)+'">Открыть методику</button></div></article>';
   }).join("")||'<p class="special-empty">По выбранным параметрам материалов нет. Измените направление или возрастную группу.</p>';
   tree.querySelectorAll("[data-special-group]").forEach(b=>b.classList.toggle("active",!!group&&b.dataset.specialGroup===group&&b.dataset.specialTopic===topic));
