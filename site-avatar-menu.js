@@ -57,8 +57,18 @@
   add("Настройки","settings.html");
   add("Подписка","subscriptions.html");
   if(state.role==="owner"||state.role==="shadow")add("Управление","manage-users.html");
-  if(["owner","shadow","moderator"].includes(state.role))
+  if(["owner","shadow","moderator"].includes(state.role)){
+   if(state.user?.email_confirmed_at&&!document.getElementById("psyGlobalEdit")){
+    const edit=document.createElement("a");
+    edit.id="psyGlobalEdit";
+    edit.className="psy-global-edit";
+    edit.href="owner-editor.html";
+    edit.textContent="Редактировать";
+    edit.title="Редактор Метоларии";
+    current.insertAdjacentElement("beforebegin",edit);
+   }
    add("Сменить аккаунт",null,()=>leave(true));
+  }
   add("Выйти из аккаунта",null,()=>leave(false));
  }).catch(()=>{menu.replaceChildren();add("Войти в аккаунт","index.html?home=1&entry=1");add("Подписка","subscriptions.html");});
 })();
