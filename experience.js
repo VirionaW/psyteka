@@ -132,10 +132,12 @@ function render(){
  const visibleName=copy?.display?.(m,'name',m.name)||m.name;
  const author=(card?.author||d?.author||m.author||'');
  const matchMSPSS=['simpleAnalogies12','pairedAssoc20','schulte5'].includes(d?.workflow);
- const credited=author&&!/сведения об авторе уточняются/i.test(author)?'<p class="method-card-author">'+escapeHTML(author)+'</p>':'<p class="method-card-author">Автор не установлен</p>';
- const count=card?.quantity||d?.count||m.count;
- const countTag=count?'<span class="tag">'+escapeHTML(count)+'</span>':'';
- return '<article class="method'+(matchMSPSS?' psy-mspss-card':'')+'" data-kind="'+kind+'"><div class="head"><div class="glyph">'+artForMethod(m)+'</div><div><h3>'+escapeHTML(visibleName)+'</h3>'+credited+'</div></div><div class="tags"><span class="tag">'+escapeHTML(card?.type||m.format)+'</span><span class="tag">'+escapeHTML(age)+'</span>'+countTag+'</div><p class="method-card-summary">'+escapeHTML(description)+'</p><div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">Открыть методику</button>'+'</div></article>';
+ const credited=author&&!/сведения об авторе уточняются|автор(?: версии)? не установлен|неизвестно|нужно уточнить/i.test(author)?'<p class="method-card-author">'+escapeHTML(author)+'</p>':'';
+ const count=card?.quantity||d?.count||m.count||'';
+ const countTag=count&&!/неизвестно|уточняется|нужно уточнить|не установлено/i.test(count)?'<span class="tag">'+escapeHTML(count)+'</span>':'';
+ const ageTag=age&&!/неизвестно|уточняется|нужно уточнить|не установлено/i.test(age)?'<span class="tag">'+escapeHTML(age)+'</span>':'';
+ const typeTag=card?.type||m.format||'Методика';
+ return '<article class="method'+(matchMSPSS?' psy-mspss-card':'')+'" data-kind="'+kind+'"><div class="head"><div class="glyph">'+artForMethod(m)+'</div><div><h3>'+escapeHTML(visibleName)+'</h3>'+credited+'</div></div><div class="tags"><span class="tag">'+escapeHTML(typeTag)+'</span>'+ageTag+countTag+'</div><p class="method-card-summary">'+escapeHTML(description)+'</p><div class="actions"><button class="btn primary" data-open="'+escapeHTML(m.id)+'">Открыть методику</button>'+'</div></article>';
  }).join("") || '<p>Не найдено материалов по выбранным параметрам.</p>';
  document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openMethod(C.find(m=>m.id===b.dataset.open)));
 
