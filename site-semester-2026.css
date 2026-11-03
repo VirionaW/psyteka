@@ -1017,13 +1017,17 @@ html.dark .library-page #modal.psy-mspss-example .psy-cp-gender-feedback{
 .library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid .psy-711-overall-card.psy-711-middle .psy-711-track span{background:#dda726}
 .library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid .psy-711-overall-card.psy-711-high .psy-711-track span{background:#dc324f}
 /* Colored number only, never the whole table cell. */
+/* Same compact, square numeric highlight as CDI/Kovacs; Word uses square text-run shading. */
 .library-page #modal.psy-mspss-example .psy-711-group.psy-711-razuvaeva-osr29 .psy-711-number{
  display:inline-block!important;
- min-width:30px;
- text-align:center;
- padding:3px 8px!important;
- border-radius:6px!important;
- font:750 13px/1.3 system-ui,sans-serif!important;
+ min-width:2ch!important;
+ text-align:center!important;
+ padding:1px 3px!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ color:#141414!important;
+ font:700 11pt/1.15 "Times New Roman",Times,serif!important;
  font-variant-numeric:tabular-nums!important;
 }
 .psy-semester-result-table tr.psy-semester-overall td{
