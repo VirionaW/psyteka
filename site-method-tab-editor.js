@@ -5,6 +5,7 @@
  const client=window.PSY_IDENTITY?.client||window.PSY_AUTH_CLIENT;
  const identity=window.PSY_IDENTITY;
  const ADMIN=new Set(["owner","shadow","moderator"]);
+ let activeAction=null;
  const keyFor=(m,tab,index)=>"method:"+encodeURIComponent(String(m.id))+":tab_"+tab+"_"+index;
  const editable=body=>Array.from(body.querySelectorAll("h2,h3,h4,p,blockquote,li,th,td"))
   .filter(el=>!el.closest(".psy-admin-tab-toolbar,.psy-method-admin-upload,.psy-print-published")
@@ -32,10 +33,7 @@
   await Promise.resolve(identity?.ready);
   if(body.dataset.psyTabTicket!==ticket||!body.isConnected
     ||!identity?.user?.email_confirmed_at||!ADMIN.has(identity.role))return;
-  const tools=el("div","psy-admin-tab-toolbar");
-  const button=el("button","psy-admin-tab-button","✎ Редактировать тексты раздела");
-  button.type="button";tools.append(button);body.prepend(tools);
-  button.addEventListener("click",()=>{
+  activeAction=()=>{
    const dialog=el("dialog","psy-admin-tab-dialog");
    const form=el("form");form.method="dialog";
    const heading=el("h2",null,tab==="instruction"?"Редактор руководства":"Редактор бланка");
@@ -73,7 +71,13 @@
     }catch(e){info.textContent="Не удалось сохранить: "+(e?.message||"Ошибка соединения");save.disabled=false;}
    });
    dialog.showModal();
-  });
+  };
+  window.PSY_PORTFOLIO_VISUAL?.syncHeader?.();
  }
- window.PSY_METHOD_TAB_EDITOR={mount};
+ window.PSY_METHOD_TAB_EDITOR={
+  mount,
+  open:()=>activeAction?.(),
+  canOpen:()=>!!activeAction,
+  reset:()=>{activeAction=null}
+ };
 })();
