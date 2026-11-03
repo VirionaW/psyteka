@@ -125,15 +125,15 @@ function render(){
  $("#listHeading").textContent=state.topic||"Школьные материалы";
  $("#catalog").innerHTML=filtered.map(m=>{
  const d=DETAILS[m.name],card=window.PSY_SCHOOL_CARDS?.compose(m,d,window.PSY_PORTFOLIO_EDITS?.[m.name]||{},window.PSY_GUIDE_STANDARD);
- const age=card?.age||window.PSY_GUIDE_STANDARD?.cardAge(m.name,d,m)||d?.age||m.age;
+ const age=card?card.age:(window.PSY_GUIDE_STANDARD?.cardAge(m.name,d,m)||d?.age||m.age||'');
  const description=card?.summary||profileGoal(m,d,window.PSY_PORTFOLIO_EDITS?.[m.name]||{})||m.summary||m.goal||'';
  const kind=d?.workflow==='diagnostic03'?'scale':d?.special==='memory10'?'memory':d?.special==='odd4'?'cognitive':(d?.graphic==='drawing'||d?.graphic==='sociogram')?'drawing':(d?.graphic==='dictation'||d?.graphic==='schulte'||d?.graphic==='dembo'||d?.graphic==='ladder')?'graphic':(d?.calculator?'scale':'other');
  const copy=window.PSY_CONTENT_OVERRIDES;
  const visibleName=copy?.display?.(m,'name',m.name)||m.name;
- const author=(card?.author||d?.author||m.author||'');
+ const author=(card?card.author:(d?.author||m.author||''));
  const matchMSPSS=['simpleAnalogies12','pairedAssoc20','schulte5'].includes(d?.workflow);
  const credited=author&&!/сведения об авторе уточняются|автор(?: версии)? не установлен|неизвестно|нужно уточнить/i.test(author)?'<p class="method-card-author">'+escapeHTML(author)+'</p>':'';
- const count=card?.quantity||d?.count||m.count||'';
+ const count=card?card.quantity:(d?.count||m.count||'');
  const countTag=count&&!/неизвестно|уточняется|нужно уточнить|не установлено/i.test(count)?'<span class="tag">'+escapeHTML(count)+'</span>':'';
  const ageTag=age&&!/неизвестно|уточняется|нужно уточнить|не установлено/i.test(age)?'<span class="tag">'+escapeHTML(age)+'</span>':'';
  const typeTag=card?.type||m.format||'Методика';
