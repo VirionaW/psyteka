@@ -1068,6 +1068,14 @@ function group(d,rows){
 }
 function calculator(d,ctx){
  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0];
+ // New blank protocols use the published six-item version. Existing answered
+ // protocols without an explicit version retain their prior interpretation.
+ if(d.id==="razuvaeva-osr29"){
+  rows.forEach(person=>{
+   if(!person.razuvaevaKey&&present(d,person)===0)
+    person.razuvaevaKey="method-six";
+  });
+ }
  if(d.id==="lazarus-wcq50"){
   rows.forEach(person=>{
    if(!person.ageManual&&(person.ageYears===null||person.ageYears===undefined||person.ageYears==="")){
@@ -1098,8 +1106,8 @@ function calculator(d,ctx){
  }
  if(locked)out+='<p class="psy-cdi-lock-note">'+(ctx.calcMode==="class"&&!hasRoster?"Сначала добавьте хотя бы одного участника.":!r.name?.trim()?"Сначала укажите участника.":!ageOk(d,r,rows,ctx.calcMode)?(d.id==="lazarus-wcq50"?"Укажите фактический возраст участника.":"Выберите класс перед вводом ответов."):"Укажите пол участника.")+'</p>';
  if(d.id==="razuvaeva-osr29")out+='<label class="psy-711-version">Ключ обработки<select id="school711RazKey">'+
- '<option value="kmc-seven" '+(r.razuvaevaKey!=="method-six"?"selected":"")+'>Ключ А – КМЦ (7 пунктов)</option>'+
- '<option value="method-six" '+(r.razuvaevaKey==="method-six"?"selected":"")+'>Ключ Б – методические материалы (6 пунктов)</option></select></label>'+
+ '<option value="method-six" '+(r.razuvaevaKey==="method-six"?"selected":"")+'>Основной – 6 пунктов</option>'+
+ '<option value="kmc-seven" '+(r.razuvaevaKey!=="method-six"?"selected":"")+'>Альтернативный – 7 пунктов</option></select></label>'+
  '<p class="psy-mspss-small">Для одной группы используйте одинаковый ключ. Выбор не меняет сохраненные ответы.</p>';
  if(d.id==="eysenck-40")out+='<label class="psy-711-version">Редакция опросника<select id="school711Version">'+
  '<option value="interleaved" '+(r.eysenckVersion!=="block"?"selected":"")+'>Версия 2 – чередование шкал (твой бланк)</option>'+
