@@ -988,17 +988,12 @@ const razLabel=(d,r)=>razKey(d,r)?"Ключ "+razKey(d,r):"";
 // possible factor maximum is still raw max multiplied by the coefficient.
 const preciseRazMaximum=s=>razNumber(s.max*s.factor);
 const maximum=(d,s)=>d.id==="razuvaeva-osr29"?razNumber(s.max*s.factor):String(s.max);
+const razOverallTone=z=>z?.overallLevel?.code==="medium"?"middle":z?.overallLevel?.code==="high"?"high":"low";
 function razOverallHtml(z){
- const level=z.overallLevel||m.razOverallLevel(z.overallScore);
- const count=z.overallScore;
- return '<div class="psy-711-overall is-'+level.code+'" aria-label="Общий результат '+count+' из 29, '+level.name+'">'+
-  '<div class="psy-711-overall-heading"><h4>Общий результат</h4><strong>'+count+' <span>/ 29</span></strong></div>'+
-  '<div class="psy-711-overall-segments" role="img" aria-label="'+count+' баллов из 29">'+
-   Array.from({length:29},(_,i)=>'<span class="psy-711-overall-segment'+(i<count?' is-filled':'')+'"></span>').join("")+
-  '</div>'+
-  '<div class="psy-711-overall-ticks" aria-hidden="true"><span>0</span><span>9|10</span><span>17|18</span><span>29</span></div>'+
-  '<div class="psy-711-overall-level">'+level.name+'</div>'+
-  '</div>';
+ const value=z.overallScore;
+ return '<div class="psy-711-scale psy-711-overall-card psy-711-'+razOverallTone(z)+'" aria-label="Общий результат: '+value+' баллов, '+z.overallLevel.name+'">'+
+  '<b>Общий результат</b><strong>'+value+'</strong>'+
+  '<div class="psy-711-track" aria-hidden="true"><span style="width:'+Math.round(value/29*100)+'%"></span></div></div>';
 }
 function result(d,r){
  if(r?.attendance==="absent")return '<section class="psy-711-result">Участник отсутствовал. Результаты не рассчитываются.</section>';
@@ -1006,14 +1001,14 @@ function result(d,r){
  if(!z&&d.id==="lazarus-wcq50"&&present(d,r)===size(d)&&!["f","m"].includes(r?.sex))
   return '<section class="psy-711-result"><h3>Ответы заполнены</h3><p>Выберите пол участника выше, чтобы рассчитать Т-баллы по таблице возраста. Ответы сохранены в текущем протоколе.</p></section>';
  if(!z)return '<section class="psy-711-result">Заполнено '+present(d,r)+' из '+size(d)+'. Для подсчета нужны все ответы.</section>';
- return '<section class="psy-711-result"><h3>Результаты участника'+(d.id==="razuvaeva-osr29"?" · "+razLabel(d,r):"")+'</h3>'+
- (d.id==="razuvaeva-osr29"?razOverallHtml(z):"")+
- '<div class="psy-711-scale-grid">'+z.scales.map(s=>
- '<div class="psy-711-scale psy-711-'+tone(d,s)+'"><b>'+esc(s.name)+'</b><strong>'+(d.id==="lazarus-wcq50"?wcqValue(s):num(d,s)+' / '+maximum(d,s))+'</strong><span>'+
- esc(d.id==="razuvaeva-osr29"?"Коэффициент "+s.factor+" · точный максимум "+preciseRazMaximum(s):
- d.id==="lazarus-wcq50"?(s.tScore!==null?(s.referenceOnly?"Условно по 14-20 лет: ":"")+window.PSY_WCQ_NORMS_2026.level(s.tScore):"Доля максимума шкалы"):label(d,s))+'</span>'+
+ return '<section class="psy-711-result'+(d.id==="razuvaeva-osr29"?" psy-711-razuvaeva-result":"")+'"><h3>Результаты участника</h3>'+
+ '<div class="psy-711-scale-grid'+(d.id==="razuvaeva-osr29"?" psy-711-razuvaeva-grid":"")+'">'+
+ (d.id==="razuvaeva-osr29"?razOverallHtml(z):"")+z.scales.map(s=>
+ '<div class="psy-711-scale psy-711-'+tone(d,s)+'"><b>'+esc(s.name)+'</b><strong>'+(d.id==="lazarus-wcq50"?wcqValue(s):num(d,s)+' / '+maximum(d,s))+'</strong>'+
+ (d.id==="razuvaeva-osr29"?"":'<span>'+esc(
+ d.id==="lazarus-wcq50"?(s.tScore!==null?(s.referenceOnly?"Условно по 14-20 лет: ":"")+window.PSY_WCQ_NORMS_2026.level(s.tScore):"Доля максимума шкалы"):label(d,s))+'</span>')+
  '<div class="psy-711-track"><span style="width:'+(d.id==="lazarus-wcq50"&&s.tScore!==null?Math.max(0,Math.min(100,s.tScore/90*100)):s.percent)+'%"></span></div></div>').join("")+'</div>'+
- (d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Максимум шкалы рассчитан по числу пунктов выбранного ключа и коэффициенту. Для социального пессимизма: ключ А – 7, ключ Б – 6. В одной опубликованной таблице ошибочно указан максимум 6 для семи пунктов. Показатели разных ключей не смешивайте.</p><p class="psy-711-safety">Количество ответов «Да» и показатели факторов не определяют вероятность суицида и не исключают опасности. При признаках угрозы необходима очная профессиональная оценка безопасности.</p>':
+ (d.id==="razuvaeva-osr29"?'<p class="psy-711-safety">При признаках угрозы необходима очная оценка безопасности.</p>':
  (d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">'+esc(wcqNormNote(r))+'</p>'+wcqProfile(z):'<p class="psy-mspss-small">Диапазоны по каждой шкале: 0-7, 8-14, 15-20.</p>'))+'</section>';
 }
 
@@ -1070,10 +1065,10 @@ function analytical711Preview(d,rows){
 }
 function group(d,rows){
  const keys=(cfg(d).versions?.[0]?.scales||cfg(d).scales);
- return '<section class="psy-mspss-group psy-711-group psy-711-'+d.id+'"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th>'+(d.id==="razuvaeva-osr29"?'<th>Общий результат / 29</th><th>Уровень</th>':"")+keys.map(s=>'<th>'+esc(s.name)+'</th>').join("")+'</tr></thead><tbody>'+
- rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+(d.id==="razuvaeva-osr29"?'<small style="display:block;font-size:11px">'+razLabel(d,r)+'</small>':"")+'</td>'+(d.id==="razuvaeva-osr29"?'<td class="psy-711-score-cell">'+(z?z.overallScore+' / 29':"")+'</td><td class="psy-711-score-cell">'+(z?z.overallLevel.name:"")+'</td>':"")+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="psy-711-score-cell">'+(v?'<span class="psy-711-number psy-711-'+(d.id==="lazarus-wcq50"?wcqColor(v):tone(d,v))+'">'+(d.id==="lazarus-wcq50"?wcqValue(v):num(d,v))+'</span>':"")+'</td>'}).join("")+'</tr>'}).join("")+
- '</tbody></table></div>'+(d.id==="razuvaeva-osr29"?'<p class="psy-mspss-small">Цвет чисел обозначает только долю максимума по выбранному ключу, а не уровень суицидального риска. Категория риска автоматически не присваивается.'+
- (new Set(rows.filter(r=>!!scored(d,r)).map(r=>razKey(d,r))).size>1?' В группе выбраны разные ключи (А и Б). Приведите участников к одному ключу, иначе аналитическая справка не формируется.':'')+'</p>':d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">Т – нормативный Т-балл для возраста и пола (14-60 лет). Т* – условный пересчет для 12-13 лет по таблице 14-20 лет, не возрастная норма. % – доля максимума при отсутствии Т. Т менее 40 – редкое, 40-60 – умеренное, свыше 60 – выраженное использование.</p>':"")+analytical711Preview(d,rows)+'</section>';
+ return '<section class="psy-mspss-group psy-711-group psy-711-'+d.id+'"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th>'+(d.id==="razuvaeva-osr29"?'<th>Общий результат</th>':"")+keys.map(s=>'<th>'+esc(s.name)+'</th>').join("")+'</tr></thead><tbody>'+
+ rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+'</td>'+(d.id==="razuvaeva-osr29"?'<td class="psy-711-score-cell">'+(z?'<span class="psy-711-number psy-711-'+razOverallTone(z)+'" aria-label="'+z.overallLevel.name+'">'+z.overallScore+'</span>':"")+'</td>':"")+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="psy-711-score-cell">'+(v?'<span class="psy-711-number psy-711-'+(d.id==="lazarus-wcq50"?wcqColor(v):tone(d,v))+'">'+(d.id==="lazarus-wcq50"?wcqValue(v):num(d,v))+'</span>':"")+'</td>'}).join("")+'</tr>'}).join("")+
+ '</tbody></table></div>'+(d.id==="razuvaeva-osr29"&&new Set(rows.filter(r=>!!scored(d,r)).map(r=>razKey(d,r))).size>1?
+ '<p class="psy-mspss-small">Для общей аналитической справки выберите одну редакцию ключа для всей группы.</p>':d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">Т – нормативный Т-балл для возраста и пола (14-60 лет). Т* – условный пересчет для 12-13 лет по таблице 14-20 лет, не возрастная норма. % – доля максимума при отсутствии Т. Т менее 40 – редкое, 40-60 – умеренное, свыше 60 – выраженное использование.</p>':"")+analytical711Preview(d,rows)+'</section>';
 }
 function calculator(d,ctx){
  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0];
@@ -1221,10 +1216,10 @@ function bind(d,ctx){
 
 function csv(d,rows){
  const isWCQ=d.id==="lazarus-wcq50",scales=(cfg(d).scales||cfg(d).versions?.[0]?.scales||[]);
- const head=["№","Участник",...(d.id==="razuvaeva-osr29"?["Общий результат / 29","Уровень общей шкалы"]:[]),...scales.map(s=>s.name+(isWCQ?" (Т / Т* / %)":""))];
+ const head=["№","Участник",...(d.id==="razuvaeva-osr29"?["Общий результат"]:[]),...scales.map(s=>s.name+(isWCQ?" (Т / Т* / %)":""))];
  const cell=v=>{let x=String(v??"");if(/^\s*[=+@-]/.test(x))x="'"+x;return '"'+x.replace(/"/g,'""')+'"'};
  const lines=[head,...rows.map((r,i)=>{const scores=scored(d,r)?.scales||scales.map(()=>null);
-  return [i+1,(r.name||"У-"+(i+1))+(d.id==="razuvaeva-osr29"?" ["+razLabel(d,r)+"]":""),...(d.id==="razuvaeva-osr29"?[scored(d,r)?.overallScore??"",scored(d,r)?.overallLevel?.name??""]:[]),...scores.map(s=>s?(isWCQ?wcqValue(s):num(d,s)):"")];
+  return [i+1,(r.name||"У-"+(i+1)),...(d.id==="razuvaeva-osr29"?[scored(d,r)?.overallScore??""]:[]),...scores.map(s=>s?(isWCQ?wcqValue(s):num(d,s)):"")];
  })];
  return "\uFEFF"+lines.map(row=>row.map(cell).join(";")).join("\r\n");
 }
@@ -1241,11 +1236,11 @@ function report(d,rows,mode,index){
  const scales=cfg(d).scales||cfg(d).versions?.[0]?.scales||[],rowsData=[],fill=[];
  for(let i=0;i<people.length;i++){
   const row=people[i],z=scored(d,row);
-  rowsData.push([String(i+1),(row.name||"У-"+(i+1))+(d.id==="razuvaeva-osr29"?" ["+razLabel(d,row)+"]":""),...(d.id==="razuvaeva-osr29"?[z?String(z.overallScore):"",z?.overallLevel?.name||""]:[]),...scales.map((s,j)=>{
+  rowsData.push([String(i+1),(row.name||"У-"+(i+1)),...(d.id==="razuvaeva-osr29"?[z?String(z.overallScore):""]:[]),...scales.map((s,j)=>{
    const v=z?.scales?.[j];if(!v)return "";
    return d.id==="lazarus-wcq50"?wcqValue(v):num(d,v);
   })]);
-  fill.push([null,null,...(d.id==="razuvaeva-osr29"?[null,null]:[]),...scales.map((s,j)=>{const factor=z?.scales?.[j];if(!factor)return null;
+  fill.push([null,null,...(d.id==="razuvaeva-osr29"?[z?(razOverallTone(z)==="high"?"FF6868":razOverallTone(z)==="middle"?"FFF14D":"4BE878"):null]:[]),...scales.map((s,j)=>{const factor=z?.scales?.[j];if(!factor)return null;
    if(d.id==="lazarus-wcq50"&&factor.tScore===null)return null;
    const kind=tone(d,factor);return kind==="high"?"FF6868":kind==="middle"?"FFF14D":"4BE878"})]);
  }
@@ -1263,7 +1258,7 @@ function report(d,rows,mode,index){
  if(analytic)body=analytic.lines.map(analyticPara).join("")+window.PSY_ANALYTIC_SIGNATURES.word(rows);
  else{
   body=para(cfg(d).name)+para(mode==="class"?"Результаты "+(grade?grade+" класса":"класса"):"Результат участника")+para("Дата: "+new Date().toLocaleDateString("ru-RU"));
-  body+=table([["№","Участник",...(d.id==="razuvaeva-osr29"?["Общий результат / 29","Уровень общей шкалы"]:[]),...scales.map(s=>s.name)],...rowsData],fill);
+  body+=table([["№","Участник",...(d.id==="razuvaeva-osr29"?["Общий результат"]:[]),...scales.map(s=>s.name)],...rowsData],fill);
   if(d.id==="eysenck-40")body+=para("Интервалы каждой шкалы:")+table([["Баллы","Уровень"],["0-7","Низкий"],["8-14","Средний"],["15-20","Высокий"]],[["E4F1FB","E4F1FB"],["FFF0CF","FFF0CF"],["F9DEDC","F9DEDC"]]);
   else if(d.id==="lazarus-wcq50"){
    body+=para("Т – нормативный балл по таблицам Вассермана и соавт. (14-60 лет). Т* – условный показатель для 12-13 лет по группе 14-20 лет, не возрастная норма. % – описательная доля максимума стратегии без Т.");
@@ -1275,7 +1270,7 @@ function report(d,rows,mode,index){
     body+=para(wcqNormNote(people[0]));
    }
   }
-  else body+=para("Общая шкала: 0-9 – низкий, 10-17 – средний, 18-29 – высокий уровень по представленной схеме. Эти интервалы не являются клинически валидированными порогами. При признаках угрозы необходима очная оценка безопасности.");
+  else if(d.id==="razuvaeva-osr29")body+=para("При признаках угрозы необходима очная оценка безопасности.");
  }
  const documentXml='<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+
  '<w:sectPr>'+(analytic?'<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:bottom="850" w:left="850" w:right="850"/>':'<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="680" w:bottom="680" w:left="680" w:right="680"/>')+'</w:sectPr></w:body></w:document>';
