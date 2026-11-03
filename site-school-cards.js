@@ -190,6 +190,12 @@
   "Опросник агрессии детей и подростков (BPAQ, адаптация)":{...specific["Опросник агрессии детей и подростков (BPAQ, адаптация)"],author:"А. Басс, М. Перри; подростковая адаптация М. М. Лобасковой и соавт. (2021)",age:"14-17 лет",count:"29 утверждений, 4 шкалы"},
   "Опросник суицидального риска (Шмелев – Разуваева)":{...specific["Опросник суицидального риска (Шмелев – Разуваева)"],type:"Опросник",count:"29 утверждений, 9 факторов"}
  });
+ // Подтвержденные карточки методик для педагогов.
+ Object.assign(specific,{
+  "Опросник профессиональной мотивации (ОПМ)":{author:"Е. Н. Осин, А. А. Горбунова, Т. О. Гордеева и соавт.",age:"Взрослые",type:"Опросник",count:"20 утверждений",summary:"Изучение внутренней и внешней профессиональной мотивации и амотивации в трудовой деятельности."},
+  "Утрехтская шкала вовлеченности работой (UWES-9)":{author:"W. Schaufeli и соавт.; русская версия А. В. Ловакова, Е. Р. Агадуллиной",age:"Взрослые",type:"Опросник",count:"9 утверждений",summary:"Оценка энергичности, преданности работе и поглощенности профессиональной деятельностью."},
+  "Оценка готовности педагога к инновационной деятельности":{author:"В. А. Сластенин, Л. С. Подымова",age:"Педагоги",type:"Карта самооценки",count:"21 показатель",summary:"Самооценка мотивационно-творческой, профессиональной и личностной готовности педагога к инновационной деятельности."}
+ });
  const verifiedKind=/проектив|рисуноч|графическ|рисунок|опросник|анкет|рейтинг|шкал|самоотчет|бесед|наблюден|проба|социометр|тест|программ|реестр|модель/i;
  const uncertain=/возраст зависит|возраст не подтвержден|проверить возраст|возрастная редакция не подтверждена|школьный возраст|с учетом возраста|ориентировочно|по выбранной версии|возраст по|школьники и взрослые|подростки и взрослые|подростки \(ориентировочно|не заявлен/i;
  const placeholder=/^(изучение направления:|исследование отдельных познавательных функций|коррекционная или профилактическая работа|изучение психологических особенностей по проверенной авторской версии)/i;
@@ -220,7 +226,7 @@
   const item=specific[m.name]||{};
   const isProgram=m.theme==="Программы";
   const authorRaw=item.author||d?.author||profile?.author||m.author||"";
-  const author=/сведения об авторе уточняются|возможная методика|вероятная версия|автор карточки не установлен/i.test(authorRaw)?"Автор версии не установлен":clean(authorRaw)||"Автор версии не установлен";
+  const author=/сведения об авторе уточняются|возможная методика|вероятная версия|автор карточки не установлен|автор не установлен|неизвестно|нужно уточнить/i.test(authorRaw)?"":clean(authorRaw);
   const preferred=clean(item.type||((d?.kind&&verifiedKind.test(d.kind))?d.kind:m.format));
   let type=preferred;
   if(!item.type){
@@ -235,13 +241,13 @@
    else if(/проба|тест|памят|праксис/i.test(preferred))type="Диагностическая проба";
   }
   const standardAge=standard?.records?.[m.name]?.age||"";
-  const age=item.ageStatus==="unresolved"?"Возраст уточняется":item.age||normAge(standardAge)||normAge(d?.age)||normAge(profile?.age)||normAge(m.age)||"Возраст уточняется";
+  const age=item.ageStatus==="unresolved"?"":item.age||normAge(standardAge)||normAge(d?.age)||normAge(profile?.age)||normAge(m.age)||"";
   const qty=clean(item.count||d?.count||profile?.count||m.count||"");
-  const quantity=qty&&!/не уточнено|не подтвержден|возможная|сведения уточняют|возраст зависит|по выбранной форме/i.test(qty)?clip(qty,74):isProgram?"Материалы программы":"Количество заданий уточняется";
+  const quantity=qty&&!/не уточнено|не подтвержден|неизвестно|нужно уточнить|возможная|сведения уточняют|возраст зависит|по выбранной форме/i.test(qty)?clip(qty,74):isProgram?"Материалы программы":"";
   const preferredSummary=item.summary||schoolSummaries[m.name]||m.summary||d?.goal||profile?.goal||m.goal||"";
   const fallback=placeholder.test(preferredSummary)?[d?.goal,profile?.goal,m.summary].find(x=>x&&!placeholder.test(clean(x)))||"":preferredSummary;
   const summary=clip(fallback||(isProgram?"Цели, содержание и условия применения приведены в материалах программы.":"Описание и задачи приведены в руководстве выбранной версии."),150);
-  return {author,type:type||"Вид методики уточняется",age,quantity,summary,confirmedAge:item.ageStatus?["age","grade"].includes(item.ageStatus):/\d/.test(age),confirmedQuantity:quantity!=="Количество заданий уточняется",category:m.theme};
+  return {author,type:type||"Методика",age,quantity,summary,confirmedAge:item.ageStatus?["age","grade"].includes(item.ageStatus):/\d/.test(age),confirmedQuantity:!!quantity,category:m.theme};
  }
  // Одна карточка – один основной способ предъявления, даже если
  // рисуночная или графическая методика одновременно относится к проективным.
@@ -260,7 +266,7 @@
   if(/рисуночн(?!ый тест фрустрации)|рисунок семьи/.test(type))return "drawing";
   if(/графическ|социограмм/.test(type))return "graphic";
   if(/проективн|проективная|цветовая/.test(type))return "projective";
-  if(/опросник|анкет|самоотчет|рейтингова/.test(type))return "questionnaire";
+  if(/опросник|анкет|самоотчет|рейтингова|карта самооценки/.test(type))return "questionnaire";
   if(/социометр/.test(type))return "sociometry";
   if(/бесед|наблюден/.test(type))return "interview";
   if(/программ|реестр|модель|подборк/.test(type))return "program";
