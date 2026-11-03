@@ -129,7 +129,7 @@ function render(){
  const description=card?.summary||profileGoal(m,d,window.PSY_PORTFOLIO_EDITS?.[m.name]||{})||m.summary||m.goal||'';
  const kind=d?.workflow==='diagnostic03'?'scale':d?.special==='memory10'?'memory':d?.special==='odd4'?'cognitive':(d?.graphic==='drawing'||d?.graphic==='sociogram')?'drawing':(d?.graphic==='dictation'||d?.graphic==='schulte'||d?.graphic==='dembo'||d?.graphic==='ladder')?'graphic':(d?.calculator?'scale':'other');
  const copy=window.PSY_CONTENT_OVERRIDES;
- const visibleName=copy?.display?.(m,'name',m.name)||m.name;
+ const visibleName=copy?.display?.(m,'name',card?.title||m.name)||card?.title||m.name;
  const author=(card?card.author:(d?.author||m.author||''));
  const matchMSPSS=['simpleAnalogies12','pairedAssoc20','schulte5'].includes(d?.workflow);
  const credited=author&&!/сведения об авторе уточняются|автор(?: версии)? не установлен|неизвестно|нужно уточнить/i.test(author)?'<p class="method-card-author">'+escapeHTML(author)+'</p>':'';
@@ -483,7 +483,7 @@ function viewOverview(m){
  const age=profileText(shown("age",d.workflow==="orekhovaHouses8"?(d.age||m.age||""):window.PSY_GUIDE_STANDARD?.age(m.name,DETAILS[m.name],m)||o.age||d.age||m.age||""));
  const kind=profileText(shown("type",o.kind||d.kind||m.format||""));
  const count=profileText(shown("count",o.count||d.count||m.count||""));
- const name=profileText(shown("name",m.name));
+ const name=profileText(shown("name",window.PSY_SCHOOL_CARDS?.compose?.(m,d,o,window.PSY_GUIDE_STANDARD)?.title||m.name));
  const isProgram=m.theme==="Программы";
  const isRegister=isProgram&&/реестр/i.test(kind);
  const fields=[
@@ -1135,7 +1135,7 @@ function openMethod(m){
  savedModeRecords=saved?.savedModeRecords||{one:{id:null,title:"",baseline:null},class:{id:null,title:"",baseline:null}};
  activeSavedAssessmentId=savedModeRecords[calcMode]?.id||null;
  activeSavedAssessmentTitle=savedModeRecords[calcMode]?.title||"";
- const d=DETAILS[m.name];$('#modalTitle').textContent=window.PSY_CONTENT_OVERRIDES?.display?.(m,'name',m.name)||m.name;$('#modalAuthor').textContent='Сведения о методике';
+ const d=DETAILS[m.name];const displayTitle=window.PSY_SCHOOL_CARDS?.compose?.(m,d,window.PSY_PORTFOLIO_EDITS?.[m.name]||{},window.PSY_GUIDE_STANDARD)?.title||m.name;$('#modalTitle').textContent=window.PSY_CONTENT_OVERRIDES?.display?.(m,'name',displayTitle)||displayTitle;$('#modalAuthor').textContent='Сведения о методике';
  $('#modalBody').innerHTML='';
  const header=$('#modal').querySelector('.modalhead');
  let old=$('#methodTabs');if(old)old.remove();
