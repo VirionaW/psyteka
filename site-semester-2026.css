@@ -965,43 +965,89 @@ html.dark .library-page #modal.psy-mspss-example .psy-cp-gender-feedback{
  font-weight:600;
 }
 
-/* Разуваева: общая шкала 0-29, визуальные уровни по запрошенному образцу. */
-.library-page #modal.psy-mspss-example .psy-711-result .psy-711-overall{
- --psy-overall-hue:#2f9a5b;
- padding:20px 20px 17px;margin:4px 0 18px;
- background:var(--paper,#fff);border:1px solid var(--line,#d9e6dd);
- border-radius:15px;color:var(--ink,#203b2c);max-width:none;
- display:block;line-height:1.5;
+/* Разуваева: десять одинаковых карточек, в том числе общая шкала.
+   Только цвет числа в таблице, без отдельных столбцов уровней. */
+.library-page #modal.psy-mspss-example .psy-711-razuvaeva-result .psy-711-razuvaeva-grid{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:14px;
+ align-items:stretch;
+ margin:16px 0 12px;
 }
-.library-page #modal.psy-mspss-example .psy-711-overall.is-medium{--psy-overall-hue:#c48b23}
-.library-page #modal.psy-mspss-example .psy-711-overall.is-high{--psy-overall-hue:#d82344}
-.library-page #modal.psy-mspss-example .psy-711-overall-heading{position:relative;display:flex;justify-content:center;align-items:center;min-height:35px;margin-bottom:13px}
-.library-page #modal.psy-mspss-example .psy-711-overall-heading h4{font-size:20px;font-weight:750;text-align:center;margin:0;color:inherit}
-.library-page #modal.psy-mspss-example .psy-711-overall-heading strong{position:absolute;right:0;top:0;font-size:23px;line-height:1.45;color:var(--psy-overall-hue);font-variant-numeric:tabular-nums;white-space:nowrap}
-.library-page #modal.psy-mspss-example .psy-711-overall-heading strong span{font-size:13px;color:var(--muted,#607668);font-weight:500}
-.library-page #modal.psy-mspss-example .psy-711-overall-segments{display:grid;grid-template-columns:repeat(29,minmax(0,1fr));column-gap:2px;height:31px;background:transparent;overflow:hidden}
-.library-page #modal.psy-mspss-example .psy-711-overall-segment{background:#edf0ef;min-width:0}
-.library-page #modal.psy-mspss-example .psy-711-overall-segment.is-filled{background:var(--psy-overall-hue)}
-.library-page #modal.psy-mspss-example .psy-711-overall-ticks{position:relative;height:23px;margin-top:2px;color:var(--muted,#627367);font-size:12px;line-height:1.3}
-.library-page #modal.psy-mspss-example .psy-711-overall-ticks span{position:absolute;white-space:nowrap;top:0}
-.library-page #modal.psy-mspss-example .psy-711-overall-ticks span:first-child{left:0}
-.library-page #modal.psy-mspss-example .psy-711-overall-ticks span:nth-child(2){left:32.75%;transform:translateX(-50%)}
-.library-page #modal.psy-mspss-example .psy-711-overall-ticks span:nth-child(3){left:60.35%;transform:translateX(-50%)}
-.library-page #modal.psy-mspss-example .psy-711-overall-ticks span:last-child{right:0}
-.library-page #modal.psy-mspss-example .psy-711-overall-level{text-align:center;font-size:17px;font-weight:750;color:var(--psy-overall-hue);margin-top:6px}
-.psy-semester-result-table tr.psy-semester-overall td{background:#eff5f0;color:#28573d}
-.psy-semester-result-table tr.psy-semester-overall strong{font-size:17px;font-variant-numeric:tabular-nums}
-html.dark .library-page #modal.psy-mspss-example .psy-711-overall-segment{background:#314338}
-html.dark .library-page #modal.psy-mspss-example .psy-711-overall.is-high{--psy-overall-hue:#ff526a}
-html.dark .library-page #modal.psy-mspss-example .psy-711-overall.is-medium{--psy-overall-hue:#ffca60}
-html.dark .library-page #modal.psy-mspss-example .psy-711-overall.is-low{--psy-overall-hue:#78dba1}
-html.dark .psy-semester-result-table tr.psy-semester-overall td{background:#264335;color:#e4efe5}
-@media(max-width:490px){
- .library-page #modal.psy-mspss-example .psy-711-result .psy-711-overall{padding:13px 12px}
- .library-page #modal.psy-mspss-example .psy-711-overall-heading{justify-content:space-between;gap:10px}
- .library-page #modal.psy-mspss-example .psy-711-overall-heading h4{font-size:16px;text-align:left}
- .library-page #modal.psy-mspss-example .psy-711-overall-heading strong{position:static;font-size:19px}
- .library-page #modal.psy-mspss-example .psy-711-overall-segments{column-gap:1px;height:26px}
- .library-page #modal.psy-mspss-example .psy-711-overall-ticks{font-size:10px}
- .library-page #modal.psy-mspss-example .psy-711-overall-level{font-size:15px}
+.library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid > .psy-711-scale{
+ min-height:136px;
+ box-sizing:border-box;
+ border-radius:15px;
+ padding:17px 19px;
+ gap:10px;
+ box-shadow:0 2px 8px rgba(30,65,40,.035);
+}
+.library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid > .psy-711-scale b{
+ font-size:15px;
+ font-weight:760;
+ line-height:1.35;
+}
+.library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid > .psy-711-scale strong{
+ font-size:28px;
+ font-weight:780;
+ letter-spacing:-.02em;
+ line-height:1.2;
+}
+.library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid > .psy-711-scale .psy-711-track{
+ width:100%;
+ height:9px;
+ margin-top:auto;
+ border-radius:99px;
+ background:rgba(255,255,255,.7);
+}
+.library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid > .psy-711-scale .psy-711-track span{
+ border-radius:99px;
+ background:#668fba;
+}
+.library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid .psy-711-overall-card.psy-711-low{
+ background:#e9f5ed;border-color:#b7d9c3;color:#2c6f47;
+}
+.library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid .psy-711-overall-card.psy-711-middle{
+ background:#fff4d9;border-color:#edcf89;color:#946314;
+}
+.library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid .psy-711-overall-card.psy-711-high{
+ background:#ffe9e6;border-color:#efb7b2;color:#c72b42;
+}
+.library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid .psy-711-overall-card.psy-711-low .psy-711-track span{background:#2e985f}
+.library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid .psy-711-overall-card.psy-711-middle .psy-711-track span{background:#dda726}
+.library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid .psy-711-overall-card.psy-711-high .psy-711-track span{background:#dc324f}
+/* Colored number only, never the whole table cell. */
+.library-page #modal.psy-mspss-example .psy-711-group.psy-711-razuvaeva-osr29 .psy-711-number{
+ display:inline-block!important;
+ min-width:30px;
+ text-align:center;
+ padding:3px 8px!important;
+ border-radius:6px!important;
+ font:750 13px/1.3 system-ui,sans-serif!important;
+ font-variant-numeric:tabular-nums!important;
+}
+.psy-semester-result-table tr.psy-semester-overall td{
+ background:transparent;
+ color:inherit;
+}
+.psy-semester-result-table tr.psy-semester-overall strong{font-size:16px}
+html.dark .library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid .psy-711-overall-card.psy-711-low{
+ background:#1f432c;border-color:#4b8f61;color:#b7edc7;
+}
+html.dark .library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid .psy-711-overall-card.psy-711-middle{
+ background:#493c1e;border-color:#ad8345;color:#ffe0a0;
+}
+html.dark .library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid .psy-711-overall-card.psy-711-high{
+ background:#512c32;border-color:#b35d6a;color:#ffd1d7;
+}
+@media(max-width:650px){
+ .library-page #modal.psy-mspss-example .psy-711-razuvaeva-result .psy-711-razuvaeva-grid{
+  grid-template-columns:minmax(0,1fr);
+  gap:10px;
+ }
+ .library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid > .psy-711-scale{
+  min-height:116px;
+  padding:15px 16px;
+ }
+ .library-page #modal.psy-mspss-example .psy-711-razuvaeva-grid > .psy-711-scale strong{font-size:25px}
 }
