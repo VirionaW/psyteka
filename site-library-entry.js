@@ -65,7 +65,7 @@
    <div class="psy-entry-actions"><button class="psy-entry-btn secondary" type="button" id="psyEntryExpiredClose">Вернуться на главную</button></div>
   </div>
   <div class="psy-entry-step" id="psyEntryIssue" hidden>
-   <p class="psy-entry-lead">Не удалось связаться с сервером аккаунтов. Сохраненная сессия не удалена. Повторите проверку соединения.</p>
+   <p class="psy-entry-lead">Не удалось завершить проверку доступа. Сессия и сохраненные обследования не удалены. Можно повторить проверку или перейти ко входу по почте.</p>
    <div class="psy-entry-actions">
     <button class="psy-entry-btn" type="button" id="psyEntryRetry">Повторить проверку</button>
     <button class="psy-entry-btn secondary" type="button" id="psyEntrySignInAgain">Войти по почте</button>
@@ -84,9 +84,13 @@
  checkStatus.textContent="Проверяю доступ к библиотеке...";
  checkStatus.hidden=true;
  document.body.append(checkStatus);
- const withTimeout=(promise,ms=10000)=>new Promise((resolve,reject)=>{
-  const timeout=setTimeout(()=>{const e=new Error("Время ожидания истекло");e.name="PsyAuthTimeoutError";reject(e)},ms);
-  Promise.resolve(promise).then(value=>{clearTimeout(timeout);resolve(value)},err=>{clearTimeout(timeout);reject(err)});
+ const withTimeout=(promise,ms=10000,authStage="access")=>new Promise((resolve,reject)=>{
+  const timeout=setTimeout(()=>{const e=new Error("Время ожидания истекло");e.name="PsyAuthTimeoutError";e.authStage=authStage;reject(e)},ms);
+  Promise.resolve(promise).then(value=>{clearTimeout(timeout);resolve(value)},err=>{
+   clearTimeout(timeout);
+   try{if(err&&typeof err==="object")err.authStage=authStage}catch(_){}
+   reject(err);
+  });
  });
  const steps=["psyEntryEmail","psyEntryCode","psyEntryPlans","psyEntryAccess","psyEntryExpired","psyEntryIssue"];
  function step(id){for(const s of steps)el(s).hidden=s!==id;el("psyEntryError").hidden=true}
@@ -159,8 +163,8 @@
   try{
    // An empty local session is enough to offer sign-in immediately. The
    // server-side account and entitlement checks remain mandatory for access.
-   const {data:cached,error:sessionError}=await withTimeout(client.auth.getSession(),6500);
-   if(sessionError)throw sessionError;
+   const {data:cached,error:sessionError}=await withTimeout(client.auth.getSession(),6500,"session");
+   if(sessionError){try{sessionError.authStage="session"}catch(_){}throw sessionError;}
    if(!cached?.session?.user){
     currentUser=null;
     const pendingEmail=el("psyEntryCode").dataset.email;
@@ -170,8 +174,8 @@
     else step("psyEntryEmail");
     show();return;
    }
-   const {data,error:authError}=await withTimeout(client.auth.getUser(),8500);
-   if(authError)throw authError;
+   const {data,error:authError}=await withTimeout(client.auth.getUser(),8500,"identity");
+   if(authError){try{authError.authStage="identity"}catch(_){}throw authError;}
    if(!data?.user||data.user.is_anonymous){
     currentUser=null;
     if(el("psyEntryCode").dataset.email&&requestAt&&Date.now()-requestAt<600000)step("psyEntryCode");
@@ -182,7 +186,7 @@
    if(policy&&!(await policy.keepSession(client,data.user))){
     currentUser=null;step("psyEntryEmail");show();return;
    }
-   if(policy&&await policy.secondFactorNeeded(client)){
+   if(policy&&await withTimeout(policy.secondFactorNeeded(client),10000,"mfa")){
     location.assign(policy.challengeUrl(destination));return;
    }
    currentUser=data.user;
@@ -190,8 +194,8 @@
     client.from("psy_account_roles").select("role").eq("user_id",currentUser.id).maybeSingle(),
     client.from("psy_trial_access").select("started_at,expires_at").eq("user_id",currentUser.id).maybeSingle(),
     client.from("psy_paid_access").select("plan,expires_at").eq("user_id",currentUser.id).maybeSingle()
-   ]));
-   if(r.error||t.error||p.error)throw new Error("Не удалось проверить права доступа.");
+   ]),10000,"permissions");
+   if(r.error||t.error||p.error){const e=new Error("Не удалось проверить права доступа.");e.authStage="permissions";e.code=r.error?.code||t.error?.code||p.error?.code;e.status=r.error?.status||t.error?.status||p.error?.status;throw e;}
    role=r.data?.role||"participant";trial=t.data||null;paid=p.data||null;
    if(["owner","shadow","moderator"].includes(role)){
     if(timer){clearInterval(timer);timer=null;}
@@ -201,7 +205,7 @@
     el("psyEntryClock").textContent="Без ограничения";el("psyEntryGo").disabled=false;
     ownerNeedsMfa=false;
     if(role==="owner"||role==="shadow"){
-     const {data:aal,error:aalError}=await withTimeout(client.auth.mfa.getAuthenticatorAssuranceLevel());
+     const {data:aal,error:aalError}=await withTimeout(client.auth.mfa.getAuthenticatorAssuranceLevel(),10000,"mfa");
      if(aalError||aal?.currentLevel!=="aal2"){
       ownerNeedsMfa=true;
       el("psyEntryAccessName").textContent=role==="shadow"?"Резервный доступ «Тень»":"Доступ владельца";
