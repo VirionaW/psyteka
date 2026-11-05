@@ -1035,16 +1035,16 @@ function analytical711(d,rows){
   const allNormed=allT&&!hasReference;
   const factors=names.map((factor,i)=>({name:factor.name,mean:scores.reduce((acc,x)=>acc+(allT?x.scales[i].tScore:(x.scales[i]?.percent||0)),0)/n})).sort((a,b)=>b.mean-a.mean);
   lines.push({kind:"body",text:d.id==="lazarus-wcq50"?
-   (allNormed?"Средние стандартизированные Т-баллы по возрастно-половым нормам 14-60 лет:":
-     allT?"Средние условные Т* по возрастно-половым таблицам; дети 12-13 лет сопоставлены с группой 14-20 лет:":
-      "Не у всех участников указаны данные для пересчета в Т-баллы; приведена описательная доля максимума каждой шкалы:"):
+   (allNormed?"Средние показатели стратегий:":
+     allT?"Средние показатели стратегий (для 12-13 лет сравнение с группой 14-20 лет):":
+      "Средние показатели стратегий (% от максимума шкалы):"):
    "Групповые средние значения наиболее выраженных факторов (в процентах от максимума шкалы):"});
-  factors.slice(0,4).forEach(x=>lines.push({kind:"factor",text:x.name+" – "+Math.round(x.mean)+(allNormed?" Т-баллов":allT?" Т*":"%")+"."}));
+  factors.slice(0,4).forEach(x=>lines.push({kind:"factor",text:x.name+" – "+Math.round(x.mean)+(allT?"":"%")+"."}));
   lines.push({kind:"body",text:d.id==="lazarus-wcq50"?
-   (allNormed?"По таблицам Вассермана и соавт. (2009): Т менее 40 – редкое, от 40 до 60 – умеренное, свыше 60 – выраженное использование. Это не клинический диагноз.":
-     allT?"Значения Т* представлены только как условное сопоставление с более старшей группой, не как возрастные нормы или стандартизированный групповой уровень.":
-      hasReference?"Для части участников 12-13 лет нет применимых возрастных норм; без указания пола приведены описательные проценты.":
-      "Проценты не являются возрастными нормами. Для Т-баллов требуется возраст из нормативного диапазона и пол."):
+   (allNormed?"До 40 – редкое, 40-60 – умеренное, выше 60 – выраженное использование.":
+     allT?"Для 12-13 лет сравнение с 14-20 годами ориентировочное, возрастных норм нет.":
+      hasReference?"Для части участников применимых возрастных норм нет.":
+      "Проценты отражают долю от максимума шкалы, не возрастную норму."):
    "Факторные баллы не определяют вероятность суицида. Автоматическая категория риска не присваивается; при подозрении на угрозу необходима очная оценка безопасности."});
  }
  return {lines,n,total};
@@ -1098,7 +1098,7 @@ function calculator(d,ctx){
  if(d.id==="lazarus-wcq50")out+='<div class="psy-cp-demographics"><label>Возраст (полных лет)<input id="school711Age" type="number" min="1" max="120" step="1" value="'+(Number(r.ageYears)>=7&&Number(r.ageYears)<=90?Number(r.ageYears):"")+'" placeholder="Например, 12 или 13"></label><div class="psy-cp-sex-field"><span>Пол участника</span><div class="psy-cp-sex-buttons" role="group" aria-label="Пол"><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="f"?"is-selected":"")+'" data-711-sex="f" aria-pressed="'+(r.sex==="f")+'" '+(!hasRoster||!ageOk(d,r,rows,ctx.calcMode)?"disabled":"")+'>Девочка / женщина</button><button type="button" class="btn psy-cp-sex-btn '+(r.sex==="m"?"is-selected":"")+'" data-711-sex="m" aria-pressed="'+(r.sex==="m")+'" '+(!hasRoster||!ageOk(d,r,rows,ctx.calcMode)?"disabled":"")+'>Мальчик / мужчина</button></div></div></div>';
  if(d.id==="lazarus-wcq50"){
   if(!["f","m"].includes(r.sex))out+='<p class="psy-wcq-gender-hint">Выберите пол участника, чтобы получить Т-баллы. Можно сначала ввести ответы – они не пропадут.</p>';
-  out+='<p class="psy-mspss-small">Класс дает предварительный возраст (класс + 6 лет); фактический возраст можно изменить. Для 12-13 лет условные Т* рассчитываются по группе 14-20 лет при выбранном поле. Нормативных Т-баллов для 12-13 лет у этой редакции нет.</p>';
+  out+='<p class="psy-mspss-small">Возраст по классу предварительный. При необходимости измените его вручную.</p>';
  }
  if(locked)out+='<p class="psy-cdi-lock-note">'+(ctx.calcMode==="class"&&!hasRoster?"Сначала добавьте хотя бы одного участника.":!r.name?.trim()?"Сначала укажите участника.":!ageOk(d,r,rows,ctx.calcMode)?(d.id==="lazarus-wcq50"?"Укажите фактический возраст участника.":"Выберите класс перед вводом ответов."):"Укажите пол участника.")+'</p>';
  if(d.id==="razuvaeva-osr29")out+='<label class="psy-711-version">Ключ обработки<select id="school711RazKey">'+
@@ -1261,13 +1261,12 @@ function report(d,rows,mode,index){
   body+=table([["№","Участник",...(d.id==="razuvaeva-osr29"?["Общий результат"]:[]),...scales.map(s=>s.name)],...rowsData],fill);
   if(d.id==="eysenck-40")body+=para("Интервалы каждой шкалы:")+table([["Баллы","Уровень"],["0-7","Низкий"],["8-14","Средний"],["15-20","Высокий"]],[["E4F1FB","E4F1FB"],["FFF0CF","FFF0CF"],["F9DEDC","F9DEDC"]]);
   else if(d.id==="lazarus-wcq50"){
-   body+=para("Т – нормативный балл по таблицам Вассермана и соавт. (14-60 лет). Т* – условный показатель для 12-13 лет по группе 14-20 лет, не возрастная норма. % – описательная доля максимума стратегии без Т.");
    if(people.some(person=>{const age=wcqYears(person);return age===12||age===13;}))
-    body+=para("Внимание: показатели Т* у детей 12-13 лет рассчитаны по нормам 14-20 лет только для ориентировочного сравнения. Не делать выводов о возрастной норме по этим показателям.");
+    body+=para("Для 12-13 лет сравнение с группой 14-20 лет ориентировочное, возрастных норм нет.");
    if(mode!=="class"&&scored(d,people[0])){
     body+=para("Краткий анализ профиля");
     body+=para(wcqProfile(scored(d,people[0])).replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim());
-    body+=para(wcqNormNote(people[0]));
+    if(wcqNormNote(people[0])&&!people.some(person=>{const age=wcqYears(person);return age===12||age===13;}))body+=para(wcqNormNote(people[0]));
    }
   }
   else if(d.id==="razuvaeva-osr29")body+=para("При признаках угрозы необходима очная оценка безопасности.");
