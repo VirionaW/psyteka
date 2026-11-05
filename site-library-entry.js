@@ -85,12 +85,13 @@
  checkStatus.hidden=true;
  document.body.append(checkStatus);
  const withTimeout=(promise,ms=10000)=>new Promise((resolve,reject)=>{
-  const timeout=setTimeout(()=>reject(new Error("Проверка доступа занимает слишком много времени. Повторите попытку.")),ms);
+  const timeout=setTimeout(()=>{const e=new Error("Время ожидания истекло");e.name="PsyAuthTimeoutError";reject(e)},ms);
   Promise.resolve(promise).then(value=>{clearTimeout(timeout);resolve(value)},err=>{clearTimeout(timeout);reject(err)});
  });
  const steps=["psyEntryEmail","psyEntryCode","psyEntryPlans","psyEntryAccess","psyEntryExpired","psyEntryIssue"];
  function step(id){for(const s of steps)el(s).hidden=s!==id;el("psyEntryError").hidden=true}
  function error(text){const e=el("psyEntryError");e.textContent=text;e.hidden=!text}
+ const authError=(ex,stage)=>window.PSY_AUTH_PROTECTION?.describeError?.(ex,stage)||{id:"AUTH-UNKNOWN",text:"Не удалось выполнить запрос (Код: AUTH-UNKNOWN)",maybeSent:false};
  function hourText(milliseconds){
   const seconds=Math.max(0,Math.floor(milliseconds/1000)),days=Math.floor(seconds/86400),
    hrs=Math.floor(seconds%86400/3600),mins=Math.floor(seconds%3600/60),secs=seconds%60;
@@ -233,7 +234,7 @@
    show();
   }catch(ex){
    retryDirect=direct;step("psyEntryIssue");show();
-   error("Проверка аккаунта временно не удалась. Это не означает, что сессия истекла.");
+   error(authError(ex,"access").text+" Сессия и сохраненные обследования не удалены.");
   }
   finally{opening=false;checkStatus.hidden=true}
  }
@@ -278,9 +279,16 @@
    codeMessage.textContent="Запрос принят. Проверьте входящие и папку «Спам». Если письмо не появится, отправьте код повторно через минуту.";
    codeInput.focus();
   }catch(ex){
-   requestAt=0;
-   step("psyEntryEmail");
-   error("Не удалось отправить запрос на код. Проверьте подключение к сервису авторизации. "+(ex?.message&&/too many|rate limit|лимит/i.test(ex.message)?String(ex.message):"Если без VPN вход не работает, проблема может быть в связи с зарубежным сервером."));
+   const issue=authError(ex,"send");
+   if(issue.maybeSent){
+    // If the request went through despite the timeout, the code can still arrive.
+    step("psyEntryCode");
+    codeInput.disabled=false;verifyButton.disabled=false;
+    codeMessage.textContent=issue.text+" Если письмо придет, введите код. Иначе повторите запрос через минуту.";
+   }else{
+    step("psyEntryEmail");
+    error(issue.text);
+   }
   }finally{
    sendingEmail=false;emailButton.disabled=false;resendButton.disabled=false;
   }
@@ -308,7 +316,7 @@
    const {error:verifyError}=await withTimeout(client.auth.verifyOtp({email,token,type:"email"}),20000);
    if(verifyError)throw verifyError;
    await load();
-  }catch(ex){error("Код не подошел, истек или проверка недоступна. "+String(ex?.message||"Повторите попытку."))}
+  }catch(ex){error(authError(ex,"verify").text)}
   finally{button.disabled=false}
  });
  el("psyEntryStart").addEventListener("click",async()=>{
