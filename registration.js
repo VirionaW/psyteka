@@ -15,6 +15,11 @@
   /^sb_publishable_[A-Za-z0-9_-]+$/.test(config.publishableKey||"")&&
   (config.registrationEnabled===true||emailTestMode)&&window.supabase?.createClient);
  function message(text,error=false){status.textContent=text;status.classList.toggle("error",error)}
+ const authError=(ex,stage)=>window.PSY_AUTH_PROTECTION?.describeError?.(ex,stage)||{id:"AUTH-UNKNOWN",text:"Не удалось выполнить запрос (Код: AUTH-UNKNOWN)",maybeSent:false};
+ const withTimeout=(request,ms)=>new Promise((resolve,reject)=>{
+  const timeout=setTimeout(()=>{const e=new Error("Время ожидания истекло");e.name="PsyAuthTimeoutError";reject(e)},ms);
+  Promise.resolve(request).then(v=>{clearTimeout(timeout);resolve(v)},e=>{clearTimeout(timeout);reject(e)});
+ });
  const send=document.getElementById("authSend"),verify=document.getElementById("authVerify");
  const disabledNote=document.getElementById("authNotConfigured");
  let client=null;
@@ -50,9 +55,9 @@
  }
  async function sessionCheck(){
   try{
-   const {data,error}=await client.auth.getUser();
+   const {data,error}=await withTimeout(client.auth.getUser(),10000);
    if(!error&&data?.user)signedIn(data.user);
-  }catch(_){message("Пока не удалось проверить текущий сеанс.",true)}
+  }catch(err){message(authError(err,"access").text,true)}
  }
  client.auth.onAuthStateChange((event,session)=>{
   if(event==="SIGNED_IN"&&session?.user)signedIn(session.user);
@@ -66,14 +71,24 @@
   if(Date.now()-lastSendAt<60000){message("Повторное письмо можно запросить через минуту.",true);return}
   send.disabled=true;message("Запрашиваем письмо для входа...");
   try{
-   const {error}=await client.auth.signInWithOtp({
+   const {error}=await withTimeout(client.auth.signInWithOtp({
     email:value,
     options:{shouldCreateUser:!emailTestMode,emailRedirectTo:location.origin+location.pathname}
-   });
+   }),20000);
    if(error)throw error;
    email=value;lastSendAt=Date.now();form.hidden=true;codeForm.hidden=false;
    message("Письмо запрошено. Откройте ссылку из письма или введите код, если он указан.");
-  }catch(err){message("Не удалось отправить письмо: "+String(err.message||"Ошибка сервиса"),true)}
+  }catch(err){
+   const issue=authError(err,"send");
+   if(issue.maybeSent){
+    email=value;lastSendAt=Date.now();
+    form.hidden=true;codeForm.hidden=false;
+    message(issue.text+" Если письмо придет, введите код. Иначе повторите запрос позднее.",true);
+   }else{
+    message(issue.text,true);
+    if(issue.id==="AUTH-LIMIT")lastSendAt=Date.now();
+   }
+  }
   finally{send.disabled=false}
  });
  codeForm.addEventListener("submit",async e=>{
@@ -82,11 +97,11 @@
   if(!/^\d{6,8}$/.test(token)){message("Введите числовой код из письма.",true);return}
   verify.disabled=true;message("Проверяем код...");
   try{
-   const {data,error}=await client.auth.verifyOtp({email,token,type:"email"});
+   const {data,error}=await withTimeout(client.auth.verifyOtp({email,token,type:"email"}),20000);
    if(error)throw error;
    if(data?.user)signedIn(data.user);
    else message("Проверьте письмо и попробуйте еще раз.");
-  }catch(err){message("Код не подошел или срок его действия истек.",true)}
+  }catch(err){message(authError(err,"verify").text,true)}
   finally{verify.disabled=false}
  });
  document.getElementById("authAgain").addEventListener("click",()=>{
