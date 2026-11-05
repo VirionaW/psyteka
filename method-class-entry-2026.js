@@ -927,7 +927,7 @@ const label=(d,s)=>d.id==="razuvaeva-osr29"?"Без автоматическог
 const razNumber=n=>Number.isInteger(Number(n))?String(Number(n)):Number(n).toFixed(2).replace(/0+$/,"").replace(/\.$/,"").replace(".",",");
 const num=(d,s)=>d.id==="razuvaeva-osr29"?razNumber(s.adjusted):d.id==="lazarus-wcq50"&&s.tScore!==null?String(s.tScore):String(s.raw);
 
-const wcqValue=s=>s.tScore!==null?String(s.tScore)+(s.referenceOnly?" Т*":" Т"):String(Math.round(s.percent))+"%";
+const wcqValue=s=>s.tScore!==null?String(s.tScore):String(Math.round(s.percent))+"%";
 const wcqColor=s=>s.tScore===null?"neutral":s.tScore<40?"low":s.tScore<=60?"middle":"high";
 const wcqMeaning={
  "Конфронтация":"отстаивание своей позиции",
@@ -943,20 +943,17 @@ const wcqYears=r=>r?.ageYears===null||r?.ageYears===undefined||r?.ageYears===""?
 const wcqOutsideNorm=r=>Number.isInteger(wcqYears(r))&&(wcqYears(r)<14||wcqYears(r)>60);
 function wcqNormNote(r){
  const age=wcqYears(r);
- if(age===12||age===13)return ["m","f"].includes(r.sex)
-  ?"Т* – условное сравнение с возрастной группой 14-20 лет по указанному полу. Для "+age+" лет эти нормативы не проверены; не используйте уровни как возрастное заключение."
-  :"Для условного пересчета по таблице 14-20 лет укажите пол. Пока показана доля максимума каждой шкалы, без нормативного уровня.";
- if(Number.isInteger(age)&&age<12)return "Для возраста младше 12 лет выбранная редакция не имеет подтвержденных норм. Т-баллы не рассчитываются; проценты носят только описательный характер.";
- if(Number.isInteger(age)&&age>60)return "Таблица норм заканчивается на 60 годах. Т-баллы для этого возраста не рассчитываются.";
- if(!["m","f"].includes(r?.sex))return "Для получения Т-баллов по возрастной таблице укажите пол.";
- return "Т – нормативный Т-балл по полу и возрасту 14-60 лет; Т менее 40 – редкое, 40-60 – умеренное, свыше 60 – выраженное использование.";
+ if(age===12||age===13)return "Возраст "+age+" лет: ориентировочное сравнение с группой 14-20 лет, собственных возрастных норм нет.";
+ if(Number.isInteger(age)&&age<12)return "До 12 лет возрастных норм нет. Указан процент от максимума шкалы.";
+ if(Number.isInteger(age)&&age>60)return "После 60 лет возрастных норм нет. Указан процент от максимума шкалы.";
+ return "";
 }
 function wcqAgeWarning(r){
  const age=wcqYears(r);
  if(!wcqOutsideNorm(r))return "";
  const reference=age===12||age===13;
  const text=reference?
-  "Возраст "+age+" лет ниже возрастной группы опубликованных норм (14-60 лет). По вашему выбору используется условное сравнение с таблицей 14-20 лет. Это не стандартизированный результат для "+age+" лет и не основание для возрастных выводов.":
+  "Возраст "+age+" лет: сравнение с группой 14-20 лет ориентировочное, собственных возрастных норм нет.":
   "Возраст "+age+" лет находится за пределами норм используемой редакции (14-60 лет). Нормативный результат для этого возраста получить нельзя.";
  return '<div class="psy-wcq-age-warning" role="note"><strong>Внимание: возраст вне диапазона норм</strong><p>'+esc(text)+'</p></div>';
 }
@@ -965,7 +962,7 @@ function wcqProfile(z){
  const allT=z.scales.every(s=>Number.isInteger(s.tScore));
  const isReference=allT&&z.scales.some(s=>s.referenceOnly);
  const metric=s=>allT?s.tScore:s.percent;
- const shown=s=>allT?(s.tScore+(isReference?" Т*":" Т")):Math.round(s.percent)+"%";
+ const shown=s=>allT?String(s.tScore):Math.round(s.percent)+"%";
  const ordered=z.scales.slice().sort((a,b)=>metric(b)-metric(a));
  const first=ordered[0],second=ordered[1],last=ordered[ordered.length-1],spread=metric(first)-metric(last);
  const almostEqual=spread<(allT?4:10);
@@ -979,7 +976,6 @@ function wcqProfile(z){
  if(z.scales.some(s=>s.name==="Бегство-избегание"&&metric(s)>=(allT?60:60)))detail+="Стоит уточнить, когда участник откладывает решение проблемы и что помогает действовать.";
  else if(z.scales.some(s=>s.name==="Поиск социальной поддержки"&&metric(s)>=(allT?60:60)))detail+="Уточните, к кому участник обращается за помощью и получает ли ее.";
  else if(z.scales.some(s=>s.name==="Планирование решения проблемы"&&metric(s)>=(allT?60:60)))detail+="Уточните, какие способы планирования помогают справляться со школьными трудностями.";
- if(isReference)detail+=" Сопоставление выполнено по более старшей группе и требует особой осторожности.";
  return '<div class="psy-711-wcq-profile"><h4>Краткий анализ профиля</h4><p>'+esc(headline+" "+detail.trim())+'</p></div>';
 }
 const razKey=(d,r)=>d.id==="razuvaeva-osr29"?(r?.razuvaevaKey==="method-six"?"Б":"А"):"";
@@ -1002,10 +998,10 @@ function result(d,r){
  (d.id==="razuvaeva-osr29"?razOverallHtml(z):"")+z.scales.map(s=>
  '<div class="psy-711-scale psy-711-'+tone(d,s)+'"><b>'+esc(s.name)+'</b><strong>'+(d.id==="lazarus-wcq50"?wcqValue(s):num(d,s)+' / '+maximum(d,s))+'</strong>'+
  (d.id==="razuvaeva-osr29"?"":'<span>'+esc(
- d.id==="lazarus-wcq50"?(s.tScore!==null?(s.referenceOnly?"Условно по 14-20 лет: ":"")+window.PSY_WCQ_NORMS_2026.level(s.tScore):"Доля максимума шкалы"):label(d,s))+'</span>')+
+ d.id==="lazarus-wcq50"?(s.tScore!==null?window.PSY_WCQ_NORMS_2026.level(s.tScore):"Доля максимума шкалы"):label(d,s))+'</span>')+
  '<div class="psy-711-track"><span style="width:'+(d.id==="lazarus-wcq50"&&s.tScore!==null?Math.max(0,Math.min(100,s.tScore/90*100)):s.percent)+'%"></span></div></div>').join("")+'</div>'+
  (d.id==="razuvaeva-osr29"?'<p class="psy-711-safety">При признаках угрозы необходима очная оценка безопасности.</p>':
- (d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">'+esc(wcqNormNote(r))+'</p>'+wcqProfile(z):'<p class="psy-mspss-small">Диапазоны по каждой шкале: 0-7, 8-14, 15-20.</p>'))+'</section>';
+ (d.id==="lazarus-wcq50"?(wcqNormNote(r)?'<p class="psy-mspss-small">'+esc(wcqNormNote(r))+'</p>':"")+wcqProfile(z):'<p class="psy-mspss-small">Диапазоны по каждой шкале: 0-7, 8-14, 15-20.</p>'))+'</section>';
 }
 
 function analytical711(d,rows){
@@ -1064,7 +1060,7 @@ function group(d,rows){
  return '<section class="psy-mspss-group psy-711-group psy-711-'+d.id+'"><h3>Результаты класса</h3><div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th>'+(d.id==="razuvaeva-osr29"?'<th>Общий результат</th>':"")+keys.map(s=>'<th>'+esc(s.name)+'</th>').join("")+'</tr></thead><tbody>'+
  rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+'</td>'+(d.id==="razuvaeva-osr29"?'<td class="psy-711-score-cell">'+(z?'<span class="psy-711-number psy-711-'+razOverallTone(z)+'" aria-label="'+z.overallLevel.name+'">'+z.overallScore+'</span>':"")+'</td>':"")+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="psy-711-score-cell">'+(v?'<span class="psy-711-number psy-711-'+(d.id==="lazarus-wcq50"?wcqColor(v):tone(d,v))+'">'+(d.id==="lazarus-wcq50"?wcqValue(v):num(d,v))+'</span>':"")+'</td>'}).join("")+'</tr>'}).join("")+
  '</tbody></table></div>'+(d.id==="razuvaeva-osr29"&&new Set(rows.filter(r=>!!scored(d,r)).map(r=>razKey(d,r))).size>1?
- '<p class="psy-mspss-small">Для общей аналитической справки выберите одну редакцию ключа для всей группы.</p>':d.id==="lazarus-wcq50"?'<p class="psy-mspss-small">Т – нормативный Т-балл для возраста и пола (14-60 лет). Т* – условный пересчет для 12-13 лет по таблице 14-20 лет, не возрастная норма. % – доля максимума при отсутствии Т. Т менее 40 – редкое, 40-60 – умеренное, свыше 60 – выраженное использование.</p>':"")+analytical711Preview(d,rows)+'</section>';
+ '<p class="psy-mspss-small">Для общей аналитической справки выберите одну редакцию ключа для всей группы.</p>':d.id==="lazarus-wcq50"&&rows.some(person=>{const age=wcqYears(person);return age===12||age===13;})?'<p class="psy-mspss-small">Для участников 12-13 лет сравнение с группой 14-20 лет ориентировочное.</p>':"")+analytical711Preview(d,rows)+'</section>';
 }
 function calculator(d,ctx){
  const rows=ctx.rows?.length?ctx.rows:[{name:"",answers:[]}],r=rows[ctx.rowIndex]||rows[0];
@@ -1220,7 +1216,7 @@ function bind(d,ctx){
 
 function csv(d,rows){
  const isWCQ=d.id==="lazarus-wcq50",scales=(cfg(d).scales||cfg(d).versions?.[0]?.scales||[]);
- const head=["№","Участник",...(d.id==="razuvaeva-osr29"?["Общий результат"]:[]),...scales.map(s=>s.name+(isWCQ?" (Т / Т* / %)":""))];
+ const head=["№","Участник",...(d.id==="razuvaeva-osr29"?["Общий результат"]:[]),...scales.map(s=>s.name)];
  const cell=v=>{let x=String(v??"");if(/^\s*[=+@-]/.test(x))x="'"+x;return '"'+x.replace(/"/g,'""')+'"'};
  const lines=[head,...rows.map((r,i)=>{const scores=scored(d,r)?.scales||scales.map(()=>null);
   return [i+1,(r.name||"У-"+(i+1)),...(d.id==="razuvaeva-osr29"?[scored(d,r)?.overallScore??""]:[]),...scores.map(s=>s?(isWCQ?wcqValue(s):num(d,s)):"")];
