@@ -1,3 +1,11 @@
+# НЕ ЗАПУСКАТЬ – план заменен полной миграцией в РФ
+
+Владелец Метоларии выбрал полное размещение базы, регистрации, хранения результатов и почты в России. Этот экспериментальный прокси НЕ решает задачу локализации персональных данных, потому что пересылает их в зарубежный Supabase. Не оформлять App Platform за 810 ₽ для этой цели.
+
+Актуальный безопасный план: ветка `metolaria-ru-infrastructure`, файл `infra/ru-migration/README.md`.
+
+---
+
 # Metolaria API gateway – isolated trial deployment
 
 This is a small Node.js / Express relay to the current Supabase project.
