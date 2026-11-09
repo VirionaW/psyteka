@@ -14,7 +14,7 @@
    if(areas.has(area))u.searchParams.delete("area");
   }else{
    const m=/^\/([a-z0-9_-]+)\.html$/i.exec(u.pathname);
-   if(!m||!pages.has(m[1]))return null;
+   if(!m||!pages.has(m[1])||['register','account-security','owner-mfa'].includes(m[1]))return null;
    u.pathname="/"+m[1];
   }
   return u.pathname+u.search+u.hash;
