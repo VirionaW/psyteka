@@ -58,6 +58,7 @@
    const url=new URL(location.href);
    url.pathname='/library/'+area;
    url.searchParams.delete('area');
+   if(url.hash==='#'+area)url.hash='';
    history.replaceState(history.state,'',url.pathname+url.search+url.hash);
    // The catalog's own click handler is the only source of truth for
    // expanding/collapsing School. Forcing it open here immediately undid

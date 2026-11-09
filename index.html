@@ -7,6 +7,7 @@
  if(path==='/library')dest='/library.html';
  else if(path.startsWith('/library/')&&areas.includes(path.slice('/library/'.length)))
   dest='/library.html?area='+encodeURIComponent(path.slice('/library/'.length));
+ else if(path==='/support')dest='/suggest-method.html';
  else if(pages.includes(path.slice(1)))dest=path+'.html';
  if(dest){
   document.documentElement.style.visibility='hidden';
@@ -63,7 +64,7 @@
   <a href="library.html" class="section-card lilac"><div class="psy-section-visual" aria-hidden="true"><img src="assets/psyteka-banner-preschool-approved.webp" alt="" loading="lazy" decoding="async"></div><h3>Детский сад</h3><p>Развитие дошкольников, игровая диагностика, адаптация и наблюдение.</p><span>Открыть раздел →</span></a>
   <a href="library.html" class="section-card blue"><div class="psy-section-visual" aria-hidden="true"><img src="assets/psyteka-banner-adults-approved.webp" alt="" loading="lazy" decoding="async"></div><h3>Взрослые</h3><p>Консультирование и профессиональная поддержка родителей и педагогов.</p><span>Открыть раздел →</span></a>
   <a href="library.html" class="section-card ochre"><div class="psy-section-visual" aria-hidden="true"><img src="assets/psyteka-banner-special-approved.webp" alt="" loading="lazy" decoding="async"></div><h3>ОВЗ и инвалидность</h3><p>Материалы для индивидуального сопровождения и учета особых потребностей.</p><span>Открыть раздел →</span></a>
-  <a href="library.html" class="section-card gray"><div class="psy-section-visual" aria-hidden="true"><img src="assets/psyteka-banner-pmpk-scene.webp" alt="" loading="lazy" decoding="async"></div><h3>ПМПК</h3><p>Комплексное обследование, возрастные задания и рабочие протоколы.</p><span>Открыть раздел →</span></a>
+  <a href="/library/pmpk" class="section-card gray"><div class="psy-section-visual" aria-hidden="true"><img src="assets/psyteka-banner-pmpk-scene.webp" alt="" loading="lazy" decoding="async"></div><h3>ПМПК</h3><p>Комплексное обследование, возрастные задания и рабочие протоколы.</p><span>Открыть раздел →</span></a>
   <a href="library.html" class="section-card sage"><div class="psy-section-visual" aria-hidden="true"><img src="assets/psyteka-banner-prevention-approved.webp" alt="" loading="lazy" decoding="async"></div><h3>Профилактика</h3><p>Занятия, просветительские материалы и сопровождение взрослых и детей.</p><span>Открыть раздел →</span></a>
   <a href="library.html" class="section-card gray"><div class="psy-section-visual" aria-hidden="true"><img src="assets/psyteka-banner-documents-approved.webp" alt="" loading="lazy" decoding="async"></div><h3>Документация</h3><p>Протоколы, справки и рабочие формы психологической службы.</p><span>Открыть раздел →</span></a>
  </div>

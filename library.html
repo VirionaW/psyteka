@@ -30,7 +30,8 @@
  const q=new URLSearchParams(p),area=q.get('area');
  const path=allowed.includes(area)?'/library/'+area:'/library';
  q.delete('area');
- const address=path+(q.toString()?'?'+q.toString():'')+location.hash;
+ const hash=location.hash==='#'+area?'':location.hash;
+ const address=path+(q.toString()?'?'+q.toString():'')+hash;
  if(location.pathname+location.search+location.hash!==address)
   history.replaceState(history.state,'',address);
 })();

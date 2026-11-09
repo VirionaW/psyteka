@@ -72,7 +72,7 @@
    const block=document.createElement('div');
    block.className='psy-footer-feedback';
    const link=document.createElement('a');
-   link.href='suggest-method.html';
+   link.href='/support';
    link.textContent='Предложить методику / Сообщить об ошибке';
    block.appendChild(link);
    footer.appendChild(block);
