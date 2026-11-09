@@ -1,0 +1,16 @@
+# Timeweb Apache clean URLs and backwards-compatible old links.
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+RewriteRule ^library/(school|preschool|adults|special|documents|spt|prevention|information|pmpk)/?$ library.html?area=$1 [QSA,L]
+
+RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
+RewriteRule ^index\.html$ / [R=301,L,NE]
+
+RewriteCond %{THE_REQUEST} \s/+[A-Za-z0-9_-]+\.html(?:[?\s]) [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^([A-Za-z0-9_-]+)\.html$ /$1 [R=301,L,NE]
+
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^([A-Za-z0-9_-]+)$ $1.html [L]
+</IfModule>

@@ -2,7 +2,7 @@
 (function(){
  const params=new URLSearchParams(location.search);
  // Explicit directions and direct links must keep their existing behavior.
- if(params.has('area')||params.has('method')||params.has('topic')||location.hash)return;
+ if(params.has('area')||/^\/library\/[^/]+\/?$/.test(location.pathname)||params.has('method')||params.has('topic')||location.hash)return;
  const main=document.querySelector('main.main');
  if(!main)return;
  const hero=main.querySelector('.hero');
@@ -40,7 +40,7 @@
  }
  document.querySelectorAll('[data-view],[data-topic],[data-preschool-topic],[data-mobile-area],#showAllMaterials').forEach(el=>el.addEventListener('click',activate,{capture:true}));
  // A deep link added later by client-side navigation also clears the welcome state.
- window.addEventListener('popstate',()=>{if(new URLSearchParams(location.search).has('area'))activate()});
+ window.addEventListener('popstate',()=>{if(new URLSearchParams(location.search).has('area')||/^\/library\/[^/]+\/?$/.test(location.pathname))activate()});
 })();
 
 
@@ -48,7 +48,7 @@
 // not to the very top of the library page.
 (function(){
  const allowed=new Set(['school','preschool','adults','special','documents','spt','prevention','information','pmpk']);
- const initial=new URLSearchParams(location.search).get('area');
+ const initial=new URLSearchParams(location.search).get('area')||(/^\/library\/([^/]+)\/?$/.exec(location.pathname)||[])[1];
  if(allowed.has(initial)){try{sessionStorage.setItem('psy-library-last-area',initial)}catch(_){}}
  document.querySelectorAll('[data-view]').forEach(button=>{
   button.addEventListener('click',()=>{
@@ -56,7 +56,8 @@
    if(!allowed.has(area))return;
    try{sessionStorage.setItem('psy-library-last-area',area)}catch(_){}
    const url=new URL(location.href);
-   url.searchParams.set('area',area);
+   url.pathname='/library/'+area;
+   url.searchParams.delete('area');
    history.replaceState(history.state,'',url.pathname+url.search+url.hash);
    // The catalog's own click handler is the only source of truth for
    // expanding/collapsing School. Forcing it open here immediately undid

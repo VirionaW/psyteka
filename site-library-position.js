@@ -13,7 +13,7 @@
   "preschoolGroup0","preschoolGroup1","preschoolGroup2","preschoolGroup3"]);
  function capture(){
   try{
-   const route=new URLSearchParams(location.search).get("area");
+   const route=new URLSearchParams(location.search).get("area")||(/^\/library\/([^/]+)\/?$/.exec(location.pathname)||[])[1];
    const visible=document.body.dataset.area;
    const area=allowed.has(route)?route:allowed.has(visible)?visible:null;
    const state=window.PSY_LIBRARY_CARD_STATE||{};

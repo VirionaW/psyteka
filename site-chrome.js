@@ -46,7 +46,7 @@
       name=(p.name||"Специалист").trim().charAt(0).toUpperCase()||"С";}
    }catch(_){}
    const valid=/^data:image\/(?:jpeg|png|webp);base64,[a-zA-Z0-9+/=]+$/.test(raw);
-   doc.querySelectorAll('a.round-link[href="profile.html"],a.header-avatar[href="profile.html"]').forEach(link=>{
+   doc.querySelectorAll('a.round-link[href="profile.html"],a.header-avatar[href="profile.html"],a.round-link[href="/profile"],a.header-avatar[href="/profile"]').forEach(link=>{
     link.replaceChildren();link.classList.toggle("has-photo",Boolean(key&&valid));
     if(key&&valid){const img=doc.createElement("img");img.src=raw;img.alt="";img.className="psy-user-image";link.appendChild(img);}
     else link.textContent=name;

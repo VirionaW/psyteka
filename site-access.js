@@ -4,14 +4,15 @@
 (function(){
  const root=document.documentElement;
  const publicPages=new Set(["about.html","guide.html","profile.html","settings.html"]);
- if(publicPages.has(location.pathname.split("/").pop())){root.classList.add("psy-access-ok");return}
+ const leaf=location.pathname.split("/").pop();
+ if(publicPages.has(leaf)||publicPages.has(leaf+".html")){root.classList.add("psy-access-ok");return}
  const config=window.PSY_AUTH_CONFIG||{};
  const enabled=config.registrationEnabled===true;
  // The landing page shows non-interactive real catalog previews in iframes.
  if(window.self!==window.top){root.classList.add("psy-access-ok");return}
  function goHome(){
   try{
-   const destination=location.pathname.slice(location.pathname.lastIndexOf("/")+1)+location.search+location.hash;
+   const destination=location.pathname+location.search+location.hash;
    sessionStorage.setItem("psy-intended-destination",destination);
   }catch(_){}
   location.replace("index.html?home=1&entry=1");

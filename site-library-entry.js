@@ -112,9 +112,12 @@
  }
  function clock(){if(timer)clearInterval(timer);ticker();timer=setInterval(ticker,1000)}
  function validTarget(href){
-  try{const u=new URL(href,location.href);return u.origin===location.origin&&
-   /\/(?:library|cognitive-kit|family-kit|selfesteem-kit|adaptation-drawing)\.html$/.test(u.pathname)
-   ?u.pathname.slice(u.pathname.lastIndexOf("/")+1)+u.search+u.hash:null;}catch(_){return null}
+  try{
+   const u=new URL(href,location.href);
+   if(u.origin!==location.origin)return null;
+   const valid=/^\/(?:library(?:\/(?:school|preschool|adults|special|documents|spt|prevention|information|pmpk))?|cognitive-kit|family-kit|selfesteem-kit|adaptation-drawing)(?:\.html)?\/?$/.test(u.pathname);
+   return valid?u.pathname+u.search+u.hash:null;
+  }catch(_){return null}
  }
  function hasActiveAccess(){
   if(!currentUser)return false;

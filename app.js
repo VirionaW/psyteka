@@ -79,7 +79,7 @@ function closeModal(){
    url.searchParams.delete('method');
    url.searchParams.delete('assessment');
    const area=document.body.dataset.area;
-   if(!url.searchParams.has('area')&&['school','preschool','adults','special','documents','spt','prevention','information','pmpk'].includes(area)){
+   if(!url.searchParams.has('area')&&!/^\/library\/[^/]+\/?$/.test(url.pathname)&&['school','preschool','adults','special','documents','spt','prevention','information','pmpk'].includes(area)){
     url.searchParams.set('area',area);
    }
    history.replaceState(history.state,'',url.pathname+url.search+url.hash);

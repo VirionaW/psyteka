@@ -1,35 +1,38 @@
 <!doctype html>
 <html lang="ru">
-<head><style>html:not(.psy-gate-open) body > :not(#psy-preview-gate){display:none!important}</style><link rel="stylesheet" href="psy-preview-gate.css?v=20261028wordmark2"><script defer src="psy-preview-gate.js?v=20261028wordmark2"></script>
+<head><base href="/"><style>html:not(.psy-gate-open) body > :not(#psy-preview-gate){display:none!important}</style><link rel="stylesheet" href="psy-preview-gate.css?v=20261028wordmark2"><script defer src="psy-preview-gate.js?v=20261028wordmark2"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#196c50">
 <meta name="description" content="Метолария - методическая библиотека педагога-психолога: диагностика, коррекция, документы, СПТ и сопровождение.">
 <title>Метолария | Методическая библиотека</title>
-<script>/* Class applied before styles to prevent a default-school banner flash. */
+<script>/* Canonical routes and original library reload behavior. */
 (function(){
  const p=new URLSearchParams(location.search);
  const allowed=['school','preschool','adults','special','documents','spt','prevention','information','pmpk'];
+ const route=/^\/library\/([^/]+)\/?$/.exec(location.pathname);
+ if(route&&allowed.includes(route[1]))p.set('area',route[1]);
  const entry=performance.getEntriesByType?.('navigation')?.[0];
  const reload=entry?.type==='reload'||(!entry&&performance.navigation?.type===1);
  window.PSY_LIBRARY_RELOAD=!!reload;
  let saved=null;
  try{saved=JSON.parse(sessionStorage.getItem('psy-library-page-state-v3')||'null')}catch(_){}
  window.PSY_LIBRARY_SNAPSHOT=reload&&saved&&typeof saved==='object'?saved:null;
- // If the user closed a method before refreshing, a stale deep-link must
- // not reopen the portfolio. Preserve the actual library direction instead.
  if(reload&&saved?.modalOpen===false&&(p.has('method')||p.has('assessment'))){
   p.delete('method');p.delete('assessment');
   if(!p.has('area')&&allowed.includes(saved.area))p.set('area',saved.area);
-  history.replaceState(history.state,'',location.pathname+(p.toString()?'?'+p.toString():'')+location.hash);
  }
  const direct=p.has('area')||p.has('method')||p.has('topic')||!!location.hash;
  if(!direct){
-  if(reload&&allowed.includes(saved?.area)){
-   p.set('area',saved.area);
-   history.replaceState(history.state,'',location.pathname+'?'+p.toString()+location.hash);
-  }else document.documentElement.classList.add('psy-library-choose-only');
+  if(reload&&allowed.includes(saved?.area))p.set('area',saved.area);
+  else document.documentElement.classList.add('psy-library-choose-only');
  }
+ const q=new URLSearchParams(p),area=q.get('area');
+ const path=allowed.includes(area)?'/library/'+area:'/library';
+ q.delete('area');
+ const address=path+(q.toString()?'?'+q.toString():'')+location.hash;
+ if(location.pathname+location.search+location.hash!==address)
+  history.replaceState(history.state,'',address);
 })();
 </script>
 <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="experience.css?v=20261102roster1">
@@ -95,7 +98,8 @@
 <link rel="stylesheet" href="site-special-programs.css?v=20261026ovz1"><link rel="stylesheet" href="site-requested-six.css?v=20261026six2020qa4"><link rel="stylesheet" href="site-logo-theme-fix.css?v=20261026logo3"><link rel="stylesheet" href="site-library-entry.css?v=20261026entry1"><link rel="stylesheet" href="site-owner-nav.css?v=20261026owner1"><link rel="stylesheet" href="site-school-type-filter.css?v=20261027types1">
 <link rel="stylesheet" href="site-role-status.css?v=20261027roles1">
 <link rel="stylesheet" href="site-logout.css?v=20261027logout1"><link rel="stylesheet" href="site-library-timer.css?v=20261027trial1"><link rel="stylesheet" href="site-six-approved-images.css?v=20261027approved6">
-<link rel="stylesheet" href="site-avatar-menu.css?v=20261103headeredit1"><style id="psy-feedback-entry-style">.psy-feedback-entry{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:12px}.psy-feedback-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#24584a;background:#fff;border:1px solid #bcd8ca;border-radius:999px;padding:9px 15px;font-size:13px;font-weight:650;transition:background .15s}.psy-feedback-link:hover,.psy-feedback-link:focus-visible{background:#e5f2ea}.subbar{gap:12px;flex-wrap:wrap}@media(max-width:700px){.psy-feedback-entry{justify-content:flex-start}.psy-feedback-link{font-size:12px}}</style><link rel="stylesheet" href="site-library-welcome.css?v=20261028restore1"><link rel="stylesheet" href="site-semester-2026.css?v=20261103square1"><link rel="stylesheet" href="site-cloud-data.css?v=20261029sync3"><link rel="stylesheet" href="site-logo-unframed.css?v=20261102unframed1"></head>
+<link rel="stylesheet" href="site-avatar-menu.css?v=20261103headeredit1"><style id="psy-feedback-entry-style">.psy-feedback-entry{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:12px}.psy-feedback-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#24584a;background:#fff;border:1px solid #bcd8ca;border-radius:999px;padding:9px 15px;font-size:13px;font-weight:650;transition:background .15s}.psy-feedback-link:hover,.psy-feedback-link:focus-visible{background:#e5f2ea}.subbar{gap:12px;flex-wrap:wrap}@media(max-width:700px){.psy-feedback-entry{justify-content:flex-start}.psy-feedback-link{font-size:12px}}</style><link rel="stylesheet" href="site-library-welcome.css?v=20261028restore1"><link rel="stylesheet" href="site-semester-2026.css?v=20261103square1"><link rel="stylesheet" href="site-cloud-data.css?v=20261029sync3"><link rel="stylesheet" href="site-logo-unframed.css?v=20261102unframed1"><script defer src="/site-clean-urls.js?v=20261109"></script>
+</head>
 <body class="library-page" data-area="school">
 <div class="layout">
 <aside class="sidebar" id="sidebar" aria-label="Разделы библиотеки"><button id="mobileNavClose" class="mobile-sidebar-close" type="button" aria-label="Закрыть меню">×</button>
