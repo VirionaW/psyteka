@@ -2,7 +2,7 @@
 (function(){
  const identity=window.PSY_IDENTITY;
  if(!identity)return;
- const entries=[...document.querySelectorAll('a.round-link[href="profile.html"],a.header-avatar[href="profile.html"]')]
+ const entries=[...document.querySelectorAll('a.round-link[href="profile.html"],a.header-avatar[href="profile.html"],a.round-link[href="/profile"],a.header-avatar[href="/profile"]')]
   .filter(a=>a.closest("header")||a.closest(".topbar"));
  const current=entries[0];
  if(!current)return;

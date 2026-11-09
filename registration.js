@@ -9,7 +9,7 @@
  // A limited SMTP smoke test is permitted for previously registered accounts only.
  // This is not a public signup bypass: shouldCreateUser=false in test mode.
  const emailTestMode=config.registrationEnabled!==true&&
-  location.pathname.endsWith("/register.html")&&
+  /\/register(?:\.html)?$/.test(location.pathname)&&
   new URLSearchParams(location.search).get("test")==="1";
  const ready=Boolean(/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.url||"")&&
   /^sb_publishable_[A-Za-z0-9_-]+$/.test(config.publishableKey||"")&&

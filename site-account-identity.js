@@ -20,7 +20,7 @@
    const policy=window.PSY_AUTH_PROTECTION;
    if(policy&&!(await policy.keepSession(client,data.user)))return state;
    if(policy&&await policy.secondFactorNeeded(client)){
-    if(["profile.html","settings.html","orekhova-houses.html","luscher-tests.html"].includes(location.pathname.split("/").pop()))
+    if(["profile","settings","orekhova-houses","luscher-tests"].includes(location.pathname.split("/").pop()?.replace(/\.html$/,"")))
      location.replace(policy.challengeUrl(location.pathname+location.search+location.hash));
     return state;
    }
