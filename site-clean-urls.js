@@ -21,6 +21,14 @@
  }
  function fix(a){const old=a.getAttribute("href"),next=clean(old);if(next&&next!==old)a.setAttribute("href",next)}
  function fixTree(n){if(n.nodeType!==1&&n.nodeType!==9)return;if(n.nodeType===1&&n.matches?.("a[href]"))fix(n);n.querySelectorAll?.("a[href]").forEach(fix)}
+ // Hide .html in the address bar after navigating through the HTML entry file.
+ // Keep authentication callback paths unchanged until the separate auth migration.
+ const leaf=/^\/([a-z0-9_-]+)\.html$/i.exec(location.pathname);
+ if(leaf&&pages.has(leaf[1])&&!new Set(['register','account-security','owner-mfa']).has(leaf[1])){
+  const next=clean(location.pathname+location.search+location.hash);
+  if(next&&next!==location.pathname+location.search+location.hash)
+   history.replaceState(history.state,'',next);
+ }
  function start(){
   fixTree(document);
   document.addEventListener("click",e=>{const a=e.target.closest?.("a[href]");if(a)fix(a)},true);
