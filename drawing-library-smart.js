@@ -197,7 +197,7 @@
  function drawMarks(){
   const pos=caret(),frag=document.createDocumentFragment();let previous=0;
   marks.forEach(m=>{
-   if(m.start<previous||m.end>raw.length)return;
+   if(m.start<previous||m.end>raw.length||m.kind!=="unknown"&&!m.owner)return;
    frag.append(document.createTextNode(raw.slice(previous,m.start)));
    const span=document.createElement("span");
    // Unambiguous, directly stated attributes are already recognized;
@@ -301,7 +301,7 @@
    note.append(title,body);output.push(note);
   }
   out.replaceChildren(...output);
-  const pending=marks.filter(m=>!["unknown","reference","position","size","color","feature","tailLength"].includes(m.kind)&&
+  const pending=marks.filter(m=>m.owner&&!["unknown","reference","position","size","color","feature","tailLength"].includes(m.kind)&&
    !(m.kind==="quantity"&&/(?:^|[\s,.;:])(у каждого|у каждой|на каждом|на каждой)(?:[\s,.;:]|$)/i.test(raw.slice(m.end,m.end+42)))&&
    !answered.has(m.key)&&!(m.kind==="object"&&chosen.get(m.key)?.confirmed)).length;
   status.textContent=objects.length?"Образов из библиотеки: "+objects.length+". Уточнений: "+pending+". Интерпретация обновлена.":"Текст обрабатывается локально. Ни один рисунок не передается на сервер.";
@@ -315,6 +315,7 @@
    requests.push({m,stage,question});
   };
   marks.forEach(m=>{
+   if(!m.owner)return;
    if(m.kind==="quantity"&&!/(?:^|[\s,.;:])(у каждого|у каждой|на каждом|на каждой)(?:[\s,.;:]|$)/i.test(raw.slice(m.end,m.end+42))&&!answered.has(m.key))
     offer(m,"quantity","«"+m.raw+"» – для каждого или всего?");
    if(m.kind==="absence"&&!answered.has(m.key))
