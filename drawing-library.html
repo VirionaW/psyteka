@@ -289,7 +289,7 @@ html.dark .method-focus{background:#2b493b;color:#deefdf}
 .synthesis-section .actions{margin-top:12px}@media print{.synthesis-section{display:none!important}}
 </style>
 <script defer src="/site-clean-urls.js?v=20261109"></script>
-<link rel="stylesheet" href="/drawing-library-smart.css?v=20261110fix1">
+<link rel="stylesheet" href="/drawing-library-smart.css?v=20261110improved3">
 </head>
 <body>
 <header><div class="header-inner"><a class="brand" href="library.html"><span class="brand-art"><img class="logo-light" src="brand-mark.svg" alt=""><img class="logo-dark" src="brand-mark-dark.svg" alt=""></span><span><span class="brand-title-green">Мето</span><span class="brand-title-brown">лария</span> <span class="brand-crumb">/ Рисунки</span></span></a><nav class="header-nav"><a class="link-btn" href="library.html">Вернуться в библиотеку</a><button class="btn theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему" aria-pressed="false"><span id="themeIcon" aria-hidden="true">☾</span><span id="themeText">Темная тема</span></button></nav></div></header>
@@ -3054,6 +3054,17 @@ function countFields(entry){
 }
 function draftEmpty(){return {position:"unknown",size:"",color:"",colors:[],features:[],counts:{},note:"",excluded:[]};}
 
+
+/* Additional distinct drawing concepts for the text clarifier. Append-only IDs preserve old protocols. */
+[
+ ["Поле","Пространство","Открытое пространство в пейзаже. Уточняются растения, границы, расположение фигур и происходящее на нем.","Что растет на поле и что здесь происходит?","free tree house-tree-person school-likes fictional-animal","луг поля лужайка"],
+ ["Поле цветов","Природа","Участок земли, на котором растут цветы. Не следует автоматически считать их собранным букетом.","Цветы растут на поле или сорваны?","free tree house-tree-person school-likes","цветочное поле цветущая поляна"],
+ ["Полевые цветы","Растения","Растущие в природной среде цветы; отмечаются количество, разновидность, состояние и окружение.","Какие это цветы и где они растут?","free tree house-tree-person school-likes","луговые цветы"],
+ ["Засохшие цветы","Растения","Цветы с признаками увядания или высыхания. Важны причина состояния и место цветов в сюжете.","Почему цветы засохли и что произошло до этого?","free tree house-tree-person school-likes family","увядшие цветы сухие цветы"],
+ ["Королевский замок","Предметы","Большое здание или крепость в сказочном сюжете. Важны обитатели, доступность и связь с героями.","Кто живет в замке и может ли герой туда попасть?","free house-tree-person school-likes fictional-animal family","дворец замок крепость"],
+ ["Дверной замок","Предметы","Механизм для запирания двери или ворот, а не сказочное здание.","Открыт ли замок, есть ли ключ и кто им пользуется?","free house-tree-person family fictional-animal","замочек запор"]
+].forEach(function(e){if(!RAW.some(function(row){return row[0]===e[0]}))RAW.push(e);});
+
 var entries=RAW.map(function(a,i){return {id:"element-"+(i+1),name:a[0],category:a[1],meaning:a[2],question:a[3],methods:a[4].split(" "),aliases:a[5]};});
 var state={method:"fictional-animal",selected:entries[0].id,category:"Все",items:[],sheetOpen:false,tab:"position",editKey:null,visibleLimit:100,draft:draftEmpty()};
 var $=function(s){return document.querySelector(s)};
@@ -3320,13 +3331,13 @@ function renderRecords(){
  $("#recordList").innerHTML=state.items.length?state.items.map(function(x,i){
   var colors=normalizeColors(x.colors,x.color),featureNames=(x.features||[]).map(function(k){var f=featureById(byId(x.elementId),k);return f?f[1]:null}).filter(Boolean);
   var hasCount=Object.keys(x.counts||{}).length;
-  return '<div class="record" data-row="'+esc(x.key)+'"><div class="record-head"><div><span class="record-num">Элемент '+(i+1)+'</span><strong style="display:block">'+esc(x.name)+'</strong></div><div class="record-tools"><button type="button" class="btn" data-edit="'+esc(x.key)+'">Изменить признаки</button><button type="button" class="remove" data-remove="'+esc(x.key)+'" aria-label="Удалить '+esc(x.name)+'">Удалить</button></div></div>'+
+  return '<div class="record" data-row="'+esc(x.key)+'"><div class="record-head"><div><span class="record-num">Элемент '+(i+1)+'</span><strong style="display:block">'+esc(x.name)+'</strong></div><div class="record-tools"><button type="button" class="btn" data-edit="'+esc(x.key)+'">Подробные признаки</button><button type="button" class="remove" data-remove="'+esc(x.key)+'" aria-label="Удалить '+esc(x.name)+'">Удалить</button></div></div>'+
   (featureNames.length?'<p class="record-feature-summary">'+featureNames.map(esc).join(" · ")+'</p>':'')+
   (hasCount?'<p class="record-feature-summary">Количественные признаки: '+Object.keys(x.counts).map(function(k){var c=countFields(byId(x.elementId)).find(function(f){return f[0]===k});return c?esc(c[1])+': '+esc(x.counts[k]):""}).filter(Boolean).join(" · ")+'</p>':'')+
-  '<div class="fields"><label>Положение<select data-field="position">'+Object.keys(POS).map(function(k){return '<option value="'+k+'" '+(x.position===k?'selected':'')+'>'+esc(POS[k][0])+'</option>'}).join("")+'</select></label>'+
+  '<details class="record-extra"><summary>Изменить положение, размер, цвета и описание</summary><div class="fields"><label>Положение<select data-field="position">'+Object.keys(POS).map(function(k){return '<option value="'+k+'" '+(x.position===k?'selected':'')+'>'+esc(POS[k][0])+'</option>'}).join("")+'</select></label>'+
   '<label>Размер<select data-field="size">'+Object.keys(SZ).map(function(k){return '<option value="'+k+'" '+(x.size===k?'selected':'')+'>'+esc(SZ[k])+'</option>'}).join("")+'</select></label>'+
   '<div class="record-colors"><details><summary>Цвета: '+(colors.length?colors.map(function(k){return colorByKey(k)[1]}).join(", "):"не указаны")+'</summary><div class="record-color-grid">'+COLORS.filter(function(c){return c[0]}).map(function(c){return '<button type="button" class="record-color-toggle" data-record-color="'+c[0]+'" aria-pressed="'+colors.includes(c[0])+'">'+esc(c[1])+'</button>'}).join("")+'</div></details></div>'+
-  '<label>Описание<textarea data-field="note" maxlength="4000">'+esc(x.note||"")+'</textarea></label></div></div>';
+  '<label>Описание<textarea data-field="note" maxlength="4000">'+esc(x.note||"")+'</textarea></label></div></details></div>';
  }).join(""):'<div class="empty">Пока нет записей. Выберите элемент в поиске, раскройте признаки и добавьте его.</div>';
  renderSynthesis();
 }
@@ -3335,6 +3346,7 @@ function getDocument(){
   schema:"psyteka-drawing-protocol",version:1,method:state.method,methodName:methodName(state.method),
   code:$("#subjectCode").value.slice(0,70),age:$("#subjectAge").value===""?null:Number($("#subjectAge").value),context:$("#contextNotes").value.slice(0,20000),
   smartDescription:String(window.MetolariaDrawingSmartText?.getText?.()||"").slice(0,5000),
+  smartAnswers:window.MetolariaDrawingSmartText?.getState?.()||null,
   items:state.items.map(function(x){return {
    origin:/^smart:/.test(x.key||"")?"smart":"manual",
    elementId:x.elementId,name:x.name,position:x.position,size:x.size,
@@ -3404,7 +3416,7 @@ async function importFile(e){
    var counts={};
    var permitted=countFields(elem).map(function(t){return t[0]});
    if(x.counts&&typeof x.counts==="object"&&!Array.isArray(x.counts))Object.keys(x.counts).forEach(function(k){
-    var v=Number(x.counts[k]);if(permitted.includes(k)&&Number.isInteger(v)&&v>=0&&v<=99)counts[k]=v;
+    var v=Number(x.counts[k]);if(permitted.includes(k)&&Number.isInteger(v)&&v>=0&&v<=9999)counts[k]=v;
    });
    var allowedKeys=["element","position","size","note"].concat(colors.map(function(c){return "color:"+c})).concat(features.map(function(k){return "feature:"+k})).concat(Object.keys(counts).map(function(k){return "count:"+k}));
    var excl=Array.isArray(x.excluded)?Array.from(new Set(x.excluded.filter(function(v){return typeof v==="string"&&allowedKeys.includes(v)}))).slice(0,120):[];
@@ -3429,6 +3441,7 @@ async function importFile(e){
   state.sheetOpen=false;state.draft=draftEmpty();state.editKey=null;state.tab="position";state.category="Все";$("#search").value="";
   renderCategories();renderResults();renderDetails();renderRecords();
   window.MetolariaDrawingSmartText?.setText?.(String(d.smartDescription||"").slice(0,5000));
+  if(d.smartAnswers)window.MetolariaDrawingSmartText?.setState?.(d.smartAnswers);
   $("#actionStatus").textContent="Протокол загружен: "+clean.length+" записей.";
  }catch(err){alert("Не удалось открыть файл. Нужен JSON-протокол Метоларии.")}
 }
@@ -3450,7 +3463,7 @@ window.MetolariaDrawingSmartBridge={
    var valid=featuresFor(e,"build").concat(featuresFor(e,"condition"),featuresFor(e,"environment"),featuresFor(e,"graphics")).map(function(f){return f[0]});
    var allowedCounts=countFields(e).map(function(t){return t[0]}),counts={};
    Object.keys(x.counts||{}).forEach(function(k){
-    if(allowedCounts.includes(k)&&Number.isInteger(Number(x.counts[k]))&&Number(x.counts[k])>=0&&Number(x.counts[k])<=99)counts[k]=Number(x.counts[k]);
+    if(allowedCounts.includes(k)&&Number.isInteger(Number(x.counts[k]))&&Number(x.counts[k])>=0&&Number(x.counts[k])<=9999)counts[k]=Number(x.counts[k]);
    });
    var colors=normalizeColors(x.colors,undefined);
    return {key:"smart:"+String(x.key||e.id).slice(0,150),elementId:e.id,name:e.name,
@@ -3470,5 +3483,5 @@ window.MetolariaDrawingSmartBridge={
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
 </script>
-<script src="/drawing-library-smart.js?v=20261110fix2"></script>
+<script src="/drawing-library-smart.js?v=20261110improved3"></script>
 </body></html>
