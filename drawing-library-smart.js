@@ -248,29 +248,34 @@
  function ownerOf(m){return objects.find(o=>o.key===m.owner)||null}
  function answerFor(o){if(!o)return null;if(!chosen.has(o.key))chosen.set(o.key,{confirmed:false,position:"",size:"",colors:[],features:[],counts:{},notes:[],quantityUnknown:false});return chosen.get(o.key)}
  function renderInterpretation(){
-  const rows=objects.map(o=>{
-   const ans=answerFor(o),item={key:o.key,elementId:o.entry.id,position:ans.position||"unknown",size:ans.size,colors:ans.colors.slice(),features:ans.features.slice(),counts:{...ans.counts},note:ans.notes.join("; ")};
+  const rows=objects.filter(o=>!o.needsChoice).map(o=>{
+   const a=answerFor(o);
+   const item={key:o.key,elementId:o.entry.id,position:a.position||"unknown",size:a.size,
+    colors:a.colors.slice(),features:a.features.slice(),counts:{...a.counts},note:a.notes.join("; ")};
+   if(!a.quantityUnknown&&Number.isInteger(o.objectCount)&&o.objectCount>=1)item.counts.objects=o.objectCount;
+   if(a.quantityUnknown){delete item.counts.objects;item.note+=(item.note?"; ":"")+"Количество объектов определить невозможно"}
    marks.filter(m=>m.owner===o.key&&m.kind!=="object").forEach(m=>{
     if(m.kind==="position"&&item.position==="unknown")item.position=m.guess;
     if(m.kind==="quantity"){
      if(B.counts(o.entry.id).some(c=>c.id===m.part))item.counts[m.part]=m.count;
      else item.note+=(item.note?"; ":"")+m.raw;
-     const perItem=/(?:^|[\s,.;:])(у каждого|у каждой|на каждом|на каждой)(?:[\s,.;:]|$)/i.test(raw.slice(m.end,m.end+42));
-     if(perItem)item.note+=(item.note?"; ":"")+"На каждом объекте отмечено "+m.count+" "+m.raw.replace(/^\S+\s+/,"");
-     else if(!answered.has(m.key))item.note+=(item.note?"; ":"")+"Не уточнено, "+m.count+" деталей указаны для каждого объекта или всего";
+     if(!answered.has(m.key)&&!/(?:^|[\s,.;:])(у каждого|у каждой|на каждом|на каждой)(?:[\s,.;:]|$)/i.test(raw.slice(m.end,m.end+42)))
+      item.note+=(item.note?"; ":"")+"Не уточнено, "+m.raw+" указаны на одном или всех объектах";
     }
     if(m.kind==="size"&&!item.size){
-     const appliesToPart=marks.find(z=>z.kind==="feature"&&z.owner===o.key&&z.start>=m.end&&z.start-m.end<5);
-     if(appliesToPart)item.note+=(item.note?"; ":"")+m.raw+" "+appliesToPart.raw;
+     const part=marks.find(z=>z.kind==="feature"&&z.owner===o.key&&z.start>=m.end&&z.start-m.end<5);
+     const person=/принцесс|принц|девоч|мальчик|ребен|человек|геро|фе[яи]/i.test(o.entry.name);
+     if(part)item.note+=(item.note?"; ":"")+"Деталь: "+m.raw+" "+part.raw;
+     else if(person)item.note+=(item.note?"; ":"")+"В рассказе персонаж назван "+m.raw.toLowerCase()+"; размер изображения не указан";
      else item.size=m.guess;
     }
     if(m.kind==="color"&&!item.colors.length)item.colors=[m.guess];
     if(m.kind==="feature"&&!answered.has(m.key)){
-     if(m.mode==="note")item.note+=(item.note?"; ":"")+"Изображена деталь: "+m.raw;
+     if(m.mode==="note")item.note+=(item.note?"; ":"")+"Деталь изображения: "+m.raw;
      else if(!item.features.includes(m.part))item.features.push(m.part);
     }
     if(m.kind==="tailLength"&&!answered.has(m.key)&&!item.features.includes(m.guess))item.features.push(m.guess);
-    if(m.kind==="multicolor"&&!answered.has(m.key))item.note+=(item.note?"; ":"")+"Указано несколько цветов; оттенки не уточнены";
+    if(m.kind==="multicolor"&&!answered.has(m.key))item.note+=(item.note?"; ":"")+"Несколько цветов; оттенки не указаны";
     if(m.kind==="absence"&&!answered.has(m.key)){
      if(["roots","paws","windows","doors"].includes(m.part))item.counts[m.part]=0;
      else if(m.part==="leaves"&&!item.features.includes("no-leaves"))item.features.push("no-leaves");
@@ -281,54 +286,97 @@
    return item;
   });
   const synthesis=B.apply(rows),output=[];
-  const block=(title,text,decor)=>{
+  function block(title,text,cssClass){
+   if(!String(text||"").trim())return;
+   const section=document.createElement("section");
+   section.className=cssClass||"smart-narrative";
    const h=document.createElement("h4");h.textContent=title;
    const p=document.createElement("p");p.textContent=text;
-   if(decor){const wrap=document.createElement("div");wrap.className=decor;wrap.append(h,p);output.push(wrap)}
-   else output.push(h,p);
-  };
+   section.append(h,p);output.push(section);
+  }
+  function button(label,callback,klass){
+   const b=document.createElement("button");b.type="button";b.className=klass||"smart-inline-choice";b.textContent=label;b.onclick=callback;
+   return b;
+  }
+  function ask(card,text,opts,onChoice,hint){
+   const wrap=document.createElement("div");wrap.className="smart-inline-question";
+   const h=document.createElement("p");h.className="smart-inline-question-title";h.textContent=text;wrap.append(h);
+   const grid=document.createElement("div");grid.className="smart-inline-choices";
+   opts.forEach(x=>grid.append(button(x.label,()=>onChoice(x.id))));
+   wrap.append(grid);
+   if(hint){const p=document.createElement("p");p.className="smart-inline-hint";p.textContent=hint;wrap.append(p)}
+   card.append(wrap);
+  }
   if(objects.length){
-   objects.slice(0,12).forEach(o=>{
-    const r=rows.find(x=>x.key===o.key),add=[];
-    if(r.position!=="unknown"){
-     const pos=B.positions.find(x=>x.id===r.position);
-     add.push("Расположение: "+(pos?.label||r.position)+(pos?.meaning?". Справочная трактовка: "+pos.meaning:""));
+   if(raw.trim())block("Сюжет со слов специалиста",raw.trim(),"smart-story");
+   objects.slice(0,25).forEach(o=>{
+    const a=answerFor(o),r=rows.find(x=>x.key===o.key),card=document.createElement("section");
+    card.className="smart-meaning";
+    const head=document.createElement("div");head.className="smart-object-head";
+    const h=document.createElement("h4");h.textContent=o.needsChoice?"Уточните: «"+o.raw+"»":o.entry.name;
+    head.append(h);
+    if(!o.needsChoice){
+     const edit=button("✎",()=>show(o,"root"),"smart-edit-icon");
+     edit.title="Изменить признаки";edit.setAttribute("aria-label","Изменить признаки "+o.entry.name);head.append(edit);
     }
-    if(r.size)add.push("Размер: "+(B.sizes.find(x=>x.id===r.size)?.label||r.size));
-    if(r.colors.length)add.push("Цвет: "+r.colors.map(x=>B.colors.find(c=>c.id===x)?.label||x).join(", "));
-    const features=["build","condition","environment","graphics"].flatMap(t=>B.features(o.entry.id,t)).filter(f=>r.features.includes(f.id));
-    if(features.length){
-     const distinct=[...new Map(features.map(f=>[f.id,f])).values()];
-     add.push("Детали: "+distinct.map(f=>f.label).join(", "));
-     distinct.slice(0,4).forEach(f=>{if(f.meaning)add.push(f.label+": "+f.meaning)});
+    card.append(head);
+    if(o.needsChoice){
+     ask(card,"Какой именно объект изображен?",o.options.map(x=>({id:x.id,label:x.name})),
+      id=>pick(o,"disambiguate",id));
+     output.push(card);return;
     }
-    if(Object.keys(r.counts).length)add.push("Количество: "+Object.entries(r.counts).map(([k,v])=>(B.counts(o.entry.id).find(c=>c.id===k)?.label||k)+" – "+v).join(", "));
-    if(r.note)add.push(r.note);
-    block(o.entry.name,(o.entry.meaning||B.meaning(o.entry.id))+(add.length?"\n"+add.join(". ")+".":""),"smart-meaning");
+    const lines=[];
+    if(r.position!=="unknown")lines.push("Расположение: "+(B.positions.find(p=>p.id===r.position)?.label||r.position));
+    if(Number.isInteger(r.counts.objects))lines.push("Количество объектов: "+r.counts.objects);
+    if(r.size)lines.push("Размер на листе: "+(B.sizes.find(x=>x.id===r.size)?.label||r.size));
+    if(r.colors.length)lines.push("Цвета: "+r.colors.map(x=>B.colors.find(c=>c.id===x)?.label||x).join(", "));
+    const f=["build","condition","environment","graphics"].flatMap(tab=>B.features(o.entry.id,tab)).filter(x=>r.features.includes(x.id));
+    if(f.length)lines.push("Отмеченные детали: "+[...new Set(f.map(x=>x.label))].join(", "));
+    const counts=Object.entries(r.counts).filter(([k])=>k!=="objects");
+    if(counts.length)lines.push("Детали по количеству: "+counts.map(([k,v])=>(B.counts(o.entry.id).find(x=>x.id===k)?.label||k)+" – "+v).join(", "));
+    if(r.note)lines.push(r.note);
+    const p=document.createElement("p");p.className="smart-object-facts";
+    p.textContent=lines.length?lines.join(". ")+".":"Элемент распознан; характеристики изображения пока не уточнены.";
+    card.append(p);
+    const hasPosition=r.position!=="unknown";
+    if(hasPosition){
+     const row=document.createElement("div");row.className="smart-saved-answer";
+     row.append(document.createTextNode("Место на рисунке: "+(B.positions.find(x=>x.id===r.position)?.label||r.position)));
+     const edit=button("✎",()=>{a.editPosition=!a.editPosition;renderInterpretation()},"smart-edit-icon");
+     edit.title="Изменить расположение";edit.setAttribute("aria-label","Изменить расположение");row.append(edit);card.append(row);
+    }
+    if(!hasPosition||a.editPosition){
+     ask(card,"Где изображен «"+o.entry.name+"»?",B.positions.map(x=>({id:x.id,label:x.label})),
+      id=>{a.position=id;a.editPosition=false;renderInterpretation();drawMarks()});
+    }
+    const known=Number.isInteger(r.counts.objects)||a.quantityUnknown;
+    if(known){
+     const row=document.createElement("div");row.className="smart-saved-answer";
+     row.append(document.createTextNode("Количество: "+(a.quantityUnknown?"невозможно определить":r.counts.objects)));
+     const edit=button("✎",()=>{a.editQuantity=!a.editQuantity;renderInterpretation()},"smart-edit-icon");
+     edit.title="Изменить количество";edit.setAttribute("aria-label","Изменить количество");row.append(edit);card.append(row);
+    }
+    if(!known||a.editQuantity){
+     const options=Array.from({length:9},(_,i)=>({id:String(i+1),label:String(i+1)}));
+     options.push({id:"unknown",label:"Невозможно определить"});
+     ask(card,"Сколько изображено «"+o.entry.name+"»?",options,id=>{
+      if(id==="unknown"){a.quantityUnknown=true;delete a.counts.objects}
+      else {a.quantityUnknown=false;a.counts.objects=Number(id)}
+      a.editQuantity=false;renderInterpretation();drawMarks();
+     },"Если их больше девяти, напишите точное число в описании, например «26 ландышей».");
+    }
+    output.push(card);
    });
-   (synthesis.sections||[]).filter(s=>s.title!=="Наблюдаемые особенности").forEach(s=>block(s.title,s.text));
+   (synthesis.sections||[]).filter(x=>!["Наблюдаемые особенности","Краткий результат"].includes(x.title)).forEach(x=>block(x.title,x.text));
   }else{
-   const p=document.createElement("p");p.className="smart-missing";
-   p.textContent=raw.trim()?"Пока нет распознанных элементов. Укажите объекты рисунка (дерево, дом, человек, животное и др.).":"Напишите описание рисунка целым предложением – связный текст появится здесь.";
-   output.push(p);
+   const p=document.createElement("p");p.className="smart-missing";p.textContent=raw.trim()?"Объекты пока не распознаны. Напишите название того, что изображено.":"Опишите рисунок целым предложением.";output.push(p);
   }
-  const unrecognized=[...new Set(marks.filter(m=>m.kind==="unknown").map(m=>m.raw.toLowerCase()))];
-  if(unrecognized.length){
-   const p=document.createElement("p");p.className="smart-unknown-summary";
-   p.textContent="Нет в библиотеке: "+unrecognized.slice(0,12).join(", ")+". Эти слова не подменяются другими элементами.";
-   output.push(p);
-  }
-  if(comment.value.trim()){
-   const note=document.createElement("div");note.className="smart-custom-analysis";
-   const title=document.createElement("h4");title.textContent="Дополнительные наблюдения специалиста";
-   const body=document.createElement("p");body.textContent=comment.value.trim();
-   note.append(title,body);output.push(note);
-  }
+  const unknown=[...new Set(marks.filter(m=>m.kind==="unknown").map(m=>m.raw.toLowerCase()))];
+  if(unknown.length){const p=document.createElement("p");p.className="smart-unknown-summary";p.textContent="Нет в библиотеке: "+unknown.slice(0,12).join(", ")+". Не подменяйте их другими объектами.";output.push(p)}
+  if(comment.value.trim())block("Наблюдения специалиста",comment.value.trim(),"smart-custom-analysis");
   out.replaceChildren(...output);
-  const pending=marks.filter(m=>m.owner&&!["unknown","reference","position","size","color","feature","tailLength"].includes(m.kind)&&
-   !(m.kind==="quantity"&&/(?:^|[\s,.;:])(у каждого|у каждой|на каждом|на каждой)(?:[\s,.;:]|$)/i.test(raw.slice(m.end,m.end+42)))&&
-   !answered.has(m.key)&&!(m.kind==="object"&&chosen.get(m.key)?.confirmed)).length;
-  status.textContent=objects.length?"Образов из библиотеки: "+objects.length+". Уточнений: "+pending+". Интерпретация обновлена.":"Текст обрабатывается локально. Ни один рисунок не передается на сервер.";
+  const pending=objects.filter(o=>o.needsChoice).length;
+  status.textContent=objects.length?"Распознано элементов: "+objects.length+(pending?". Требуют уточнения: "+pending:"")+". Протокол обновляется автоматически.":"Обработка выполняется на устройстве.";
   renderQuestions();
  }
  function renderQuestions(){
