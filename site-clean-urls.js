@@ -1,7 +1,7 @@
 "use strict";
 /* Canonical public URLs; do not modify downloads or external links. */
 (function(){
- const pages=new Set(["about","account-security","adaptation-drawing","cognitive-kit","connection-check","dev-review","diagnostics-batch-k6-brs","drawing-library","family-kit","guide","library","luscher-tests","manage-users","media-check","method-kit","orekhova-houses","owner-editor","owner-mfa","phillips-print","profile","register","selfesteem-kit","settings","subscriptions","suggest-method","testing"]);
+ const pages=new Set(["about","account-security","adaptation-drawing","cognitive-kit","connection-check","dev-review","diagnostics-batch-k6-brs","drawing-library","family-kit","guide","library","luscher-tests","manage-users","media-check","method-kit","orekhova-houses","owner-editor","owner-mfa","phillips-print","profile","register","selfesteem-kit","settings","subscriptions","suggest-method","testing","additional","organization","report-builder"]);
  const areas=new Set(["school","preschool","adults","special","documents","spt","prevention","information","pmpk"]);
  const protectedPaths=new Set(["register","account-security","owner-mfa"]);
  function clean(raw){

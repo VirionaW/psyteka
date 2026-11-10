@@ -3,7 +3,7 @@
  const path=location.pathname.replace(/\/+$/,'')||'/';
  let dest='';
  const areas=['school','preschool','adults','special','documents','spt','prevention','information','pmpk'];
- const pages=['about','adaptation-drawing','cognitive-kit','connection-check','dev-review','diagnostics-batch-k6-brs','drawing-library','family-kit','guide','library','luscher-tests','manage-users','media-check','method-kit','orekhova-houses','owner-editor','phillips-print','profile','selfesteem-kit','settings','subscriptions','suggest-method','testing'];
+ const pages=['about','adaptation-drawing','cognitive-kit','connection-check','dev-review','diagnostics-batch-k6-brs','drawing-library','family-kit','guide','library','luscher-tests','manage-users','media-check','method-kit','orekhova-houses','owner-editor','phillips-print','profile','selfesteem-kit','settings','subscriptions','suggest-method','testing','additional','organization','report-builder'];
  if(path==='/library')dest='/library.html';
  else if(path.startsWith('/library/')&&areas.includes(path.slice('/library/'.length)))
   dest='/library.html?area='+encodeURIComponent(path.slice('/library/'.length));
@@ -67,6 +67,7 @@
   <a href="/library/pmpk" class="section-card gray"><div class="psy-section-visual" aria-hidden="true"><img src="assets/psyteka-banner-pmpk-scene.webp" alt="" loading="lazy" decoding="async"></div><h3>ПМПК</h3><p>Комплексное обследование, возрастные задания и рабочие протоколы.</p><span>Открыть раздел →</span></a>
   <a href="library.html" class="section-card sage"><div class="psy-section-visual" aria-hidden="true"><img src="assets/psyteka-banner-prevention-approved.webp" alt="" loading="lazy" decoding="async"></div><h3>Профилактика</h3><p>Занятия, просветительские материалы и сопровождение взрослых и детей.</p><span>Открыть раздел →</span></a>
   <a href="library.html" class="section-card gray"><div class="psy-section-visual" aria-hidden="true"><img src="assets/psyteka-banner-documents-approved.webp" alt="" loading="lazy" decoding="async"></div><h3>Документация</h3><p>Протоколы, справки и рабочие формы психологической службы.</p><span>Открыть раздел →</span></a>
+  <a href="/additional" class="section-card gray"><div class="psy-section-visual" aria-hidden="true"><img src="assets/psyteka-banner-information-approved.webp" alt="" loading="lazy" decoding="async"></div><h3>Дополнительно</h3><p>Сновидения, лекции по психологии и профессиональный справочник.</p><span>Открыть раздел →</span></a>
  </div>
 </section><section class="psy-home-journey psy-journey-ribbon" id="workflow" aria-labelledby="workflowTitle">
  <div class="psy-home-accent psy-accent-leaves" aria-hidden="true"><svg viewBox="0 0 170 180" fill="none" xmlns="http://www.w3.org/2000/svg">
