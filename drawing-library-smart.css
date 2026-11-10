@@ -235,3 +235,6 @@ html.dark .smart-saved-answer .smart-edit-icon{background:#284833}
 html.dark .smart-story,html.dark .smart-narrative{border-color:#48674d}
 html.dark .record-extra>summary{background:#2e4d36;border-color:#53775a;color:#e8f4e8}
 @media(max-width:520px){.smart-analysis .smart-meaning{padding:12px 11px}.smart-inline-question{padding:10px 9px}.smart-inline-choices{gap:6px}.smart-inline-choice{font-size:11px;padding:7px 4px}}
+
+.smart-clarify-prompt{margin:9px 0 12px!important;font-size:12px;font-weight:650;line-height:1.5;color:#986728;padding:8px 10px;background:#fff8eb;border:1px solid #f0dfbe;border-radius:9px}
+html.dark .smart-clarify-prompt{color:#f1dab0;background:#40382b;border-color:#776848}
