@@ -56,7 +56,9 @@
    const t=shadesOfTone.find(x=>x[0].test(w.root));if(t){mark(i,1,"tone",{question:t[1],answers:t[2]});continue}
   }
   for(let i=0;i<ws.length;i++){
-   if(used.has(i)||stop.has(ws[i].str))continue;
+   // "Ребенок нарисовал" names the author; "ребенок стоит" may name a drawn character.
+   if(used.has(i)||stop.has(ws[i].str)&&!["ребенок","ребёнок"].includes(ws[i].str))continue;
+   if(["ребенок","ребёнок"].includes(ws[i].str)&&/^(нарисова|изобраз|рисова)/.test(ws[i+1]?.str||""))continue;
    for(let n=3;n>=1;n--){
     if(i+n>ws.length||occupied(i,n))continue;
     const txt=str.slice(ws[i].start,ws[i+n-1].end);
@@ -180,11 +182,18 @@
   if(objects.length){
    objects.slice(0,12).forEach(o=>{
     const r=rows.find(x=>x.key===o.key),add=[];
-    if(r.position!=="unknown")add.push("Расположение: "+(B.positions.find(x=>x.id===r.position)?.label||r.position));
+    if(r.position!=="unknown"){
+     const pos=B.positions.find(x=>x.id===r.position);
+     add.push("Расположение: "+(pos?.label||r.position)+(pos?.meaning?". Справочная трактовка: "+pos.meaning:""));
+    }
     if(r.size)add.push("Размер: "+(B.sizes.find(x=>x.id===r.size)?.label||r.size));
     if(r.colors.length)add.push("Цвет: "+r.colors.map(x=>B.colors.find(c=>c.id===x)?.label||x).join(", "));
     const features=["build","condition","environment","graphics"].flatMap(t=>B.features(o.entry.id,t)).filter(f=>r.features.includes(f.id));
-    if(features.length)add.push("Детали: "+[...new Set(features.map(f=>f.label))].join(", "));
+    if(features.length){
+     const distinct=[...new Map(features.map(f=>[f.id,f])).values()];
+     add.push("Детали: "+distinct.map(f=>f.label).join(", "));
+     distinct.slice(0,4).forEach(f=>{if(f.meaning)add.push(f.label+": "+f.meaning)});
+    }
     if(Object.keys(r.counts).length)add.push("Количество: "+Object.entries(r.counts).map(([k,v])=>(B.counts(o.entry.id).find(c=>c.id===k)?.label||k)+" – "+v).join(", "));
     if(r.note)add.push(r.note);
     block(o.entry.name,(o.entry.meaning||B.meaning(o.entry.id))+(add.length?"\n"+add.join(". ")+".":""),"smart-meaning");
@@ -289,7 +298,10 @@
  editor.addEventListener("input",delay);
  editor.addEventListener("click",e=>{
   const w=e.target.closest("[data-smart-key]"),m=marks.find(x=>x.key===w?.dataset.smartKey);
-  if(m&&m.kind!=="unknown")show(m,m.kind==="object"?"root":m.kind);
+  if(m&&m.kind!=="unknown"){
+   const target=m.kind==="reference"?ownerOf(m):m;
+   if(target)show(target,target.kind==="object"?"root":target.kind);
+  }
  });
  editor.addEventListener("keydown",e=>{
   if((e.key==="Enter"||e.key===" ")&&e.target.closest?.(".smart-ping")){
