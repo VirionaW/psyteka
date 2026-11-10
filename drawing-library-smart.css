@@ -191,3 +191,47 @@ html.dark .smart-comment-label{color:#e5f1e8}
  .smart-questions{display:grid;grid-template-columns:1fr;gap:7px}
  .smart-question,.smart-question-trigger{width:100%}
 }
+
+/* Focused object questions in the interpretation, with one-tap editing. */
+.smart-guidance .smart-guide-heading,.smart-guidance #smartQuestionList{display:none!important}
+.smart-guidance{background:transparent!important;border:0!important;padding:0!important;margin-top:15px!important}
+.smart-analysis .smart-meaning{border:1px solid #d7e7da;border-radius:13px;background:#fff;padding:16px 17px 14px;margin:0 0 12px}
+.smart-preview-content .smart-meaning{border-left:1px solid #d7e7da;border-bottom:1px solid #d7e7da}
+.smart-object-head{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.smart-object-head h4{font-size:16px!important;margin:0!important;color:#234e3a}
+.smart-edit-icon{flex:none;width:30px;height:30px;min-width:30px;display:inline-flex;justify-content:center;align-items:center;border:1px solid #ccdfd0;border-radius:9px;background:#f6faf7;color:#376c4e;font-size:17px;line-height:1;cursor:pointer}
+.smart-edit-icon:hover,.smart-edit-icon:focus-visible{border-color:#448f63;background:#e6f4e9;outline-offset:2px}
+.smart-object-facts{font-size:14px;line-height:1.65;color:#365445;white-space:pre-wrap;margin:0 0 11px!important}
+.smart-inline-question{padding:11px 13px 12px;margin:9px 0 11px;border:1px solid #f0ddb3;border-radius:11px;background:#fffdf7}
+.smart-inline-question-title{font-size:14px;font-weight:750;color:#4d452d;margin:0 0 9px!important}
+.smart-inline-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.smart-inline-choice{min-width:0;min-height:39px;border:1px solid #d5dfd3;border-radius:9px;background:#fff;color:#28543c;padding:7px 9px;font-size:12px;font-weight:700;cursor:pointer;text-align:center;line-height:1.35}
+.smart-inline-choice:hover,.smart-inline-choice:focus-visible{background:#e7f4e9;border-color:#4d9869;outline-offset:1px}
+.smart-inline-choice:last-child:nth-child(10){grid-column:1/-1}
+.smart-inline-hint{margin:9px 0 0!important;font-size:12px;line-height:1.5;color:#71634a}
+.smart-saved-answer{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;margin:4px 8px 6px 0;padding:4px 6px 4px 11px;border:1px solid #d0e4d4;border-radius:10px;background:#edf7f0;color:#255d40;font-size:12px;font-weight:700}
+.smart-saved-answer .smart-edit-icon{width:27px;height:27px;min-width:27px;background:white}
+.smart-story{margin:0 0 15px;padding:0 0 13px;border-bottom:1px solid #d9e7db}
+.smart-story h4,.smart-narrative h4{font-size:14px;color:#26593e;margin:10px 0 3px}
+.smart-story p{margin:4px 0;white-space:pre-wrap;font-size:14px}
+.smart-narrative{padding:12px 1px 5px;border-bottom:1px solid #d9e7db}
+.smart-narrative p{white-space:pre-wrap;font-size:14px;line-height:1.65}
+.record-extra{margin:9px 0 0;border-top:1px solid #e4ebe5;padding-top:8px}
+.record-extra>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;min-height:33px;padding:6px 10px;border:1px solid #d2e3d5;border-radius:8px;background:#f7faf7;color:#315d43;font-size:12px;font-weight:700}
+.record-extra>summary::-webkit-details-marker{display:none}
+.record-extra>summary:after{content:"⌄";margin-left:9px;font-size:15px}
+.record-extra[open]>summary:after{content:"⌃"}
+.record-extra>.fields{margin-top:12px}
+html.dark .smart-analysis .smart-meaning{background:#294032;border-color:#48694f}
+html.dark .smart-object-head h4{color:#e5f3e8}
+html.dark .smart-object-facts{color:#d2e6d5}
+html.dark .smart-inline-question{background:#3b372b;border-color:#756649}
+html.dark .smart-inline-question-title{color:#f5e3b9}
+html.dark .smart-inline-choice,html.dark .smart-edit-icon{background:#344d3a;color:#ecf4eb;border-color:#567b60}
+html.dark .smart-inline-choice:hover{background:#416f4a}
+html.dark .smart-inline-hint{color:#d2c3a0}
+html.dark .smart-saved-answer{background:#315440;border-color:#567b60;color:#e8f4e8}
+html.dark .smart-saved-answer .smart-edit-icon{background:#284833}
+html.dark .smart-story,html.dark .smart-narrative{border-color:#48674d}
+html.dark .record-extra>summary{background:#2e4d36;border-color:#53775a;color:#e8f4e8}
+@media(max-width:520px){.smart-analysis .smart-meaning{padding:12px 11px}.smart-inline-question{padding:10px 9px}.smart-inline-choices{gap:6px}.smart-inline-choice{font-size:11px;padding:7px 4px}}
