@@ -14,9 +14,14 @@
  B.entries.forEach(e=>{
   if(e.category==="Цвет"||!e.name)return;
   const name=clean(e.name);put(exact,name,e,15);put(stems,name.split(" ").map(inflect).join(" "),e,9);
-  String(e.aliases||"").split(/[\s,;|/]+/).map(clean).filter(x=>x.length>=4).forEach(alias=>{
-   put(exact,alias,e,5);put(stems,inflect(alias),e,3);
-  });
+  // Long composite entries often list generic modifiers as aliases;
+  // matching those fragments as whole objects creates false positives.
+  if(e.name.split(/\s+/).length<=2&&e.name.length<=35&&
+     !["Действие","Выражение"].includes(e.category)){
+   String(e.aliases||"").split(/[\s,;|/]+/).map(clean)
+    .filter(x=>x.length>=4&&!/(ый|ий|ой|ая|яя|ое|ее|ые|ие|ыми|ими|ого|ему|овать|аться|ится|ились|ают|ала|али|ает|ать|ить|еть)$/.test(x))
+    .forEach(alias=>{put(exact,alias,e,5);put(stems,inflect(alias),e,3)});
+  }
  });
  function lookup(str){
   const v=clean(str),mapped=[...(exact.get(v)||[]),...(stems.get(v.split(" ").map(inflect).join(" "))||[])];
