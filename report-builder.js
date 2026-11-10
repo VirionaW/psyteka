@@ -7,6 +7,9 @@
  const bytes=new TextEncoder();
  const state={id:null,columns:[{id:"participant",name:"Участник",visible:true}],rows:[],sources:[],summary:""};
  let list=[],identity=window.PSY_IDENTITY,cloud=window.PSY_CLOUD,user=null,dirty=false,renderDelay=0;
+ const orgId=new URLSearchParams(location.search).get("organization");
+ const teamDocRequested=new URLSearchParams(location.search).get("teamdoc");
+ let teamDocId=null,teamRevision=0;
  function notify(s,error=false){$("rbStatus").textContent=s;$("rbStatus").dataset.error=String(error)}
  function getDoc(){return {columns:state.columns,rows:state.rows,summary:$("rbSummary").value,sources:state.sources}}
  function setDoc(data,id=null){if(!data||!Array.isArray(data.columns)||!Array.isArray(data.rows))throw Error("Некорректный формат документа");state.id=id;state.columns=data.columns.filter(x=>x&&typeof x.id==="string").slice(0,50).map(x=>({id:x.id,name:String(x.name||"Показатель").slice(0,120),visible:x.visible!==false}));state.rows=data.rows.slice(0,500).map(r=>Object.fromEntries(Object.entries(r||{}).map(([k,v])=>[k,String(v??"").slice(0,800)])));state.sources=Array.isArray(data.sources)?data.sources.slice(0,20):[];$("rbSummary").value=String(data.summary||"").slice(0,60000);render();dirty=false}
@@ -114,6 +117,19 @@
     h.textContent=item.title;sub.textContent=item.method_name+" · "+new Date(item.updated_at).toLocaleDateString("ru-RU");
     meta.append(h,sub);label.append(cb,meta);$("rbSources").append(label);
    });
+   if(orgId){
+    const {data:team,error:err}=await identity.client.from("psy_organization_shares")
+     .select("id,title,method_name,shared_at").eq("organization_id",orgId).order("shared_at",{ascending:false}).limit(150);
+    if(err)throw err;
+    if(team?.length){const heading=document.createElement("h3");heading.textContent="Общие результаты коллег";$("rbSources").append(heading)}
+    (team||[]).forEach(x=>{
+     const label=document.createElement("label");label.className="rb-source";
+     const cb=document.createElement("input");cb.type="checkbox";cb.value="s:"+x.id;cb.setAttribute("data-source","s:"+x.id);
+     const info=document.createElement("span"),strong=document.createElement("strong"),small=document.createElement("small");
+     strong.textContent=x.title;small.textContent=x.method_name+" · Общая копия";
+     info.append(strong,small);label.append(cb,info);$("rbSources").append(label);
+    });
+   }
   }catch(e){$("rbSources").textContent="Не удалось получить сохранения. "+e.message}
  }
  async function loadDrafts(){
@@ -129,7 +145,17 @@
   if(ids.length<2){notify("Выберите минимум два сохраненных обследования.",true);return}
   if(dirty&&!confirm("Собрать новую таблицу? Несохраненные правки итогового документа будут заменены."))return;
   notify("Получаем выбранные сохранения…");
-  try{const data=await Promise.all(ids.map(id=>cloud.getAssessment(id)));build(data);$("rbTitle").value=(data[0].title||"Объединенные результаты").replace(/\s+(Филлипс|Ковач|CDI).*$/i,"")+" – общие результаты";preview()}catch(e){notify("Не удалось собрать результаты: "+e.message,true)}
+  try{
+   const data=await Promise.all(ids.map(async id=>{
+    if(!id.startsWith("s:"))return cloud.getAssessment(id);
+    if(!orgId)throw Error("Не указана организация");
+    const result=await identity.client.from("psy_organization_shares").select("id,title,method_name,snapshot")
+     .eq("organization_id",orgId).eq("id",id.slice(2)).single();
+    if(result.error)throw result.error;
+    return {...result.data,id};
+   }));
+   build(data);$("rbTitle").value=(data[0].title||"Объединенные результаты").replace(/\s+(Филлипс|Ковач|CDI).*$/i,"")+" – общие результаты";preview()
+  }catch(e){notify("Не удалось собрать результаты: "+e.message,true)}
  }
  function xml(s){return String(s??"").replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,"").replace(/[<>&"']/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;","'":"&apos;"}[c]))}
  const le16=n=>[n&255,(n>>>8)&255],le32=n=>[...le16(n),...le16(n>>>16)];
@@ -185,6 +211,35 @@
    if(error)throw error;$("rbTitle").value=data.title;setDoc(data.body,data.id);notify("Черновик открыт.");
   }catch(e){notify("Ошибка открытия черновика: "+e.message,true)}
  }
+ async function saveForTeam(){
+  if(!orgId||!user||!state.rows.length){notify("Создайте таблицу в кабинете организации.",true);return}
+  const title=cleanName($("rbTitle").value),body=getDoc();
+  try{
+   if(teamDocId){
+    const result=await identity.client.from("psy_organization_documents").update({title,body,revision:teamRevision+1,updated_at:new Date().toISOString()})
+     .eq("id",teamDocId).eq("organization_id",orgId).eq("revision",teamRevision).select("id,revision");
+    if(result.error)throw result.error;
+    if(!result.data?.length)throw Error("Коллега уже изменил этот документ. Откройте его заново, чтобы не затереть правки.");
+    teamRevision=result.data[0].revision;
+   }else{
+    const result=await identity.client.from("psy_organization_documents")
+     .insert({organization_id:orgId,created_by:user.id,title,body}).select("id,revision").single();
+    if(result.error)throw result.error;teamDocId=result.data.id;teamRevision=result.data.revision;
+    history.replaceState(history.state,"", "/report-builder?organization="+orgId+"&teamdoc="+teamDocId);
+   }
+   dirty=false;notify("Документ сохранен для коллег. Редакция "+teamRevision+".");
+  }catch(e){notify("Не удалось сохранить общий документ: "+e.message,true)}
+ }
+ async function openTeamDocument(){
+  if(!teamDocRequested||!orgId)return;
+  try{
+   const result=await identity.client.from("psy_organization_documents").select("id,title,body,revision")
+    .eq("organization_id",orgId).eq("id",teamDocRequested).single();
+   if(result.error)throw result.error;
+   teamDocId=result.data.id;teamRevision=result.data.revision;
+   $("rbTitle").value=result.data.title;setDoc(result.data.body,null);notify("Общий документ открыт. Редакция "+teamRevision+".");
+  }catch(e){notify("Не удалось открыть общий документ: "+e.message,true)}
+ }
  async function deleteDraft(){
   const id=$("rbSavedDrafts").value;if(!id||!confirm("Удалить сохраненный итоговый документ? Исходные обследования не затронуты."))return;
   try{const {error}=await identity.client.from("psy_report_documents").delete().eq("user_id",user.id).eq("id",id);if(error)throw error;if(id===state.id)state.id=null;await loadDrafts();notify("Черновик удален. Исходные результаты сохранены.")}catch(e){notify(e.message,true)}
@@ -198,13 +253,16 @@
   $("rbTitle").oninput=()=>{dirty=true;previewLater()};
   $("rbDownload").onclick=()=>{try{download(docx(),cleanName($("rbTitle").value)+".docx");notify("Word-файл подготовлен к скачиванию.")}catch(e){notify("Не удалось создать Word: "+e.message,true)}};
   $("rbPrint").onclick=()=>{preview();window.print()};
-  $("rbSaveDraft").onclick=saveDraft;$("rbOpenDraft").onclick=openDraft;$("rbDeleteDraft").onclick=deleteDraft;
+  $("rbSaveDraft").onclick=saveDraft;
+  $("rbSaveTeam").hidden=!orgId;
+  $("rbSaveTeam").onclick=saveForTeam;
+  $("rbOpenDraft").onclick=openDraft;$("rbDeleteDraft").onclick=deleteDraft;
   render();
   Promise.resolve(identity?.ready).then(async()=>{
    user=identity?.user&&!identity.user.is_anonymous?identity.user:null;
    await cloud?.ready;
    if(!user){notify("Для работы с сохраненными обследованиями войдите в личный аккаунт.",true);$("rbSources").innerHTML='<a href="/?entry=1">Войти в аккаунт</a>';return}
-   await Promise.all([loadList(),loadDrafts()]);
+   await Promise.all([loadList(),loadDrafts()]);await openTeamDocument();
    if(new URLSearchParams(location.search).get("assessment")){$("rbSources").querySelectorAll("input[data-source]").forEach(x=>{if(x.value===new URLSearchParams(location.search).get("assessment"))x.checked=true})}
   }).catch(e=>notify("Ошибка авторизации: "+e.message,true));
  }

@@ -752,7 +752,8 @@
   }
   const central=join(centers),end=new Uint8Array(22);u32(end,0x06054b50,0);u16(end,centers.length,8);u16(end,centers.length,10);u32(end,central.length,12);u32(end,offset,16);
   const zip=join([...locals,central,end]);
-  return save(mode==="analysis"?"Metolaria_"+(isCDI?"CDI":"Phillips")+"_analiticheskaya_spravka.docx":"Metolaria_"+(isCDI?"CDI":"Phillips")+(mode==="class"?"_class":"_participant")+"_results.docx",zip,"application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+  const baseName=mode==="analysis"?"Metolaria_"+(isCDI?"CDI":"Phillips")+"_analiticheskaya_spravka.docx":"Metolaria_"+(isCDI?"CDI":"Phillips")+(mode==="class"?"_class":"_participant")+"_results.docx";
+   return save(window.PSY_REPORT_FILENAME?window.PSY_REPORT_FILENAME(baseName,mode):baseName,zip,"application/vnd.openxmlformats-officedocument.wordprocessingml.document");
  }
 
  function csv(d,rows){

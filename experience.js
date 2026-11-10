@@ -11,6 +11,14 @@ let copiedAssessmentAnswers=null;
 const methodSessions={};
 
 let activeSavedAssessmentId=null,activeSavedAssessmentTitle="";
+/* Export names must follow the user's saved assessment title, not an internal English identifier. */
+window.PSY_REPORT_FILENAME=(fallback,mode)=>{
+ const source=String(activeSavedAssessmentTitle||"").trim();
+ if(!source)return fallback;
+ const extension=String(fallback||"").match(/\.[a-z0-9]+$/i)?.[0]||".docx";
+ const name=source.replace(/[\\/:*?"<>|\u0000-\u001f]/g," ").replace(/\s+/g," ").trim().slice(0,110);
+ return (name+(mode==="analysis"?" – аналитическая справка":""))+extension;
+};
 let savedModeRecords={one:{id:null,title:"",baseline:null},class:{id:null,title:"",baseline:null}};
 let assessmentSaveDialogOpen=false;
 async function saveCurrentAssessment(){
