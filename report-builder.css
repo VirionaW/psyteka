@@ -4,9 +4,9 @@
 body{margin:0;background:var(--rb-bg);color:var(--rb-ink);font:15px/1.5 system-ui,-apple-system,Arial,sans-serif}
 a{color:var(--rb-green)}button,input,textarea{font:inherit}
 button{cursor:pointer}
-.rb-header{padding:16px max(20px,calc((100vw - 1280px)/2));display:flex;gap:18px;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid var(--rb-line)}
+.rb-header{padding:16px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid var(--rb-line)}
 .rb-logo{display:flex;gap:10px;align-items:center;text-decoration:none;font-size:21px;font-weight:800}.rb-logo img{width:38px;height:38px}.rb-header nav{display:flex;gap:20px;flex-wrap:wrap}
-.rb-layout{max-width:1330px;padding:34px 24px 90px;margin:auto;display:grid;grid-template-columns:300px minmax(0,1fr);gap:24px;align-items:start}
+.rb-layout{width:calc(100% - 40px);max-width:2160px;padding:30px 0 90px;margin:auto;display:grid;grid-template-columns:minmax(320px,370px) minmax(0,1fr);gap:22px;align-items:start}
 .rb-title{grid-column:1/-1}.rb-title h1{font-size:clamp(26px,3vw,39px);line-height:1.2;margin:0 0 8px}.rb-title p{color:var(--rb-muted);margin:0}
 .rb-panel{background:#fff;border:1px solid var(--rb-line);border-radius:17px;padding:20px;box-shadow:0 5px 25px #153c2710;min-width:0}
 .rb-panel h2{font-size:20px;margin:0 0 15px}.rb-panel h3{font-size:16px;margin:16px 0 7px}
@@ -41,6 +41,6 @@ button{cursor:pointer}
 .rb-preview th{background:#ededed}
 .rb-summary{min-height:150px;resize:vertical;line-height:1.55}
 .rb-subheading{margin:0 0 10px}
-@media(max-width:830px){.rb-layout{display:block;padding:22px 12px 65px}.rb-title,.rb-panel{margin-bottom:15px}.rb-header{padding:12px}.rb-preview{padding:15px}}
+@media(max-width:900px){.rb-layout{width:calc(100% - 24px);display:block;padding:22px 0 65px}.rb-title,.rb-panel{margin-bottom:15px}.rb-header{padding:12px}.rb-preview{padding:15px}}
 @media print{.rb-header,.rb-title,.rb-sidebar,.rb-noprint,.rb-editor> :not(.rb-preview){display:none!important}.rb-layout{display:block;padding:0;margin:0}.rb-panel{border:0;box-shadow:none;padding:0}.rb-preview{border:0;box-shadow:none;padding:0}.rb-preview tr{break-inside:avoid}@page{size:A4 landscape;margin:13mm}}
 html.dark body{background:#15271e;color:#e5eee5}html.dark .rb-header,html.dark .rb-panel,html.dark .rb-source,html.dark .rb-table,html.dark .rb-table input,html.dark .rb-input{background:#233a2d;color:#e5eee5}html.dark .rb-preview{background:#fff;color:#222}html.dark .rb-table th{background:#335640}html.dark .rb-btn:not(.rb-btn-primary){background:#244733;color:#e5eee5}html.dark .rb-status{background:#34523c;color:#e5eee5}
