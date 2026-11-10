@@ -289,6 +289,7 @@ html.dark .method-focus{background:#2b493b;color:#deefdf}
 .synthesis-section .actions{margin-top:12px}@media print{.synthesis-section{display:none!important}}
 </style>
 <script defer src="/site-clean-urls.js?v=20261109"></script>
+<link rel="stylesheet" href="/drawing-library-smart.css?v=20261110smart1">
 </head>
 <body>
 <header><div class="header-inner"><a class="brand" href="library.html"><span class="brand-art"><img class="logo-light" src="brand-mark.svg" alt=""><img class="logo-dark" src="brand-mark-dark.svg" alt=""></span><span><span class="brand-title-green">Мето</span><span class="brand-title-brown">лария</span> <span class="brand-crumb">/ Рисунки</span></span></a><nav class="header-nav"><a class="link-btn" href="library.html">Вернуться в библиотеку</a><button class="btn theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему" aria-pressed="false"><span id="themeIcon" aria-hidden="true">☾</span><span id="themeText">Темная тема</span></button></nav></div></header>
@@ -3419,7 +3420,43 @@ async function importFile(e){
   $("#actionStatus").textContent="Протокол загружен: "+clean.length+" записей.";
  }catch(err){alert("Не удалось открыть файл. Нужен JSON-протокол Метоларии.")}
 }
+
+/* Typed description uses the current catalogue, without modifying manually added observations. */
+window.MetolariaDrawingSmartBridge={
+ entries:entries.map(function(x){return {id:x.id,name:x.name,category:x.category,aliases:x.aliases,methods:x.methods,meaning:meaningFor(x),question:x.question}}),
+ getMethod:function(){return state.method},
+ positions:Object.keys(POS).filter(function(k){return k!=="unknown"}).map(function(k){return {id:k,label:POS[k][0],meaning:POS[k][1]}}),
+ sizes:Object.keys(SZ).filter(Boolean).map(function(k){return {id:k,label:SZ[k],meaning:SIZE_NOTE[k]}}),
+ colors:COLORS.filter(function(c){return c[0]}).map(function(c){return {id:c[0],label:c[1],hex:c[2],meaning:c[3]}}),
+ features:function(id,tab){var e=byId(id);return e?featuresFor(e,tab).map(function(f){return {id:f[0],label:f[1],meaning:FEATURE_ASSOCIATIONS[f[0]]||f[2]}}):[]},
+ counts:function(id){var e=byId(id);return e?countFields(e).map(function(t){return {id:t[0],label:t[1]}}):[]},
+ meaning:function(id){var e=byId(id);return e?meaningFor(e):""},
+ apply:function(items){
+  var original=state.items.filter(function(x){return !/^smart:/.test(x.key||"")});
+  var additions=(Array.isArray(items)?items:[]).slice(0,45).map(function(x){
+   var e=byId(x.elementId);if(!e)return null;
+   var valid=featuresFor(e,"build").concat(featuresFor(e,"condition"),featuresFor(e,"environment"),featuresFor(e,"graphics")).map(function(f){return f[0]});
+   var allowedCounts=countFields(e).map(function(t){return t[0]}),counts={};
+   Object.keys(x.counts||{}).forEach(function(k){
+    if(allowedCounts.includes(k)&&Number.isInteger(Number(x.counts[k]))&&Number(x.counts[k])>=0&&Number(x.counts[k])<=99)counts[k]=Number(x.counts[k]);
+   });
+   var colors=normalizeColors(x.colors,undefined);
+   return {key:"smart:"+String(x.key||e.id).slice(0,150),elementId:e.id,name:e.name,
+    position:Object.prototype.hasOwnProperty.call(POS,x.position)?x.position:"unknown",
+    size:Object.prototype.hasOwnProperty.call(SZ,x.size)?x.size:"",
+    colors:colors,color:colors[0]||"",
+    features:Array.from(new Set((x.features||[]).filter(function(k){return valid.includes(k)}))),
+    counts:counts,note:String(x.note||"").slice(0,900),excluded:[]};
+  }).filter(Boolean);
+  state.items=original.concat(additions);
+  renderRecords();
+  return buildSynthesis();
+ },
+ preview:function(){return buildSynthesis()},
+ getSmartCount:function(){return state.items.filter(function(x){return /^smart:/.test(x.key||"")}).length}
+};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
 </script>
+<script src="/drawing-library-smart.js?v=20261110smart1"></script>
 </body></html>
