@@ -32,7 +32,7 @@
  const initial=()=>({name:"",answers:[]});
  const randomId=()=>typeof crypto!=="undefined"&&typeof crypto.randomUUID==="function"
   ?crypto.randomUUID():"socio-"+Math.random().toString(36).slice(2)+"-"+Date.now();
- const ensureIds=rows=>rows.forEach(r=>{if(!r.socioId)r.socioId=randomId();});
+ const ensureIds=rows=>rows.forEach(r=>{if(String(r.name||"").trim()&&!r.socioId)r.socioId=randomId();});
  const members=rows=>rows.filter(r=>String(r.name||"").trim());
  const questions=rows=>{
   const stored=rows?.find(r=>Array.isArray(r.socioQuestions)&&r.socioQuestions.length===6)?.socioQuestions;
@@ -148,7 +148,7 @@
     '<p class="psy-socio-note">Добавьте учеников, затем выберите ребенка из списка.</p>')+
    '<div class="psy-socio-results"><h3>Сводка по классу</h3><div id="psySocResult">'+resultHTML(ctx)+'</div>'+
    '<div class="class-actions"><button type="button" class="btn" id="psySocRaw">Скачать ответы CSV</button>'+
-   '<button type="button" class="btn" id="psySocSummary">Скачать сводку CSV</button></div></div>'+
+   '<button type="button" class="btn" id="psySocSummary">Скачать сводку CSV</button><button type="button" class="btn primary psy-socio-save" id="psySocSave">Сохранить результат в профиль</button></div></div>'+
    '<p class="psy-socio-note">Данные учеников конфиденциальны. Для их хранения и последующего открытия используйте сохранение обследования в профиле. Не публикуйте результаты отдельного ребенка.</p></section>';
  }
  function bind(d,ctx){
@@ -212,6 +212,7 @@
    });
    refresh();
   }));
+  document.getElementById("psySocSave")?.addEventListener("click",()=>ctx.onSave?.());
   document.getElementById("psySocRaw")?.addEventListener("click",()=>{
    const people=members(rows),q=questions(rows),ids=new Set(people.map(r=>r.socioId));
    const out=[["Ученик","Вопрос","Формулировка","1 выбор","2 выбор","3 выбор","Статус"]];
