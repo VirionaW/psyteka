@@ -394,10 +394,12 @@
  function popupOptions(m,stage){
   const o=m.kind==="object"?m:ownerOf(m),a=answerFor(o),name=o?.entry.name||m.raw;
   if(stage==="root")return {title:"Что уточнить у «"+name+"»?",items:[
-   ["position","↗ Расположение","Где на листе?"],["size","▢ Размер","Какой размер?"],["color","◉ Цвет","Можно выбрать несколько"],
+   ["position","↗ Расположение","Где на листе?"],["count","123 Количество","1-9 или другое число в описании"],["size","▢ Размер","Какой размер?"],["color","◉ Цвет","Можно выбрать несколько"],
    ["build","✳ Строение","Что изображено?"],["condition","◡ Состояние","Как выглядит или действует?"],["environment","⌂ Окружение","Что рядом?"],["graphics","〰 Линии","Особенности исполнения"],["done","✓ Достаточно","Уточнения завершены"]
   ].map(x=>({id:x[0],label:x[1],hint:x[2]}))};
-  if(stage==="position")return {title:"Где расположен «"+name+"»?",items:B.positions.map(x=>({id:x.id,label:x.label,hint:x.meaning,selected:x.id===a?.position}))};
+  if(stage==="disambiguate")return {title:"Что означает «"+m.raw+"»?",items:(m.options||[]).map(x=>({id:x.id,label:x.name,hint:x.meaning}))};
+   if(stage==="count")return {title:"Сколько изображено «"+name+"»?",items:Array.from({length:9},(_,i)=>({id:String(i+1),label:String(i+1)})).concat([{id:"unknown",label:"Невозможно определить",hint:"Число больше девяти напишите в описании, например 26 ландышей"}])};
+   if(stage==="position")return {title:"Где расположен «"+name+"»?",items:B.positions.map(x=>({id:x.id,label:x.label,hint:x.meaning,selected:x.id===a?.position}))};
   if(stage==="size")return {title:"Какого размера «"+name+"»?",items:B.sizes.map(x=>({id:x.id,label:x.label,hint:x.meaning,selected:x.id===a?.size}))};
   if(stage==="color"||stage==="multicolor")return {title:"Какие цвета у «"+name+"»?",items:B.colors.map(x=>({id:x.id,label:"● "+x.label,hint:x.meaning,selected:a?.colors.includes(x.id)}))};
   if(stage==="tailLength")return {title:"Какой хвост изображен?",items:[
@@ -457,6 +459,15 @@
   }
   const o=m.kind==="object"?m:ownerOf(m),a=answerFor(o);
   if(!a){close();return}
+  if(step==="disambiguate"){
+   if(!m.choiceKey||!(m.options||[]).some(x=>x.id===id))return;
+   resolved.set(m.choiceKey,id);a.confirmed=true;close();analyze();return;
+  }
+  if(step==="count"){
+   if(id==="unknown"){delete a.counts.objects;a.quantityUnknown=true}
+   else if(/^[1-9]$/.test(id)){a.counts.objects=Number(id);a.quantityUnknown=false}
+   else return;
+  }
   if(step==="position")a.position=id;
   else if(step==="size")a.size=id;
   else if(step==="color"||step==="multicolor")a.colors=a.colors.includes(id)?a.colors.filter(x=>x!==id):[...a.colors,id];
@@ -499,13 +510,13 @@
   const w=e.target.closest("[data-smart-key]"),m=marks.find(x=>x.key===w?.dataset.smartKey);
   if(m&&m.kind!=="unknown"){
    const target=m.kind==="reference"?ownerOf(m):m;
-   if(target)show(target,target.kind==="object"?"root":target.kind);
+   if(target)show(target,target.kind==="object"?(target.needsChoice?"disambiguate":"root"):target.kind);
   }
  });
  editor.addEventListener("keydown",e=>{
   if((e.key==="Enter"||e.key===" ")&&e.target.closest?.(".smart-ping")){
    e.preventDefault();const w=e.target.closest("[data-smart-key]"),m=marks.find(x=>x.key===w?.dataset.smartKey);
-   if(m)show(m,m.kind==="object"?"root":m.kind);
+   if(m)show(m,m.kind==="object"?(m.needsChoice?"disambiguate":"root"):m.kind);
   }
  });
  document.addEventListener("pointerdown",e=>{if(!pop.hidden&&!pop.contains(e.target)&&!e.target.closest?.("[data-smart-key]"))close()});
@@ -514,7 +525,7 @@
  function setText(text){
   editor.textContent=String(text||"").slice(0,5000);
   if(conclusion)comment.value=conclusion.value||"";
-  chosen.clear();answered.clear();analyze();
+  chosen.clear();answered.clear();resolved.clear();analyze();
  }
  document.getElementById("smartExample").onclick=()=>{
   if(raw.trim()&&!confirm("Заменить описание примером? Вручную добавленные записи останутся."))return;
@@ -525,8 +536,19 @@
   setText("");
  };
  document.getElementById("method").addEventListener("change",()=>{
-  const m=B.getMethod();if(lastMethod!==m){lastMethod=m;chosen.clear();answered.clear();analyze()}
+  const m=B.getMethod();if(lastMethod!==m){lastMethod=m;chosen.clear();answered.clear();resolved.clear();analyze()}
  });
- window.MetolariaDrawingSmartText={getText, setText, clear:()=>setText(""), refresh:analyze};
+ window.MetolariaDrawingSmartText={
+ getText,setText,clear:()=>setText(""),refresh:analyze,
+ getState:()=>({version:1,choices:[...resolved.entries()].slice(0,100),answers:[...chosen.entries()].slice(0,60),answered:[...answered].slice(0,150)}),
+ setState(data){
+  if(!data||data.version!==1)return;
+  resolved.clear();chosen.clear();answered.clear();
+  if(Array.isArray(data.choices))data.choices.slice(0,100).forEach(x=>{if(Array.isArray(x)&&typeof x[0]==="string"&&typeof x[1]==="string"&&B.entries.some(e=>e.id===x[1]))resolved.set(x[0].slice(0,100),x[1])});
+  if(Array.isArray(data.answers))data.answers.slice(0,60).forEach(x=>{if(Array.isArray(x)&&typeof x[0]==="string"&&x[1]&&typeof x[1]==="object")chosen.set(x[0],Object.assign({confirmed:false,position:"",size:"",colors:[],features:[],counts:{},notes:[],quantityUnknown:false},x[1]))});
+  if(Array.isArray(data.answered))data.answered.slice(0,150).forEach(x=>{if(typeof x==="string")answered.add(x)});
+  analyze();
+ }
+};
  analyze();
 })();
