@@ -76,7 +76,10 @@
      if(!confirm("Удалить сохраненное обследование «"+item.title+"»? Это действие нельзя отменить."))return;
      del.disabled=true;try{await cloud.deleteAssessment(item.id);await refresh()}catch(e){alert("Не удалось удалить: "+e.message);del.disabled=false}
     };
-    actions.append(open,preview,del);row.append(desc,actions);list.append(row);
+    const merge=make("a","site-btn");
+    merge.href="/report-builder?assessment="+encodeURIComponent(item.id);
+    text(merge,"В общий документ");
+    actions.append(open,merge,preview,del);row.append(desc,actions);list.append(row);
    }
   }catch(e){text(list,"Не удалось загрузить результаты. "+e.message)}
  }

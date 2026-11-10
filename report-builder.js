@@ -154,6 +154,14 @@
     if(result.error)throw result.error;
     return {...result.data,id};
    }));
+   // The same participant code in different classes does not mean the same child.
+   // Reject only explicitly conflicting class identifiers in saved titles.
+   const codes=data.map(x=>{
+    const match=String(x.title||"").match(/(?:^|[^0-9])((?:[1-9]|1[01])\s*[.]\s*\d{1,2})(?=[^0-9]|$)/);
+    return match?match[1].replace(/\s/g,""):null;
+   }).filter(Boolean);
+   if(new Set(codes).size>1)
+    throw Error("Выбраны сохранения разных классов ("+[...new Set(codes)].join(", ")+"). Не объединяйте записи учеников только по совпадающим номерам.");
    build(data);$("rbTitle").value=(data[0].title||"Объединенные результаты").replace(/\s+(Филлипс|Ковач|CDI).*$/i,"")+" – общие результаты";preview()
   }catch(e){notify("Не удалось собрать результаты: "+e.message,true)}
  }
