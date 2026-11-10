@@ -76,6 +76,17 @@
    base.splice(base.indexOf(m),1);
   });
   base.sort((a,b)=>a.start-b.start);
+  // A repeated inflected noun in a prepositional reference (e.g. "под деревом")
+  // points to the same drawing element, not a second tree.
+  const firstById=new Map();
+  base.slice().forEach(m=>{
+   const prior=firstById.get(m.entry.id);
+   const preceding=str.slice(Math.max(0,m.start-28),m.start).trim().split(/\s+/).slice(-2).join(" ");
+   const reference=/(?:^|\s)(под|над|перед|около|возле|рядом|за|у|на|по|к|с|со|в)$/.test(preceding);
+   if(prior&&reference&&m.start-prior.start<220){
+    m.kind="reference";m.target=prior;base.splice(base.indexOf(m),1);
+   }else firstById.set(m.entry.id,m);
+  });
   const ordinal=new Map();
   base.forEach(x=>{const n=ordinal.get(x.entry.id)||0;ordinal.set(x.entry.id,n+1);x.key="object:"+x.entry.id+":"+n;x.owner=x.key});
   all.filter(x=>x.kind!=="object").forEach(x=>{
@@ -116,7 +127,7 @@
    if(m.start<previous||m.end>raw.length)return;
    frag.append(document.createTextNode(raw.slice(previous,m.start)));
    const span=document.createElement("span");
-   const done=answered.has(m.key)||(m.kind==="object"&&chosen.get(m.key)?.confirmed);
+   const done=m.kind==="reference"||answered.has(m.key)||(m.kind==="object"&&chosen.get(m.key)?.confirmed);
    span.className="smart-mark smart-"+(m.kind==="unknown"?"red":done?"green":"amber");
    span.dataset.smartKey=m.key;
    span.title=m.kind==="unknown"?"Слово отсутствует в библиотеке. Можно описать его вручную.":"Нажмите для уточнения";
@@ -129,7 +140,9 @@
    span.append(document.createTextNode(raw.slice(m.start,m.end)));frag.append(span);previous=m.end;
   });
   frag.append(document.createTextNode(raw.slice(previous)));
-  editor.replaceChildren(frag);restore(pos);
+  if(!raw)editor.replaceChildren();
+  else editor.replaceChildren(frag);
+  restore(pos);
  }
  function ownerOf(m){return objects.find(o=>o.key===m.owner)||null}
  function answerFor(o){if(!o)return null;if(!chosen.has(o.key))chosen.set(o.key,{confirmed:false,position:"",size:"",colors:[],features:[],counts:{},notes:[]});return chosen.get(o.key)}
@@ -140,8 +153,8 @@
     if(m.kind==="position"&&item.position==="unknown")item.position=m.guess;
     if(m.kind==="size"&&!item.size)item.size=m.guess;
     if(m.kind==="color"&&!item.colors.length)item.colors=[m.guess];
-    if(m.kind==="feature"&&!item.features.includes(m.part))item.features.push(m.part);
-    if(m.kind==="absence"){
+    if(m.kind==="feature"&&!answered.has(m.key)&&!item.features.includes(m.part))item.features.push(m.part);
+    if(m.kind==="absence"&&!answered.has(m.key)){
      if(["roots","paws","windows","doors"].includes(m.part))item.counts[m.part]=0;
      else if(m.part==="leaves"&&!item.features.includes("no-leaves"))item.features.push("no-leaves");
      else item.note+=(item.note?"; ":"")+"Не изображено: "+m.raw;
