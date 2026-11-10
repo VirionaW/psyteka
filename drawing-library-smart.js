@@ -365,7 +365,7 @@
      edit.title="Изменить расположение";edit.setAttribute("aria-label","Изменить расположение");row.append(edit);card.append(row);
     }
     if(!hasPosition||a.editPosition){
-     ask(card,"Где изображен «"+o.entry.name+"»?",B.positions.map(x=>({id:x.id,label:x.label})),
+     ask(card,/^ландыш(и|ей|ами|ах)$/i.test(clean(o.raw))?"Где изображены ландыши?":"Где на рисунке расположен объект «"+o.entry.name+"»?",B.positions.map(x=>({id:x.id,label:x.label})),
       id=>{a.position=id;a.editPosition=false;renderInterpretation();drawMarks()});
     }
     const known=Number.isInteger(r.counts.objects)||a.quantityUnknown;
