@@ -30,7 +30,7 @@
  const positions={слева:"left",справа:"right",посередине:"center",вверху:"top",сверху:"top",снизу:"bottom",внизу:"bottom",влево:"left",вправо:"right"};
  const sizes=[[/^(больш|крупн|огромн|гигантск)/,"large"],[/^(маленьк|небольш|крошечн|мелк)/,"small"],[/^средн/,"medium"]];
  const shades={красн:"red",оранжев:"orange",желт:"yellow",зелен:"green",голуб:"cyan",син:"blue",фиолет:"purple",розов:"pink",коричнев:"brown",черн:"black",сер:"gray",бел:"white"};
- const parts=[[/^корн/,"roots","count"],[/^лист/,"leaves","feature"],[/^лап/,"paws","count"],[/^зуб/,"teeth","feature"],[/^клык/,"fangs","feature"],[/^рог/,"horns","feature"],[/^крыл/,"wings","feature"],[/^когт/,"claws","feature"],[/^окн/,"windows","count"],[/^двер/,"doors","count"],[/^ветв|^ветк/,"branches","feature"]];
+ const parts=[[/^корн/,"roots","count"],[/^лист/,"leaves","feature"],[/^лап/,"paws","count"],[/^зуб/,"teeth","feature"],[/^клык/,"fangs","feature"],[/^рог/,"horns","feature"],[/^крыл/,"wings","feature"],[/^когт/,"claws","feature"],[/^крон/,"crown","feature"],[/^хвост/,"tail","note"],[/^окн/,"windows","count"],[/^двер/,"doors","count"],[/^ветв|^ветк/,"branches","feature"]];
  const shadesOfTone=[[/^бледн/,"Какая бледность изображена?",[["Слабо закрашено","Отмечено слабое закрашивание."],["Светлый оттенок","Выбран очень светлый оттенок."],["Не помню","Особенность не уточнена."]]],[/^ярк/,"Как проявляется яркость?",[["Насыщенный цвет","Цвет объекта насыщенный."],["Контраст","Объект выделен контрастом."],["Не помню","Особенность не уточнена."]]],[/^темн/,"Что кажется темным?",[["Темная окраска","Объект выполнен темными оттенками."],["Штриховка","Показана плотная штриховка."],["Тень","В изображении есть тень."]]]];
  const wordsRx=/[А-Яа-яЁёA-Za-z]+(?:-[А-Яа-яЁёA-Za-z]+)*/g;
  let raw="",marks=[],objects=[],timer=0,composition=false,lastMethod=B.getMethod(),openKey=null,phase="root";
@@ -58,6 +58,9 @@
    const s=sizes.find(x=>x[0].test(w.root));if(s){mark(i,1,"size",{guess:s[1]});continue}
    const color=Object.entries(shades).find(([k])=>w.root.startsWith(k));
    if(color){mark(i,1,"color",{guess:color[1]});continue}
+   if(/^(разноцветн|многоцветн)/.test(w.root)){mark(i,1,"multicolor");continue}
+   if(/^коротк/.test(w.root)){mark(i,1,"tailLength",{guess:"short-tail"});continue}
+   if(/^длинн/.test(w.root)){mark(i,1,"tailLength",{guess:"long-tail"});continue}
    const t=shadesOfTone.find(x=>x[0].test(w.root));if(t){mark(i,1,"tone",{question:t[1],answers:t[2]});continue}
   }
   for(let i=0;i<ws.length;i++){
@@ -76,7 +79,7 @@
   base.slice().forEach(m=>{
    const part=parts.find(x=>x[0].test(inflect(m.raw)));if(!part)return;
    const possible=base.filter(x=>x!==m&&Math.abs(x.start-m.start)<110 &&
-    (["build","condition","environment","graphics"].some(type=>B.features(x.entry.id,type).some(f=>f.id===part[1]))||B.counts(x.entry.id).some(c=>c.id===part[1])));
+    (["build","condition","environment","graphics"].some(type=>B.features(x.entry.id,type).some(f=>f.id===part[1]||part[1]==="tail"&&["short-tail","long-tail"].includes(f.id)))||B.counts(x.entry.id).some(c=>c.id===part[1])));
    if(!possible.length)return;
    m.kind="feature";m.part=part[1];m.mode=part[2];
    m.target=possible.sort((a,b)=>Math.abs(a.start-m.start)-Math.abs(b.start-m.start))[0];
@@ -103,7 +106,12 @@
     !/[.!?,;:\n]/.test(str.slice(x.end,y.start)));
    const preferAhead=["size","color","tone"].includes(x.kind)||
     x.kind==="position"&&(x.start===0||/[.!?]\s*$/.test(str.slice(Math.max(0,x.start-3),x.start)));
-   const closest=base.map(y=>({y,d:Math.abs(y.start-x.start)})).sort((a,b)=>a.d-b.d)[0];
+   const distance=y=>Math.abs(y.start-x.start);
+   const sameClause=base.filter(y=>{
+    const between=y.start>=x.end?str.slice(x.end,y.start):str.slice(y.end,x.start);
+    return !/[.!?,;:\n]/.test(between);
+   });
+   const closest=(sameClause.length?sameClause:base).map(y=>({y,d:distance(y)})).sort((a,b)=>a.d-b.d)[0];
    const target=x.target||(preferAhead&&ahead.length?ahead[0]:closest?.y);
    x.owner=target?.key||null;
    const n=all.filter(y=>y.kind===x.kind&&y.raw===x.raw&&y.start<x.start).length;
@@ -165,9 +173,18 @@
    const ans=answerFor(o),item={key:o.key,elementId:o.entry.id,position:ans.position||"unknown",size:ans.size,colors:ans.colors.slice(),features:ans.features.slice(),counts:{...ans.counts},note:ans.notes.join("; ")};
    marks.filter(m=>m.owner===o.key&&m.kind!=="object").forEach(m=>{
     if(m.kind==="position"&&item.position==="unknown")item.position=m.guess;
-    if(m.kind==="size"&&!item.size)item.size=m.guess;
+    if(m.kind==="size"&&!item.size){
+     const appliesToPart=marks.find(z=>z.kind==="feature"&&z.owner===o.key&&z.start>=m.end&&z.start-m.end<5);
+     if(appliesToPart)item.note+=(item.note?"; ":"")+m.raw+" "+appliesToPart.raw;
+     else item.size=m.guess;
+    }
     if(m.kind==="color"&&!item.colors.length)item.colors=[m.guess];
-    if(m.kind==="feature"&&!answered.has(m.key)&&!item.features.includes(m.part))item.features.push(m.part);
+    if(m.kind==="feature"&&!answered.has(m.key)){
+     if(m.mode==="note")item.note+=(item.note?"; ":"")+"Изображена деталь: "+m.raw;
+     else if(!item.features.includes(m.part))item.features.push(m.part);
+    }
+    if(m.kind==="tailLength"&&!answered.has(m.key)&&!item.features.includes(m.guess))item.features.push(m.guess);
+    if(m.kind==="multicolor"&&!answered.has(m.key))item.note+=(item.note?"; ":"")+"Указано несколько цветов; оттенки не уточнены";
     if(m.kind==="absence"&&!answered.has(m.key)){
      if(["roots","paws","windows","doors"].includes(m.part))item.counts[m.part]=0;
      else if(m.part==="leaves"&&!item.features.includes("no-leaves"))item.features.push("no-leaves");
@@ -227,7 +244,12 @@
   ].map(x=>({id:x[0],label:x[1],hint:x[2]}))};
   if(stage==="position")return {title:"Где расположен «"+name+"»?",items:B.positions.map(x=>({id:x.id,label:x.label,hint:x.meaning,selected:x.id===a?.position}))};
   if(stage==="size")return {title:"Какого размера «"+name+"»?",items:B.sizes.map(x=>({id:x.id,label:x.label,hint:x.meaning,selected:x.id===a?.size}))};
-  if(stage==="color")return {title:"Какого цвета «"+name+"»?",items:B.colors.map(x=>({id:x.id,label:"● "+x.label,hint:x.meaning,selected:a?.colors.includes(x.id)}))};
+  if(stage==="color"||stage==="multicolor")return {title:"Какие цвета у «"+name+"»?",items:B.colors.map(x=>({id:x.id,label:"● "+x.label,hint:x.meaning,selected:a?.colors.includes(x.id)}))};
+  if(stage==="tailLength")return {title:"Какой хвост изображен?",items:[
+   {id:"short-tail",label:"Короткий хвост",hint:"Деталь силуэта персонажа"},
+   {id:"long-tail",label:"Длинный хвост",hint:"Деталь силуэта персонажа"},
+   {id:"unknown",label:"Не могу уточнить",hint:"Оставить вопрос открытым"}
+  ]};
   if(["build","condition","environment","graphics"].includes(stage))
    return {title:({build:"Какие части видны?",condition:"Как выглядит или действует?",environment:"Что изображено рядом?",graphics:"Как выполнены линии?"})[stage],
     items:B.features(o?.entry.id,stage).slice(0,45).map(x=>({id:x.id,label:x.label,hint:x.meaning,selected:a?.features.includes(x.id)}))};
@@ -277,14 +299,20 @@
   if(!a){close();return}
   if(step==="position")a.position=id;
   else if(step==="size")a.size=id;
-  else if(step==="color")a.colors=a.colors.includes(id)?a.colors.filter(x=>x!==id):[...a.colors,id];
+  else if(step==="color"||step==="multicolor")a.colors=a.colors.includes(id)?a.colors.filter(x=>x!==id):[...a.colors,id];
+  else if(step==="tailLength"){
+   a.features=a.features.filter(x=>!["short-tail","long-tail"].includes(x));
+   if(id!=="unknown")a.features.push(id);
+   else a.notes.push("Длина хвоста не уточнена.");
+  }
   else if(["build","condition","environment","graphics"].includes(step))a.features=a.features.includes(id)?a.features.filter(x=>x!==id):[...a.features,id];
   else if(step==="absence"){
    if(id==="absent"&&["roots","paws","windows","doors"].includes(m.part))a.counts[m.part]=0;
    else if(id==="absent"&&m.part==="leaves")a.features.push("no-leaves");
    else a.notes.push(id==="hidden"?"Элемент может быть закрыт: "+m.raw:"Деталь не уточнена: "+m.raw);
   }else if(step==="feature"){
-   if(id==="visible"&&!a.features.includes(m.part))a.features.push(m.part);
+   if(id==="visible"&&m.mode==="note")a.notes.push("Изображена деталь: "+m.raw);
+   else if(id==="visible"&&!a.features.includes(m.part))a.features.push(m.part);
    else a.notes.push("Не уточнено: "+m.raw);
   }else if(step==="tone"){
    const choice=m.answers[Number(id)];if(choice)a.notes.push(choice[1]);
