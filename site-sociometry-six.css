@@ -1,0 +1,61 @@
+/* Метолария – социометрия: ученик, шесть критериев, три выбора. */
+.psy-socio{gap:18px;min-width:0;color:var(--text,#27392d)}
+.psy-socio h3{margin:0 0 6px;font-size:19px}
+.psy-socio h4{margin:0;font-size:15px;line-height:1.45}
+.psy-socio p{margin:4px 0}
+.psy-socio-intro{display:grid;gap:6px}
+.psy-socio-intro p{color:var(--muted,#526457);font-size:14px;line-height:1.55}
+.psy-socio-roster,.psy-socio-custom,.psy-socio-results{border:1px solid var(--stroke,#d6e2d6);border-radius:13px;background:var(--panel-soft,#f8faf7);padding:15px;min-width:0}
+.psy-socio-roster-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.psy-socio-roster-head strong{font-size:16px}
+.psy-socio-roster-head span{font-size:13px;color:var(--muted,#637166)}
+.psy-socio-add summary,.psy-socio-custom summary{cursor:pointer;font-weight:650;color:var(--text,#263c2c);padding:7px 0}
+.psy-socio-add textarea{display:block;width:100%;min-height:100px;resize:vertical;box-sizing:border-box;font:inherit;line-height:1.5;padding:11px;border:1px solid var(--stroke,#b9cdbd);border-radius:9px;background:var(--input-bg,#fff);color:var(--text,#263c2c);margin:10px 0}
+.psy-socio-note{font-size:12px;color:var(--muted,#637166);line-height:1.6}
+.psy-socio-message{font-size:13px;color:#a15727}
+.psy-socio-message:empty{display:none}
+.psy-socio-student-picker{display:flex;align-items:flex-end;flex-wrap:wrap;gap:10px;margin:14px 0 7px}
+.psy-socio-student-picker label{display:grid;gap:6px;flex:1;min-width:220px;font-size:13px;font-weight:650}
+.psy-socio-student-picker select,.psy-socio-rename input,.psy-socio-custom input,
+.psy-socio-picks select,.psy-socio-detail-choice select{box-sizing:border-box;width:100%;min-width:0;border:1px solid var(--stroke,#b7ccba);border-radius:9px;background:var(--input-bg,#fff);color:var(--text,#213528);font:inherit;padding:10px 12px}
+.psy-socio-student-picker select{font-size:15px}
+.psy-socio-rename{display:grid;gap:5px;margin:11px 0 0;max-width:460px;font-size:12px;color:var(--muted,#607268)}
+.psy-socio-custom{display:grid;gap:8px}
+.psy-socio-custom label{display:grid;gap:6px;margin-top:8px}
+.psy-socio-custom label span{font-size:13px;font-weight:650}
+.psy-socio-progress{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 -6px}
+.psy-socio-progress strong{font-size:18px}
+.psy-socio-progress span{color:var(--muted,#637166);font-size:13px}
+.psy-socio-questions{display:grid;gap:12px}
+.psy-socio-question{min-width:0;border:1px solid var(--stroke,#d8e3d9);border-radius:13px;padding:15px;background:var(--card,#fff)}
+.psy-socio-question-heading{display:flex;align-items:center;gap:11px;margin-bottom:13px}
+.psy-socio-number{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#e7efe6;color:#396247;font-weight:750;font-size:14px}
+.psy-socio-question-heading h4{flex:1;min-width:0}
+.psy-socio-question-status{flex:none;font-size:11px;color:var(--muted,#718073)}
+.psy-socio-picks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.psy-socio-picks label{display:grid;gap:6px;min-width:0}
+.psy-socio-picks label span{font-size:12px;color:var(--muted,#5b705f)}
+.psy-socio-picks select{font-size:14px}
+.psy-socio-picks select:focus-visible,.psy-socio-custom input:focus-visible,.psy-socio-roster select:focus-visible{outline:2px solid #51886b;outline-offset:2px}
+.psy-socio-results{display:grid;gap:12px}
+.psy-socio-summary-scroll{max-width:100%;overflow-x:auto}
+.psy-socio-results table{min-width:580px}
+.psy-socio-results th{font-size:12px!important}
+.psy-socio-results td{font-size:13px!important}
+.psy-socio-detail-choice{display:grid;gap:6px;font-weight:650;font-size:13px}
+.psy-socio-detail-choice select{max-width:100%}
+.psy-socio-print-q{margin:10px 0 13px;break-inside:avoid}
+.psy-socio-print-q p{padding-left:13px;margin:8px 0}
+@media(max-width:720px){
+ .psy-socio-roster,.psy-socio-custom,.psy-socio-results,.psy-socio-question{padding:12px}
+ .psy-socio-picks{grid-template-columns:minmax(0,1fr)}
+ .psy-socio-question-heading{flex-wrap:wrap}
+ .psy-socio-question-status{margin-left:41px}
+ .psy-socio-student-picker label{min-width:0;flex-basis:100%}
+ .psy-socio-student-picker .btn{width:100%}
+}
+@media print{
+ .psy-socio-print{font:10pt/1.45 Arial,sans-serif;color:#111}
+ .psy-socio-print-q{border-bottom:1px solid #ddd;padding-bottom:5px}
+ .psy-socio-print-q p{margin:6px 0}
+}
