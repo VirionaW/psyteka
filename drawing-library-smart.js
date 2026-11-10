@@ -10,6 +10,10 @@
  const inflect=s=>{let x=clean(s);if(x.length<4)return x;const y=x.replace(/(иями|ьями|ьях|ья|ями|ами|его|ого|ему|ому|ыми|ими|ых|их|ую|юю|ая|яя|ое|ее|ые|ие|ый|ий|ой|ов|ев|ей|ам|ям|ах|ях|ом|ем|ою|ею|а|я|ы|и|о|е|у|ю|ь)$/,"");return y.length>=3?y:x};
  const stop=new Set("ребенок ребёнок нарисовал нарисовала нарисовали рисунок рисунке бумаге листе лист листа это этот эта такое такие был была были здесь там тут уже просто рядом а и но он она они его ее их у в во на под над без с со возле около есть нет не по от про для же или что где как когда потом при этом очень немного много сильно как-то очень видно виден видна изображен изображено изображены цвета цвет цветом красками краской нарисована нарисован нарисовали посмотрите который которая которых который похожа похоже похож сам сама сами все всё".split(" ").map(clean));
  const exact=new Map(),stems=new Map();
+ // Dictionary aliases are not interchangeable objects (dinosaur != dragon).
+ const unsafeAliases=new Set(["динозавр","ящер","змей"]);
+ const nounExceptions=new Set(["поле","динозавр"]);
+
  function put(map,k,e,rank){if(k.length<3)return;let a=map.get(k);if(!a){a=[];map.set(k,a)}if(!a.some(x=>x.e.id===e.id))a.push({e,rank})}
  B.entries.forEach(e=>{
   if(e.category==="Цвет"||!e.name)return;
@@ -19,20 +23,35 @@
   if(e.name.split(/\s+/).length<=2&&e.name.length<=35&&
      !["Действие","Выражение"].includes(e.category)){
    String(e.aliases||"").split(/[\s,;|/]+/).map(clean)
-    .filter(x=>x.length>=4&&!/(ый|ий|ой|ая|яя|ое|ее|ые|ие|ыми|ими|ого|ему|овать|аться|ится|ились|ают|ала|али|ает|ать|ить|еть)$/.test(x))
+    .filter(x=>x.length>=4&&!unsafeAliases.has(x)&&!/(ый|ий|ой|ая|яя|ое|ее|ые|ие|ыми|ими|ого|ему|овать|аться|ится|ились|ают|ала|али|ает|ать|ить|еть)$/.test(x))
     .forEach(alias=>{put(exact,alias,e,5);put(stems,inflect(alias),e,3)});
   }
  });
  function lookup(str){
-  const v=clean(str),mapped=[...(exact.get(v)||[]),...(stems.get(v.split(" ").map(inflect).join(" "))||[])];
-  return mapped.sort((a,b)=>b.rank+4*Number(b.e.methods.includes(B.getMethod()))-a.rank-4*Number(a.e.methods.includes(B.getMethod())))[0]?.e||null;
+  const v=clean(str);
+  const direct=exact.get(v)||[];
+  if(direct.length)return direct.slice().sort((a,b)=>b.rank+4*Number(b.e.methods.includes(B.getMethod()))-a.rank-4*Number(a.e.methods.includes(B.getMethod())))[0].e;
+  // Exact names take priority; short ambiguous stems never match a different noun.
+  if(nounExceptions.has(v))return null;
+  const mapped=(stems.get(v.split(" ").map(inflect).join(" "))||[])
+    .filter(x=>clean(x.e.name).length>3&&(x.rank>=9||x.rank===3&&v.length>=5));
+  return mapped.slice().sort((a,b)=>b.rank+4*Number(b.e.methods.includes(B.getMethod()))-a.rank-4*Number(a.e.methods.includes(B.getMethod())))[0]?.e||null;
  }
  const positions={слева:"left",справа:"right",посередине:"center",вверху:"top",сверху:"top",снизу:"bottom",внизу:"bottom",влево:"left",вправо:"right"};
  const sizes=[[/^(больш|крупн|огромн|гигантск)/,"large"],[/^(маленьк|небольш|крошечн|мелк)/,"small"],[/^средн/,"medium"]];
  const shades={красн:"red",оранжев:"orange",желт:"yellow",зелен:"green",голуб:"cyan",син:"blue",фиолет:"purple",розов:"pink",коричнев:"brown",черн:"black",сер:"gray",бел:"white"};
  const parts=[[/^корн/,"roots","count"],[/^лист/,"leaves","feature"],[/^лап/,"paws","count"],[/^зуб/,"teeth","feature"],[/^клык/,"fangs","feature"],[/^рог/,"horns","feature"],[/^крыл/,"wings","feature"],[/^когт/,"claws","feature"],[/^крон/,"crown","feature"],[/^хвост/,"tail","note"],[/^окн/,"windows","count"],[/^двер/,"doors","count"],[/^ветв|^ветк/,"branches","feature"]];
  const shadesOfTone=[[/^бледн/,"Какая бледность изображена?",[["Слабо закрашено","Отмечено слабое закрашивание."],["Светлый оттенок","Выбран очень светлый оттенок."],["Не помню","Особенность не уточнена."]]],[/^ярк/,"Как проявляется яркость?",[["Насыщенный цвет","Цвет объекта насыщенный."],["Контраст","Объект выделен контрастом."],["Не помню","Особенность не уточнена."]]],[/^темн/,"Что кажется темным?",[["Темная окраска","Объект выполнен темными оттенками."],["Штриховка","Показана плотная штриховка."],["Тень","В изображении есть тень."]]]];
- const wordsRx=/[А-Яа-яЁёA-Za-z]+(?:-[А-Яа-яЁёA-Za-z]+)*/g;
+ const wordsRx=/[А-Яа-яЁёA-Za-z]+(?:-[А-Яа-яЁёA-Za-z]+)*|\d{1,2}/g;
+ const numbers=new Map(Object.entries({
+  один:1,одна:1,одно:1,одного:1,одну:1,два:2,две:2,три:3,
+  четыре:4,пять:5,шесть:6,семь:7,восемь:8,девять:9,десять:10,
+  одиннадцать:11,двенадцать:12,тринадцать:13,четырнадцать:14,
+  пятнадцать:15,шестнадцать:16,семнадцать:17,восемнадцать:18,
+  девятнадцать:19,двадцать:20
+ }));
+ function numberFor(word){return /^\d{1,2}$/.test(word)?Number(word):numbers.get(word)||null}
+
  let raw="",marks=[],objects=[],timer=0,composition=false,lastMethod=B.getMethod(),openKey=null,phase="root";
  const chosen=new Map(),answered=new Set();
  function tokens(str){return [...str.matchAll(wordsRx)].slice(0,280).map((m,i)=>({raw:m[0],str:clean(m[0]),root:inflect(m[0]),start:m.index,end:m.index+m[0].length,i}))}
@@ -42,6 +61,15 @@
   function mark(i,n,kind,extra={}){
    const start=ws[i].start,end=ws[i+n-1].end;all.push({kind,start,end,raw:str.slice(start,end),...extra});
    for(let k=i;k<i+n;k++)used.add(k);
+  }
+  // Quantified parts: "четыре листика", "4 лапы".
+  for(let i=0;i+1<ws.length;i++){
+   if(occupied(i,2))continue;
+   const count=numberFor(ws[i].str);
+   if(count===null)continue;
+   const part=parts.find(x=>x[0].test(ws[i+1].root));
+   if(!part||str.slice(ws[i].end,ws[i+1].start).trim())continue;
+   mark(i,2,"quantity",{part:part[1],count,mode:part[2]});
   }
   // Negated structural details take priority over bare noun recognition.
   for(let i=0;i+1<ws.length;i++){
@@ -117,10 +145,13 @@
    const n=all.filter(y=>y.kind===x.kind&&y.raw===x.raw&&y.start<x.start).length;
    x.key="modifier:"+x.kind+":"+clean(x.raw)+":"+n;
   });
-  // Only nouns with clear nominal endings can be called "not in the dictionary".
+  // Red means absent in this catalogue, not a spelling error.
   ws.forEach(w=>{
-   if(used.has(w.i)||w.str.length<6||stop.has(w.str)||/(овал|овала|овали|ился|илась|ились|ается|ется|утся|ются|ать|ить|яла|ыло|али|ало|али)$/.test(w.str))return;
-   if(/(ость|ение|ство|очка|енка|ина|ота|ник|ница|ище)$/.test(w.str))all.push({kind:"unknown",start:w.start,end:w.end,raw:w.raw,key:"unknown:"+w.i});
+   if(used.has(w.i)||w.str.length<4||stop.has(w.str)||numberFor(w.str)!==null)return;
+   if(/(овала|овали|овал|илась|ились|ился|ается|яется|ется|ится|утся|ются|ает|яют|ают|ать|ить|еть|яла|ыло|али|ало|ила|или|ал|ала|ело|ели|ют|ет|ит|ат|ят)$/.test(w.str))return;
+   if(/(ого|ему|ому|ыми|ими|овых|евых|ых|их|ый|ий|ой|ая|яя|ое|ее|ые|ие|ую|юю|ым|им|ом|ем|енький|енькая)$/.test(w.str))return;
+   if(["где-то","какого-то","каждого","каждый","вроде"].includes(w.str))return;
+   all.push({kind:"unknown",start:w.start,end:w.end,raw:w.raw,key:"unknown:"+w.i});
   });
   return {marks:all.sort((a,b)=>a.start-b.start),objects:base.slice(0,40)};
  }
