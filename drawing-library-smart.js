@@ -127,24 +127,6 @@
   });
   const ordinal=new Map();
   base.forEach(x=>{const n=ordinal.get(x.entry.id)||0;ordinal.set(x.entry.id,n+1);x.key="object:"+x.entry.id+":"+n;x.owner=x.key});
-  all.filter(x=>x.kind!=="object").forEach(x=>{
-   // Size and color adjectives usually describe the next noun, not the
-   // preceding object ("под деревом зеленая трава").
-   const ahead=base.filter(y=>y.start>=x.end&&y.start-x.end<=42&&
-    !/[.!?,;:\n]/.test(str.slice(x.end,y.start)));
-   const preferAhead=["size","color","tone"].includes(x.kind)||
-    x.kind==="position"&&(x.start===0||/[.!?]\s*$/.test(str.slice(Math.max(0,x.start-3),x.start)));
-   const distance=y=>Math.abs(y.start-x.start);
-   const sameClause=base.filter(y=>{
-    const between=y.start>=x.end?str.slice(x.end,y.start):str.slice(y.end,x.start);
-    return !/[.!?,;:\n]/.test(between);
-   });
-   const closest=(sameClause.length?sameClause:base).map(y=>({y,d:distance(y)})).sort((a,b)=>a.d-b.d)[0];
-   const target=x.target||(preferAhead&&ahead.length?ahead[0]:closest?.y);
-   x.owner=target?.key||null;
-   const n=all.filter(y=>y.kind===x.kind&&y.raw===x.raw&&y.start<x.start).length;
-   x.key="modifier:"+x.kind+":"+clean(x.raw)+":"+n;
-  });
   // Red means absent in this catalogue, not a spelling error.
   ws.forEach(w=>{
    if(used.has(w.i)||w.str.length<4||stop.has(w.str)||numberFor(w.str)!==null)return;
@@ -153,6 +135,28 @@
    if(["где-то","какого-то","каждого","каждый","вроде"].includes(w.str))return;
    all.push({kind:"unknown",start:w.start,end:w.end,raw:w.raw,key:"unknown:"+w.i});
   });
+  all.filter(x=>x.kind!=="object"&&x.kind!=="unknown").forEach(x=>{
+   // Size and color adjectives usually describe the next noun, not the
+   // preceding object ("под деревом зеленая трава").
+   const ahead=base.filter(y=>y.start>=x.end&&y.start-x.end<=42&&
+    !/[.!?,;:\n]/.test(str.slice(x.end,y.start)));
+   const preferAhead=["size","color","tone"].includes(x.kind)||
+    x.kind==="position"&&(x.start===0||/[.!?]\s*$/.test(str.slice(Math.max(0,x.start-3),x.start)));
+   const distance=y=>Math.abs(y.start-x.start);
+   const sameClause=base.filter(y=>{
+    const low=Math.min(x.end,y.end),high=Math.max(x.start,y.start);
+    const between=str.slice(low,high);
+    if(/[.!?;:\n]/.test(between)||x.kind==="position"&&/,/.test(between))return false;
+    return !all.some(m=>m.kind==="unknown"&&m.start>=low&&m.end<=high);
+   });
+   const closest=sameClause.map(y=>({y,d:distance(y)})).sort((a,b)=>a.d-b.d)[0];
+   const aheadInClause=ahead.find(y=>sameClause.includes(y));
+   const target=x.target||(preferAhead&&aheadInClause?aheadInClause:closest?.y);
+   x.owner=target?.key||null;
+   const n=all.filter(y=>y.kind===x.kind&&y.raw===x.raw&&y.start<x.start).length;
+   x.key="modifier:"+x.kind+":"+clean(x.raw)+":"+n;
+  });
+
   return {marks:all.sort((a,b)=>a.start-b.start),objects:base.slice(0,40)};
  }
  function getText(){
@@ -182,7 +186,8 @@
    const span=document.createElement("span");
    // Unambiguous, directly stated attributes are already recognized;
    // only elements and genuinely uncertain descriptions prompt for clarification.
-   const clear=["position","size","color","feature","tailLength","reference"].includes(m.kind);
+   const clear=["position","size","color","feature","tailLength","reference"].includes(m.kind)||
+     m.kind==="quantity"&&/\b(у каждого|у каждой|на каждом|на каждой)\b/i.test(raw.slice(m.end,m.end+42));
    const done=clear||answered.has(m.key)||(m.kind==="object"&&chosen.get(m.key)?.confirmed);
    span.className="smart-mark smart-"+(m.kind==="unknown"?"red":done?"green":"amber");
    span.dataset.smartKey=m.key;
@@ -207,6 +212,13 @@
    const ans=answerFor(o),item={key:o.key,elementId:o.entry.id,position:ans.position||"unknown",size:ans.size,colors:ans.colors.slice(),features:ans.features.slice(),counts:{...ans.counts},note:ans.notes.join("; ")};
    marks.filter(m=>m.owner===o.key&&m.kind!=="object").forEach(m=>{
     if(m.kind==="position"&&item.position==="unknown")item.position=m.guess;
+    if(m.kind==="quantity"){
+     if(B.counts(o.entry.id).some(c=>c.id===m.part))item.counts[m.part]=m.count;
+     else item.note+=(item.note?"; ":"")+m.raw;
+     const perItem=/\b(у каждого|у каждой|на каждом|на каждой)\b/i.test(raw.slice(m.end,m.end+42));
+     if(perItem)item.note+=(item.note?"; ":"")+"На каждом объекте отмечено "+m.count+" "+m.raw.replace(/^\S+\s+/,"");
+     else if(!answered.has(m.key))item.note+=(item.note?"; ":"")+"Не уточнено, "+m.count+" деталей указаны для каждого объекта или всего";
+    }
     if(m.kind==="size"&&!item.size){
      const appliesToPart=marks.find(z=>z.kind==="feature"&&z.owner===o.key&&z.start>=m.end&&z.start-m.end<5);
      if(appliesToPart)item.note+=(item.note?"; ":"")+m.raw+" "+appliesToPart.raw;
@@ -260,8 +272,15 @@
    p.textContent=raw.trim()?"Пока нет распознанных элементов. Укажите объекты рисунка (дерево, дом, человек, животное и др.).":"Напишите описание рисунка целым предложением – связный текст появится здесь.";
    output.push(p);
   }
+  const unrecognized=[...new Set(marks.filter(m=>m.kind==="unknown").map(m=>m.raw.toLowerCase()))];
+  if(unrecognized.length){
+   const p=document.createElement("p");p.className="smart-unknown-summary";
+   p.textContent="Нет в библиотеке: "+unrecognized.slice(0,12).join(", ")+". Эти слова не подменяются другими элементами.";
+   output.push(p);
+  }
   out.replaceChildren(...output);
   const pending=marks.filter(m=>!["unknown","reference","position","size","color","feature","tailLength"].includes(m.kind)&&
+   !(m.kind==="quantity"&&/\b(у каждого|у каждой|на каждом|на каждой)\b/i.test(raw.slice(m.end,m.end+42)))&&
    !answered.has(m.key)&&!(m.kind==="object"&&chosen.get(m.key)?.confirmed)).length;
   status.textContent=objects.length?"Образов из библиотеки: "+objects.length+". Уточнений: "+pending+". Интерпретация обновлена.":"Текст обрабатывается локально. Ни один рисунок не передается на сервер.";
  }
@@ -288,6 +307,11 @@
   if(["build","condition","environment","graphics"].includes(stage))
    return {title:({build:"Какие части видны?",condition:"Как выглядит или действует?",environment:"Что изображено рядом?",graphics:"Как выполнены линии?"})[stage],
     items:B.features(o?.entry.id,stage).slice(0,45).map(x=>({id:x.id,label:x.label,hint:x.meaning,selected:a?.features.includes(x.id)}))};
+  if(stage==="quantity")return {title:"Как учитывать «"+m.raw+"»?",items:[
+   {id:"each",label:"На каждом объекте",hint:"Указанное число относится к каждому"},
+   {id:"total",label:"Всего на рисунке",hint:"Общее количество деталей"},
+   {id:"unsure",label:"Не могу уточнить",hint:"Количество указано, охват не определен"}
+  ]};
   if(stage==="absence")return {title:"Что означает «"+m.raw+"»?",items:[{id:"absent",label:"Не изображены",hint:"Количество – 0"},{id:"hidden",label:"Скрыты другой деталью",hint:"Нельзя однозначно определить"},{id:"unknown",label:"Не помню",hint:"Оставить вопрос открытым"}]};
   if(stage==="feature")return {title:"Уточните деталь «"+m.raw+"»",items:[{id:"visible",label:"Деталь изображена"},{id:"unknown",label:"Не помню"}]};
   if(stage==="tone")return {title:m.question,items:m.answers.map((x,i)=>({id:String(i),label:x[0],hint:x[1]}))};
@@ -335,6 +359,12 @@
   if(step==="position")a.position=id;
   else if(step==="size")a.size=id;
   else if(step==="color"||step==="multicolor")a.colors=a.colors.includes(id)?a.colors.filter(x=>x!==id):[...a.colors,id];
+  else if(step==="quantity"){
+   a.counts[m.part]=m.count;
+   if(id==="each")a.notes.push("На каждом "+o.entry.name.toLowerCase()+" отмечено "+m.count+" "+m.raw.replace(/^\S+\s+/,""));
+   else if(id==="total")a.notes.push("Всего изображено "+m.count+" "+m.raw.replace(/^\S+\s+/,""));
+   else a.notes.push("Количество "+m.count+" указано, но охват не уточнен");
+  }
   else if(step==="tailLength"){
    a.features=a.features.filter(x=>!["short-tail","long-tail"].includes(x));
    if(id!=="unknown")a.features.push(id);
