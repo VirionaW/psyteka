@@ -3367,7 +3367,7 @@ function buildSynthesis(){
   countFields(entry).forEach(function(t){counts[t[0]]=t[1]});
   return Object.assign({},x,{featureLabels:f,countLabels:counts});
  });
- return window.MetolariaDrawingSynthesis.build({method:d.method,age:d.age,context:d.context,items:items});
+ return window.MetolariaDrawingSynthesis.build({method:d.method,age:d.age,context:d.context,description:d.smartDescription,items:items});
 }
 function renderSynthesis(){
  var element=$("#synthesisPreview");if(!element)return;
