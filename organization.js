@@ -2,6 +2,7 @@
 (function(){
  const $=id=>document.getElementById(id),identity=window.PSY_IDENTITY,cloud=window.PSY_CLOUD;
  let client=null,user=null,org=null,memberRole="member";
+ let folders=[],selectedFolder="all",sharedItems=[],teamDocuments=[];
  const status=(s,error=false)=>{$("orgStatus").textContent=s;$("orgStatus").dataset.error=String(error)};
  function item(title,desc,buttons=[]){
   const el=document.createElement("div");el.className="org-item";const main=document.createElement("div"),strong=document.createElement("strong"),small=document.createElement("small");
@@ -27,6 +28,7 @@
   $("orgCombine").href="/report-builder?organization="+encodeURIComponent(org.id);
   $("orgNewDoc").href=$("orgCombine").href;
   status("Кабинет организации открыт. Личные обследования не передаются автоматически.");
+  await loadFolders();
   await Promise.all([loadMembers(),loadOwn(),loadShares(),loadDocs()]);
  }
  async function loadMembers(){
@@ -48,15 +50,127 @@
   const select=$("orgOwnAssessments");select.replaceChildren(new Option("Выберите сохранение",""));
   try{const data=await cloud.listAssessments();data.forEach(x=>select.add(new Option(x.title+" · "+x.method_name,x.id)))}catch(e){status("Не удалось загрузить личные сохранения: "+e.message,true)}
  }
+
+ function selected(item){
+  return selectedFolder==="all"||selectedFolder==="none"&&!item.folder_id||selectedFolder===item.folder_id;
+ }
+ function showFolders(){
+  const host=$("orgFolders");host.replaceChildren();
+  const makeButton=(label,value,color)=>{
+   const el=document.createElement("div");el.className="org-folder";el.dataset.selected=String(selectedFolder===value);
+   const dot=document.createElement("span");dot.className="org-folder-dot";dot.style.setProperty("--folder-color",color||"#d9e4d9");
+   const button=btn(label,()=>{selectedFolder=value;showFolders();renderShares();renderDocuments()});
+   button.className="org-folder-main";button.setAttribute("aria-pressed",String(selectedFolder===value));
+   el.append(dot,button);host.append(el);
+   return el;
+  };
+  makeButton("Все материалы","all","#a5c1b0");
+  makeButton("Без папки","none","#e7dcc2");
+  folders.forEach(f=>{
+   const count=sharedItems.filter(x=>x.folder_id===f.id).length+teamDocuments.filter(x=>x.folder_id===f.id).length;
+   const el=makeButton(f.name+" · "+count,f.id,f.color);
+   const edit=btn("Изменить",()=>openFolderDialog(f));edit.className="org-folder-small";edit.title="Переименовать и изменить папку";
+   const del=btn("×",()=>deleteFolder(f));del.className="org-folder-small";del.title="Удалить только папку, сохранив документы";
+   el.append(edit,del);
+  });
+ }
+ async function loadFolders(){
+  const {data,error}=await client.from("psy_organization_folders")
+   .select("id,name,color,description,created_at").eq("organization_id",org.id).order("created_at");
+  if(error)throw error;folders=data||[];
+  if(selectedFolder!=="all"&&selectedFolder!=="none"&&!folders.some(f=>f.id===selectedFolder))selectedFolder="all";
+  showFolders();
+ }
+ function openFolderDialog(folder=null){
+  $("orgFolderDialog").dataset.editId=folder?.id||"";
+  $("orgFolderDialogTitle").textContent=folder?"Изменить папку":"Новая папка";
+  $("orgFolderName").value=folder?.name||"";
+  $("orgFolderDescription").value=folder?.description||"";
+  $("orgFolderColor").value=folder?.color||"#78a88b";
+  $("orgFolderDialog").showModal();
+ }
+ async function saveFolder(e){
+  e.preventDefault();
+  if(!org)return;
+  const name=$("orgFolderName").value.trim(),description=$("orgFolderDescription").value.trim();
+  const color=$("orgFolderColor").value;
+  if(!name){status("Укажите название папки.",true);return}
+  const id=$("orgFolderDialog").dataset.editId;
+  $("orgFolderSave").disabled=true;
+  try{
+   if(id){
+    const {data,error}=await client.from("psy_organization_folders")
+     .update({name,description,color}).eq("organization_id",org.id).eq("id",id).select("id").single();
+    if(error||!data)throw error||Error("Папка не найдена");
+   }else{
+    const {data,error}=await client.from("psy_organization_folders")
+     .insert({organization_id:org.id,created_by:user.id,name,description,color}).select("id").single();
+    if(error||!data)throw error||Error("Папка не создана");
+    selectedFolder=data.id;
+   }
+   $("orgFolderDialog").close();await loadFolders();
+   renderShares();renderDocuments();status(id?"Папка обновлена.":"Папка создана.");
+  }catch(e){status("Не удалось сохранить папку: "+e.message,true)}
+  finally{$("orgFolderSave").disabled=false}
+ }
+ async function deleteFolder(folder){
+  if(!confirm("Удалить папку «"+folder.name+"»? Документы и общие результаты останутся в разделе «Без папки»."))return;
+  try{
+   const {error}=await client.from("psy_organization_folders").delete().eq("id",folder.id).eq("organization_id",org.id);
+   if(error)throw error;
+   selectedFolder="all";
+   await loadFolders();await Promise.all([loadShares(),loadDocs()]);
+   status("Папка удалена. Все документы и результаты сохранены.");
+  }catch(e){status("Не удалось удалить папку: "+e.message,true)}
+ }
+ function folderSelect(record,kind){
+  const wrapper=document.createElement("label");wrapper.className="org-folder-label";wrapper.textContent="Папка: ";
+  const select=document.createElement("select");select.className="org-folder-picker";select.setAttribute("aria-label","Папка для "+record.title);
+  select.add(new Option("Без папки",""));
+  folders.forEach(f=>select.add(new Option(f.name,f.id)));
+  select.value=record.folder_id||"";
+  select.onchange=async()=>{
+   select.disabled=true;
+   try{
+    const table=kind==="share"?"psy_organization_shares":"psy_organization_documents";
+    const payload={folder_id:select.value||null};
+    if(kind==="document")payload.revision=record.revision+1;
+    let q=client.from(table).update(payload).eq("id",record.id).eq("organization_id",org.id);
+    if(kind==="document")q=q.eq("revision",record.revision);
+    const {data,error}=await q.select("id");
+    if(error)throw error;
+    if(!data?.length)throw Error("Документ уже изменен коллегой. Обновите список.");
+    await Promise.all([loadShares(),loadDocs()]);
+    status("Материал перемещен в папку.");
+   }catch(e){status("Не удалось переместить материал: "+e.message,true);select.value=record.folder_id||""}
+   finally{select.disabled=false}
+  };
+  wrapper.append(select);return wrapper;
+ }
+
  async function loadShares(){
-  const list=$("orgShares"),{data,error}=await client.from("psy_organization_shares").select("id,title,method_name,shared_by,shared_at").eq("organization_id",org.id).order("shared_at",{ascending:false}).limit(100);
-  if(error)throw error;list.replaceChildren();
-  if(!data.length){list.textContent="Общих результатов пока нет. Добавьте конкретное обследование из личных сохранений.";return}
-  data.forEach(x=>{
-   const actions=[btn("Просмотреть",()=>previewShare(x))];
+  const {data,error}=await client.from("psy_organization_shares")
+   .select("id,title,method_name,shared_by,shared_at,folder_id")
+   .eq("organization_id",org.id).order("shared_at",{ascending:false}).limit(150);
+  if(error)throw error;
+  sharedItems=data||[];renderShares();showFolders();
+ }
+ function renderShares(){
+  const list=$("orgShares");list.replaceChildren();
+  const visible=sharedItems.filter(selected);
+  if(!visible.length){
+   list.textContent=sharedItems.length?"В выбранной папке нет общих результатов.":"Общих результатов пока нет. Добавьте конкретное обследование из личных сохранений.";
+   return;
+  }
+  visible.forEach(x=>{
+   const actions=[folderSelect(x,"share"),btn("Просмотреть",()=>previewShare(x))];
    if(x.shared_by===user.id||memberRole==="owner")actions.push(btn("Убрать из общего доступа",async()=>{
     if(!confirm("Убрать этот результат из общего доступа? Личное сохранение останется."))return;
-    try{const {error}=await client.from("psy_organization_shares").delete().eq("id",x.id);if(error)throw error;await loadShares();status("Общий доступ отозван.")}catch(e){status(e.message,true)}
+    try{
+     const {error}=await client.from("psy_organization_shares").delete().eq("organization_id",org.id).eq("id",x.id);
+     if(error)throw error;
+     await loadShares();status("Общий доступ отозван.");
+    }catch(e){status(e.message,true)}
    }));
    list.append(item(x.title,x.method_name+" · добавлено "+new Date(x.shared_at).toLocaleDateString("ru-RU"),actions));
   });
@@ -78,13 +192,29 @@
   }catch(e){status("Не удалось открыть общий результат: "+e.message,true)}
  }
  async function loadDocs(){
-  const list=$("orgDocuments"),{data,error}=await client.from("psy_organization_documents").select("id,title,updated_at,revision").eq("organization_id",org.id).order("updated_at",{ascending:false}).limit(100);
-  if(error)throw error;list.replaceChildren();
-  if(!data.length){list.textContent="Пока нет совместных документов. Создайте первый отчет.";return}
-  data.forEach(x=>list.append(item(x.title,"Редакция "+x.revision+" · "+new Date(x.updated_at).toLocaleString("ru-RU"),
-   [(()=>{const a=document.createElement("a");a.className="org-btn";a.textContent="Редактировать";a.href="/report-builder?organization="+org.id+"&teamdoc="+x.id;return a})()])));
+  const {data,error}=await client.from("psy_organization_documents")
+   .select("id,title,updated_at,revision,folder_id")
+   .eq("organization_id",org.id).order("updated_at",{ascending:false}).limit(150);
+  if(error)throw error;teamDocuments=data||[];renderDocuments();showFolders();
+ }
+ function renderDocuments(){
+  const list=$("orgDocuments");list.replaceChildren();
+  const visible=teamDocuments.filter(selected);
+  if(!visible.length){
+   list.textContent=teamDocuments.length?"В выбранной папке нет совместных отчетов.":"Пока нет совместных документов. Создайте первый отчет.";
+   return;
+  }
+  visible.forEach(x=>{
+   const a=document.createElement("a");a.className="org-btn";a.textContent="Редактировать";
+   a.href="/report-builder?organization="+encodeURIComponent(org.id)+"&teamdoc="+encodeURIComponent(x.id);
+   list.append(item(x.title,"Редакция "+x.revision+" · "+new Date(x.updated_at).toLocaleString("ru-RU"),
+    [folderSelect(x,"document"),a]));
+  });
  }
  async function init(){
+  $("orgAddFolder").onclick=()=>openFolderDialog();
+  $("orgFolderCancel").onclick=()=>$("orgFolderDialog").close();
+  $("orgFolderForm").onsubmit=saveFolder;
   $("orgCreateForm").onsubmit=async e=>{e.preventDefault();try{const name=$("orgCreateName").value.trim();await rpc("psy_create_organization",{_name:name});await findOrg()}catch(err){status("Не удалось создать кабинет: "+err.message,true)}};
   $("orgJoinForm").onsubmit=async e=>{e.preventDefault();try{
    const code=$("orgInviteCode").value.trim();if(!/^[a-f0-9-]{36}$/i.test(code))throw Error("Проверьте код приглашения");
