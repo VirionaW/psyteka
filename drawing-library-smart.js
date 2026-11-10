@@ -6,6 +6,22 @@
  section.innerHTML="\n<div class=\"smart-head\">\n <div><span class=\"smart-kicker\">Интерактивная библиотека рисунков</span><h2 id=\"smartTitle\">Опишите рисунок обычными словами</h2>\n <p>Пишите целыми предложениями. Над желтым словом появляется пульсирующий значок – нажмите и выберите уточнение. Интерпретация появится под описанием.</p></div>\n <div class=\"smart-legend\"><span><i class=\"smart-dot smart-dot-green\"></i>Уточнено</span><span><i class=\"smart-dot smart-dot-amber\"></i>Нужно уточнить</span><span><i class=\"smart-dot smart-dot-red\"></i>Нет в словаре</span></div>\n</div>\n<div class=\"smart-cols\">\n <div class=\"smart-workarea\"><div class=\"smart-fieldtitle\" id=\"smartEditorLabel\">Описание рисунка</div>\n  <div id=\"smartEditor\" class=\"smart-editor\" contenteditable=\"true\" role=\"textbox\" aria-labelledby=\"smartEditorLabel\" aria-multiline=\"true\" spellcheck=\"false\" data-placeholder=\"Например: Ребенок нарисовал большое дерево слева, без корней. Рядом солнце, а под деревом трава.\"></div>\n  <div class=\"smart-actions\"><button type=\"button\" class=\"smart-try\" id=\"smartExample\">Попробовать пример</button><button type=\"button\" id=\"smartClear\">Очистить</button><a href=\"#recordList\">Перейти к протоколу ↓</a></div>\n  <p id=\"smartStatus\" class=\"smart-status\" role=\"status\" aria-live=\"polite\">Распознавание выполняется на устройстве – текст не отправляется на сервер.</p>\n </div>\n <div class=\"smart-analysis\"><h3>Интерпретация рисунка</h3><div id=\"smartPreview\" class=\"smart-preview-content\" aria-live=\"polite\"><p class=\"smart-missing\">Опишите рисунок, чтобы получить связный текст анализа.</p></div><p class=\"smart-hint\">Справочные значения требуют проверки в беседе и не являются самостоятельным диагностическим критерием.</p></div>\n</div>";(document.querySelector(".drawing-search-stage")||root).insertAdjacentElement("afterend",section);
  const editor=document.getElementById("smartEditor"),out=document.getElementById("smartPreview"),status=document.getElementById("smartStatus");
  const pop=document.createElement("div");pop.className="smart-popover";pop.hidden=true;pop.setAttribute("role","dialog");pop.setAttribute("aria-label","Уточнения признака");document.body.append(pop);
+ const help=document.createElement("section");help.className="smart-guidance";help.setAttribute("aria-label","Вопросы и дополнения");
+ help.innerHTML='<div class="smart-guide-heading"><div><h3>Вопросы к рисунку</h3><p>Можно выбрать ответы здесь или нажать на выделенное слово в тексте.</p></div></div>'+
+  '<div id="smartQuestionList" class="smart-questions" aria-live="polite"></div>'+
+  '<label class="smart-comment-label" for="smartComment">Дополнительные наблюдения специалиста</label>'+
+  '<textarea id="smartComment" class="smart-comment" rows="3" maxlength="6000" placeholder="Допишите важные детали своими словами. Текст сразу появится в интерпретации и сохранится в протоколе."></textarea>';
+ editor.closest(".smart-workarea").append(help);
+ const questionList=document.getElementById("smartQuestionList"),comment=document.getElementById("smartComment");
+ const conclusion=document.getElementById("conclusion");
+ if(conclusion)comment.value=conclusion.value||"";
+ comment.addEventListener("input",()=>{
+  if(conclusion){conclusion.value=comment.value;conclusion.dispatchEvent(new Event("input",{bubbles:true}))}
+  renderInterpretation();
+ });
+ if(conclusion)conclusion.addEventListener("input",()=>{
+  if(comment.value!==conclusion.value){comment.value=conclusion.value;renderInterpretation()}
+ });
  const clean=s=>String(s||"").toLocaleLowerCase("ru-RU").replace(/ё/g,"е").replace(/\s+/g," ").trim();
  const inflect=s=>{let x=clean(s);if(x.length<4)return x;const y=x.replace(/(иями|ьями|ьях|ья|ями|ами|его|ого|ему|ому|ыми|ими|ых|их|ую|юю|ая|яя|ое|ее|ые|ие|ый|ий|ой|ов|ев|ей|ам|ям|ах|ях|ом|ем|ою|ею|а|я|ы|и|о|е|у|ю|ь)$/,"");return y.length>=3?y:x};
  const stop=new Set("ребенок ребёнок нарисовал нарисовала нарисовали рисунок рисунке бумаге листе лист листа это этот эта такое такие был была были здесь там тут уже просто рядом а и но он она они его ее их у в во на под над без с со возле около есть нет не по от про для же или что где как когда потом при этом очень немного много сильно как-то очень видно виден видна изображен изображено изображены цвета цвет цветом красками краской нарисована нарисован нарисовали посмотрите который которая которых который похожа похоже похож сам сама сами все всё".split(" ").map(clean));
@@ -278,11 +294,71 @@
    p.textContent="Нет в библиотеке: "+unrecognized.slice(0,12).join(", ")+". Эти слова не подменяются другими элементами.";
    output.push(p);
   }
+  if(comment.value.trim()){
+   const note=document.createElement("div");note.className="smart-custom-analysis";
+   const title=document.createElement("h4");title.textContent="Дополнительные наблюдения специалиста";
+   const body=document.createElement("p");body.textContent=comment.value.trim();
+   note.append(title,body);output.push(note);
+  }
   out.replaceChildren(...output);
   const pending=marks.filter(m=>!["unknown","reference","position","size","color","feature","tailLength"].includes(m.kind)&&
    !(m.kind==="quantity"&&/\b(у каждого|у каждой|на каждом|на каждой)\b/i.test(raw.slice(m.end,m.end+42)))&&
    !answered.has(m.key)&&!(m.kind==="object"&&chosen.get(m.key)?.confirmed)).length;
   status.textContent=objects.length?"Образов из библиотеки: "+objects.length+". Уточнений: "+pending+". Интерпретация обновлена.":"Текст обрабатывается локально. Ни один рисунок не передается на сервер.";
+  renderQuestions();
+ }
+ function renderQuestions(){
+  questionList.replaceChildren();
+  const requests=[];
+  const offer=(m,stage,question)=>{
+   if(!m||requests.some(x=>x.m.key===m.key&&x.stage===stage)||requests.length>=7)return;
+   requests.push({m,stage,question});
+  };
+  marks.forEach(m=>{
+   if(m.kind==="quantity"&&!/\b(у каждого|у каждой|на каждом|на каждой)\b/i.test(raw.slice(m.end,m.end+42))&&!answered.has(m.key))
+    offer(m,"quantity","«"+m.raw+"» – для каждого или всего?");
+   if(m.kind==="absence"&&!answered.has(m.key))
+    offer(m,"absence","«"+m.raw+"» – не нарисованы или скрыты?");
+   if(m.kind==="tone"&&!answered.has(m.key))offer(m,"tone",m.question||"Уточнить: "+m.raw);
+   if(m.kind==="multicolor"&&!answered.has(m.key))offer(m,"multicolor","Какие цвета у «"+(ownerOf(m)?.entry.name||m.raw)+"»?");
+  });
+  objects.forEach(o=>{
+   const a=answerFor(o);
+   if(a?.confirmed)return;
+   if(!marks.some(m=>m.owner===o.key&&m.kind==="position")&&!a?.position)
+    offer(o,"position","Где находится «"+o.entry.name+"»?");
+   if(!marks.some(m=>m.owner===o.key&&m.kind==="color")&&!a?.colors.length)
+    offer(o,"color","Каким цветом нарисован «"+o.entry.name+"»?");
+   if(!marks.some(m=>m.owner===o.key&&m.kind==="size")&&!a?.size)
+    offer(o,"size","Какого размера «"+o.entry.name+"»?");
+  });
+  if(!requests.length){
+   const p=document.createElement("p");p.className="smart-guide-empty";
+   p.textContent=raw.trim()?"Можно продолжать описание или дописать собственные наблюдения ниже.":"Вопросы появятся, когда вы начнете описывать рисунок.";
+   questionList.append(p);
+   return;
+  }
+  requests.forEach(({m,stage,question})=>{
+   const item=document.createElement("div");item.className="smart-question";
+   const b=document.createElement("button");b.type="button";b.className="smart-question-trigger";
+   b.setAttribute("aria-expanded","false");b.textContent=question+"  ⌄";
+   const options=document.createElement("div");options.className="smart-question-options";options.hidden=true;
+   b.onclick=()=>{
+    options.hidden=!options.hidden;b.setAttribute("aria-expanded",String(!options.hidden));
+    if(options.hidden)return;
+    const data=popupOptions(m,stage);
+    options.replaceChildren();
+    data.items.forEach(x=>{
+     const choice=document.createElement("button");choice.className="smart-question-answer";choice.type="button";
+     choice.textContent=x.label;choice.title=x.hint||x.label;
+     choice.dataset.picked=String(!!x.selected);
+     choice.onclick=()=>pick(m,stage,x.id);
+     options.append(choice);
+    });
+    if(!data.items.length)options.textContent="В этой методике нет готовых вариантов. Можно описать деталь ниже своими словами.";
+   };
+   item.append(b,options);questionList.append(item);
+  });
  }
  function close(){pop.hidden=true;openKey=null;phase="root"}
  function analyze(){if(composition)return;close();raw=getText();const x=detect(raw);marks=x.marks;objects=x.objects;
@@ -410,7 +486,11 @@
  document.addEventListener("pointerdown",e=>{if(!pop.hidden&&!pop.contains(e.target)&&!e.target.closest?.("[data-smart-key]"))close()});
  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!pop.hidden){e.preventDefault();close()}});
  window.addEventListener("resize",()=>{if(openKey){const m=marks.find(x=>x.key===openKey);if(m)show(m,phase)}});
- function setText(text){editor.textContent=String(text||"").slice(0,5000);chosen.clear();answered.clear();analyze()}
+ function setText(text){
+  editor.textContent=String(text||"").slice(0,5000);
+  if(conclusion)comment.value=conclusion.value||"";
+  chosen.clear();answered.clear();analyze();
+ }
  document.getElementById("smartExample").onclick=()=>{
   if(raw.trim()&&!confirm("Заменить описание примером? Вручную добавленные записи останутся."))return;
   setText("Ребенок нарисовал большое дерево слева, без корней. Справа желтое солнце. Под деревом зеленая трава.");
