@@ -1,6 +1,6 @@
 /* Метолария: автономная библиотека рисунков и официальные логотипы. */
 "use strict";
-const CACHE = "psyteka-drawing-library-v20";
+const CACHE = "psyteka-drawing-library-v21";
 const fileUrl = name => new URL("./" + name, self.location.href).href;
 const PAGE = fileUrl("drawing-library.html");
 const ASSETS = [fileUrl("brand-mark.svg"), fileUrl("brand-mark-dark.svg"), fileUrl("brand-favicon.svg"), fileUrl("drawing-library-interpretation.js"),fileUrl("drawing-library-smart.css"),fileUrl("drawing-library-smart.js")];

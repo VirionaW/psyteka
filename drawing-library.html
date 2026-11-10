@@ -289,20 +289,21 @@ html.dark .method-focus{background:#2b493b;color:#deefdf}
 .synthesis-section .actions{margin-top:12px}@media print{.synthesis-section{display:none!important}}
 </style>
 <script defer src="/site-clean-urls.js?v=20261109"></script>
-<link rel="stylesheet" href="/drawing-library-smart.css?v=20261110smart1">
+<link rel="stylesheet" href="/drawing-library-smart.css?v=20261110layout1">
 </head>
 <body>
 <header><div class="header-inner"><a class="brand" href="library.html"><span class="brand-art"><img class="logo-light" src="brand-mark.svg" alt=""><img class="logo-dark" src="brand-mark-dark.svg" alt=""></span><span><span class="brand-title-green">Мето</span><span class="brand-title-brown">лария</span> <span class="brand-crumb">/ Рисунки</span></span></a><nav class="header-nav"><a class="link-btn" href="library.html">Вернуться в библиотеку</a><button class="btn theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему" aria-pressed="false"><span id="themeIcon" aria-hidden="true">☾</span><span id="themeText">Темная тема</span></button></nav></div></header>
 <main>
-<section class="intro"><div><p class="eyebrow">Рисуночные методики · справочник элементов</p><h1>Библиотека рисунков</h1><p>Выберите изображенный элемент, уточните цвет, расположение и детали. Интерпретации появятся справа, а нужные записи можно включить в протокол.</p></div><div class="status" id="connection" role="status">Автономный справочник</div></section>
-<div class="layout">
-<div class="search-column">
-<section class="panel method-line"><div><label for="method">Методика рисунка</label><select id="method"></select><p class="method-hint" id="methodHint"></p><p class="method-focus" id="methodFocus"></p></div><span class="active-method" id="methodBadge">Выбрана методика</span></section>
-<section class="panel column search-panel" aria-label="Поиск по справочнику"><h2>Найти элемент рисунка</h2><label class="search-field" for="search">Поиск по названию и синонимам<input id="search" type="search" autocomplete="off" placeholder="Например: вода, тигр, дом, фиолетовый"></label><div class="pill-group" id="categories" role="group" aria-label="Категории элементов"></div><div class="search-info" id="count" aria-live="polite"></div><div id="results" class="results" aria-label="Результаты поиска"></div></section>
-
-</div>
-<div class="analysis-column"><section class="panel analysis-panel" aria-label="Результат анализа"><div class="analysis-heading"><h2>Результат анализа</h2><span class="analysis-live">Обновляется при выборе признаков</span></div><div id="details" class="details" aria-live="polite"><div class="empty">Найдите элемент слева и откройте его лист.</div></div><div id="actionStatus" class="action-status" role="status" aria-live="polite"></div></section></div>
-</div>
+<section class="intro"><div><p class="eyebrow">Рисуночные методики · справочник элементов</p><h1>Библиотека рисунков</h1><p>Найдите нужный элемент в библиотеке или опишите рисунок целым предложением. Интерпретация появится сразу под описанием.</p></div><div class="status" id="connection" role="status">Автономный справочник</div></section>
+<div class="drawing-search-stage"><section class="panel drawing-search-panel" aria-label="Поиск по библиотеке рисунков">
+  <div class="drawing-search-top"><div class="drawing-method-field"><label for="method">Методика рисунка</label><select id="method"></select><p class="method-hint" id="methodHint" hidden></p><p class="method-focus" id="methodFocus" hidden></p><span class="active-method" id="methodBadge" hidden></span></div>
+  <div class="drawing-query-field"><label class="search-field" for="search">Поиск по библиотеке<input id="search" type="search" autocomplete="off" placeholder="Введите название или признак рисунка"></label></div></div>
+  <div id="categories" class="pill-group" role="group" aria-label="Категории элементов" hidden></div>
+  <div class="search-info" id="count" aria-live="polite" hidden></div><div class="results" id="results" aria-label="Результаты поиска" hidden></div>
+</section></div>
+<details class="drawing-manual-details" id="drawingManualDetails"><summary>Подробный разбор выбранного элемента</summary>
+  <section class="panel analysis-panel" aria-label="Результат анализа"><div class="analysis-heading"><h2>Детали элемента</h2><span class="analysis-live">Обновляются при выборе признаков</span></div><div id="details" class="details" aria-live="polite"><div class="empty">Найдите элемент с помощью поиска и откройте его свойства.</div></div><div id="actionStatus" class="action-status" role="status" aria-live="polite"></div></section>
+</details>
 <div class="workspace-divider" role="separator" aria-label="Протокол наблюдения"><span>Протокол наблюдения</span></div>
 <section class="panel protocol-panel" aria-label="Протокол наблюдения">
 <div class="protocol-heading"><div><h2>Мой протокол</h2><p class="subtle">Выбранные элементы и характеристики рисунка</p></div><span class="protocol-counter" id="recordCount">0 записей</span></div>
@@ -3119,6 +3120,7 @@ function init(){
    state.selected=entry.id;state.draft=draftEmpty();state.tab="position";state.sheetOpen=true;state.editKey=null;
   }
   $("#actionStatus").textContent="";
+  if(state.sheetOpen)$("#drawingManualDetails").open=true;
   renderResults();renderDetails();
  });
  $("#results").addEventListener("input",function(e){
@@ -3162,6 +3164,7 @@ function init(){
    state.selected=existing.elementId;state.sheetOpen=true;state.editKey=existing.key;state.tab="build";
    state.draft={position:existing.position||"unknown",size:existing.size||"",color:existing.color||"",colors:normalizeColors(existing.colors,existing.color),features:Array.isArray(existing.features)?existing.features.slice():[],counts:Object.assign({},existing.counts||{}),note:existing.note||"",excluded:Array.isArray(existing.excluded)?existing.excluded.slice():[]};
    state.category="Все";$("#search").value=existing.name;
+   $("#drawingManualDetails").open=true;
    renderCategories();renderResults();renderDetails();
    $("#results").scrollIntoView({behavior:"smooth",block:"start"});return;
   }
@@ -3205,7 +3208,12 @@ function matched(){
  });
 }
 function renderResults(){
+ var hasQuery=Boolean(normalize($("#search").value));
+ $("#count").hidden=!hasQuery;
+ $("#results").hidden=!hasQuery&&!state.sheetOpen;
+ if(!hasQuery&&!state.sheetOpen){$("#count").textContent="";$("#results").replaceChildren();return}
  var found=matched();
+ if(!hasQuery&&state.sheetOpen)found=found.filter(function(x){return x.id===state.selected});
  if(state.sheetOpen&&!found.some(function(x){return x.id===state.selected})){
   state.sheetOpen=false;state.editKey=null;state.draft=draftEmpty();renderDetails();
  }
@@ -3462,5 +3470,5 @@ window.MetolariaDrawingSmartBridge={
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
 </script>
-<script src="/drawing-library-smart.js?v=20261110smart3"></script>
+<script src="/drawing-library-smart.js?v=20261110layout1"></script>
 </body></html>
