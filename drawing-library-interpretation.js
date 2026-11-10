@@ -117,6 +117,28 @@ function combine(input){
  });
  sections.push({title:"Наблюдаемые особенности",text:observations.join("\n")});
  const interpretation=[];
+ const narrative=clean(input.description||"").toLocaleLowerCase("ru").replace(/ё/g,"е");
+ const actor=rows.find(x=>/принцесс|принц|человек|девочк|мальчик|ребенок|герой|фе[яи]/i.test(x.name));
+ const flowers=rows.find(x=>/ландыш|цвет|букет|растени|роз[аы]|ромаш|василек/i.test(x.name));
+ const castle=rows.find(x=>/замок|дворец|крепост/i.test(x.name));
+ const plucking=/(сорва|срыва|рвал|рвала|нарва|собрал[аи]? цвет|собира[ею]т цвет)/.test(narrative);
+ if(actor&&flowers&&plucking){
+  interpretation.push("В описании есть последовательность действий: персонаж "+mentioned(actor)+" взаимодействует с растением "+mentioned(flowers)+" и срывает его. Для понимания эпизода важнее всего объяснение ребенка: зачем герой это сделал, кому предназначен цветок и что происходит после этого. Если цветок показан отдельно от персонажа, стоит уточнить, как связаны эти два изображения.");
+ }else if(actor&&flowers){
+  interpretation.push("В сюжете одновременно присутствуют персонаж "+mentioned(actor)+" и растительный образ "+mentioned(flowers)+". Значение этого сочетания зависит от того, взаимодействует ли герой с растением, обращает ли на него внимание или оно только обозначает место действия.");
+ }
+ if(castle&&actor){
+  interpretation.push("Изображения "+mentioned(castle)+" и "+mentioned(actor)+" связаны темой места действия и героя. Для анализа важны реальные расстояния на листе, путь персонажа, доступность здания и объяснение того, что находится внутри; по названию здания такие характеристики не определяются.");
+ }
+ const repeated=rows.filter(x=>x.counts.some(([key,value])=>key==="objects"&&Number(value)>=2));
+ if(repeated.length){
+  const sample=repeated.slice(0,3).map(x=>mentioned(x)+" – "+x.counts.find(([key])=>key==="objects")[1]).join("; ");
+  interpretation.push("Зафиксировано количество повторяющихся объектов: "+sample+". Уточните, расположены ли они отдельно, образуют группу, растут вместе или собраны в один предмет. Именно способ объединения позволяет описать композицию точнее, чем одно число.");
+ }
+ const positioned=rows.filter(x=>x.positionLabel);
+ if(positioned.length>=2){
+  interpretation.push("На листе уточнено положение нескольких элементов: "+positioned.slice(0,3).map(x=>mentioned(x)+" – "+x.positionLabel).join("; ")+". Это позволяет сопоставить взаимное расположение объектов; важно дополнительно отметить, пересекаются ли они и есть ли между ними контакт.");
+ }
  const sharp=rows.filter(x=>group(x,"sharp").length),damage=rows.filter(x=>group(x,"damage").length);
  const related=sharp.find(x=>damage.includes(x));
  if(related){
@@ -167,6 +189,9 @@ function combine(input){
  }
  sections.push({title:"Анализ сочетаний",text:interpretation.slice(0,4).join("\n\n")});
  const questions=[];
+ if(actor&&flowers&&plucking)questions.push("Зачем персонаж сорвал цветок и что он собирается делать с ним дальше?");
+ if(castle&&actor)questions.push("Кто находится в замке и как персонаж связан с этим местом?");
+ if(repeated.length)questions.push("Эти повторяющиеся объекты растут или стоят по отдельности, находятся рядом или собраны вместе?");
  if(related)questions.push("Что случилось с персонажем "+mentioned(related)+" и для чего ему детали "+(labels(related,group(related,"sharp")).length?"«"+short(labels(related,group(related,"sharp")),1)+"»":"внешности")+"?");
  else if(sharp.length)questions.push("Какую роль у персонажа "+mentioned(sharp[0])+" играют детали "+(labels(sharp[0],group(sharp[0],"sharp")).length?"«"+short(labels(sharp[0],group(sharp[0],"sharp")),2)+"»":"его внешности")+"?");
  else if(damage.length)questions.push("Что случилось с персонажем "+mentioned(damage[0])+" и что будет дальше?");
@@ -178,6 +203,8 @@ function combine(input){
  if(questions.length<3&&left.length&&right.length)questions.push("Как связаны объекты "+mentioned(left[0])+" и "+mentioned(right[0])+"?");
  sections.push({title:"Вопросы ребенку",text:unique(questions).slice(0,3).map((q,i)=>(i+1)+". "+q).join("\n")});
  const actions=[profile.action];
+ if(actor&&flowers&&plucking)actions.unshift("Уточнить, нарисован ли цветок на растении, в руке персонажа или отдельно; соотнести ответ с расположением объектов.");
+ if(repeated.length)actions.push("Записать видимое число повторяющихся объектов и проверить, относятся ли они к одной группе или к разным частям рисунка.");
  if(related)actions.push("Отдельно записать объяснение деталей "+(short(labels(related,group(related,"sharp")),2)||"острых частей")+" и "+(short(labels(related,group(related,"damage")),2)||"повреждения")+" на изображении "+mentioned(related)+".");
  else if(sharp.length||damage.length)actions.push("Выяснить функцию необычных деталей в истории и зафиксировать ответ ребенка дословно.");
  if(contact.length||separation.length)actions.push("Зафиксировать со слов ребенка, кто с кем связан и какое действие происходит между персонажами.");
