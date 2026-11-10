@@ -7,6 +7,8 @@
  if(path==='/library')dest='/library.html';
  else if(path.startsWith('/library/')&&areas.includes(path.slice('/library/'.length)))
   dest='/library.html?area='+encodeURIComponent(path.slice('/library/'.length));
+ else if(path==='/additional/dreams'||path==='/additional/lectures')
+  dest='/additional.html?section='+path.slice('/additional/'.length);
  else if(path==='/support')dest='/suggest-method.html';
  else if(pages.includes(path.slice(1)))dest=path+'.html';
  if(dest){
