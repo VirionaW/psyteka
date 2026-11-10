@@ -1,9 +1,9 @@
 /* Метолария: автономная библиотека рисунков и официальные логотипы. */
 "use strict";
-const CACHE = "psyteka-drawing-library-v25";
+const CACHE = "psyteka-drawing-library-v26";
 const fileUrl = name => new URL("./" + name, self.location.href).href;
 const PAGE = fileUrl("drawing-library.html");
-const ASSETS = [fileUrl("brand-mark.svg"), fileUrl("brand-mark-dark.svg"), fileUrl("brand-favicon.svg"), fileUrl("drawing-library-interpretation.js"),fileUrl("drawing-library-smart.css"),fileUrl("drawing-library-smart.js")];
+const ASSETS = [fileUrl("brand-mark.svg"), fileUrl("brand-mark-dark.svg"), fileUrl("brand-favicon.svg"), fileUrl("drawing-library-interpretation.js"),fileUrl("drawing-library-smart.css"),fileUrl("drawing-library-smart-v26.js")];
 const URLS = [PAGE, ...ASSETS];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(URLS)).then(() => self.skipWaiting()));
