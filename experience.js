@@ -1024,7 +1024,34 @@ function bindControls(){
   });
   if(d?.workflow==='smfq')window.PSY_SMFQ.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='luskanova')window.PSY_LUSKANOVA.bind(d,{rows,rowIndex,calcMode});
- if(d?.workflow==='fresh06')window.PSY_NEW_METHODS.bind(d,{rows,rowIndex,calcMode});
+ if(d?.workflow==='fresh06')window.PSY_NEW_METHODS.bind(d,{rows,rowIndex,calcMode,
+   onSelect:i=>{
+    if(!Number.isInteger(i)||i<0||i>=rows.length)return;
+    rowIndex=i;modeIndices.class=i;setTab('score');
+   },
+   onBulkAdd:names=>{
+    const oldQuestions=rows.find(r=>Array.isArray(r.socioQuestions))?.socioQuestions;
+    if(rows.length===1&&!rows[0].name?.trim()&&!rows[0].socioChoices?.some(x=>x?.some(Boolean)))rows.splice(0,1);
+    let first=-1;
+    const known=new Set(rows.map(r=>String(r.name||'').trim().toLocaleLowerCase('ru')));
+    for(const name of names){
+     const value=String(name||'').trim().slice(0,120),key=value.toLocaleLowerCase('ru');
+     if(!value||known.has(key))continue;
+     known.add(key);
+     if(first<0)first=rows.length;
+     rows.push({name:value,answers:[],...(oldQuestions?{socioQuestions:oldQuestions.slice()}:{} )});
+    }
+    if(!rows.length)rows.push({name:'',answers:[]});
+    rowIndex=first>=0?first:Math.min(rowIndex,rows.length-1);
+    modeIndices.class=rowIndex;setTab('score');
+   },
+   onNext:()=>{
+    const next=rows.findIndex((r,i)=>i>rowIndex&&r.name?.trim());
+    const first=rows.findIndex(r=>r.name?.trim());
+    if(next<0&&first<0)return;
+    rowIndex=next<0?first:next;modeIndices.class=rowIndex;setTab('score');
+   }
+  });
   if(d?.workflow==='diagnostic04')window.PSY_DIAG04.bind(d,{rows,rowIndex,calcMode});
   if(d?.workflow==='diagnostic03')window.PSY_DIAG03.bind(d,{rows,rowIndex,calcMode},()=>setTab('score'));
  if(d?.workflow==='diagnostic')window.PSY_DIAGNOSTICS.bind(d,{rows,rowIndex,calcMode});
