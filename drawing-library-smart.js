@@ -203,7 +203,7 @@
    // Unambiguous, directly stated attributes are already recognized;
    // only elements and genuinely uncertain descriptions prompt for clarification.
    const clear=["position","size","color","feature","tailLength","reference"].includes(m.kind)||
-     m.kind==="quantity"&&/\b(у каждого|у каждой|на каждом|на каждой)\b/i.test(raw.slice(m.end,m.end+42));
+     m.kind==="quantity"&&/(?:^|[\s,.;:])(у каждого|у каждой|на каждом|на каждой)(?:[\s,.;:]|$)/i.test(raw.slice(m.end,m.end+42));
    const done=clear||answered.has(m.key)||(m.kind==="object"&&chosen.get(m.key)?.confirmed);
    span.className="smart-mark smart-"+(m.kind==="unknown"?"red":done?"green":"amber");
    span.dataset.smartKey=m.key;
@@ -231,7 +231,7 @@
     if(m.kind==="quantity"){
      if(B.counts(o.entry.id).some(c=>c.id===m.part))item.counts[m.part]=m.count;
      else item.note+=(item.note?"; ":"")+m.raw;
-     const perItem=/\b(у каждого|у каждой|на каждом|на каждой)\b/i.test(raw.slice(m.end,m.end+42));
+     const perItem=/(?:^|[\s,.;:])(у каждого|у каждой|на каждом|на каждой)(?:[\s,.;:]|$)/i.test(raw.slice(m.end,m.end+42));
      if(perItem)item.note+=(item.note?"; ":"")+"На каждом объекте отмечено "+m.count+" "+m.raw.replace(/^\S+\s+/,"");
      else if(!answered.has(m.key))item.note+=(item.note?"; ":"")+"Не уточнено, "+m.count+" деталей указаны для каждого объекта или всего";
     }
@@ -302,7 +302,7 @@
   }
   out.replaceChildren(...output);
   const pending=marks.filter(m=>!["unknown","reference","position","size","color","feature","tailLength"].includes(m.kind)&&
-   !(m.kind==="quantity"&&/\b(у каждого|у каждой|на каждом|на каждой)\b/i.test(raw.slice(m.end,m.end+42)))&&
+   !(m.kind==="quantity"&&/(?:^|[\s,.;:])(у каждого|у каждой|на каждом|на каждой)(?:[\s,.;:]|$)/i.test(raw.slice(m.end,m.end+42)))&&
    !answered.has(m.key)&&!(m.kind==="object"&&chosen.get(m.key)?.confirmed)).length;
   status.textContent=objects.length?"Образов из библиотеки: "+objects.length+". Уточнений: "+pending+". Интерпретация обновлена.":"Текст обрабатывается локально. Ни один рисунок не передается на сервер.";
   renderQuestions();
@@ -315,7 +315,7 @@
    requests.push({m,stage,question});
   };
   marks.forEach(m=>{
-   if(m.kind==="quantity"&&!/\b(у каждого|у каждой|на каждом|на каждой)\b/i.test(raw.slice(m.end,m.end+42))&&!answered.has(m.key))
+   if(m.kind==="quantity"&&!/(?:^|[\s,.;:])(у каждого|у каждой|на каждом|на каждой)(?:[\s,.;:]|$)/i.test(raw.slice(m.end,m.end+42))&&!answered.has(m.key))
     offer(m,"quantity","«"+m.raw+"» – для каждого или всего?");
    if(m.kind==="absence"&&!answered.has(m.key))
     offer(m,"absence","«"+m.raw+"» – не нарисованы или скрыты?");
