@@ -9,7 +9,7 @@
  // Only tree groups are expandable content. The sidebar itself is controlled
  // by site-panel-toggle.js and must NEVER receive a hidden attribute here.
  const navigable=new Set(["schoolTree","preschoolTree","specialTree","diagnosticsGroup",
-  "correctionGroup","informationGroup","testingGroup",
+  "correctionGroup","informationGroup","testingGroup","additionalTree",
   "preschoolGroup0","preschoolGroup1","preschoolGroup2","preschoolGroup3"]);
  function capture(){
   try{

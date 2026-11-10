@@ -83,7 +83,13 @@
  try{favorites=new Set(JSON.parse(localStorage.getItem(favoritesKey)||"[]"))}catch(_){}
  function saveFavorites(){try{localStorage.setItem(favoritesKey,JSON.stringify([...favorites]))}catch(_){}}
  function switchTab(next){
-  tab=next;document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===tab)));
+  tab=next;
+  const isDreams=tab==="dreams";
+  const headline=isDreams?"Библиотека снов":tab==="lectures"?"Психологические лекции":tab==="glossary"?"Справочник психолога":"Избранное";
+  const lead=isDreams?"Образы, сюжеты и детали сновидений. Поиск по библиотеке и личный протокол сна.":"Материалы о личности, депрессии, тревоге, психических расстройствах, развитии и других темах.";
+  $("addMainTitle").textContent=headline;
+  $("addMainLead").textContent=tab==="glossary"?"Понятия и определения для профессиональной работы.":tab==="favorites"?"Избранные материалы из библиотеки снов, лекций и справочника.":lead;
+  document.title=headline+" – Метолария";document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===tab)));
   $("addListTitle").textContent=({dreams:"Образы сновидений",lectures:"Психологические лекции",glossary:"Психологический справочник",favorites:"Избранные материалы"})[tab];
   $("addNotebook").hidden=tab!=="dreams";
   active=null;list();
