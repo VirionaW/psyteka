@@ -184,16 +184,28 @@
   a.href=url;a.download=(d.title||"Сновидение").replace(/[\\/:*?"<>|\u0000-\u001f]/g," ").slice(0,110)+".txt";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
  }
  function init(){
-  document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+  document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{
+   switchTab(b.dataset.tab);
+   if(b.dataset.tab==="dreams"||b.dataset.tab==="lectures")
+    history.pushState(history.state,"","/additional/"+b.dataset.tab);
+  });
   $("addSearch").oninput=list;
   $("addCompose").onclick=questions;$("addSaveNote").onclick=saveNote;$("addExportNote").onclick=exportNote;
   $("addClearNote").onclick=()=>{if(confirm("Очистить текущую форму? Личные сохранения в кабинете останутся."))resetNote()};
   $("addOpenNote").onclick=openNote;$("addDeleteNote").onclick=deleteNote;
-  const start=new URLSearchParams(location.search).get("section");
+  const route=/^\/additional\/(dreams|lectures)\/?$/.exec(location.pathname);
+  const start=route?.[1]||new URLSearchParams(location.search).get("section");
   switchTab(["dreams","lectures","glossary","favorites"].includes(start)?start:"dreams");
   article(tab==="dreams"?dreams[0]:tab==="lectures"?lectures[0]:glossary[0]);
   active=(tab==="dreams"?dreams[0]:tab==="lectures"?lectures[0]:glossary[0]).id;list();
   renderPicked();savedList();
+  window.addEventListener("popstate",()=>{
+   const route=/^\/additional\/(dreams|lectures)\/?$/.exec(location.pathname);
+   const next=route?.[1]||new URLSearchParams(location.search).get("section")||"dreams";
+   switchTab(["dreams","lectures","glossary","favorites"].includes(next)?next:"dreams");
+   const entry=tab==="dreams"?dreams[0]:tab==="lectures"?lectures[0]:tab==="glossary"?glossary[0]:dreams[0];
+   active=entry.id;article(entry);list();
+  });
   if("serviceWorker" in navigator&&location.pathname.startsWith("/additional"))
    navigator.serviceWorker.register("/additional-sw.js",{scope:"/additional/"}).catch(()=>{});
  }
