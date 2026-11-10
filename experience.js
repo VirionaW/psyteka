@@ -1024,7 +1024,7 @@ function bindControls(){
   });
   if(d?.workflow==='smfq')window.PSY_SMFQ.bind(d,{rows,rowIndex,calcMode});
  if(d?.workflow==='luskanova')window.PSY_LUSKANOVA.bind(d,{rows,rowIndex,calcMode});
- if(d?.workflow==='fresh06')window.PSY_NEW_METHODS.bind(d,{rows,rowIndex,calcMode,
+ if(d?.workflow==='fresh06')window.PSY_NEW_METHODS.bind(d,{rows,rowIndex,calcMode,onSave:saveCurrentAssessment,
    onSelect:i=>{
     if(!Number.isInteger(i)||i<0||i>=rows.length)return;
     rowIndex=i;modeIndices.class=i;setTab('score');
