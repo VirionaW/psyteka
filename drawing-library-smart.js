@@ -149,7 +149,10 @@
    if(m.start<previous||m.end>raw.length)return;
    frag.append(document.createTextNode(raw.slice(previous,m.start)));
    const span=document.createElement("span");
-   const done=m.kind==="reference"||answered.has(m.key)||(m.kind==="object"&&chosen.get(m.key)?.confirmed);
+   // Unambiguous, directly stated attributes are already recognized;
+   // only elements and genuinely uncertain descriptions prompt for clarification.
+   const clear=["position","size","color","feature","tailLength","reference"].includes(m.kind);
+   const done=clear||answered.has(m.key)||(m.kind==="object"&&chosen.get(m.key)?.confirmed);
    span.className="smart-mark smart-"+(m.kind==="unknown"?"red":done?"green":"amber");
    span.dataset.smartKey=m.key;
    span.title=m.kind==="unknown"?"Слово отсутствует в библиотеке. Можно описать его вручную.":"Нажмите для уточнения";
@@ -227,7 +230,8 @@
    output.push(p);
   }
   out.replaceChildren(...output);
-  const pending=marks.filter(m=>m.kind!=="unknown"&&!answered.has(m.key)&&!(m.kind==="object"&&chosen.get(m.key)?.confirmed)).length;
+  const pending=marks.filter(m=>!["unknown","reference","position","size","color","feature","tailLength"].includes(m.kind)&&
+   !answered.has(m.key)&&!(m.kind==="object"&&chosen.get(m.key)?.confirmed)).length;
   status.textContent=objects.length?"Образов из библиотеки: "+objects.length+". Уточнений: "+pending+". Интерпретация обновлена.":"Текст обрабатывается локально. Ни один рисунок не передается на сервер.";
  }
  function close(){pop.hidden=true;openKey=null;phase="root"}
