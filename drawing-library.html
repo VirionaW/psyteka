@@ -3326,7 +3326,9 @@ function getDocument(){
  return {
   schema:"psyteka-drawing-protocol",version:1,method:state.method,methodName:methodName(state.method),
   code:$("#subjectCode").value.slice(0,70),age:$("#subjectAge").value===""?null:Number($("#subjectAge").value),context:$("#contextNotes").value.slice(0,20000),
+  smartDescription:String(window.MetolariaDrawingSmartText?.getText?.()||"").slice(0,5000),
   items:state.items.map(function(x){return {
+   origin:/^smart:/.test(x.key||"")?"smart":"manual",
    elementId:x.elementId,name:x.name,position:x.position,size:x.size,
    color:x.color||"",colors:normalizeColors(x.colors,x.color),
    features:Array.isArray(x.features)?x.features.slice():[],
@@ -3364,6 +3366,7 @@ function reportBody(){
  if(d.code)parts.push('<p><strong>Код обследования:</strong> '+esc(d.code)+'</p>');
  if(Number.isInteger(d.age)&&d.age>=3&&d.age<=99)parts.push('<p><strong>Возраст, лет:</strong> '+esc(d.age)+'</p>');
  if(d.context)parts.push('<h2>Контекст обследования</h2><p>'+esc(d.context)+'</p>');
+ if(d.smartDescription)parts.push('<h2>Описание рисунка</h2><p>'+esc(d.smartDescription)+'</p>');
  var synthesized=buildSynthesis();
  if(synthesized.hasContent){
   synthesized.sections.forEach(function(s){parts.push('<h2>'+esc(s.title)+'</h2><p>'+esc(s.text)+'</p>')});
@@ -3399,7 +3402,7 @@ async function importFile(e){
    var excl=Array.isArray(x.excluded)?Array.from(new Set(x.excluded.filter(function(v){return typeof v==="string"&&allowedKeys.includes(v)}))).slice(0,120):[];
    if(x.excluded&&x.excluded.includes("color"))excl=excl.concat(colors.map(function(c){return "color:"+c}));
    return {
-    key:"i"+Date.now().toString(36)+i,elementId:elem.id,name:elem.name,
+    key:x.origin==="smart"?"smart:import-"+i:"i"+Date.now().toString(36)+i,elementId:elem.id,name:elem.name,
     position:Object.prototype.hasOwnProperty.call(POS,x.position)?x.position:"unknown",
     size:Object.prototype.hasOwnProperty.call(SZ,x.size)?x.size:"",
     color:colors[0]||"",colors:colors,features:features,counts:counts,
@@ -3417,6 +3420,7 @@ async function importFile(e){
   $("#conclusion").value=String(d.conclusion||"").slice(0,20000);
   state.sheetOpen=false;state.draft=draftEmpty();state.editKey=null;state.tab="position";state.category="Все";$("#search").value="";
   renderCategories();renderResults();renderDetails();renderRecords();
+  window.MetolariaDrawingSmartText?.setText?.(String(d.smartDescription||"").slice(0,5000));
   $("#actionStatus").textContent="Протокол загружен: "+clean.length+" записей.";
  }catch(err){alert("Не удалось открыть файл. Нужен JSON-протокол Метоларии.")}
 }
