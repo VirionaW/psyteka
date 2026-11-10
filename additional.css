@@ -1,0 +1,38 @@
+
+:root{--add-bg:#f7f7f1;--add-paper:#fff;--add-ink:#243b2e;--add-muted:#6c786f;--add-edge:#d5e1d5;--add-green:#225f46}
+*{box-sizing:border-box}body{margin:0;background:var(--add-bg);color:var(--add-ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+button,input,textarea{font:inherit}button{cursor:pointer}a{color:#216648}
+.add-head{background:#fff;border-bottom:1px solid var(--add-edge);padding:14px max(24px,calc((100vw - 1260px)/2));display:flex;justify-content:space-between;align-items:center;gap:15px}
+.add-logo{font-weight:850;font-size:20px;text-decoration:none;display:flex;gap:9px;align-items:center}.add-logo img{width:40px}.add-head nav{display:flex;flex-wrap:wrap;gap:18px}
+.add-main{max-width:1280px;margin:auto;padding:34px 22px 95px}
+.add-eyebrow{color:#7b6a45;text-transform:uppercase;font-size:12px;letter-spacing:.13em;font-weight:800}
+.add-hero h1{font-size:clamp(31px,4vw,45px);line-height:1.15;letter-spacing:-.03em;margin:10px 0}
+.add-hero p{max-width:760px;color:var(--add-muted);margin:0 0 23px}
+.add-tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:16px}
+.add-tab{padding:11px 17px;border:1px solid #c7d9c9;background:#fff;color:#306345;border-radius:999px;font-weight:700}
+.add-tab[aria-selected="true"]{background:#236647;color:#fff;border-color:#236647}
+.add-search{display:flex;gap:12px;align-items:center;margin-bottom:23px}.add-search input{background:#fff;border:1px solid #c5d9c7;border-radius:11px;min-width:0;width:100%;max-width:610px;padding:12px 16px;color:inherit}
+.add-layout{display:grid;grid-template-columns:minmax(270px,.9fr) minmax(0,1.4fr);gap:21px;align-items:start}
+.add-panel{background:var(--add-paper);border:1px solid var(--add-edge);border-radius:17px;padding:20px;box-shadow:0 8px 28px #1c4f2510;min-width:0}
+.add-panel h2{font-size:20px;margin:0 0 12px}
+.add-results{display:grid;gap:8px;max-height:720px;overflow:auto}
+.add-item{display:flex;text-align:left;gap:11px;align-items:center;background:#fff;border:1px solid #dae6dc;border-radius:10px;padding:12px;width:100%;color:inherit}
+.add-item[aria-pressed="true"]{background:#e8f3eb;border-color:#6ca785}
+.add-item span{flex:1;min-width:0}.add-item strong{display:block}.add-item small{display:block;color:var(--add-muted)}.add-item i{font-style:normal;font-size:13px;color:#61876b}
+.add-article h2{font-size:26px;line-height:1.25}.add-article h3{font-size:18px;margin:23px 0 8px}.add-article p{margin:9px 0 12px}.add-article ul{padding-left:19px}
+.add-meta{color:var(--add-muted);font-size:13px}.add-source{border-top:1px solid var(--add-edge);margin-top:20px;padding-top:12px;font-size:13px}
+.add-btn{display:inline-flex;align-items:center;justify-content:center;border-radius:9px;padding:9px 14px;min-height:41px;border:1px solid #91baa1;background:#fff;color:#205c3b;font-weight:700;text-decoration:none}
+.add-primary{color:#fff;background:#226447;border-color:#226447}.add-btn:disabled{opacity:.5}
+.add-row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.add-notebook{margin-top:25px}
+.add-label{font-weight:700;font-size:13px;display:block;margin:13px 0 5px}
+.add-input{width:100%;min-width:0;padding:10px 12px;border:1px solid #bfd1c2;border-radius:9px;background:#fff;color:inherit}
+textarea.add-input{min-height:105px;resize:vertical}
+.add-picked{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.add-chip{border-radius:999px;padding:5px 9px;background:#e6f1e8;color:#256045;font-size:12px;border:1px solid #bdd6c3}
+.add-hint{font-size:13px;color:var(--add-muted)}
+.add-message{font-size:13px;background:#e9f3ea;padding:9px 12px;border-radius:8px;margin:10px 0}
+.add-message[data-error="true"]{background:#fff1e8;color:#9c431e}
+.add-entry-links{display:flex;gap:14px;flex-wrap:wrap}
+@media(max-width:790px){.add-layout{grid-template-columns:1fr}.add-main{padding:24px 12px 65px}.add-head{padding:12px}.add-results{max-height:380px}}
+html.dark body{--add-bg:#17291f;--add-paper:#253b2e;--add-ink:#e3eee5;--add-edge:#405e46;--add-muted:#b8cdbd}html.dark .add-head,html.dark .add-item,html.dark .add-tab,html.dark .add-search input,html.dark .add-input{background:#263d31;color:var(--add-ink)}html.dark .add-item[aria-pressed=true]{background:#34553d}html.dark .add-btn:not(.add-primary){background:#294937;color:#e2ede2}
+@media print{.add-head,.add-tabs,.add-search,.add-results,.add-notebook,.add-hero,.add-row{display:none!important}.add-main{padding:0}.add-layout{display:block}.add-panel{box-shadow:none;border:0}}
