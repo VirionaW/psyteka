@@ -247,6 +247,18 @@
  }
  function ownerOf(m){return objects.find(o=>o.key===m.owner)||null}
  function answerFor(o){if(!o)return null;if(!chosen.has(o.key))chosen.set(o.key,{confirmed:false,position:"",size:"",colors:[],features:[],counts:{},notes:[],quantityUnknown:false});return chosen.get(o.key)}
+ function countQuestion(name){
+  const names={
+   "ландыш":"ландышей","ландыши":"ландышей","полевые цветы":"полевых цветов",
+   "засохшие цветы":"засохших цветов","букет цветов":"букетов цветов",
+   "корзина цветов":"корзин цветов","цветок":"цветов",
+   "принцесса":"принцесс","королевский замок":"королевских замков",
+   "дверной замок":"дверных замков","замок-крепость":"замков-крепостей",
+   "поле цветов":"полей цветов","поле":"полей","дракон":"драконов",
+   "дерево":"деревьев","человек":"людей","дом":"домов"
+  };
+  return "Сколько "+(names[clean(name)]||"таких объектов")+" изображено?";
+ }
  function renderInterpretation(){
   const rows=objects.filter(o=>!o.needsChoice).map(o=>{
    const a=answerFor(o);
@@ -339,6 +351,13 @@
     p.textContent=lines.length?lines.join(". ")+".":"Элемент распознан; характеристики изображения пока не уточнены.";
     card.append(p);
     const hasPosition=r.position!=="unknown";
+    const hasCountAlready=Number.isInteger(r.counts.objects)||a.quantityUnknown;
+    if(!hasPosition||!hasCountAlready){
+     const reminder=document.createElement("p");
+     reminder.className="smart-clarify-prompt";
+     reminder.textContent="Дополните описание рисунка или выберите ответы на вопросы ниже.";
+     card.append(reminder);
+    }
     if(hasPosition){
      const row=document.createElement("div");row.className="smart-saved-answer";
      row.append(document.createTextNode("Место на рисунке: "+(B.positions.find(x=>x.id===r.position)?.label||r.position)));
@@ -359,7 +378,7 @@
     if(!known||a.editQuantity){
      const options=Array.from({length:9},(_,i)=>({id:String(i+1),label:String(i+1)}));
      options.push({id:"unknown",label:"Невозможно определить"});
-     ask(card,"Сколько изображено «"+o.entry.name+"»?",options,id=>{
+     ask(card,countQuestion(o.entry.name),options,id=>{
       if(id==="unknown"){a.quantityUnknown=true;delete a.counts.objects}
       else {a.quantityUnknown=false;a.counts.objects=Number(id)}
       a.editQuantity=false;renderInterpretation();drawMarks();
@@ -446,7 +465,7 @@
    ["build","✳ Строение","Что изображено?"],["condition","◡ Состояние","Как выглядит или действует?"],["environment","⌂ Окружение","Что рядом?"],["graphics","〰 Линии","Особенности исполнения"],["done","✓ Достаточно","Уточнения завершены"]
   ].map(x=>({id:x[0],label:x[1],hint:x[2]}))};
   if(stage==="disambiguate")return {title:"Что означает «"+m.raw+"»?",items:(m.options||[]).map(x=>({id:x.id,label:x.name,hint:x.meaning}))};
-   if(stage==="count")return {title:"Сколько изображено «"+name+"»?",items:Array.from({length:9},(_,i)=>({id:String(i+1),label:String(i+1)})).concat([{id:"unknown",label:"Невозможно определить",hint:"Число больше девяти напишите в описании, например 26 ландышей"}])};
+   if(stage==="count")return {title:countQuestion(name),items:Array.from({length:9},(_,i)=>({id:String(i+1),label:String(i+1)})).concat([{id:"unknown",label:"Невозможно определить",hint:"Число больше девяти напишите в описании, например 26 ландышей"}])};
    if(stage==="position")return {title:"Где расположен «"+name+"»?",items:B.positions.map(x=>({id:x.id,label:x.label,hint:x.meaning,selected:x.id===a?.position}))};
   if(stage==="size")return {title:"Какого размера «"+name+"»?",items:B.sizes.map(x=>({id:x.id,label:x.label,hint:x.meaning,selected:x.id===a?.size}))};
   if(stage==="color"||stage==="multicolor")return {title:"Какие цвета у «"+name+"»?",items:B.colors.map(x=>({id:x.id,label:"● "+x.label,hint:x.meaning,selected:a?.colors.includes(x.id)}))};
@@ -496,7 +515,7 @@
   }else{const hint=document.createElement("span");hint.className="smart-hint";hint.textContent="Ответы можно исправить";footer.append(hint)}
   const finish=document.createElement("button");finish.className="smart-pop-done";finish.textContent="Готово ✓";
   finish.onclick=()=>{answered.add(m.key);const o=m.kind==="object"?m:ownerOf(m);if(o)answerFor(o).confirmed=true;close();drawMarks();renderInterpretation()};
-  footer.append(finish);pop.replaceChildren(head,sub,grid,footer);
+  finish.hidden=step==="disambiguate";footer.append(finish);pop.replaceChildren(head,sub,grid,footer);
   const anchor=[...editor.querySelectorAll("[data-smart-key]")].find(x=>x.dataset.smartKey===m.key);
   if(anchor)positionPopup(anchor);
  }
@@ -542,7 +561,11 @@
   }else if(step==="tone"){
    const choice=m.answers[Number(id)];if(choice)a.notes.push(choice[1]);
   }
-  a.confirmed=true;answered.add(m.key);close();drawMarks();renderInterpretation();
+  a.confirmed=true;answered.add(m.key);
+  if(["color","multicolor","build","condition","environment","graphics"].includes(step)){
+   drawMarks();renderInterpretation();show(m,step);return;
+  }
+  close();drawMarks();renderInterpretation();
  }
  function insertText(text){
   const sel=getSelection();if(!sel?.rangeCount||!editor.contains(sel.anchorNode))return;
