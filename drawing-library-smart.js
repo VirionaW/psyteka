@@ -81,7 +81,7 @@
   const firstById=new Map();
   base.slice().forEach(m=>{
    const prior=firstById.get(m.entry.id);
-   const preceding=str.slice(Math.max(0,m.start-28),m.start).trim().split(/\s+/).slice(-2).join(" ");
+   const preceding=clean(str.slice(Math.max(0,m.start-28),m.start)).split(/\s+/).slice(-2).join(" ");
    const reference=/(?:^|\s)(под|над|перед|около|возле|рядом|за|у|на|по|к|с|со|в)$/.test(preceding);
    if(prior&&reference&&m.start-prior.start<220){
     m.kind="reference";m.target=prior;base.splice(base.indexOf(m),1);
@@ -90,8 +90,15 @@
   const ordinal=new Map();
   base.forEach(x=>{const n=ordinal.get(x.entry.id)||0;ordinal.set(x.entry.id,n+1);x.key="object:"+x.entry.id+":"+n;x.owner=x.key});
   all.filter(x=>x.kind!=="object").forEach(x=>{
-   const target=x.target||base.map(y=>({y,d:Math.abs(y.start-x.start)})).sort((a,b)=>a.d-b.d)[0];
-   x.owner=(target?.y||target)?.key||null;
+   // Size and color adjectives usually describe the next noun, not the
+   // preceding object ("под деревом зеленая трава").
+   const ahead=base.filter(y=>y.start>=x.end&&y.start-x.end<=42&&
+    !/[.!?,;:\n]/.test(str.slice(x.end,y.start)));
+   const preferAhead=["size","color","tone"].includes(x.kind)||
+    x.kind==="position"&&(x.start===0||/[.!?]\s*$/.test(str.slice(Math.max(0,x.start-3),x.start)));
+   const closest=base.map(y=>({y,d:Math.abs(y.start-x.start)})).sort((a,b)=>a.d-b.d)[0];
+   const target=x.target||(preferAhead&&ahead.length?ahead[0]:closest?.y);
+   x.owner=target?.key||null;
    const n=all.filter(y=>y.kind===x.kind&&y.raw===x.raw&&y.start<x.start).length;
    x.key="modifier:"+x.kind+":"+clean(x.raw)+":"+n;
   });
