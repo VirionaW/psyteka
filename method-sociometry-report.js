@@ -156,32 +156,40 @@
   const target=people.find(p=>p.socioId===selectedChild)||people[0];
   if(!target)return "";
   selectedChild=target.socioId;
+  const isAbsent=absent(target);
   return '<div class="psy-socio-individual"><div class="psy-socio-section-heading"><div><h4>Карточка ученика</h4>'+
-   '<p>Фактические выборы по всем шести вопросам</p></div><label>Ученик <select id="psySocAnalysedPerson">'+
-   people.map(p=>'<option value="'+E(p.socioId)+'" '+(p.socioId===target.socioId?"selected":"")+'>'+E(p.name)+'</option>').join("")+
+   '<p>Статус и взаимные связи отдельно по каждому из шести вопросов</p></div><label>Ученик <select id="psySocAnalysedPerson">'+
+   people.map(p=>'<option value="'+E(p.socioId)+'" '+(p.socioId===target.socioId?"selected":"")+'>'+E(p.name)+
+    (absent(p)?" – отсутствовал":"")+'</option>').join("")+
    '</select></label></div>'+
-   '<div class="psy-socio-summary-scroll"><table class="psy-socio-person-table"><thead><tr><th>Вопрос</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Интерпретация данных</th></tr></thead><tbody>'+
+   (isAbsent?'<p class="psy-socio-empty">Отсутствовал на обследовании. Все шесть результатов пустые, статус не присваивается.</p>':"")+
+   '<div class="psy-socio-summary-scroll"><table class="psy-socio-person-table"><thead><tr><th>Вопрос</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Статус</th><th>Конкретный вывод</th></tr></thead><tbody>'+
    result.map((s,i)=>{
-    const d=clean(target,s);
+    const d=clean(target,s),st=statusFor(target,s);
     return '<tr><td><strong>'+(i+1)+'.</strong> '+E(s.question)+'</td>'+
      '<td>'+(d.answered?d.own.size:"–")+'</td><td>'+(d.excluded?"–":s.answered?d.received:"–")+'</td>'+
-     '<td>'+(d.excluded?"–":s.answered?d.reciprocal:"–")+'</td><td>'+E(observation(target,s,people.length))+'</td></tr>';
+     '<td>'+(d.excluded?"–":s.answered?d.reciprocal:"–")+'</td>'+
+     '<td><span class="psy-socio-status-badge is-'+st.key+'">'+E(st.name)+'</span></td>'+
+     '<td>'+E(observation(target,s,people.length))+'</td></tr>';
    }).join("")+'</tbody></table></div>'+
-   '<p class="psy-socio-note"><strong>Отметка психолога:</strong> '+E(reviewLabel(target))+'</p>'+
-   '<p class="psy-socio-note">Результаты разных критериев нельзя суммировать в единый «рейтинг» ребенка. Полученные выборы описывают только указанные ситуации.</p></div>';
+   (review(target).status?'<p class="psy-socio-note"><strong>Уточнение:</strong> '+E(reviewLabel(target))+'</p>':"")+
+   (concernLabel(target)?'<p class="psy-socio-concern-record"><strong>Отдельные сведения о травле:</strong> '+E(concernLabel(target))+'</p>':"")+
+   '</div>';
  }
  function table(people,s){
-  const header='<thead><tr><th>Ученик</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Анкета</th><th>Отметка психолога</th><th>Фактический анализ</th></tr></thead>';
+  const header='<thead><tr><th>Ученик</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Социометрический статус</th><th>Анкета</th><th>Что видно по ответам</th></tr></thead>';
   const body=people.map(p=>{
-   const d=clean(p,s);
-   return '<tr><th scope="row">'+E(p.name)+'</th>'+
+   const d=clean(p,s),st=statusFor(p,s);
+   const attendance=st.key==="absent"?"Отсутствовал":st.key==="review"?"На уточнении":d.answered?"Заполнена":"Не завершена";
+   return '<tr><th scope="row"><button type="button" class="psy-socio-name-link" data-socio-focus-id="'+E(p.socioId)+'">'+E(p.name)+'</button></th>'+
     '<td>'+(d.answered?d.own.size:"–")+'</td>'+
     '<td>'+(d.excluded?"–":s.answered?d.received:"–")+'</td>'+
     '<td>'+(d.excluded?"–":s.answered?d.reciprocal:"–")+'</td>'+
-    '<td><span class="psy-socio-answer-status '+(d.excluded?"is-pending":d.answered?"is-ready":"is-pending")+'">'+
-     (d.excluded?"Исключена":d.answered?"Заполнена":"Не завершена")+'</span></td>'+
-    '<td class="psy-socio-review-cell '+(review(p).status==="Требует уточнения"?"is-flagged":"")+'">'+E(reviewLabel(p))+'</td>'+
-    '<td class="psy-socio-observation">'+E(observation(p,s,people.length))+'</td></tr>';
+    '<td><span class="psy-socio-status-badge is-'+st.key+'">'+E(st.name)+'</span></td>'+
+    '<td><span class="psy-socio-answer-status '+(d.answered?"is-ready":"is-pending")+'">'+attendance+'</span></td>'+
+    '<td class="psy-socio-observation">'+E(observation(p,s,people.length))+
+     (concernLabel(p)?'<div class="psy-socio-concern-tag">Сведения о травле – отдельная запись</div>':"")+
+    '</td></tr>';
   }).join("");
   return '<div class="psy-socio-summary-scroll"><table class="psy-socio-children-table">'+header+'<tbody>'+body+'</tbody></table></div>';
  }
