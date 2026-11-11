@@ -34,7 +34,9 @@
   ?crypto.randomUUID():"socio-"+Math.random().toString(36).slice(2)+"-"+Date.now();
  const ensureIds=rows=>rows.forEach(r=>{if(String(r.name||"").trim()&&!r.socioId)r.socioId=randomId();});
  const members=rows=>rows.filter(r=>String(r.name||"").trim());
- const excluded=row=>row?.socioReview?.status==="needs-review";
+ const absent=row=>row?.socioAbsent===true;
+ const reviewPending=row=>row?.socioReview?.status==="needs-review";
+ const excluded=row=>absent(row)||reviewPending(row);
  const questions=rows=>{
   const stored=rows?.find(r=>Array.isArray(r.socioQuestions)&&r.socioQuestions.length===6)?.socioQuestions;
   return stored?stored.map((q,i)=>String(q??DEFAULT[i]).slice(0,220)):DEFAULT.slice();
@@ -57,6 +59,8 @@
   ensureIds(rows);
   const people=members(rows),ids=new Set(people.map(r=>r.socioId));
   const excludedIds=new Set(people.filter(excluded).map(p=>p.socioId));
+  const absentIds=new Set(people.filter(absent).map(p=>p.socioId));
+  const reviewIds=new Set(people.filter(p=>reviewPending(p)&&!absent(p)).map(p=>p.socioId));
   const eligible=people.length-excludedIds.size;
   const result=questions(rows).map((question,q)=>{
    const answers=new Map(),incoming=new Map(people.map(p=>[p.socioId,0]));
@@ -74,9 +78,9 @@
      pairs++;mutual.set(from,mutual.get(from)+1);mutual.set(to,mutual.get(to)+1);
     }
    }
-   return {question,answered:answers.size,total,pairs,incoming,mutual,edges:answers,eligible,excludedIds};
+   return {question,answered:answers.size,total,pairs,incoming,mutual,edges:answers,eligible,excludedIds,absentIds,reviewIds};
   });
-  return {people,result,eligible,excludedIds};
+  return {people,result,eligible,excludedIds,absentIds,reviewIds};
  }
  const responseName=(id,people)=>id===NONE?"Никто":(people.find(p=>p.socioId===id)?.name||"");
  function repetition(row){
@@ -112,7 +116,7 @@
     "Статус «Требует уточнения» исключает ответы из расчётов, не удаляя их. «Уточнено» возвращает данные в анализ.")+'</p></section>';
  }
  function resultHTML(ctx){
-  const {people,result,eligible,excludedIds}=analyze(ctx.rows);
+  const {people,result,eligible,excludedIds,absentIds,reviewIds}=analyze(ctx.rows);
   if(!people.length)return '<p>Добавьте список класса, чтобы начать обследование.</p>';
   const answered=result.reduce((sum,r)=>sum+r.answered,0);
   const selected=Math.max(0,Math.min(5,viewCriterion)),s=result[selected];
@@ -123,10 +127,11 @@
    '';
   return '<div class="psy-new-metrics"><span>Участников в классе <b>'+people.length+'</b></span>'+
    '<span>Учтено анкет по вопросам <b>'+answered+' из '+(eligible*6)+'</b></span>'+
-   (excludedIds.size?'<span>На уточнении (исключены) <b>'+excludedIds.size+'</b></span>':'')+
+   (absentIds.size?'<span>Отсутствовали <b>'+absentIds.size+'</b></span>':'')+
+   (reviewIds.size?'<span>На уточнении <b>'+reviewIds.size+'</b></span>':'')+
    '<span>Взаимных пар по выбранному вопросу <b>'+s.pairs+'</b></span></div>'+
    perQuestion+details+(api.sociometryReport?.render({people,result,selected,activeId:ctx.rows[ctx.rowIndex]?.socioId})||'')+
-   '<p class="psy-socio-note">Подсчитываются завершённые ответы учеников без отметки «Требует уточнения». Их собственные анкеты временно исключаются; выборы одноклассников в их адрес сохраняются. «Никто» – явный ответ, пустое поле – незавершённый ввод.</p>';
+   '<p class="psy-socio-note">В учтённые анкеты не входят отсутствовавшие и участники с отметкой «Требует уточнения». Выборы остальных учеников в их адрес остаются в классовых данных. Пропуск ответа не равен «Никто».</p>';
  }
  function blank(){
   const q=questions(currentRows);
@@ -147,6 +152,7 @@
   }
   const people=members(ctx.rows),r=ctx.rows[ctx.rowIndex]||ctx.rows[0],q=questions(ctx.rows);
   const active=people.some(x=>x.socioId===r?.socioId);
+  const isAbsent=!!r&&absent(r);
   const count=active?q.filter((_,i)=>validPicks(r,i,new Set(people.map(p=>p.socioId)))!==null).length:0;
   const questionCards=active?q.map((question,i)=>{
    const selected=picks(r,i),chosen=new Set(selected.filter(v=>v!==NONE));
@@ -176,15 +182,20 @@
    '<div class="class-actions"><button type="button" class="btn primary" id="psySocAdd">Добавить в класс</button></div></details>'+
    '<div id="psySocRosterMessage" role="status" class="psy-socio-message"></div>'+
    (people.length?'<div class="psy-socio-student-picker"><label>Выбранный ученик<select id="psySocPerson">'+
-    ctx.rows.map((person,i)=>person.name?.trim()?'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+esc(person.name)+'</option>':"").join("")+
+    ctx.rows.map((person,i)=>person.name?.trim()?'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+esc(person.name)+
+     (absent(person)?" – отсутствовал":reviewPending(person)?" – уточнение":"")+'</option>':"").join("")+
     '</select></label><button type="button" class="btn" id="psySocNext">Следующий ученик</button></div>'+
     (active?'<label class="psy-socio-rename">Имя или код ученика<input id="psySocRename" maxlength="120" value="'+esc(r.name)+'"></label>':""):"")+
    '</div>'+
+   (active?'<div class="psy-socio-attendance"><button type="button" id="psySocAbsent" class="psy-socio-absence-button '+(isAbsent?"is-absent":"")+
+     '" aria-pressed="'+isAbsent+'">'+(isAbsent?"Вернуть к обследованию":"Отметить: отсутствовал")+'</button>'+
+     '<span>'+(isAbsent?"Анкета не учитывается, введённые ранее ответы сохранены.":"Если ребёнка не было, отметьте его отсутствие. Пустой бланк сам по себе не означает отсутствие.")+'</span></div>':"")+
    '<details class="psy-socio-custom"><summary>Изменить формулировки 6 вопросов</summary>'+
    '<p class="psy-socio-note">Это редактируемые вопросы, а не стандартизованный авторский опросник. При изменении вопроса с уже введенными ответами программа предложит очистить только этот вопрос – остальные пять сохранятся.</p>'+
    q.map((question,i)=>'<label><span>Вопрос '+(i+1)+'</span><input type="text" maxlength="220" data-socio-edit="'+i+'" value="'+esc(question)+'"></label>').join("")+'</details>'+
-   (active?'<div class="psy-socio-progress"><strong>'+esc(r.name)+'</strong><span id="psySocProgress">'+count+' из 6 вопросов заполнено</span></div>'+
+   (active&&!isAbsent?'<div class="psy-socio-progress"><strong>'+esc(r.name)+'</strong><span id="psySocProgress">'+count+' из 6 вопросов заполнено</span></div>'+
     '<div class="psy-socio-questions">'+questionCards+'</div>'+reviewMarkup(r):
+    active?'<div class="psy-socio-absent-panel"><strong>Отсутствовал на обследовании</strong><p>Ответы не вводятся, показатели не рассчитываются. Запись можно изменить кнопкой выше.</p></div>':
     '<p class="psy-socio-note">Добавьте учеников, затем выберите ребенка из списка.</p>')+
    '<div class="psy-socio-results"><h3>Сводка по классу</h3><div id="psySocResult">'+resultHTML(ctx)+'</div>'+
    '<div class="class-actions"><button type="button" class="btn" id="psySocRaw">Скачать ответы CSV</button>'+
@@ -228,6 +239,12 @@
   });
   document.getElementById("psySocPerson")?.addEventListener("change",e=>{const i=Number(e.target.value);api.sociometryReport?.select?.(rows[i]?.socioId);ctx.onSelect?.(i);});
   document.getElementById("psySocNext")?.addEventListener("click",()=>ctx.onNext?.());
+  document.getElementById("psySocAbsent")?.addEventListener("click",()=>{
+   const row=rows[ctx.rowIndex];
+   row.socioAbsent=!absent(row);
+   window.dispatchEvent(new Event("psy-assessment-dirty"));
+   ctx.onSelect?.(ctx.rowIndex);
+  });
   document.getElementById("psySocRename")?.addEventListener("change",e=>{
    const name=e.target.value.trim();
    if(!name){e.target.value=rows[ctx.rowIndex].name;message("Имя или код не может быть пустым.");return;}
@@ -256,6 +273,7 @@
    input.focus({preventScroll:true});
   };
   const advanceAfter=(row,question,slot)=>{
+   if(absent(row))return;
    const current=picks(row,question);
    let nextSlot=-1;
    for(let i=slot+1;i<3;i++)if(!current[i]){nextSlot=i;break;}
@@ -267,7 +285,7 @@
    }
    const ids=new Set(members(rows).map(p=>p.socioId));
    if(!questions(rows).every((_,q)=>validPicks(row,q,ids)!==null))return;
-   const next=rows.findIndex((r,i)=>i>ctx.rowIndex&&String(r.name||"").trim());
+   const next=rows.findIndex((r,i)=>i>ctx.rowIndex&&String(r.name||"").trim()&&!absent(r));
    if(next>=0){
     ctx.onSelect?.(next);
     focusAnswer(0,0);
@@ -410,7 +428,7 @@
    people.forEach(r=>q.forEach((question,i)=>{
     out.push([r.name,i+1,question,...picks(r,i).map(id=>responseName(id,people)),
      validPicks(r,i,ids)!==null?"Заполнен":"Не завершен",
-     excluded(r)?"Исключено – требует уточнения":"Учитывается при завершении"]);
+     absent(r)?"Не участвовал":reviewPending(r)?"Исключено – требует уточнения":"Учитывается при завершении"]);
    }));
    download("Метолария_социометрия_ответы.csv",out);
   });
@@ -419,7 +437,7 @@
    const out=[["Вопрос","Формулировка","Ученик","Входящие выборы","Взаимные выборы","Учтено анкет","Взаимных пар","Учет ученика"]];
    result.forEach((s,i)=>people.forEach(p=>out.push([i+1,s.question,p.name,
     excluded(p)?"":s.incoming.get(p.socioId),excluded(p)?"":s.mutual.get(p.socioId),
-    s.answered,s.pairs,excluded(p)?"Исключено – требует уточнения":"Учитывается"])));
+    s.answered,s.pairs,absent(p)?"Не участвовал":reviewPending(p)?"Исключено – требует уточнения":"Учитывается"])));
    download("Метолария_социометрия_сводка.csv",out);
   });
  }
@@ -428,7 +446,7 @@
  D.count="6 редактируемых вопросов, до 3 выборов в каждом";
  D.goal="Изучение предпочитаемых партнеров по шести положительным критериям взаимодействия в классе.";
  D.instructions="Для каждого вопроса выбери до трех одноклассников. Можно выбрать меньше трех человек или никого. Не выбирай себя и не повторяй одно имя в рамках вопроса.";
- D.scoring="Входящие положительные выборы и взаимные пары подсчитываются отдельно по каждому вопросу. Статус «Требует уточнения» временно исключает анкету ученика из статистики (без удаления данных). Выборы других учеников в его адрес сохраняются. Пустой ответ не равен «Никто».";
+ D.scoring="По каждому вопросу отдельно подсчитываются положительные и взаимные выборы. Отсутствовавшие и ученики с отметкой «Требует уточнения» не считаются респондентами; их ответы сохраняются, но не участвуют в расчёте. Выборы других детей в их адрес не удаляются. Пустое поле не равно «Никто».";
  D.interpret="Ответы показывают предпочтения в конкретных ситуациях, а не постоянный статус ученика. Отсутствие входящих выборов не равнозначно отвержению.";
  D.warning="Конфиденциальная процедура с шестью редактируемыми положительными критериями. Это не стандартизованная нормативная шкала. Не публикуйте результаты детей и не приписывайте им диагностические статусы.";
  D.version="SOCIOMETRY-CUSTOM-SIX-2026";
