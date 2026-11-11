@@ -118,3 +118,10 @@
  .psy-socio-review-fields{grid-template-columns:minmax(0,1fr)}
  .psy-socio-review-head{align-items:flex-start}
 }
+
+/* Exclusion marks processing status, never psychological status. */
+.psy-socio-node.is-excluded circle{fill:#eceae4;stroke:#9e9c91;stroke-dasharray:3 3}
+.psy-socio-node.is-excluded text{fill:#706d63}
+.psy-socio-review-cell.is-flagged{color:#85501c;font-weight:700}
+.psy-socio-coverage.is-pending{white-space:normal}
+.psy-socio-answer-status.is-pending{white-space:normal;text-align:center}
