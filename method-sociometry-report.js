@@ -24,7 +24,11 @@
   const own=unavailable?undefined:s.edges.get(p.socioId);
   const received=unavailable?null:(s.incoming.get(p.socioId)||0);
   const reciprocal=unavailable?null:(s.mutual.get(p.socioId)||0);
-  return {own,received,reciprocal,answered:own!==undefined,excluded:unavailable,absent:absent(p),review:reviewing(p)};
+  const answered=own!==undefined;
+  const complete=answered&&(s.completeIds?.has(p.socioId)??true);
+  const partial=answered&&!complete;
+  return {own,received,reciprocal,answered,complete,partial,
+   excluded:unavailable,absent:absent(p),review:reviewing(p)};
  };
  // These four positive-choice categories are the Kolominsky thresholds;
  // they do not measure hostility, rejection, bullying or diagnoses.
@@ -38,25 +42,23 @@
  const statusFor=(p,s)=>{
   if(absent(p))return {key:"absent",name:"Отсутствовал",count:null};
   if(reviewing(p))return {key:"review",name:"На уточнении",count:null};
-  if(!s.edges.has(p.socioId))return {key:"missing",name:"Анкета не заполнена",count:null};
+  // A pupil can RECEIVE nominations before submitting their own answer sheet.
+  // Recipient status therefore MUST NOT depend on s.edges.has(p.socioId).
   const count=s.incoming.get(p.socioId)||0;
-  if(s.answered<5)return {key:"pending",name:"Мало анкет",count};
-  // A high received-choice count is an observed lower bound; with a partial
-  // class sample it may rise to another group but cannot justify "isolated".
-  if(!coverageEnough(s)&&count===0)return {key:"pending",name:"0 выборов (пока)",count};
-  const group=count>=5?categories[0]:count>=3?categories[1]:count>=1?categories[2]:categories[3];
   const provisional=!coverageEnough(s);
+  if(count===0&&provisional)return {key:"pending",name:"0 выборов (пока)",count};
+  const group=count>=5?categories[0]:count>=3?categories[1]:count>=1?categories[2]:categories[3];
   return {key:group.key,name:group.short+(provisional?" (предв.)":""),count,provisional};
  };
  function observation(p,s,n){
   const d=clean(p,s),status=statusFor(p,s);
   if(status.key==="absent")return "Не участвовал в обследовании. Показатели не рассчитываются.";
   if(status.key==="review")return "Анкета исключена до уточнения. Сохранённые выборы не учитываются.";
-  if(status.key==="missing")return "Анкета не завершена. Нужен ответ ребёнка.";
-  if(status.key==="pending")return "Пока мало анкет для статусной категории. Получено "+d.received+" выборов.";
-  if(status.key==="isolated")return "0 положительных выборов по этому вопросу; уточнить включённость в общение. Это не означает отвержения.";
-  if(status.key==="star")return "Высокое число положительных выборов по этому вопросу. Взаимных связей – "+d.reciprocal+".";
-  return "Положительные выборы: "+d.received+"; взаимные связи – "+d.reciprocal+".";
+  const own=d.complete?"Анкета заполнена.":d.partial?"Собственная анкета частично заполнена.":
+    "Собственная анкета ещё не заполнена.";
+  const votes=d.received+" положительных выборов, "+d.reciprocal+" взаимных связей.";
+  if(status.key==="pending")return votes+" Пока недостаточно данных для нулевой категории. "+own;
+  return votes+" "+status.name+" по данному вопросу. "+own;
  }
  const concernLabel=p=>{
   const v=p.socioPeerConcern||{};
@@ -111,7 +113,7 @@
   const status=statusFor(target,s);
   if(status.key==="absent")return '<p class="psy-socio-empty">Ученик отсутствовал. Личные связи не строятся, анкета не заполнялась.</p>';
   if(status.key==="review")return '<p class="psy-socio-empty">Анкета ученика исключена до уточнения. Связи не отображаются.</p>';
-  if(!s.answered)return '<p class="psy-socio-empty">Пока нет завершённых анкет по этому вопросу.</p>';
+  if(!(s.responded??s.answered))return '<p class="psy-socio-empty">По этому вопросу пока нет учтённых ответов.</p>';
   const myChoices=s.edges.get(target.socioId)||new Set();
   const incoming=people.filter(p=>s.edges.get(p.socioId)?.has(target.socioId));
   const outgoing=people.filter(p=>myChoices.has(p.socioId));
