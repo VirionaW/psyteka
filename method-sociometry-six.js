@@ -115,7 +115,7 @@
    const selected=picks(r,i),chosen=new Set(selected.filter(v=>v!==NONE));
    return '<section class="psy-socio-question"><div class="psy-socio-question-heading"><span class="psy-socio-number">'+(i+1)+'</span>'+
     '<h4 data-socio-title="'+i+'">'+esc(question||"Укажите текст вопроса")+'</h4>'+
-    '<span class="psy-socio-question-status" data-socio-status="'+i+'">'+(validPicks(r,i,new Set(people.map(p=>p.socioId)))!==null?"Заполнено":"Не заполнено")+'</span></div>'+
+    '<span class="psy-socio-question-status '+(validPicks(r,i,new Set(people.map(p=>p.socioId)))!==null?"is-ready":"is-pending")+'" data-socio-status="'+i+'">'+(validPicks(r,i,new Set(people.map(p=>p.socioId)))!==null?"Заполнено":"Не заполнено")+'</span></div>'+
     '<div class="psy-socio-picks">'+[0,1,2].map(k=>{
      const val=selected[k];
      return '<label><span>'+(k+1)+' выбор</span><select data-socio-question="'+i+'" data-socio-slot="'+k+'" aria-label="Вопрос '+(i+1)+', выбор '+(k+1)+'">'+
@@ -124,7 +124,7 @@
       people.filter(p=>p.socioId!==r.socioId).map(p=>'<option value="'+esc(p.socioId)+'" '+(p.socioId===val?"selected":"")+
        (chosen.has(p.socioId)&&p.socioId!==val?" disabled":"")+'>'+esc(p.name)+'</option>').join("")+
       '</select></label>';
-    }).join("")+'</div></section>';
+    }).join("")+'</div><div class="psy-socio-question-bottom"><button type="button" class="psy-socio-none-fill" data-socio-fill="'+i+'">Остальные – никто</button><span>Если выборов меньше трех, остальные поля можно заполнить вариантом «Никто».</span></div></section>';
   }).join(""):"";
   return '<section class="psy-new-work psy-socio"><div class="psy-socio-intro"><h3>Социометрия класса</h3>'+
    '<p>Шесть положительных вопросов. На каждый – три выбора из своего класса или «Никто». Ответы сохраняются в обследовании и учитываются отдельно по каждому вопросу.</p></div>'+
@@ -162,7 +162,9 @@
    const progress=document.getElementById("psySocProgress");
    if(progress&&person)progress.textContent=questions(rows).filter((_,i)=>validPicks(person,i,ids)!==null).length+" из 6 вопросов заполнено";
    document.querySelectorAll("[data-socio-status]").forEach(el=>{
-    el.textContent=person&&validPicks(person,Number(el.dataset.socioStatus),ids)!==null?"Заполнено":"Не заполнено";
+    const ready=!!person&&validPicks(person,Number(el.dataset.socioStatus),ids)!==null;
+    el.textContent=ready?"Заполнено":"Не заполнено";
+    el.classList.toggle("is-ready",ready);el.classList.toggle("is-pending",!ready);
    });
   };
   function bindDetails(){
@@ -203,6 +205,11 @@
    }
    if(answered)rows.forEach(r=>{if(Array.isArray(r.socioChoices))r.socioChoices[index]=["","",""];});
    q[index]=next;setQuestions(rows,q);
+   ctx.onSelect?.(ctx.rowIndex);
+  }));
+  document.querySelectorAll("[data-socio-fill]").forEach(btn=>btn.addEventListener("click",()=>{
+   const row=rows[ctx.rowIndex],index=Number(btn.dataset.socioFill);
+   picks(row,index).forEach((v,i)=>{if(!v)putPick(row,index,i,NONE);});
    ctx.onSelect?.(ctx.rowIndex);
   }));
   document.querySelectorAll("[data-socio-question]").forEach(el=>el.addEventListener("change",()=>{
