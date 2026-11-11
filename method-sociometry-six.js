@@ -249,10 +249,37 @@
    q[index]=next;setQuestions(rows,q);
    ctx.onSelect?.(ctx.rowIndex);
   }));
+  const focusAnswer=(question,slot)=>{
+   const input=document.getElementById("psySocInput"+question+"_"+slot);
+   if(!input)return;
+   input.scrollIntoView?.({behavior:"smooth",block:"center"});
+   input.focus({preventScroll:true});
+  };
+  const advanceAfter=(row,question,slot)=>{
+   const current=picks(row,question);
+   let nextSlot=-1;
+   for(let i=slot+1;i<3;i++)if(!current[i]){nextSlot=i;break;}
+   if(nextSlot<0)for(let i=0;i<3;i++)if(!current[i]){nextSlot=i;break;}
+   if(nextSlot>=0){focusAnswer(question,nextSlot);return;}
+   for(let offset=1;offset<=5;offset++){
+    const next=(question+offset)%6,empty=picks(row,next).findIndex(v=>!v);
+    if(empty>=0){focusAnswer(next,empty);return;}
+   }
+   const ids=new Set(members(rows).map(p=>p.socioId));
+   if(!questions(rows).every((_,q)=>validPicks(row,q,ids)!==null))return;
+   const next=rows.findIndex((r,i)=>i>ctx.rowIndex&&String(r.name||"").trim());
+   if(next>=0){
+    ctx.onSelect?.(next);
+    focusAnswer(0,0);
+   }else{
+    message("Все шесть вопросов заполнены. Это последний ученик.");
+    document.getElementById("psySocFlag")?.focus?.();
+   }
+  };
   document.querySelectorAll("[data-socio-fill]").forEach(btn=>btn.addEventListener("click",()=>{
    const row=rows[ctx.rowIndex],index=Number(btn.dataset.socioFill);
    picks(row,index).forEach((v,i)=>{if(!v)putPick(row,index,i,NONE);});
-   ctx.onSelect?.(ctx.rowIndex);
+   refresh();advanceAfter(row,index,2);
   }));
   const normalize=x=>String(x||"").normalize("NFKC").toLocaleLowerCase("ru").replace(/ё/g,"е").trim();
   const allCombos=[...document.querySelectorAll(".psy-socio-combo")];
@@ -274,10 +301,10 @@
    const allowed=getCandidates(combo,"").some(p=>p.id===id);
    if(!allowed){message("Этот ученик уже выбран или недоступен.");return;}
    putPick(row,q,slot,id);
+   if(id===NONE)for(let i=slot+1;i<3;i++)if(!picks(row,q)[i])putPick(row,q,i,NONE);
    const input=combo.querySelector(".psy-socio-typeahead"),found=members(rows).find(p=>p.socioId===id);
    input.value=id===NONE?"Никто":found?.name||"";input.dataset.selected=id;
-   closeCombo(combo);refresh();
-   combo.querySelector(".psy-socio-drop")?.focus();
+   closeCombo(combo);refresh();advanceAfter(row,q,slot);
   };
   const drawOptions=(combo,term)=>{
    closeOther(combo);
@@ -375,18 +402,20 @@
   document.getElementById("psySocSave")?.addEventListener("click",()=>ctx.onSave?.());
   document.getElementById("psySocRaw")?.addEventListener("click",()=>{
    const people=members(rows),q=questions(rows),ids=new Set(people.map(r=>r.socioId));
-   const out=[["Ученик","Вопрос","Формулировка","1 выбор","2 выбор","3 выбор","Статус"]];
+   const out=[["Ученик","Вопрос","Формулировка","1 выбор","2 выбор","3 выбор","Статус ввода","Учет в расчете"]];
    people.forEach(r=>q.forEach((question,i)=>{
     out.push([r.name,i+1,question,...picks(r,i).map(id=>responseName(id,people)),
-     validPicks(r,i,ids)!==null?"Заполнен":"Не завершен"]);
+     validPicks(r,i,ids)!==null?"Заполнен":"Не завершен",
+     excluded(r)?"Исключено – требует уточнения":"Учитывается при завершении"]);
    }));
    download("Метолария_социометрия_ответы.csv",out);
   });
   document.getElementById("psySocSummary")?.addEventListener("click",()=>{
    const {people,result}=analyze(rows);
-   const out=[["Вопрос","Формулировка","Ученик","Входящие выборы","Взаимные выборы","Заполнено анкет","Взаимных пар"]];
+   const out=[["Вопрос","Формулировка","Ученик","Входящие выборы","Взаимные выборы","Учтено анкет","Взаимных пар","Учет ученика"]];
    result.forEach((s,i)=>people.forEach(p=>out.push([i+1,s.question,p.name,
-    s.incoming.get(p.socioId),s.mutual.get(p.socioId),s.answered,s.pairs])));
+    excluded(p)?"":s.incoming.get(p.socioId),excluded(p)?"":s.mutual.get(p.socioId),
+    s.answered,s.pairs,excluded(p)?"Исключено – требует уточнения":"Учитывается"])));
    download("Метолария_социометрия_сводка.csv",out);
   });
  }
