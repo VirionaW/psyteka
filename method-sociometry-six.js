@@ -34,6 +34,7 @@
   ?crypto.randomUUID():"socio-"+Math.random().toString(36).slice(2)+"-"+Date.now();
  const ensureIds=rows=>rows.forEach(r=>{if(String(r.name||"").trim()&&!r.socioId)r.socioId=randomId();});
  const members=rows=>rows.filter(r=>String(r.name||"").trim());
+ const excluded=row=>row?.socioReview?.status==="needs-review";
  const questions=rows=>{
   const stored=rows?.find(r=>Array.isArray(r.socioQuestions)&&r.socioQuestions.length===6)?.socioQuestions;
   return stored?stored.map((q,i)=>String(q??DEFAULT[i]).slice(0,220)):DEFAULT.slice();
@@ -55,11 +56,14 @@
  function analyze(rows){
   ensureIds(rows);
   const people=members(rows),ids=new Set(people.map(r=>r.socioId));
+  const excludedIds=new Set(people.filter(excluded).map(p=>p.socioId));
+  const eligible=people.length-excludedIds.size;
   const result=questions(rows).map((question,q)=>{
    const answers=new Map(),incoming=new Map(people.map(p=>[p.socioId,0]));
    const mutual=new Map(people.map(p=>[p.socioId,0]));
    let total=0,pairs=0;
    for(const r of people){
+    if(excluded(r))continue;
     const selected=validPicks(r,q,ids);
     if(selected===null)continue;
     answers.set(r.socioId,new Set(selected));
@@ -70,9 +74,9 @@
      pairs++;mutual.set(from,mutual.get(from)+1);mutual.set(to,mutual.get(to)+1);
     }
    }
-   return {question,answered:answers.size,total,pairs,incoming,mutual,edges:answers};
+   return {question,answered:answers.size,total,pairs,incoming,mutual,edges:answers,eligible,excludedIds};
   });
-  return {people,result};
+  return {people,result,eligible,excludedIds};
  }
  const responseName=(id,people)=>id===NONE?"Никто":(people.find(p=>p.socioId===id)?.name||"");
  function repetition(row){
@@ -103,23 +107,26 @@
    '<label>Статус<select id="psySocReviewStatus"><option value="needs-review" '+(status==="needs-review"?"selected":"")+'>Требует уточнения</option>'+
    '<option value="resolved" '+(status==="resolved"?"selected":"")+'>Уточнено</option></select></label>'+
    '<label class="psy-socio-review-note">Комментарий специалиста<textarea id="psySocReviewNote" maxlength="1000" rows="2" placeholder="Например: обсудить, чем отличаются работа в паре и проект">'+esc(note)+'</textarea></label></div>'+
-   '<p class="psy-socio-note">Отметка не влияет на подсчет выборов и видна только в результатах специалиста.</p></section>';
+   '<p class="psy-socio-note">'+(status==="needs-review"?
+    "Ответы этого ученика временно исключены из расчётов. При статусе «Уточнено» они автоматически вернутся в анализ.":
+    "Статус «Требует уточнения» исключает ответы из расчётов, не удаляя их. «Уточнено» возвращает данные в анализ.")+'</p></section>';
  }
  function resultHTML(ctx){
-  const {people,result}=analyze(ctx.rows);
+  const {people,result,eligible,excludedIds}=analyze(ctx.rows);
   if(!people.length)return '<p>Добавьте список класса, чтобы начать обследование.</p>';
-  const answered=people.reduce((sum,r)=>sum+result.filter((_,q)=>validPicks(r,q,new Set(people.map(p=>p.socioId)))!==null).length,0);
+  const answered=result.reduce((sum,r)=>sum+r.answered,0);
   const selected=Math.max(0,Math.min(5,viewCriterion)),s=result[selected];
   const perQuestion='<div class="psy-socio-summary-scroll"><table><thead><tr><th>№</th><th>Вопрос</th><th>Заполнено анкет</th><th>Выборов</th><th>Взаимных пар</th></tr></thead><tbody>'+
-   result.map((v,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(v.question||"Вопрос не указан")+'</td><td>'+v.answered+' из '+people.length+'</td><td>'+v.total+'</td><td>'+v.pairs+'</td></tr>').join("")+'</tbody></table></div>';
+   result.map((v,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(v.question||"Вопрос не указан")+'</td><td>'+v.answered+' из '+eligible+'</td><td>'+v.total+'</td><td>'+v.pairs+'</td></tr>').join("")+'</tbody></table></div>';
   const details='<label class="psy-socio-detail-choice">Выбранный вопрос для анализа <select id="psySocCriterion">'+
    result.map((r,i)=>'<option value="'+i+'" '+(i===selected?"selected":"")+'>'+(i+1)+'. '+esc(r.question||"Без формулировки")+'</option>').join("")+'</select></label>'+
    '';
   return '<div class="psy-new-metrics"><span>Участников в классе <b>'+people.length+'</b></span>'+
-   '<span>Ответов по вопросам <b>'+answered+' из '+(people.length*6)+'</b></span>'+
+   '<span>Учтено анкет по вопросам <b>'+answered+' из '+(eligible*6)+'</b></span>'+
+   (excludedIds.size?'<span>На уточнении (исключены) <b>'+excludedIds.size+'</b></span>':'')+
    '<span>Взаимных пар по выбранному вопросу <b>'+s.pairs+'</b></span></div>'+
    perQuestion+details+(api.sociometryReport?.render({people,result,selected,activeId:ctx.rows[ctx.rowIndex]?.socioId})||'')+
-   '<p class="psy-socio-note">Подсчитываются только полностью заполненные ответы по конкретному вопросу. Вариант «Никто» – явный ответ, пустое поле – незавершенный ввод. Отсутствие входящих выборов не означает отвержения ребенка.</p>';
+   '<p class="psy-socio-note">Подсчитываются завершённые ответы учеников без отметки «Требует уточнения». Их собственные анкеты временно исключаются; выборы одноклассников в их адрес сохраняются. «Никто» – явный ответ, пустое поле – незавершённый ввод.</p>';
  }
  function blank(){
   const q=questions(currentRows);
@@ -161,7 +168,7 @@
     }).join("")+'</div><div class="psy-socio-question-bottom"><button type="button" class="psy-socio-none-fill" data-socio-fill="'+i+'">Остальные – никто</button><span>Если выборов меньше трех, остальные поля можно заполнить вариантом «Никто».</span></div></section>';
   }).join(""):"";
   return '<section class="psy-new-work psy-socio"><div class="psy-socio-intro"><h3>Социометрия класса</h3>'+
-   '<p>В каждом поле можно написать имя и выбрать ученика из подсказок или раскрыть полный список. «Никто» всегда доступен первым. Выборы учитываются отдельно по каждому вопросу.</p></div>'+
+   '<p>Напишите имя или раскройте список: «Никто» всегда первым. После выбора переход к следующему полю, затем вопросу, а после шестого – к следующему ученику.</p></div>'+
    '<div class="psy-socio-roster"><div class="psy-socio-roster-head"><strong>Список класса</strong><span>'+people.length+' учеников</span></div>'+
    '<details class="psy-socio-add" '+(!people.length?"open":"")+'><summary>Добавить учеников списком</summary>'+
    '<p class="psy-socio-note">Вставьте список из журнала – по одному имени или условному коду в строке. Повторы не добавляются.</p>'+
@@ -388,7 +395,7 @@
  D.count="6 редактируемых вопросов, до 3 выборов в каждом";
  D.goal="Изучение предпочитаемых партнеров по шести положительным критериям взаимодействия в классе.";
  D.instructions="Для каждого вопроса выбери до трех одноклассников. Можно выбрать меньше трех человек или никого. Не выбирай себя и не повторяй одно имя в рамках вопроса.";
- D.scoring="Входящие положительные выборы и взаимные пары подсчитываются отдельно по каждому вопросу. Пустой ответ не равен выбору «Никто». В подсчет включаются только завершенные ответы по конкретному вопросу.";
+ D.scoring="Входящие положительные выборы и взаимные пары подсчитываются отдельно по каждому вопросу. Статус «Требует уточнения» временно исключает анкету ученика из статистики (без удаления данных). Выборы других учеников в его адрес сохраняются. Пустой ответ не равен «Никто».";
  D.interpret="Ответы показывают предпочтения в конкретных ситуациях, а не постоянный статус ученика. Отсутствие входящих выборов не равнозначно отвержению.";
  D.warning="Конфиденциальная процедура с шестью редактируемыми положительными критериями. Это не стандартизованная нормативная шкала. Не публикуйте результаты детей и не приписывайте им диагностические статусы.";
  D.version="SOCIOMETRY-CUSTOM-SIX-2026";
@@ -411,7 +418,7 @@
   if(d.methodType!=="sociometry")return previous.processing(d);
   return '<h3>Обработка результатов</h3><p>'+esc(d.scoring)+'</p>'+
    '<p>«Никто» фиксирует осознанное отсутствие выбора на конкретной позиции. Незаполненное поле означает, что ответ еще не внесен. Самовыбор и повтор одного ученика в рамках вопроса исключаются.</p>'+
-   '<p>Имя выбранного ученика можно ввести через поиск или выбрать из списка. «Никто» остается доступным независимо от текста поиска. Отметка «Требует уточнения» не означает ложь и не меняет подсчет.</p>'+
+   '<p>Имя выбранного ученика можно ввести через поиск или выбрать из списка. «Никто» остается доступным независимо от текста поиска. Отметка «Требует уточнения» не означает ложь, но временно исключает ответы этого ученика из расчётов.</p>'+
    '<p>Разные критерии не складываются в общий показатель популярности. Для каждого вопроса формируется собственная таблица и отдельная сводка.</p>'+
    '<p class="notice">'+esc(d.warning)+'</p>';
  };
