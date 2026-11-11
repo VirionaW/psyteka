@@ -16,7 +16,7 @@
   "Кого ты пригласил(а) бы в команду для школьного мероприятия?",
   "С кем ты хотел(а) бы вместе готовить выступление?"
  ];
- let currentRows=null,viewCriterion=0;
+ let currentRows=null,viewCriterion=0,outsideComboListenerAdded=false;
  const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const csv=rows=>"\uFEFF"+rows.map(row=>row.map(cell=>{
   let value=String(cell??"");
@@ -297,7 +297,7 @@
   };
   allCombos.forEach(combo=>{
    const input=combo.querySelector(".psy-socio-typeahead"),drop=combo.querySelector(".psy-socio-drop");
-   input.addEventListener("focus",()=>drawOptions(combo,""));
+   input.addEventListener("focus",()=>drawOptions(combo,input.value===("Никто")?"":input.value));
    input.addEventListener("input",()=>{
     const row=rows[ctx.rowIndex],q=Number(combo.dataset.socioQuestion),slot=Number(combo.dataset.socioSlot);
     const current=picks(row,q)[slot];
@@ -313,7 +313,8 @@
      const opts=[...combo.querySelectorAll(".psy-socio-option")];
      if(!opts.length)return;
      const cur=opts.indexOf(document.activeElement),step=e.key==="ArrowDown"?1:-1;
-     opts[(cur+step+opts.length)%opts.length].focus();return;
+     const first=step>0&&input.value.trim()&&opts.length>1?1:(step<0?opts.length-1:0);
+     opts[cur<0?first:(cur+step+opts.length)%opts.length].focus();return;
     }
     if(e.key==="Enter"){
      if(combo.querySelector(".psy-socio-options").hidden)drawOptions(combo,input.value);
@@ -327,13 +328,22 @@
    });
    drop.addEventListener("click",()=>{
     const open=!combo.querySelector(".psy-socio-options").hidden;
-    if(open)closeCombo(combo);else drawOptions(combo,"");
-    input.focus({preventScroll:true});
+    if(open){closeCombo(combo);drop.focus({preventScroll:true});}
+    else{drawOptions(combo,"");input.focus({preventScroll:true});}
    });
   });
-  document.addEventListener("pointerdown",e=>{
-   if(!e.target.closest?.(".psy-socio-combo"))allCombos.forEach(closeCombo);
-  },{once:false});
+  if(!outsideComboListenerAdded){
+   outsideComboListenerAdded=true;
+   document.addEventListener("pointerdown",e=>{
+    if(e.target.closest?.(".psy-socio-combo"))return;
+    document.querySelectorAll(".psy-socio-combo.is-open").forEach(combo=>{
+     const panel=combo.querySelector(".psy-socio-options"),input=combo.querySelector(".psy-socio-typeahead");
+     if(panel)panel.hidden=true;
+     if(input)input.setAttribute("aria-expanded","false");
+     combo.classList.remove("is-open");
+    });
+   });
+  }
   const currentReview=()=>rows[ctx.rowIndex].socioReview||{};
   const updateReview=(patch)=>{
    const row=rows[ctx.rowIndex];row.socioReview={...currentReview(),...patch};
