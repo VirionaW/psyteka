@@ -40,9 +40,13 @@
   if(reviewing(p))return {key:"review",name:"На уточнении",count:null};
   if(!s.edges.has(p.socioId))return {key:"missing",name:"Анкета не заполнена",count:null};
   const count=s.incoming.get(p.socioId)||0;
-  if(!coverageEnough(s))return {key:"pending",name:"Предварительно",count};
+  if(s.answered<5)return {key:"pending",name:"Мало анкет",count};
+  // A high received-choice count is an observed lower bound; with a partial
+  // class sample it may rise to another group but cannot justify "isolated".
+  if(!coverageEnough(s)&&count===0)return {key:"pending",name:"0 выборов (пока)",count};
   const group=count>=5?categories[0]:count>=3?categories[1]:count>=1?categories[2]:categories[3];
-  return {key:group.key,name:group.short,count};
+  const provisional=!coverageEnough(s);
+  return {key:group.key,name:group.short+(provisional?" (предв.)":""),count,provisional};
  };
  function observation(p,s,n){
   const d=clean(p,s),status=statusFor(p,s);
@@ -148,8 +152,8 @@
    '<h4>Социометрические статусы</h4><p>Границы Я. Л. Коломинского по положительным выборам именно этого вопроса</p></div></div>'+
    '<div class="psy-socio-status-groups">'+cards+pendingCard+'</div>'+
    '<p class="psy-socio-note">'+(coverageEnough(s)?
-     "Категории доступны: заполнено "+s.answered+" из "+s.eligible+" учитываемых анкет.":
-     "Для присвоения категорий требуется не менее 5 завершённых анкет и 75% участия. Пока статусы остаются предварительными.")+
+     "Статусы по положительным выборам: заполнено "+s.answered+" из "+s.eligible+" учитываемых анкет.":
+     "Пока обследовано "+s.answered+" из "+s.eligible+". При неполном участии 1–2, 3–4 и 5+ полученных выборов отмечаются предварительно; 0 не считается изоляцией до завершения хотя бы 75% анкет (и минимум 5 ответов).")+
    ' «Изолированный» здесь означает 0 положительных выборов, а не «изгой», «отверженный» или жертва травли. Для выявления буллинга этих ответов недостаточно. <a href="https://psyjournals.ru/journals/sociosphera/archive/2010_n2/35334" target="_blank" rel="noopener noreferrer">Основание категорий</a>.</p></section>';
  }
  function individual(people,result){
