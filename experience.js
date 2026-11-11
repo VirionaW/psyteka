@@ -1046,8 +1046,9 @@ function bindControls(){
     modeIndices.class=rowIndex;setTab('score');
    },
    onNext:()=>{
-    const socio=DETAILS[methodNow.name]?.methodType==='sociometry';
-    const eligible=r=>r.name?.trim()&&(!socio||!r.socioAbsent);
+    const kind=DETAILS[methodNow.name]?.methodType;
+    const eligible=r=>r.name?.trim()&&(
+     kind==='sociometry'?!r.socioAbsent:kind==='bullying-sociometry'?!r.bullyAbsent:true);
     const next=rows.findIndex((r,i)=>i>rowIndex&&eligible(r));
     const first=rows.findIndex(eligible);
     if(next<0&&first<0)return;
