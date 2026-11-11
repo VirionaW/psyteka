@@ -42,23 +42,25 @@
  const statusFor=(p,s)=>{
   if(absent(p))return {key:"absent",name:"Отсутствовал",count:null};
   if(reviewing(p))return {key:"review",name:"На уточнении",count:null};
-  // A pupil can RECEIVE nominations before submitting their own answer sheet.
-  // Recipient status therefore MUST NOT depend on s.edges.has(p.socioId).
+  // Receiving selections does not require one's own questionnaire.
   const count=s.incoming.get(p.socioId)||0;
+  if(s.negative)return {key:"negative",name:count+" отрицательных выборов",count};
   const provisional=!coverageEnough(s);
-  if(count===0&&provisional)return {key:"pending",name:"0 выборов (пока)",count};
+  if(count===0&&provisional)return {key:"pending",name:"0 положительных (пока)",count};
   const group=count>=5?categories[0]:count>=3?categories[1]:count>=1?categories[2]:categories[3];
   return {key:group.key,name:group.short+(provisional?" (предв.)":""),count,provisional};
  };
  function observation(p,s,n){
   const d=clean(p,s),status=statusFor(p,s);
-  if(status.key==="absent")return "Не участвовал в обследовании. Показатели не рассчитываются.";
-  if(status.key==="review")return "Анкета исключена до уточнения. Сохранённые выборы не учитываются.";
+  if(status.key==="absent")return "Отсутствовал на обследовании. Индивидуальные показатели не рассчитываются.";
+  if(status.key==="review")return "Анкета временно исключена до уточнения.";
   const own=d.complete?"Анкета заполнена.":d.partial?"Собственная анкета частично заполнена.":
     "Собственная анкета ещё не заполнена.";
+  if(s.negative)return "Получено "+d.received+" отрицательных выборов, взаимных – "+d.reciprocal+
+   ". Это предпочтения одноклассников, а не доказательство травли. "+own;
   const votes=d.received+" положительных выборов, "+d.reciprocal+" взаимных связей.";
-  if(status.key==="pending")return votes+" Пока недостаточно данных для нулевой категории. "+own;
-  return votes+" "+status.name+" по данному вопросу. "+own;
+  if(status.key==="pending")return votes+" Недостаточно данных для вывода об изоляции. "+own;
+  return votes+" "+status.name+" по данному положительному вопросу. "+own;
  }
  const concernLabel=p=>{
   const v=p.socioPeerConcern||{};
@@ -140,60 +142,75 @@
    '<p class="psy-socio-legend">Показаны связи только выбранного ученика. Нажмите на имя в списке, чтобы переместить его в центр. Зелёным обозначен взаимный выбор.</p>';
  }
  function statusGroups(people,s){
+  if(s.negative){
+   const rank=people.filter(p=>!excluded(p)).map(p=>({p,count:s.incoming.get(p.socioId)||0}))
+    .sort((a,b)=>b.count-a.count||a.p.name.localeCompare(b.p.name,"ru"));
+   return '<section class="psy-socio-status-board is-negative"><div class="psy-socio-section-heading"><div>'+
+    '<h4>Отрицательные выборы по этому вопросу</h4><p>Сколько раз ученика называли в ответе «меньше всего хотел бы»</p></div></div>'+
+    '<div class="psy-socio-negative-list">'+rank.map(({p,count})=>'<button type="button" data-socio-focus-id="'+E(p.socioId)+'">'+
+     E(p.name)+' <strong>'+count+'</strong></button>').join("")+'</div>'+
+    '<p class="psy-socio-note">Отрицательные выборы не дают статусов «Звезда» или «Предпочитаемый». Номинации требуют осторожного обсуждения; сами по себе они не устанавливают травлю.</p></section>';
+  }
   const groups=categories.map(c=>({...c,people:people.filter(p=>statusFor(p,s).key===c.key)}));
   const pending=people.filter(p=>!categories.some(c=>c.key===statusFor(p,s).key));
   const makeCard=c=>'<section class="psy-socio-status-group is-'+c.key+'"><div><strong>'+E(c.name)+'</strong>'+
    '<span>'+c.people.length+'</span></div><small>'+E(c.range)+'</small>'+
    (c.people.length?'<ul>'+c.people.map(p=>'<li><button type="button" data-socio-focus-id="'+E(p.socioId)+'">'+
     E(p.name)+'</button></li>').join("")+'</ul>':'<p>Нет учеников</p>')+'</section>';
-  const cards=groups.map(makeCard).join("");
-  const pendingCard=pending.length?'<section class="psy-socio-status-group is-other"><div><strong>Без категории</strong><span>'+pending.length+'</span></div>'+
-   '<small>Не участвовали, на уточнении, анкет нет или данных мало</small><ul>'+
-   pending.map(p=>'<li><button type="button" data-socio-focus-id="'+E(p.socioId)+'">'+
-    E(p.name)+'</button><small>'+E(statusFor(p,s).name)+'</small></li>').join("")+'</ul></section>':"";
   return '<section class="psy-socio-status-board"><div class="psy-socio-section-heading"><div>'+
-   '<h4>Категории по выбранному вопросу</h4><p>Только один критерий: 5 и более – «Звезда», 3–4 – «Предпочитаемый». Итог всех шести вопросов показан выше.</p></div></div>'+
-   '<div class="psy-socio-status-groups">'+cards+pendingCard+'</div>'+
-   '<p class="psy-socio-note">'+(coverageEnough(s)?
-     "Статусы по положительным выборам: заполнено "+s.answered+" из "+s.eligible+" учитываемых анкет.":
-     "Пока обследовано "+s.answered+" из "+s.eligible+". При неполном участии 1–2, 3–4 и 5+ полученных выборов отмечаются предварительно; 0 не считается изоляцией до завершения хотя бы 75% анкет (и минимум 5 ответов).")+
-   ' «Изолированный» здесь означает 0 положительных выборов, а не «изгой», «отверженный» или жертва травли. Для выявления буллинга этих ответов недостаточно. <a href="https://psyjournals.ru/journals/sociosphera/archive/2010_n2/35334" target="_blank" rel="noopener noreferrer">Основание категорий</a>.</p></section>';
+   '<h4>Категории по положительному вопросу</h4>'+
+   '<p>«Звезда» – 5 и более, «Предпочитаемый» – 3–4 выбора в одном положительном вопросе</p></div></div>'+
+   '<div class="psy-socio-status-groups">'+groups.map(makeCard).join("")+
+    (pending.length?'<section class="psy-socio-status-group is-other"><div><strong>Без категории</strong><span>'+
+     pending.length+'</span></div><ul>'+pending.map(p=>'<li><button type="button" data-socio-focus-id="'+
+      E(p.socioId)+'">'+E(p.name)+'</button> – '+E(statusFor(p,s).name)+'</li>').join("")+
+    '</ul></section>':"")+'</div>'+
+   '<p class="psy-socio-note">Категории относятся только к положительным вопросам 1–3. При неполном охвате результаты предварительны, а нулевой выбор не считается подтверждённой изоляцией. <a href="https://psyjournals.ru/journals/sociosphera/archive/2010_n2/35334" target="_blank" rel="noopener noreferrer">Основание категорий</a>.</p></section>';
  }
  function sixStats(person,result){
-  if(excluded(person))return {excluded:true,counts:[],total:null,criteria:null,unique:null,starCriteria:null};
+  if(excluded(person))return {excluded:true,counts:[],positive:null,negative:null,sp:null,si:null,
+   uniquePos:null,uniqueNeg:null,posCriteria:null,negCriteria:null,starCriteria:null};
   const counts=result.map(r=>r.incoming.get(person.socioId)||0);
-  const unique=new Set();
-  result.forEach(r=>r.edges.forEach((chosen,from)=>{
-   if(chosen.has(person.socioId))unique.add(from);
-  }));
-  return {excluded:false,counts,total:counts.reduce((a,b)=>a+b,0),
-   criteria:counts.filter(v=>v>0).length,unique:unique.size,
-   starCriteria:result.filter((r,i)=>statusFor(person,r).key==="star").length};
+  const groupUnique=(start,end)=>{
+   const ids=new Set();
+   result.slice(start,end).forEach(r=>r.edges.forEach((chosen,from)=>{
+    if(chosen.has(person.socioId))ids.add(from);
+   }));
+   return ids.size;
+  };
+  const positive=counts.slice(0,3).reduce((a,b)=>a+b,0);
+  const negative=counts.slice(3,6).reduce((a,b)=>a+b,0);
+  return {excluded:false,counts,positive,negative,sp:positive-negative,si:positive+negative,
+   uniquePos:groupUnique(0,3),uniqueNeg:groupUnique(3,6),
+   posCriteria:counts.slice(0,3).filter(v=>v>0).length,
+   negCriteria:counts.slice(3,6).filter(v=>v>0).length,
+   starCriteria:result.slice(0,3).filter(r=>statusFor(person,r).key==="star").length};
  }
  function overviewSix(people,result,forPrint=false){
   const ordered=people.map(person=>({person,stats:sixStats(person,result)}))
    .sort((a,b)=>Number(a.stats.excluded)-Number(b.stats.excluded)||
-    (b.stats.total||0)-(a.stats.total||0)||a.person.name.localeCompare(b.person.name,"ru"));
+    (b.stats.positive||0)-(a.stats.positive||0)||
+    a.person.name.localeCompare(b.person.name,"ru"));
   return '<section class="psy-socio-six-overview"><div class="psy-socio-section-heading"><div>'+
-   '<h4>Все шесть вопросов – общая картина</h4>'+
-   '<p>По каждому ребёнку: сколько раз его назвали в вопросах 1–6, сколько разных детей его выбирали и по каким вопросам он достиг 5 выборов. Это не статус по одному вопросу.</p></div></div>'+
+   '<h4>Итог по 6 вопросам: положительные и отрицательные отдельно</h4>'+
+   '<p>LP – полученные положительные номинации (1–3), LM – отрицательные (4–6); SP = LP − LM, SI = LP + LM</p></div></div>'+
    '<div class="psy-socio-summary-scroll"><table class="psy-socio-six-table"><thead><tr>'+
-   '<th scope="col">Ученик</th><th scope="col">Вопросов, где выбирали</th>'+
-   '<th scope="col">Всего выборов</th><th scope="col">Разных выбравших</th>'+
-   '<th scope="col">«Звезда» по вопросам</th>'+
-   (forPrint?'<th scope="col">Выборы по вопросам 1–6</th>':
-     result.map((_,i)=>'<th scope="col">В'+(i+1)+'</th>').join(""))+
-   '</tr></thead><tbody>'+
-   ordered.map(({person,stats})=>'<tr><th scope="row"><button type="button" class="psy-socio-name-link" data-socio-focus-id="'+E(person.socioId)+'">'+
-    E(person.name)+'</button></th>'+
-    (stats.excluded?'<td colspan="'+(forPrint?5:10)+'">'+(absent(person)?"Отсутствовал":"На уточнении")+
-     ' – показатели не рассчитываются</td>':
-     '<td>'+stats.criteria+' из 6</td><td class="psy-socio-six-main">'+stats.total+
-     '</td><td>'+stats.unique+'</td><td>'+stats.starCriteria+'</td>'+
-     (forPrint?'<td>'+stats.counts.join(" / ")+'</td>':
-      stats.counts.map(n=>'<td>'+(n>=5?'<strong class="psy-socio-count-star" title="Не менее 5 выборов по этому вопросу">★ '+n+'</strong>':n)+'</td>').join("")))+
+   '<th>Ученик</th><th>LP (1–3)</th><th>LM (4–6)</th><th>SP</th><th>SI</th>'+
+   '<th>Разных: + / −</th><th>«Звезда» по 1–3</th>'+
+   (forPrint?'<th>По вопросам 1–3 / 4–6</th>':
+    result.map((_,i)=>'<th class="'+(i>=3?"is-negative":"is-positive")+'">'+
+     (i>=3?"− ":"+ ")+'В'+(i+1)+'</th>').join(""))+'</tr></thead><tbody>'+
+   ordered.map(({person,stats})=>'<tr><th scope="row"><button type="button" class="psy-socio-name-link" data-socio-focus-id="'+
+    E(person.socioId)+'">'+E(person.name)+'</button></th>'+
+    (stats.excluded?'<td colspan="'+(forPrint?7:12)+'">'+(absent(person)?"Отсутствовал":"На уточнении")+
+      ' – показатели не рассчитываются</td>':
+     '<td class="psy-socio-six-main">'+stats.positive+'</td><td class="psy-socio-six-negative">'+stats.negative+
+     '</td><td>'+stats.sp+'</td><td>'+stats.si+'</td>'+
+     '<td>'+stats.uniquePos+' / '+stats.uniqueNeg+'</td><td>'+stats.starCriteria+'</td>'+
+     (forPrint?'<td>'+stats.counts.slice(0,3).join(" / ")+' | '+stats.counts.slice(3).join(" / ")+'</td>':
+      stats.counts.map((n,i)=>'<td>'+(i<3&&n>=5?'<strong class="psy-socio-count-star">★ '+n+'</strong>':n)+'</td>').join("")))+
    '</tr>').join("")+'</tbody></table></div>'+
-   '<p class="psy-socio-note">Сумма по шести разным вопросам – описательный показатель, не отдельный социометрический статус. «Звезда» определяется по каждому вопросу, если получено 5 и более положительных выборов. При незавершённых ответах данные предварительные.</p></section>';
+   '<p class="psy-socio-note">LP, LM, SP и SI – описательные показатели полученных выборов, не диагнозы и не нормативный общий статус. Отрицательные ответы никогда не увеличивают положительную популярность.</p></section>';
  }
  function individual(people,result){
   const target=people.find(p=>p.socioId===selectedChild)||people[0];
