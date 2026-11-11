@@ -250,3 +250,12 @@
 .psy-socio-legacy summary{cursor:pointer;font-weight:750;color:var(--text,#775235)}
 .psy-socio-legacy p{font-size:12px;line-height:1.5;color:var(--muted,#826e5b)}
 .psy-socio-legacy button{margin:6px 0}
+
+/* Recovery of already-entered selections from old six-question wording. */
+.psy-socio-restore-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0}
+.psy-socio-restore-stats>span{padding:9px 10px;border:1px solid var(--stroke,#e0d5c9);border-radius:8px;background:var(--card,#fff);font-size:12px;color:var(--text,#624b39)}
+.psy-socio-restore-stats strong{font-variant-numeric:tabular-nums;color:#85522e}
+.psy-socio-restore-hint{padding:11px 14px!important;border:1px solid #dac7a7;border-left:4px solid #bd8950;border-radius:9px;background:var(--panel-soft,#fbf4e9);color:var(--text,#68523b);font-size:12px;line-height:1.6}
+.psy-socio-restore-hint strong{color:var(--text,#79502e)}
+.psy-socio-restore-hint a{font-weight:750;text-decoration:underline;text-underline-offset:2px;color:var(--text,#885228)}
+@media(max-width:680px){.psy-socio-restore-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
