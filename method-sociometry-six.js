@@ -140,6 +140,7 @@
   const {people,result,eligible,excludedIds,absentIds,reviewIds}=analyze(ctx.rows);
   if(!people.length)return '<p>Добавьте список класса, чтобы начать обследование.</p>';
   const answered=result.reduce((sum,r)=>sum+r.answered,0);
+  const partial=result.reduce((sum,r)=>sum+r.partial,0);
   const selected=Math.max(0,Math.min(5,viewCriterion)),s=result[selected];
   const perQuestion='<div class="psy-socio-summary-scroll"><table><thead><tr><th>№</th><th>Вопрос</th><th>Полностью</th><th>Частично</th><th>Учтено выборов</th><th>Взаимных пар</th></tr></thead><tbody>'+
    result.map((v,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(v.question||"Вопрос не указан")+'</td><td>'+
@@ -148,7 +149,8 @@
    result.map((r,i)=>'<option value="'+i+'" '+(i===selected?"selected":"")+'>'+(i+1)+'. '+esc(r.question||"Без формулировки")+'</option>').join("")+'</select></label>'+
    '';
   return '<div class="psy-new-metrics"><span>Участников в классе <b>'+people.length+'</b></span>'+
-   '<span>Учтено анкет по вопросам <b>'+answered+' из '+(eligible*6)+'</b></span>'+
+   '<span>Полностью заполнено <b>'+answered+' из '+(eligible*6)+'</b></span>'+
+   (partial?'<span>Частично (выборы учтены) <b>'+partial+'</b></span>':'')+
    (absentIds.size?'<span>Отсутствовали <b>'+absentIds.size+'</b></span>':'')+
    (reviewIds.size?'<span>На уточнении <b>'+reviewIds.size+'</b></span>':'')+
    '<span>Взаимных пар по выбранному вопросу <b>'+s.pairs+'</b></span></div>'+
@@ -180,7 +182,8 @@
    const selected=picks(r,i),chosen=new Set(selected.filter(v=>v!==NONE));
    return '<section class="psy-socio-question"><div class="psy-socio-question-heading"><span class="psy-socio-number">'+(i+1)+'</span>'+
     '<h4 data-socio-title="'+i+'">'+esc(question||"Укажите текст вопроса")+'</h4>'+
-    '<span class="psy-socio-question-status '+(validPicks(r,i,new Set(people.map(p=>p.socioId)))!==null?"is-ready":"is-pending")+'" data-socio-status="'+i+'">'+(validPicks(r,i,new Set(people.map(p=>p.socioId)))!==null?"Заполнено":"Не заполнено")+'</span></div>'+
+    '<span class="psy-socio-question-status '+(validPicks(r,i,new Set(people.map(p=>p.socioId)))!==null?"is-ready":"is-pending")+'" data-socio-status="'+i+'">'+
+     (validPicks(r,i,new Set(people.map(p=>p.socioId)))!==null?"Заполнено":selected.some(Boolean)?"Частично":"Не заполнено")+'</span></div>'+
     '<div class="psy-socio-picks">'+[0,1,2].map(k=>{
      const val=selected[k];
      const inputId='psySocInput'+i+'_'+k,optionId='psySocOptions'+i+'_'+k;
@@ -237,7 +240,7 @@
    if(progress&&person)progress.textContent=questions(rows).filter((_,i)=>validPicks(person,i,ids)!==null).length+" из 6 вопросов заполнено";
    document.querySelectorAll("[data-socio-status]").forEach(el=>{
     const ready=!!person&&validPicks(person,Number(el.dataset.socioStatus),ids)!==null;
-    el.textContent=ready?"Заполнено":"Не заполнено";
+    el.textContent=ready?"Заполнено":person&&picks(person,Number(el.dataset.socioStatus)).some(Boolean)?"Частично":"Не заполнено";
     el.classList.toggle("is-ready",ready);el.classList.toggle("is-pending",!ready);
    });
    if(typeof updateRepetition==='function')updateRepetition();
