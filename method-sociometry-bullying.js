@@ -89,18 +89,26 @@
    .filter(x=>x.m[key]>0).sort((a,b)=>b.m[key]-a.m[key]||a.p.name.localeCompare(b.p.name,"ru"));
   const acc=ranked("ag"),vics=ranked("vi"),defs=ranked("df");
   // Five descriptive checks based on the supplied example; not a validated diagnostic index.
+  const minimum=Math.max(5,Math.ceil(eligible.length*.75));
+  const positiveReady=eligible.length>=5&&results[0].responded.size>=minimum;
+  const negativeReady=eligible.length>=5&&results[1].responded.size+results[1].skipped.size>=minimum;
+  const initiatorReady=eligible.length>=5&&results[2].responded.size>=minimum;
+  const victimReady=eligible.length>=5&&results[3].responded.size>=minimum;
   const flags=[
    {label:"Одновременно часто называемые в положительных связях и возможными инициаторами",
+    ready:positiveReady&&initiatorReady,
     triggered:people.some(p=>!excluded(p)&&metrics.get(p.bullyId).lp>=3&&metrics.get(p.bullyId).ag>=3)},
    {label:"Повторяющиеся номинации возможных пострадавших (не менее 3)",
-    triggered:vics.some(x=>x.m.vi>=3)},
+    ready:victimReady,triggered:vics.some(x=>x.m.vi>=3)},
    {label:"Ученики с отрицательным балансом позитивных и негативных выборов",
+    ready:positiveReady&&negativeReady,
     triggered:people.some(p=>!excluded(p)&&metrics.get(p.bullyId).sp<=-2)},
-   {label:"Плотность положительных связей ниже 20%",triggered:density!=null&&density<20},
+   {label:"Плотность положительных связей ниже 20%",
+    ready:positiveReady,triggered:density!=null&&density<20},
    {label:"Отрицательных номинаций более 30% от положительных",
-    triggered:negativeRatio!=null&&negativeRatio>30}
+    ready:positiveReady&&negativeReady&&LP>0,triggered:negativeRatio!=null&&negativeRatio>30}
   ];
-  const enough=eligible.length>=5&&coverage>=75&&results[1].responded.size+results[1].skipped.size>=Math.ceil(eligible.length*.75);
+  const enough=flags.every(f=>f.ready);
   return {people,byId,eligible:eligible.length,results,metrics,n,LP,LM,density,reciprocity,
     negativeRatio,mutualPairs,coverage,ranked,flags,enough,acc,vics,defs,
     absent:people.filter(absent),pending:people.filter(p=>review(p)&&!absent(p))};
@@ -228,10 +236,12 @@
      (missing>0?'; без ответа '+missing:"")+
      (res.partial.size?'; меньше 2 имен '+res.partial.size:"")+'.</p>';
    }).join("")+'</div>';
-  const flagCount=a.flags.filter(x=>x.triggered).length;
+  const flagCount=a.flags.filter(x=>x.ready&&x.triggered).length;
   const risk='<section class="psy-bully-risk"><h4>Ориентировочные сигналы для проверки</h4>'+
    '<p>Пороговые 20% плотности и 30% соотношения из представленного отчета. Остальные сигналы – рабочие наблюдения. Это не диагностический индекс буллинга.</p>'+
-   '<ul>'+a.flags.map(f=>'<li><span class="'+(f.triggered?"active":"")+'">'+(f.triggered?"Отмечен":"Не отмечен")+'</span> '+E(f.label)+'</li>').join("")+'</ul>'+
+   '<ul>'+a.flags.map(f=>'<li><span class="'+(f.ready&&f.triggered?"active":"")+'">'+
+    (!f.ready?"Недостаточно ответов":f.triggered?"Отмечен":"Не отмечен")+'</span> '+
+     E(f.label)+'</li>').join("")+'</ul>'+
    '<p><strong>'+(a.enough?flagCount+' из 5 сигналов по рабочему правилу.':'Данных пока недостаточно для итоговой оценки сигналов.')+
    '</strong> Наличие сигналов означает необходимость проверки, а не доказанную травлю.</p></section>';
   const recommendations=[
@@ -248,7 +258,7 @@
    info+'<h4>Количественные показатели по детям</h4>'+table+
    '<p class="psy-bully-note">LP – положительные выборы; LM – отрицательные; SP = LP - LM; SI = LP + LM. «Агр.», «Жертва», «Защ.» – номинации, а не установленная роль в травле. Дети без собственной анкеты могут получать номинации, но отсутствие не равно нулю.</p>'+
    '<div class="psy-bully-findings">'+names("lp","Положительные выборы (Q1)")+
-    names("vi","Кого называли пострадавющим (Q4)")+
+    names("vi","Кого называли пострадавшим (Q4)")+
     names("ag","Кого называли инициатором (Q3)")+
     names("df","Кого называли защитником (Q5)")+'</div>'+
    '<details class="psy-bully-details" open><summary>Полнота и качество анкет</summary>'+quality+'</details>'+
@@ -315,7 +325,7 @@
     ': ответили '+a.results[i].responded.size+' из '+a.eligible+
     ', пропущено '+a.results[i].skipped.size+'.</p>').join("")+
    '<h2>Сигналы к проверке</h2><ul>'+a.flags.map(f=>'<li>'+E(f.label)+
-    ': '+(f.triggered?"отмечен":"не отмечен")+'</li>').join("")+'</ul>'+
+    ': '+(!f.ready?"недостаточно ответов":f.triggered?"отмечен":"не отмечен")+'</li>').join("")+'</ul>'+
    '<p>Ответы детей отражают восприятие одноклассников. Проверка фактов травли требует индивидуальных бесед, наблюдения и сверки с педагогами. Отчет не устанавливает роли агрессора или жертвы.</p>';
   const css='@page{size:A4 landscape;margin:12mm}body{font:10pt/1.45 Arial,sans-serif;color:#283d30}h1{font-size:16pt}h2{font-size:12pt;margin-top:18px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #a8b7ad;padding:4px 5px;font-size:7.7pt;text-align:left;vertical-align:top}thead{display:table-header-group}tr{page-break-inside:avoid}p{margin:8px 0}@media print{button{display:none}}button{padding:10px;border:1px solid #67917b;border-radius:7px;margin-top:20px;background:#eef8ee;cursor:pointer}';
   const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Метолария – анализ межличностных отношений</title><style>'+
