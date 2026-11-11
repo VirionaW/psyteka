@@ -131,15 +131,18 @@
    ).join("")+'</ul>':
    '<p class="psy-socio-focus-empty">По выбранному фильтру связей нет</p>';
   return '<div class="psy-socio-focus-map">'+
-   '<div class="psy-socio-focus-side"><h5>Кто его выбрал <b>'+incomingShown.length+'</b></h5>'+peers(incomingShown,"incoming")+'</div>'+
+   '<div class="psy-socio-focus-side"><h5>'+(s.negative?"Кто указал его отрицательно":"Кто его выбрал")+
+     ' <b>'+incomingShown.length+'</b></h5>'+peers(incomingShown,"incoming")+'</div>'+
    '<div class="psy-socio-focus-center"><span class="psy-socio-focus-kicker">Ребёнок в центре</span>'+
    '<strong>'+E(target.name)+'</strong><span class="psy-socio-focus-status">'+E(status.name)+'</span>'+
    '<p>'+E(s.question)+'</p>'+
    '<div><b>'+myChoices.size+'</b><small>сделано</small><b>'+incoming.length+'</b><small>получено</small>'+
    '<b>'+mutual.size+'</b><small>взаимно</small></div>'+
    '</div>'+
-   '<div class="psy-socio-focus-side"><h5>Кого он выбрал <b>'+outgoingShown.length+'</b></h5>'+peers(outgoingShown,"outgoing")+'</div></div>'+
-   '<p class="psy-socio-legend">Показаны связи только выбранного ученика. Нажмите на имя в списке, чтобы переместить его в центр. Зелёным обозначен взаимный выбор.</p>';
+   '<div class="psy-socio-focus-side"><h5>'+(s.negative?"Кого он указал отрицательно":"Кого он выбрал")+
+     ' <b>'+outgoingShown.length+'</b></h5>'+peers(outgoingShown,"outgoing")+'</div></div>'+
+   '<p class="psy-socio-legend">Показаны '+(s.negative?"отрицательные":"положительные")+
+    ' номинации выбранного ученика. Взаимность означает выбор в обе стороны по одному критерию, а не дружбу или травлю.</p>';
  }
  function statusGroups(people,s){
   if(s.negative){
@@ -218,15 +221,15 @@
   selectedChild=target.socioId;
   const isAbsent=absent(target),six=sixStats(target,result);
   return '<div class="psy-socio-individual"><div class="psy-socio-section-heading"><div><h4>Карточка ученика</h4>'+
-   '<p>Статус и взаимные связи отдельно по каждому из шести вопросов</p></div><label>Ученик <select id="psySocAnalysedPerson">'+
+   '<p>Положительные и отрицательные выборы по каждому из шести вопросов</p></div><label>Ученик <select id="psySocAnalysedPerson">'+
    people.map(p=>'<option value="'+E(p.socioId)+'" '+(p.socioId===target.socioId?"selected":"")+'>'+E(p.name)+
     (absent(p)?" – отсутствовал":"")+'</option>').join("")+
    '</select></label></div>'+
    (isAbsent?'<p class="psy-socio-empty">Отсутствовал на обследовании. Все шесть результатов пустые, статус не присваивается.</p>':"")+
-   (!six.excluded?'<div class="psy-socio-person-six"><span><b>'+six.criteria+' из 6</b><small>вопросов с выборами</small></span>'+
-     '<span><b>'+six.total+'</b><small>всего получено</small></span>'+
-     '<span><b>'+six.unique+'</b><small>разных одноклассников</small></span>'+
-     '<span><b>'+six.starCriteria+'</b><small>вопросов со статусом «Звезда»</small></span></div>':"")+
+   (!six.excluded?'<div class="psy-socio-person-six"><span><b>'+six.positive+'</b><small>положительных (LP)</small></span>'+
+     '<span><b>'+six.negative+'</b><small>отрицательных (LM)</small></span>'+
+     '<span><b>'+six.sp+'</b><small>баланс (SP)</small></span>'+
+     '<span><b>'+six.si+'</b><small>заметность (SI)</small></span></div>':"")+
    '<div class="psy-socio-summary-scroll"><table class="psy-socio-person-table"><thead><tr><th>Вопрос</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Статус</th><th>Конкретный вывод</th></tr></thead><tbody>'+
    result.map((s,i)=>{
     const d=clean(target,s),st=statusFor(target,s);
@@ -241,7 +244,7 @@
    '</div>';
  }
  function table(people,s){
-  const header='<thead><tr><th>Ученик</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Социометрический статус</th><th>Анкета</th><th>Сведения о травле</th><th>Конкретный анализ</th></tr></thead>';
+  const header='<thead><tr><th>Ученик</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Показатель по критерию</th><th>Анкета</th><th>Сведения о травле</th><th>Конкретный анализ</th></tr></thead>';
   const body=people.map(p=>{
    const d=clean(p,s),st=statusFor(p,s);
    const attendance=st.key==="absent"?"Отсутствовал":st.key==="review"?"На уточнении":d.complete?"Заполнена":d.partial?"Частично":"Не заполнена";
@@ -267,9 +270,9 @@
   const reached=people.filter(p=>!excluded(p)&&(s.incoming.get(p.socioId)||0)>0).length;
   const classStats='<div class="psy-socio-facts">'+
    '<span><strong>'+s.answered+' / '+eligible+'</strong><small>полностью заполнено</small></span>'+
-   '<span><strong>'+s.total+'</strong><small>положительных выборов</small></span>'+
+   '<span><strong>'+s.total+'</strong><small>'+(s.negative?"отрицательных":"положительных")+' выборов</small></span>'+
    '<span><strong>'+s.pairs+'</strong><small>взаимных пар</small></span>'+
-   '<span><strong>'+reached+'</strong><small>детей получили выборы</small></span></div>';
+   '<span><strong>'+reached+'</strong><small>детей получили '+(s.negative?"отрицательные":"положительные")+' выборы</small></span></div>';
   const lists='<div class="psy-socio-roster-notices">'+
    (absentees.length?'<p><strong>Отсутствовали ('+absentees.length+'):</strong> '+absentees.map(p=>E(p.name)).join(", ")+
      ' – результаты пустые, статус не присваивается.</p>':"")+
@@ -281,25 +284,29 @@
     noResponses.map(p=>E(p.name)).join(", ")+'.</p>':"")+'</div>';
   return '<div class="psy-socio-analytics">'+classStats+lists+
    overviewSix(people,result)+
-   '<p class="psy-socio-criterion-warning"><strong>Ниже – только вопрос № '+(selected+1)+':</strong> '+
-    E(s.question)+' Категории «Звезда», «Предпочитаемый» и другие относятся исключительно к этому вопросу, а не к сумме за шесть.</p>'+
+   '<p class="psy-socio-criterion-warning"><strong>Вопрос № '+(selected+1)+' – '+
+    (s.negative?"отрицательный":"положительный")+' выбор:</strong> '+
+    E(s.question)+(s.negative?" Отрицательные выборы не дают статусов «Звезда» и «Предпочитаемый».":
+    " Категории положительных выборов относятся только к этому вопросу.")+'</p>'+
    statusGroups(people,s)+
    '<div class="psy-socio-section-heading"><div><h4>Таблица детей · вопрос № '+(selected+1)+'</h4><p>'+E(s.question)+'</p></div>'+
    '<span class="psy-socio-coverage '+(s.answered<eligible?"is-pending":"is-ready")+'">'+
    (s.answered<eligible?"Данные предварительные":"Все учтённые анкеты завершены")+'</span></div>'+
    table(people,s)+
    '<section class="psy-socio-visual"><div class="psy-socio-section-heading"><div>'+
-   '<h4>Схема связей одного ребёнка</h4><p>Без перекрещивающихся стрелок: видно, кто его выбрал, кого выбрал он и где взаимность</p></div>'+
+   '<h4>Схема '+(s.negative?"отрицательных":"положительных")+' связей одного ребёнка</h4>'+
+   '<p>Только связи выбранного ученика, без пересекающихся стрелок</p></div>'+
    '<label class="psy-socio-filter"><input type="checkbox" id="psySocMutualOnly" '+(onlyMutual?"checked":"")+'><span>Только взаимные</span></label></div>'+
    sociogram(people,s)+'</section>'+
    individual(people,result)+
    '<details class="psy-socio-matrix-panel"><summary><span>Полная социоматрица</span><small>Показать все связи в таблице</small></summary>'+
-   '<p class="psy-socio-note">Строка – кто выбирает, столбец – кого выбрали. Отсутствовавшие и находящиеся на уточнении не учитываются как респонденты.</p>'+
+   '<p class="psy-socio-note">Строка – кто '+(s.negative?"указал отрицательный выбор":"выбирает положительно")+
+    ', столбец – кого указали. Отсутствующие и находящиеся на уточнении не считаются респондентами.</p>'+
    matrix(people,s)+'</details>'+
    '<div class="class-actions psy-socio-report-actions"><button type="button" class="btn" id="psySocAnalysisCSV">Скачать таблицу анализа детей</button>'+
    '<button type="button" class="btn" id="psySocMatrixCSV">Скачать социоматрицу</button>'+
    '<button type="button" class="btn" id="psySocPrintAnalysis">Посмотреть и распечатать А4</button></div>'+
-   '<p class="psy-socio-note">«Изгой», «отверженный» и «буллер» не определяются положительными выборами. Сведения о травле вводятся психологом отдельно, не влияют на расчёты и не присваиваются автоматически.</p></div>';
+   '<p class="psy-socio-note">Отрицательные выборы показывают избегаемые ситуации, а не доказанную травлю. Нельзя автоматически присваивать ярлыки «изгой», «отверженный» или «буллер».</p></div>';
  }
  function prepareCSV(people,result){
   const rows=[["Ученик","Вопрос","Критерий","Сделал выборов","Получил выборов",
