@@ -1078,8 +1078,11 @@ function bindControls(){
  modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
  const nextMode=b.dataset.cmode;
  if(nextMode===calcMode)return;
+ const carriedSociometryVariant=window.PSY_SOCIO_VARIANTS?.name===methodNow.name
+  ?window.PSY_SOCIO_VARIANTS.getVariant():null;
  savedModeRecords[calcMode]={...savedModeRecords[calcMode],id:activeSavedAssessmentId,title:activeSavedAssessmentTitle};
  window.PSY_DRAFTS?.flush?.();calcMode=nextMode;rows=modeSnapshots[calcMode];rowIndex=modeIndices[calcMode]||0;
+ if(carriedSociometryVariant)window.PSY_SOCIO_VARIANTS.setVariant(carriedSociometryVariant,rows);
  activeSavedAssessmentId=savedModeRecords[calcMode]?.id||null;
  activeSavedAssessmentTitle=savedModeRecords[calcMode]?.title||"";
  setTab("score");
