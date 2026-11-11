@@ -35,6 +35,7 @@
  const review=p=>{
   const v=p.socioReview||{};
   const status=v.status==="needs-review"?"Требует уточнения":v.status==="resolved"?"Уточнено":"";
+  if(!status)return {status:"",reason:"",note:""};
   const reason=v.reason==="same"?"Повторяющиеся выборы":
    v.reason==="instruction"?"Уточнение инструкции":v.reason==="other"?"Наблюдение психолога":"";
   return {status,reason,note:String(v.note||"").slice(0,1000)};
