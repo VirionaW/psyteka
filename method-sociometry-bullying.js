@@ -109,17 +109,22 @@
     ready:positiveReady&&negativeReady&&LP>0,triggered:negativeRatio!=null&&negativeRatio>30}
   ];
   const enough=flags.every(f=>f.ready);
+  const relationshipsReady=positiveReady&&negativeReady;
   return {people,byId,eligible:eligible.length,results,metrics,n,LP,LM,density,reciprocity,
-    negativeRatio,mutualPairs,coverage,ranked,flags,enough,acc,vics,defs,
+    negativeRatio,mutualPairs,coverage,ranked,flags,enough,relationshipsReady,acc,vics,defs,
     absent:people.filter(absent),pending:people.filter(p=>review(p)&&!absent(p))};
  }
- function profile(m,mean){
-  // Transparent working grouping, not clinical diagnosis or source-standardized norm.
-  if(m.sp<=-2&&m.lm>=2)return {type:"negative",name:"Отрицательный баланс"};
-  if(m.lp>=3&&m.lm>=2)return {type:"mixed",name:"Смешанные номинации"};
-  if(m.lp>=4&&m.sp>=3)return {type:"positive",name:"Выраженные положительные связи"};
-  if(m.lp===0&&m.lm===0)return {type:"limited",name:"Без входящих выборов"};
-  return {type:"neutral",name:"Без выраженной категории"};
+ function profile(m,ready=true,anyData=true){
+  // Transparent descriptive working grouping, NOT a norm or diagnostic status.
+  if(!anyData)return {type:"limited",name:"Недостаточно анкет"};
+  let res;
+  if(m.sp<=-2&&m.lm>=2)res={type:"negative",name:"Отрицательный баланс"};
+  else if(m.lp>=3&&m.lm>=2)res={type:"mixed",name:"Смешанные номинации"};
+  else if(m.lp>=4&&m.sp>=3)res={type:"positive",name:"Выраженные положительные связи"};
+  else if(m.lp===0&&m.lm===0)res={type:"limited",name:"Без входящих выборов"};
+  else res={type:"neutral",name:"Без выраженной категории"};
+  if(!ready)res.name+=" (предв.)";
+  return res;
  }
  const count=x=>Number(x||0).toLocaleString("ru-RU");
  const pct=v=>v===null?"–":v.toFixed(1).replace(".",",")+"%";
@@ -134,8 +139,9 @@
   if(a[1].status==="skip")issues.push("Q2 пропущен (допустимо)");
   return "Ответы по "+answered+" из 5 вопросов"+(issues.length?" · "+issues.join("; "):"");
  };
- const tag=(p,m)=>review(p)?'<span class="psy-bully-tag excluded">На уточнении</span>':
-  '<span class="psy-bully-tag '+profile(m).type+'">'+E(profile(m).name)+
+ const tag=(p,m,a)=>review(p)?'<span class="psy-bully-tag excluded">На уточнении</span>':
+  '<span class="psy-bully-tag '+profile(m,a.relationshipsReady,a.results[0].responded.size+a.results[1].responded.size>0).type+'">'+
+    E(profile(m,a.relationshipsReady,a.results[0].responded.size+a.results[1].responded.size>0).name)+
     (absent(p)?" · без бланка":"")+'</span>';
  function heading(){
   return '<header class="psy-bully-head"><div><span class="psy-bully-eyebrow">МЕЖЛИЧНОСТНЫЕ ОТНОШЕНИЯ</span>'+
@@ -223,7 +229,7 @@
     return '<tr'+(review(p)?' class="is-excluded"':"")+'><th scope="row">'+E(p.name)+'</th>'+
      '<td>'+E(status)+'</td>'+incoming.map((v,i)=>'<td class="'+(typeof v==="number"&&i>=4&&v>=3?"psy-bully-signal":"")+
       '">'+v+'</td>').join("")+
-     '<td>'+tag(p,m)+'</td><td>'+(!review(p)&&m.vi>=3?"Проверить ситуацию безопасности":
+     '<td>'+tag(p,m,a)+'</td><td>'+(!review(p)&&m.vi>=3?"Проверить ситуацию безопасности":
       !review(p)&&m.ag>=3?"Проверить содержание сообщений":
       !review(p)&&m.sp<=-2?"Уточнить отношения":"–")+'</td></tr>';
    }).join("")+'</tbody></table></div>';
@@ -296,7 +302,8 @@
     const m=a.metrics.get(p.bullyId),no=review(p);
     return [p.name,absent(p)?"Отсутствовал":review(p)?"На уточнении":rowNote(p,m),
      ...(no?Array(7).fill(""):[m.lp,m.lm,m.sp,m.si,m.ag,m.vi,m.df]),
-     no?"Без расчета":profile(m).name,record(p,0).status];
+     no?"Без расчета":profile(m,a.relationshipsReady,
+       a.results[0].responded.size+a.results[1].responded.size>0).name,record(p,0).status];
    })];
  }
  function rawRows(a){
