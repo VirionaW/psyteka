@@ -126,3 +126,15 @@
  .psy-bully-table-scroll{overflow:visible}
  .psy-bully-results{font-size:9pt}
 }
+
+/* One method, two selectable six-question protocols in every portfolio tab. */
+.psy-socio-version-picker{display:grid;gap:11px;padding:14px 16px;margin:0 0 17px;background:var(--card,#fff);border:1px solid var(--stroke,#c9dbcf);border-radius:13px;color:var(--text,#2c4936)}
+.psy-socio-version-picker>div:first-child{display:flex;gap:7px 14px;align-items:baseline;justify-content:space-between;flex-wrap:wrap}
+.psy-socio-version-picker strong{font-size:14px}
+.psy-socio-version-picker small{font-size:11px;color:var(--muted,#667c6b)}
+.psy-socio-version-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.psy-socio-version-option{border:1px solid var(--stroke,#c4d9cb);background:var(--panel-soft,#f5faf6);color:var(--text,#41684e);padding:11px;border-radius:10px;font:700 12px/1.45 system-ui,sans-serif;text-align:center;cursor:pointer;min-height:45px}
+.psy-socio-version-option.is-selected{background:#e4f1e8;border:2px solid #5d9778;color:#275941}
+.psy-socio-version-option:focus-visible{outline:2px solid #438464;outline-offset:2px}
+.psy-socio-version-picker>p{font-size:11px;line-height:1.5;color:var(--muted,#6b786c);margin:0!important}
+@media(max-width:600px){.psy-socio-version-picker{padding:11px}.psy-socio-version-options{grid-template-columns:minmax(0,1fr)}}
