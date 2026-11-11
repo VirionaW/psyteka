@@ -1,0 +1,73 @@
+/* Метолария. Читаемая аналитическая социометрия, без диагностических ярлыков. */
+.psy-socio-analytics{display:grid;gap:18px;min-width:0;padding-top:10px}
+.psy-socio-section-heading{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;min-width:0}
+.psy-socio-section-heading h4{margin:0 0 4px;font-size:17px;line-height:1.3;color:var(--text,#24362a)}
+.psy-socio-section-heading p{margin:0;color:var(--muted,#657365);font-size:12px;line-height:1.5}
+.psy-socio-coverage{font-size:12px;font-weight:650;white-space:normal;border-radius:99px;padding:6px 10px}
+.psy-socio-coverage.is-ready,.psy-socio-answer-status.is-ready{background:#e5f2e8;color:#2a6949;border:1px solid #a6d0b2}
+.psy-socio-coverage.is-pending,.psy-socio-answer-status.is-pending{background:#fff3e4;color:#925724;border:1px solid #e5c695}
+.psy-socio-children-table{min-width:760px!important;table-layout:auto}
+.psy-socio-children-table th,.psy-socio-children-table td{padding:10px 9px!important;vertical-align:top;border-bottom:1px solid var(--stroke,#e0e7df);line-height:1.48}
+.psy-socio-children-table thead th{background:var(--panel-soft,#edf5ee);font-weight:700}
+.psy-socio-children-table th:first-child{min-width:115px;text-align:left}
+.psy-socio-children-table td:nth-child(2),.psy-socio-children-table td:nth-child(3),.psy-socio-children-table td:nth-child(4){font-weight:700;text-align:center;font-variant-numeric:tabular-nums;min-width:75px}
+.psy-socio-children-table td:last-child{min-width:240px}
+.psy-socio-observation{line-height:1.55!important}
+.psy-socio-answer-status{display:inline-flex;border-radius:999px;padding:4px 8px;font-weight:650;font-size:11px;white-space:nowrap}
+.psy-socio-individual{display:grid;gap:12px;min-width:0;background:var(--card,#fff);border:1px solid var(--stroke,#d5e3d9);border-radius:13px;padding:15px}
+.psy-socio-individual label{display:grid;gap:5px;min-width:175px;max-width:260px;font-size:12px;color:var(--muted,#586d5f)}
+.psy-socio-individual select{width:100%;box-sizing:border-box;border:1px solid var(--stroke,#b9cfc0);border-radius:9px;background:var(--input-bg,#fff);color:var(--text,#273c31);padding:9px;font:inherit;font-size:14px}
+.psy-socio-person-table{min-width:700px!important}
+.psy-socio-person-table td,.psy-socio-person-table th{padding:9px!important;vertical-align:top}
+.psy-socio-person-table td:nth-child(2),.psy-socio-person-table td:nth-child(3),.psy-socio-person-table td:nth-child(4){text-align:center;min-width:72px;font-variant-numeric:tabular-nums}
+.psy-socio-person-table td:last-child{min-width:250px}
+.psy-socio-visual{display:grid;gap:13px;min-width:0;border:1px solid var(--stroke,#d1ded4);border-radius:13px;background:var(--card,#fff);padding:15px}
+.psy-socio-filter{display:flex;gap:7px;align-items:center;font-size:12px;font-weight:600;cursor:pointer;color:var(--text,#25382f);white-space:nowrap}
+.psy-socio-filter input{width:16px;height:16px;accent-color:#32806e}
+.psy-socio-network-plot{background:var(--panel-soft,#f6f9f6);border:1px solid var(--stroke,#d9e4da);border-radius:12px;overflow:hidden}
+.psy-socio-network-plot svg{width:100%;display:block;max-height:540px}
+.psy-socio-orbit{fill:none;stroke:#cadccf;stroke-width:1.1;stroke-dasharray:4 7}
+.psy-socio-edge-mutual{stroke:#32806e;fill:none;stroke-width:2.65;opacity:.82}
+.psy-socio-edge-directed{stroke:#a98355;fill:none;stroke-width:1.65;opacity:.58}
+.psy-socio-node circle{fill:#eff7f1;stroke:#578878;stroke-width:2.2}
+.psy-socio-node text{fill:#295543;font:700 13px system-ui,sans-serif;pointer-events:none}
+.psy-socio-map-key{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:7px 12px;font-size:12px}
+.psy-socio-map-key span{display:flex;align-items:center;gap:7px;min-width:0;overflow-wrap:anywhere}
+.psy-socio-map-key b{flex:none;display:grid;place-items:center;width:23px;height:23px;border-radius:8px;background:#e7f0e9;color:#356b52}
+.psy-socio-legend{display:flex;gap:8px 16px;flex-wrap:wrap;font-size:11px;color:var(--muted,#586f60)}
+.psy-socio-matrix-panel{min-width:0;border:1px solid var(--stroke,#d5e1d8);border-radius:13px;background:var(--card,#fff);overflow:hidden}
+.psy-socio-matrix-panel summary{padding:16px;cursor:pointer;display:flex;flex-wrap:wrap;gap:5px 12px;align-items:baseline;color:var(--text,#284030)}
+.psy-socio-matrix-panel summary span{font-weight:700}
+.psy-socio-matrix-panel summary small{font-size:12px;color:var(--muted,#627666)}
+.psy-socio-matrix-panel[open]{padding-bottom:14px}
+.psy-socio-matrix-panel[open] summary{border-bottom:1px solid var(--stroke,#d6e4d9)}
+.psy-socio-matrix-panel .psy-socio-note,.psy-socio-matrix-panel .psy-socio-legend{margin:10px 14px}
+.psy-socio-matrix-scroll{overflow:auto;width:100%;max-width:100%;padding:0 14px}
+.psy-socio-matrix{border-collapse:separate!important;border-spacing:2px;width:max-content!important;min-width:100%;font-variant-numeric:tabular-nums}
+.psy-socio-matrix th,.psy-socio-matrix td{font-size:11px!important;min-width:26px;text-align:center!important;padding:6px!important;border:none!important;border-radius:4px}
+.psy-socio-matrix th{background:var(--panel-soft,#e8f1ea);font-weight:650;color:var(--text,#2b4331)}
+.psy-socio-matrix tbody th{text-align:left!important;white-space:nowrap}
+.psy-socio-matrix td{background:var(--panel-soft,#f6faf5)}
+.psy-socio-matrix .psy-socio-matrix-self{background:#e9e9e8;color:#7a7e7a}
+.psy-socio-matrix .psy-socio-matrix-mutual{background:#d6efdf;color:#287246;font-weight:800}
+.psy-socio-matrix .psy-socio-matrix-oneway{background:#f7e8d5;color:#99612f;font-weight:750}
+.psy-socio-matrix .psy-socio-matrix-missing{background:#fff5e8;color:#a97a46}
+.psy-socio-matrix .psy-socio-matrix-total,.psy-socio-matrix tfoot td{font-weight:750}
+.psy-socio-report-actions{display:flex;flex-wrap:wrap;gap:8px}
+.psy-socio-report-actions .btn{white-space:normal}
+.psy-socio-empty{padding:20px;border:1px dashed var(--stroke,#bbd4be);background:var(--panel-soft,#f7faf6);border-radius:10px;font-size:13px;color:var(--muted,#5a705e)}
+@media(max-width:700px){
+ .psy-socio-section-heading{align-items:flex-start}
+ .psy-socio-visual,.psy-socio-individual{padding:11px}
+ .psy-socio-map-key{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .psy-socio-network-plot{overflow-x:auto}
+ .psy-socio-network-plot svg{min-width:440px}
+ .psy-socio-children-table th,.psy-socio-children-table td{padding:8px 6px!important}
+ .psy-socio-report-actions .btn{width:100%}
+}
+@media print{
+ .psy-socio-individual,.psy-socio-matrix-panel,.psy-socio-visual{break-inside:avoid}
+ .psy-socio-network-plot svg{max-height:160mm}
+ .psy-socio-filter,.psy-socio-report-actions{display:none}
+ .psy-socio-children-table{min-width:0!important}
+}
