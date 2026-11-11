@@ -1,5 +1,5 @@
 "use strict";
-/* Six editable positive-choice criteria. Records live in the method's existing
+/* Six editable criteria: three positive, three negative. Records live in the method's existing
    account-scoped assessment rows, not in localStorage or a separate public store. */
 (function(){
  const NAME="Социометрическое исследование класса";
@@ -8,7 +8,7 @@
  const previous={calculator:api.calculator,bind:api.bind,materials:api.materials,
   instruction:api.instruction,processing:api.processing};
  const NONE="__none__";
- const DEFAULT=[
+ const OLD_DEFAULT=[
   "С кем ты хотел(а) бы сидеть за одной партой?",
   "Кого ты выбрал(а) бы в команду для школьного проекта?",
   "С кем ты хотел(а) бы работать в паре на уроке?",
@@ -16,6 +16,40 @@
   "Кого ты пригласил(а) бы в команду для школьного мероприятия?",
   "С кем ты хотел(а) бы вместе готовить выступление?"
  ];
+ const DEFAULT=[
+  "С кем ты хотел бы сидеть за одной партой?",
+  "Кого выбрал бы в команду для школьного проекта?",
+  "С кем хотел бы проводить свободное время после уроков?",
+  "С кем ты меньше всего хотел бы сидеть за одной партой?",
+  "Кого меньше всего хотел бы выбирать в команду для школьного проекта?",
+  "С кем меньше всего хотел бы проводить свободное время после уроков?"
+ ];
+ const PROTOCOL="sociometry-positive-negative-six-v1";
+ const isNegative=q=>q>=3;
+ const EQUAL=(a,b)=>String(a??"").trim()===String(b??"").trim();
+ function ensureProtocol(rows){
+  if(!Array.isArray(rows))return;
+  rows.forEach(row=>{
+   if(!row||!String(row.name||"").trim()||row.socioProtocolVersion===PROTOCOL)return;
+   const previousQuestions=Array.isArray(row.socioQuestions)&&row.socioQuestions.length===6
+    ?row.socioQuestions.map(String):OLD_DEFAULT.slice();
+   const intended=previousQuestions.every((q,i)=>EQUAL(q,DEFAULT[i]));
+   const previousChoices=Array.isArray(row.socioChoices)?row.socioChoices.map(a=>Array.isArray(a)?a.slice():[]):[];
+   const changed=previousChoices.slice(2,6).some(a=>a.some(Boolean));
+   if(!intended&&changed&&!row.socioLegacyArchive){
+    // Save ALL prior responses and wording, including the first two questions,
+    // before clearing answers that refer to DIFFERENT situations.
+    row.socioLegacyArchive={questions:previousQuestions.slice(),choices:previousChoices.map(a=>a.slice())};
+   }
+   if(!intended&&changed){
+    if(!Array.isArray(row.socioChoices))row.socioChoices=[];
+    for(let q=2;q<6;q++)row.socioChoices[q]=["","",""];
+   }
+   row.socioQuestions=DEFAULT.slice();
+   row.socioProtocolVersion=PROTOCOL;
+  });
+ }
+
  let currentRows=null,viewCriterion=0,outsideComboListenerAdded=false;
  const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const csv=rows=>"\uFEFF"+rows.map(row=>row.map(cell=>{
@@ -38,7 +72,8 @@
  const reviewPending=row=>row?.socioReview?.status==="needs-review";
  const excluded=row=>absent(row)||reviewPending(row);
  const questions=rows=>{
-  const stored=rows?.find(r=>Array.isArray(r.socioQuestions)&&r.socioQuestions.length===6)?.socioQuestions;
+  ensureProtocol(rows);
+  const stored=rows?.find(r=>r.socioProtocolVersion===PROTOCOL&&Array.isArray(r.socioQuestions)&&r.socioQuestions.length===6)?.socioQuestions;
   return stored?stored.map((q,i)=>String(q??DEFAULT[i]).slice(0,220)):DEFAULT.slice();
  };
  const setQuestions=(rows,next)=>rows.forEach(r=>{r.socioQuestions=next.slice();});
@@ -59,7 +94,7 @@
   return entry?.complete?entry.selected:null;
  }
  function analyze(rows){
-  ensureIds(rows);
+  ensureProtocol(rows);ensureIds(rows);
   const people=members(rows),ids=new Set(people.map(r=>r.socioId));
   const excludedIds=new Set(people.filter(excluded).map(p=>p.socioId));
   const absentIds=new Set(people.filter(absent).map(p=>p.socioId));
@@ -85,7 +120,7 @@
      pairs++;mutual.set(from,mutual.get(from)+1);mutual.set(to,mutual.get(to)+1);
     }
    }
-   return {question,answered:completeIds.size,responded:answers.size,partial:partialIds.size,
+   return {question,negative:isNegative(q),answered:completeIds.size,responded:answers.size,partial:partialIds.size,
     completeIds,partialIds,total,pairs,incoming,mutual,edges:answers,eligible,excludedIds,absentIds,reviewIds};
   });
   return {people,result,eligible,excludedIds,absentIds,reviewIds};
@@ -93,7 +128,7 @@
  const responseName=(id,people)=>id===NONE?"Никто":(people.find(p=>p.socioId===id)?.name||"");
  function repetition(row){
   const groups=new Map();
-  for(let i=0;i<6;i++){
+  for(let i=0;i<3;i++){
    const values=picks(row,i);
    if(values.some(v=>!v))continue;
    const ids=values.filter(v=>v!==NONE).sort();
@@ -111,7 +146,7 @@
    '<button type="button" id="psySocFlag" class="psy-socio-review-button '+(status?"is-flagged":"")+'" aria-pressed="'+(!!status)+'">'+
    (status?"Снять отметку":"Требует уточнения")+'</button></div>'+
    '<p id="psySocRepeatedHint" class="psy-socio-review-hint" '+(repeats<3?"hidden":"")+'>'+
-   (repeats>=3?"Одни и те же ученики выбраны в "+repeats+" вопросах. Можно уточнить, различал ли ребенок предложенные ситуации.":"")+'</p>'+
+   (repeats>=3?"Одни и те же ученики выбраны в "+repeats+" положительных вопросах. Можно уточнить, различал ли ребенок предложенные ситуации.":"")+'</p>'+
    '<div id="psySocReviewFields" class="psy-socio-review-fields" '+(!status?"hidden":"")+'>'+
    '<label>Причина уточнения<select id="psySocReviewReason"><option value="same" '+(reason==="same"?"selected":"")+'>Повторяющиеся выборы</option>'+
    '<option value="instruction" '+(reason==="instruction"?"selected":"")+'>Неясно понимание вопросов</option>'+
@@ -163,12 +198,13 @@
    '<p>Условный код: __________________ Класс: __________ Дата: __________</p>'+
    '<p>В каждом вопросе можно назвать до трех одноклассников, не выбирая себя. Если выбирать некого, напиши «Никто». Можно указать меньше трех человек.</p>'+
    q.map((text,i)=>'<div class="psy-socio-print-q"><strong>'+(i+1)+'. '+esc(text)+'</strong>'+
+    '<p><small>'+(isNegative(i)?"Отрицательный выбор":"Положительный выбор")+'</small></p>'+
     '<p>1. __________________________________________</p><p>2. __________________________________________</p><p>3. __________________________________________</p></div>').join("")+
    '<p class="psy-new-micro">Ответы собираются индивидуально. Не показывайте выборы другим ученикам.</p></section>';
  }
  function calculator(d,ctx){
   if(d.methodType!=="sociometry")return previous.calculator(d,ctx);
-  currentRows=ctx.rows;ensureIds(ctx.rows);
+  currentRows=ctx.rows;ensureProtocol(ctx.rows);ensureIds(ctx.rows);
   if(ctx.calcMode!=="class"){
    return '<section class="psy-new-work psy-socio"><h3>Социометрия класса</h3>'+
     '<p>Выберите режим «Группа / класс», чтобы один раз внести список учащихся и затем заполнять шесть вопросов для каждого ребенка.</p>'+
@@ -180,8 +216,10 @@
   const count=active?q.filter((_,i)=>validPicks(r,i,new Set(people.map(p=>p.socioId)))!==null).length:0;
   const questionCards=active?q.map((question,i)=>{
    const selected=picks(r,i),chosen=new Set(selected.filter(v=>v!==NONE));
-   return '<section class="psy-socio-question"><div class="psy-socio-question-heading"><span class="psy-socio-number">'+(i+1)+'</span>'+
-    '<h4 data-socio-title="'+i+'">'+esc(question||"Укажите текст вопроса")+'</h4>'+
+   return '<section class="psy-socio-question '+(isNegative(i)?"is-negative":"is-positive")+
+    '"><div class="psy-socio-question-heading"><span class="psy-socio-number">'+(i+1)+'</span>'+
+    '<h4 data-socio-title="'+i+'">'+esc(question||"Укажите текст вопроса")+
+     ' <small class="psy-socio-question-type">'+(isNegative(i)?"Отрицательный выбор":"Положительный выбор")+'</small></h4>'+
     '<span class="psy-socio-question-status '+(validPicks(r,i,new Set(people.map(p=>p.socioId)))!==null?"is-ready":"is-pending")+'" data-socio-status="'+i+'">'+
      (validPicks(r,i,new Set(people.map(p=>p.socioId)))!==null?"Заполнено":selected.some(Boolean)?"Частично":"Не заполнено")+'</span></div>'+
     '<div class="psy-socio-picks">'+[0,1,2].map(k=>{
@@ -199,7 +237,7 @@
     }).join("")+'</div><div class="psy-socio-question-bottom"><button type="button" class="psy-socio-none-fill" data-socio-fill="'+i+'">Остальные – никто</button><span>Если выборов меньше трех, остальные поля можно заполнить вариантом «Никто».</span></div></section>';
   }).join(""):"";
   return '<section class="psy-new-work psy-socio"><div class="psy-socio-intro"><h3>Социометрия класса</h3>'+
-   '<p>Напишите имя или раскройте список: «Никто» всегда первым. После выбора переход к следующему полю, затем вопросу, а после шестого – к следующему ученику.</p></div>'+
+   '<p>Вопросы 1–3 – положительные выборы, 4–6 – отрицательные. Введите имя или выберите из списка. «Никто» всегда доступен. После выбора курсор переходит к следующему полю.</p></div>'+
    '<div class="psy-socio-roster"><div class="psy-socio-roster-head"><strong>Список класса</strong><span>'+people.length+' учеников</span></div>'+
    '<details class="psy-socio-add" '+(!people.length?"open":"")+'><summary>Добавить учеников списком</summary>'+
    '<p class="psy-socio-note">Вставьте список из журнала – по одному имени или условному коду в строке. Повторы не добавляются.</p>'+
@@ -215,6 +253,10 @@
    (active?'<div class="psy-socio-attendance"><button type="button" id="psySocAbsent" class="psy-socio-absence-button '+(isAbsent?"is-absent":"")+
      '" aria-pressed="'+isAbsent+'">'+(isAbsent?"Вернуть к обследованию":"Отметить: отсутствовал")+'</button>'+
      '<span>'+(isAbsent?"Анкета не учитывается, введённые ранее ответы сохранены.":"Если ребёнка не было, отметьте его отсутствие. Пустой бланк сам по себе не означает отсутствие.")+'</span></div>':"")+
+   (people.some(p=>p.socioLegacyArchive?.choices?.slice(2).some(x=>x?.some(Boolean)))?
+   '<details class="psy-socio-legacy"><summary>Архив ответов по прежним вопросам 3–6</summary>'+
+   '<p>Раньше эти вопросы были сформулированы иначе. Старые ответы сохранены в архиве и не включаются в новый подсчёт. Список детей и ответы на вопросы 1–2 сохранены.</p>'+
+   '<button type="button" class="btn" id="psySocLegacyCSV">Скачать архив старых ответов CSV</button></details>':"")+
    '<details class="psy-socio-custom"><summary>Изменить формулировки 6 вопросов</summary>'+
    '<p class="psy-socio-note">Это редактируемые вопросы, а не стандартизованный авторский опросник. При изменении вопроса с уже введенными ответами программа предложит очистить только этот вопрос – остальные пять сохранятся.</p>'+
    q.map((question,i)=>'<label><span>Вопрос '+(i+1)+'</span><input type="text" maxlength="220" data-socio-edit="'+i+'" value="'+esc(question)+'"></label>').join("")+'</details>'+
@@ -454,14 +496,29 @@
    const count=repetition(rows[ctx.rowIndex]),hint=document.getElementById("psySocRepeatedHint");
    if(!hint)return;
    hint.hidden=count<3;
-   hint.textContent=count>=3?"Одни и те же ученики выбраны в "+count+" вопросах. Можно уточнить, различал ли ребенок предложенные ситуации.":"";
+   hint.textContent=count>=3?"Одни и те же ученики выбраны в "+count+" положительных вопросах. Можно уточнить, различал ли ребенок предложенные ситуации.":"";
   };
   document.getElementById("psySocSave")?.addEventListener("click",()=>ctx.onSave?.());
+  document.getElementById("psySocLegacyCSV")?.addEventListener("click",()=>{
+   const people=members(rows);
+   const out=[["Ученик","Прежний номер вопроса","Прежняя формулировка","1 выбор","2 выбор","3 выбор"]];
+   for(const r of people){
+    const a=r.socioLegacyArchive;
+    if(!a)continue;
+    for(let q=2;q<6;q++){
+     const vals=a.choices?.[q]||[];
+     if(!vals.some(Boolean))continue;
+     out.push([r.name,q+1,a.questions?.[q]||OLD_DEFAULT[q],
+      ...[0,1,2].map(i=>responseName(vals[i]||"",people))]);
+    }
+   }
+   download("Метолария_социометрия_архив_прежних_вопросов.csv",out);
+  });
   document.getElementById("psySocRaw")?.addEventListener("click",()=>{
    const people=members(rows),q=questions(rows),ids=new Set(people.map(r=>r.socioId));
-   const out=[["Ученик","Вопрос","Формулировка","1 выбор","2 выбор","3 выбор","Статус ввода","Учет в расчете"]];
+   const out=[["Ученик","Вопрос","Тип выбора","Формулировка","1 выбор","2 выбор","3 выбор","Статус ввода","Учет в расчете"]];
    people.forEach(r=>q.forEach((question,i)=>{
-    out.push([r.name,i+1,question,...picks(r,i).map(id=>responseName(id,people)),
+    out.push([r.name,i+1,isNegative(i)?"Отрицательный":"Положительный",question,...picks(r,i).map(id=>responseName(id,people)),
      validPicks(r,i,ids)!==null?"Заполнен":picks(r,i).some(Boolean)?"Частично":"Не заполнен",
      absent(r)?"Не участвовал":reviewPending(r)?"Исключено – требует уточнения":"Введённые выборы учитываются"]);
    }));
@@ -469,9 +526,9 @@
   });
   document.getElementById("psySocSummary")?.addEventListener("click",()=>{
    const {people,result}=analyze(rows);
-   const out=[["Вопрос","Формулировка","Ученик","Входящие выборы","Взаимные выборы",
+   const out=[["Вопрос","Тип выбора","Формулировка","Ученик","Входящие выборы","Взаимные выборы",
     "Полных анкет","Частичных анкет","Взаимных пар","Учёт ученика"]];
-   result.forEach((s,i)=>people.forEach(p=>out.push([i+1,s.question,p.name,
+   result.forEach((s,i)=>people.forEach(p=>out.push([i+1,isNegative(i)?"Отрицательный":"Положительный",s.question,p.name,
     excluded(p)?"":s.incoming.get(p.socioId),excluded(p)?"":s.mutual.get(p.socioId),
     s.answered,s.partial,s.pairs,
     absent(p)?"Не участвовал":reviewPending(p)?"Исключено – требует уточнения":"Введённые выборы учитываются"])));
@@ -480,17 +537,17 @@
  }
  D.author="Социометрический подход Я. Л. Морено; редактируемая групповая форма Метоларии";
  D.kind="Групповая социометрическая процедура";
- D.count="6 редактируемых вопросов, до 3 выборов в каждом";
- D.goal="Изучение предпочитаемых партнеров по шести положительным критериям взаимодействия в классе.";
+ D.count="6 вопросов: 3 положительных и 3 отрицательных, до 3 выборов в каждом";
+ D.goal="Изучение положительных и отрицательных выборов одноклассников в учебной и внеучебной деятельности.";
  D.instructions="Для каждого вопроса выбери до трех одноклассников. Можно выбрать меньше трех человек или никого. Не выбирай себя и не повторяй одно имя в рамках вопроса.";
- D.scoring="По каждому вопросу учитывается каждый действительный введённый положительный выбор, даже если в двух других полях ничего не указано. Полнота анкеты отмечается отдельно; пустое поле не равно «Никто». Отсутствовавшие и ученики с отметкой «Требует уточнения» не считаются респондентами; их ответы сохраняются, выборы других детей в их адрес не удаляются.";
- D.interpret="Статусы по Я. Л. Коломинскому применяются отдельно по каждому вопросу при достаточном числе завершённых анкет (не менее 5 и 75% учитываемых). Они характеризуют положительные выборы, не определяют отвержение или травлю. Отсутствовавшие и находящиеся на уточнении не получают категорий.";
- D.warning="Конфиденциальная процедура с шестью редактируемыми положительными критериями. Это не стандартизованная нормативная шкала. Не публикуйте результаты детей и не приписывайте им диагностические статусы.";
- D.version="SOCIOMETRY-CUSTOM-SIX-2026";
+ D.scoring="Вопросы 1–3 – входящие положительные выборы (LP), вопросы 4–6 – входящие отрицательные выборы (LM). Выборы учитываются раздельно по каждому вопросу, включая частично заполненные; SP = LP - LM, SI = LP + LM как описательные суммы. Отсутствующие и находящиеся на уточнении не являются респондентами. Старые ответы на прежние вопросы 3–6 архивируются, а не приписываются новым формулировкам.";
+ D.interpret="Категории по положительным выборам применяются только к вопросам 1–3 при достаточном числе анкет. Отрицательные выборы по вопросам 4–6 показываются отдельно и не повышают положительную популярность. Сведения о непринятии или возможной травле требуют дополнительной проверки.";
+ D.warning="Рабочая форма с тремя положительными и тремя отрицательными критериями. Не является подтверждённым дословным авторским бланком. Отрицательные выборы не являются доказательством травли; результаты конфиденциальны.";
+ D.version="SOCIOMETRY-POS-NEG-6-2026";
  D.guideFile=null;D.answerFile=null;
- D.indicators=["Звёзды (5 и более положительных выборов)","Предпочитаемые (3–4 выбора)",
- "Принимаемые (1–2 выбора)","Изолированные (0 положительных выборов)",
- "Взаимные выборы","Отсутствовавшие и незавершённые анкеты"];
+ D.indicators=["Положительные выборы (вопросы 1–3)","Отрицательные выборы (вопросы 4–6)",
+ "SP – баланс выборов","SI – заметность через выборы",
+ "Взаимные положительные и отрицательные выборы","Отсутствовавшие и незавершённые анкеты"];
  api.calculator=calculator;
  api.bind=bind;
  api.materials=function(d,blankFlag){return d.methodType==="sociometry"?blank():previous.materials(d,blankFlag);};
@@ -498,7 +555,7 @@
   if(d.methodType!=="sociometry")return previous.instruction(d);
   return '<h3>Инструкция для ученика</h3><blockquote class="kid-instruction">'+esc(d.instructions)+'</blockquote>'+
    '<h3>Порядок проведения</h3><ol><li>Подготовьте единый список класса с условными кодами или именами.</li>'+
-   '<li>При необходимости измените формулировки шести положительных вопросов до сбора ответов.</li>'+
+   '<li>Вопросы 1–3 – положительные, 4–6 – отрицательные. Прочитайте их дословно из бланка.</li>'+
    '<li>Каждому ученику предложите от 0 до 3 выборов для каждого вопроса, без самовыбора и повторов.</li>'+
    '<li>Собирайте ответы индивидуально. Не считайте пропущенные ответы выбором «Никто».</li>'+
    '<li>В обработке выберите класс, затем ученика, заполните все три поля для каждого вопроса.</li></ol>'+
@@ -509,7 +566,7 @@
   return '<h3>Обработка результатов</h3><p>'+esc(d.scoring)+'</p>'+
    '<p>«Никто» фиксирует осознанное отсутствие выбора на конкретной позиции. Незаполненное поле означает, что ответ еще не внесен. Самовыбор и повтор одного ученика в рамках вопроса исключаются.</p>'+
    '<p>Имя выбранного ученика можно ввести через поиск или выбрать из списка. «Никто» остается доступным независимо от текста поиска. Отметка «Требует уточнения» не означает ложь, но временно исключает ответы этого ученика из расчётов.</p>'+
-   '<p>Отсутствие отмечается вручную: пустой бланк не считается подтверждением отсутствия. Сохраняются имена и ответы, но отсутствовавший не считается респондентом. По каждому вопросу применяются подтверждённые категории Я. Л. Коломинского: звезда – 5 и более выборов, предпочитаемый – 3–4, принимаемый – 1–2, изолированный – 0.</p>'+
+   '<p>Отсутствие отмечается вручную; пустой бланк не считается отсутствием. Категории «звезда», «предпочитаемый», «принимаемый», «изолированный» возможны только по положительным вопросам 1–3. По отрицательным вопросам 4–6 считаются отрицательные номинации отдельно.</p>'+
    '<p>«Изолированный» означает отсутствие положительных выборов, а не доказанное отвержение. Буллинг и роль ребёнка в нём по этим вопросам определить нельзя: для наблюдений предусмотрена отдельная запись специалиста.</p>'+
    '<p class="notice">'+esc(d.warning)+'</p>';
  };
