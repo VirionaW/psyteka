@@ -82,3 +82,39 @@
 .psy-socio-none-fill:focus-visible{outline:2px solid #4f8c67;outline-offset:2px}
 .psy-socio-class-reading{padding:14px 16px!important;margin:0!important;border:1px solid var(--stroke,#cbded1);border-radius:12px;background:var(--panel-soft,#eef6f0);color:var(--text,#2d4c39);font-size:14px;line-height:1.6}
 @media(max-width:700px){.psy-socio-question-bottom{align-items:flex-start}.psy-socio-question-status{margin-left:0}}
+
+/* Searchable student selector. "Никто" stays pinned above all matches. */
+.psy-socio-picks .psy-socio-pick{min-width:0;display:grid;gap:7px;align-content:start}
+.psy-socio-pick>label{font-size:12px;color:var(--muted,#5b705f);font-weight:650}
+.psy-socio-combo{position:relative;min-width:0}
+.psy-socio-combo.is-open{z-index:22}
+.psy-socio-combo .psy-socio-typeahead{display:block;width:100%;box-sizing:border-box;padding:10px 42px 10px 12px;border:1px solid var(--stroke,#b7ccba);border-radius:10px;background:var(--input-bg,#fff);color:var(--text,#213528);font:inherit;font-size:14px;min-height:45px}
+.psy-socio-combo .psy-socio-typeahead:focus-visible{outline:2px solid #478b6b;outline-offset:1px}
+.psy-socio-drop{position:absolute;top:4px;right:4px;bottom:4px;width:34px;border:0;border-left:1px solid var(--stroke,#d5e1d6);border-radius:5px;background:transparent;color:var(--text,#426450);font-size:21px;cursor:pointer}
+.psy-socio-options{position:absolute;top:calc(100% + 5px);left:0;right:0;min-width:210px;max-width:min(320px,90vw);max-height:250px;overflow:auto;border:1px solid var(--stroke,#c7d5ca);box-shadow:0 14px 32px #10291b2e;border-radius:12px;padding:6px;background:var(--card,#fff);z-index:30}
+.psy-socio-options[hidden]{display:none!important}
+.psy-socio-option{display:block;width:100%;border:0;border-radius:8px;padding:10px 11px;margin:0;text-align:left;font:500 14px/1.35 inherit;background:transparent;color:var(--text,#253b2d);cursor:pointer;overflow-wrap:anywhere}
+.psy-socio-option:hover,.psy-socio-option:focus-visible{background:var(--panel-soft,#e7f2e9);outline:none}
+.psy-socio-option.is-nobody{position:sticky;top:0;z-index:1;color:#8c633b;background:var(--card,#fff);font-weight:700;border-bottom:1px solid var(--stroke,#e1e8dd);margin-bottom:5px}
+.psy-socio-option.is-nobody:hover,.psy-socio-option.is-nobody:focus-visible{background:var(--panel-soft,#f6f1e8)}
+.psy-socio-no-matches{margin:3px 7px!important;font:12px/1.4 system-ui,sans-serif;color:var(--muted,#697a6f)}
+.psy-socio-review{display:grid;gap:11px;background:var(--panel-soft,#f8f8f5);border:1px solid var(--stroke,#d7e2d8);border-radius:13px;padding:15px}
+.psy-socio-review-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.psy-socio-review-head strong{font-size:15px;color:var(--text,#243a2b)}
+.psy-socio-review-head p{margin:3px 0 0!important;color:var(--muted,#657566);font-size:12px;line-height:1.5}
+.psy-socio-review-button{padding:10px 13px;border-radius:10px;border:1px solid #c8d7cd;background:var(--card,#fff);color:var(--text,#335b41);font-size:13px;font-weight:700;cursor:pointer}
+.psy-socio-review-button.is-flagged{background:#fff1df;border-color:#e0bd88;color:#8c592a}
+.psy-socio-review-hint{background:#fbf0df;color:#775730;border-radius:9px;border:1px solid #ead8b9;padding:10px 12px;margin:0!important;font-size:12px;line-height:1.5}
+.psy-socio-review-hint[hidden],.psy-socio-review-fields[hidden]{display:none!important}
+.psy-socio-review-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.psy-socio-review-fields label{display:grid;gap:6px;min-width:0;font-size:12px;font-weight:650;color:var(--text,#37513e)}
+.psy-socio-review-fields select,.psy-socio-review-fields textarea{box-sizing:border-box;width:100%;border:1px solid var(--stroke,#bbd0bf);border-radius:9px;padding:9px 11px;background:var(--input-bg,#fff);color:var(--text,#243a2d);font:inherit;font-size:13px}
+.psy-socio-review-fields textarea{resize:vertical;min-height:70px;line-height:1.5}
+.psy-socio-review-note{grid-column:1/-1}
+.psy-socio-review-cell{min-width:140px;max-width:230px;line-height:1.5}
+.psy-socio-review-cell.is-flagged{color:#88551e;font-weight:650}
+@media(max-width:650px){
+ .psy-socio-options{min-width:180px;max-width:min(320px,calc(100vw - 55px))}
+ .psy-socio-review-fields{grid-template-columns:minmax(0,1fr)}
+ .psy-socio-review-head{align-items:flex-start}
+}
