@@ -93,7 +93,7 @@
 .psy-socio-drop{position:absolute;top:4px;right:4px;bottom:4px;width:34px;border:0;border-left:1px solid var(--stroke,#d5e1d6);border-radius:5px;background:transparent;color:var(--text,#426450);font-size:21px;cursor:pointer}
 .psy-socio-options{position:absolute;top:calc(100% + 5px);left:0;right:0;min-width:210px;max-width:min(320px,90vw);max-height:250px;overflow:auto;border:1px solid var(--stroke,#c7d5ca);box-shadow:0 14px 32px #10291b2e;border-radius:12px;padding:6px;background:var(--card,#fff);z-index:30}
 .psy-socio-options[hidden]{display:none!important}
-.psy-socio-option{display:block;width:100%;border:0;border-radius:8px;padding:10px 11px;margin:0;text-align:left;font:500 14px/1.35 inherit;background:transparent;color:var(--text,#253b2d);cursor:pointer;overflow-wrap:anywhere}
+.psy-socio-option{display:block;width:100%;border:0;border-radius:8px;padding:10px 11px;margin:0;text-align:left;font-family:inherit;font-size:14px;font-weight:500;line-height:1.35;background:transparent;color:var(--text,#253b2d);cursor:pointer;overflow-wrap:anywhere}
 .psy-socio-option:hover,.psy-socio-option:focus-visible{background:var(--panel-soft,#e7f2e9);outline:none}
 .psy-socio-option.is-nobody{position:sticky;top:0;z-index:1;color:#8c633b;background:var(--card,#fff);font-weight:700;border-bottom:1px solid var(--stroke,#e1e8dd);margin-bottom:5px}
 .psy-socio-option.is-nobody:hover,.psy-socio-option.is-nobody:focus-visible{background:var(--panel-soft,#f6f1e8)}
