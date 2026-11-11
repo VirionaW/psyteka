@@ -1046,8 +1046,10 @@ function bindControls(){
     modeIndices.class=rowIndex;setTab('score');
    },
    onNext:()=>{
-    const next=rows.findIndex((r,i)=>i>rowIndex&&r.name?.trim());
-    const first=rows.findIndex(r=>r.name?.trim());
+    const socio=DETAILS[methodNow.name]?.methodType==='sociometry';
+    const eligible=r=>r.name?.trim()&&(!socio||!r.socioAbsent);
+    const next=rows.findIndex((r,i)=>i>rowIndex&&eligible(r));
+    const first=rows.findIndex(eligible);
     if(next<0&&first<0)return;
     rowIndex=next<0?first:next;modeIndices.class=rowIndex;setTab('score');
    }
