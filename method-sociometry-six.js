@@ -113,7 +113,20 @@
    '<label class="psy-socio-review-note">Комментарий специалиста<textarea id="psySocReviewNote" maxlength="1000" rows="2" placeholder="Например: обсудить, чем отличаются работа в паре и проект">'+esc(note)+'</textarea></label></div>'+
    '<p class="psy-socio-note">'+(status==="needs-review"?
     "Ответы этого ученика временно исключены из расчётов. При статусе «Уточнено» они автоматически вернутся в анализ.":
-    "Статус «Требует уточнения» исключает ответы из расчётов, не удаляя их. «Уточнено» возвращает данные в анализ.")+'</p></section>';
+    "Статус «Требует уточнения» исключает ответы из расчётов, не удаляя их. «Уточнено» возвращает данные в анализ.")+'</p>'+
+   '<details class="psy-socio-concern"><summary>Отдельные сведения о травле (не по социометрии)</summary>'+
+   '<p class="psy-socio-note">Заполняется психологом только при наличии наблюдений или сообщений. Положительные выборы не определяют, кто является инициатором травли.</p>'+
+   '<div class="psy-socio-concern-fields">'+
+   '<label>Состояние проверки<select id="psySocConcernStatus">'+
+   '<option value="" '+(!row.socioPeerConcern?.status?"selected":"")+'>Нет записи</option>'+
+   '<option value="signal" '+(row.socioPeerConcern?.status==="signal"?"selected":"")+'>Есть сообщение – требует проверки</option>'+
+   '<option value="verified" '+(row.socioPeerConcern?.status==="verified"?"selected":"")+'>Эпизод подтверждён отдельно</option></select></label>'+
+   '<label>Роль в сообщении<select id="psySocConcernRole">'+
+   '<option value="">Не установлена</option>'+
+   '<option value="affected" '+(row.socioPeerConcern?.role==="affected"?"selected":"")+'>Пострадавший</option>'+
+   '<option value="initiator" '+(row.socioPeerConcern?.role==="initiator"?"selected":"")+'>Предполагаемый инициатор</option>'+
+   '<option value="witness" '+(row.socioPeerConcern?.role==="witness"?"selected":"")+'>Свидетель</option></select></label>'+
+   '<label class="psy-socio-concern-comment">Факты / источник информации<textarea id="psySocConcernNote" maxlength="1200" rows="2" placeholder="Запишите наблюдение или источник сообщения">'+esc(row.socioPeerConcern?.note||"")+'</textarea></label></div></details></section>';
  }
  function resultHTML(ctx){
   const {people,result,eligible,excludedIds,absentIds,reviewIds}=analyze(ctx.rows);
@@ -415,6 +428,16 @@
    updateReview({status:e.target.value});ctx.onSelect?.(ctx.rowIndex);
   });
   document.getElementById("psySocReviewNote")?.addEventListener("input",e=>updateReview({note:e.target.value.slice(0,1000)}));
+  const concern=patch=>{
+   const row=rows[ctx.rowIndex],prev=row.socioPeerConcern||{};
+   row.socioPeerConcern={...prev,...patch};
+   window.dispatchEvent(new Event("psy-assessment-dirty"));
+  };
+  document.getElementById("psySocConcernStatus")?.addEventListener("change",e=>concern(
+   e.target.value?{status:e.target.value}:{status:"",role:"",note:""}
+  ));
+  document.getElementById("psySocConcernRole")?.addEventListener("change",e=>concern({role:e.target.value}));
+  document.getElementById("psySocConcernNote")?.addEventListener("input",e=>concern({note:e.target.value.slice(0,1200)}));
   const updateRepetition=()=>{
    const count=repetition(rows[ctx.rowIndex]),hint=document.getElementById("psySocRepeatedHint");
    if(!hint)return;
