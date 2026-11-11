@@ -80,10 +80,10 @@
    people.map((p,i)=>'<th scope="col" title="'+E(p.name)+'">'+code(p,i)+'</th>').join("")+
    '<th scope="col">Сделано</th></tr></thead>';
   const body=people.map((p,i)=>{
-   const disabled=excluded(p),selected=s.edges.get(p.socioId);
+   const disabled=excluded(p),selected=s.edges.get(p.socioId),wasAbsent=absent(p);
    const cells=people.map((other,j)=>{
     if(i===j)return '<td class="psy-socio-matrix-self" title="Самовыбор запрещен">×</td>';
-    if(disabled)return '<td class="psy-socio-matrix-missing" title="Ответы исключены до уточнения">⏸</td>';
+    if(disabled)return '<td class="psy-socio-matrix-missing" title="'+(wasAbsent?"Отсутствовал":"На уточнении")+'">'+(wasAbsent?"О":"⏸")+'</td>';
     if(!selected)return '<td class="psy-socio-matrix-missing" title="Анкета не завершена">…</td>';
     if(!selected.has(other.socioId))return '<td class="psy-socio-matrix-blank" title="Выбор отсутствует">·</td>';
     const mutual=s.edges.get(other.socioId)?.has(p.socioId);
@@ -91,14 +91,14 @@
      '" title="'+E(p.name)+" → "+E(other.name)+(mutual?" (взаимно)":"")+'">'+(mutual?"↔":"→")+'</td>';
    }).join("");
    return '<tr><th scope="row">'+code(p,i)+'. '+E(p.name)+'</th>'+cells+
-    '<td class="psy-socio-matrix-total">'+(disabled?"⏸":selected?selected.size:"–")+'</td></tr>';
+    '<td class="psy-socio-matrix-total">'+(wasAbsent?"О":disabled?"⏸":selected?selected.size:"–")+'</td></tr>';
   }).join("");
   const footer='<tfoot><tr><th scope="row">Получено</th>'+
-   people.map(p=>'<td>'+(excluded(p)?"⏸":s.answered?T(s.incoming.get(p.socioId)):"–")+'</td>').join("")+
+   people.map(p=>'<td>'+(absent(p)?"О":reviewing(p)?"⏸":s.answered?T(s.incoming.get(p.socioId)):"–")+'</td>').join("")+
    '<td>'+s.total+'</td></tr></tfoot>';
   return '<div class="psy-socio-matrix-scroll"><table class="psy-socio-matrix">'+head+'<tbody>'+body+'</tbody>'+footer+'</table></div>'+
    '<p class="psy-socio-legend"><span class="psy-socio-legend-pair">↔ взаимный выбор</span><span>→ односторонний выбор</span>'+
-   '<span>· нет выбора</span><span>… анкета не завершена</span><span>⏸ исключена до уточнения</span></p>';
+   '<span>· нет выбора</span><span>… анкета не завершена</span><span>⏸ на уточнении</span><span>О отсутствовал</span></p>';
  }
  const short=(s,max=17)=>{const v=String(s||"").trim();return v.length>max?v.slice(0,max-1)+"…":v;};
  function sociogram(people,s){
@@ -150,7 +150,7 @@
    '<p class="psy-socio-note">'+(coverageEnough(s)?
      "Категории доступны: заполнено "+s.answered+" из "+s.eligible+" учитываемых анкет.":
      "Для присвоения категорий требуется не менее 5 завершённых анкет и 75% участия. Пока статусы остаются предварительными.")+
-   ' «Изолированный» здесь означает 0 положительных выборов, а не «изгой», «отверженный» или жертва травли. Для выявления буллинга этих ответов недостаточно.</p></section>';
+   ' «Изолированный» здесь означает 0 положительных выборов, а не «изгой», «отверженный» или жертва травли. Для выявления буллинга этих ответов недостаточно. <a href="https://psyjournals.ru/journals/sociosphera/archive/2010_n2/35334" target="_blank" rel="noopener noreferrer">Основание категорий</a>.</p></section>';
  }
  function individual(people,result){
   const target=people.find(p=>p.socioId===selectedChild)||people[0];
@@ -177,7 +177,7 @@
    '</div>';
  }
  function table(people,s){
-  const header='<thead><tr><th>Ученик</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Социометрический статус</th><th>Анкета</th><th>Что видно по ответам</th></tr></thead>';
+  const header='<thead><tr><th>Ученик</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Социометрический статус</th><th>Анкета</th><th>Сведения о травле</th><th>Конкретный анализ</th></tr></thead>';
   const body=people.map(p=>{
    const d=clean(p,s),st=statusFor(p,s);
    const attendance=st.key==="absent"?"Отсутствовал":st.key==="review"?"На уточнении":d.answered?"Заполнена":"Не завершена";
@@ -187,9 +187,9 @@
     '<td>'+(d.excluded?"–":s.answered?d.reciprocal:"–")+'</td>'+
     '<td><span class="psy-socio-status-badge is-'+st.key+'">'+E(st.name)+'</span></td>'+
     '<td><span class="psy-socio-answer-status '+(d.answered?"is-ready":"is-pending")+'">'+attendance+'</span></td>'+
-    '<td class="psy-socio-observation">'+E(observation(p,s,people.length))+
-     (concernLabel(p)?'<div class="psy-socio-concern-tag">Сведения о травле – отдельная запись</div>':"")+
-    '</td></tr>';
+    '<td class="psy-socio-concern-cell">'+(concernLabel(p)?'<span title="'+E(concernLabel(p))+'">'+
+      E(concernLabel(p).slice(0,115))+(concernLabel(p).length>115?"…":"")+'</span>':"–")+'</td>'+
+    '<td class="psy-socio-observation">'+E(observation(p,s,people.length))+'</td></tr>';
   }).join("");
   return '<div class="psy-socio-summary-scroll"><table class="psy-socio-children-table">'+header+'<tbody>'+body+'</tbody></table></div>';
  }
