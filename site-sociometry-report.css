@@ -233,3 +233,20 @@
 /* Status category refers to one selected question; never to the six-question total. */
 .psy-socio-criterion-warning{padding:12px 15px!important;margin:1px 0!important;border-left:4px solid #9baf89;border-radius:9px;background:var(--panel-soft,#f2f7ef);color:var(--text,#36513b);font-size:13px;line-height:1.6}
 .psy-socio-criterion-warning strong{font-weight:800}
+
+/* Three positive + three negative: never style negative selections as popularity. */
+.psy-socio-question.is-negative{border-left:4px solid #b88b71}
+.psy-socio-question.is-positive{border-left:4px solid #7aa789}
+.psy-socio-question-type{display:inline-block;padding:3px 8px;margin-left:6px;font-size:10px;line-height:1.3;border-radius:7px;color:#3c7556;background:#eaf4ec;font-weight:650;vertical-align:middle}
+.psy-socio-question.is-negative .psy-socio-question-type{color:#986240;background:#f8ece5}
+.psy-socio-negative-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:7px}
+.psy-socio-negative-list button{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;padding:10px 12px;border:1px solid var(--stroke,#e1d6cc);background:var(--panel-soft,#f9f5f1);color:var(--text,#493c31);border-radius:9px;font:600 12px/1.45 system-ui,sans-serif;cursor:pointer}
+.psy-socio-negative-list button:hover{background:#f3e6da}
+.psy-socio-negative-list button strong{flex:none;background:#e7d4c6;border-radius:6px;padding:3px 7px}
+.psy-socio-status-badge.is-negative{color:#7e573d;background:#f5ece5}
+.psy-socio-six-table th.is-negative,.psy-socio-six-table .psy-socio-six-negative{background:#faf0e9;color:#84553b}
+.psy-socio-six-table th.is-positive{background:#eaf5ed}
+.psy-socio-legacy{margin:12px 0;padding:13px 15px;border:1px dashed #bd986f;border-radius:10px;background:var(--panel-soft,#fff8f0)}
+.psy-socio-legacy summary{cursor:pointer;font-weight:750;color:var(--text,#775235)}
+.psy-socio-legacy p{font-size:12px;line-height:1.5;color:var(--muted,#826e5b)}
+.psy-socio-legacy button{margin:6px 0}
