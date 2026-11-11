@@ -191,7 +191,7 @@
   return '<div class="psy-bully-roster"><div class="psy-bully-roster-head"><label>Текущий ученик<select id="psyBullyPerson">'+
    ctx.rows.map((person,i)=>person.name?.trim()?'<option value="'+i+'" '+(ctx.rowIndex===i?"selected":"")+'>'+E(person.name)+
     (absent(person)?" · отсутствовал":review(person)?" · уточнить":"")+'</option>':"").join("")+
-   '</select></label><div class="psy-bully-counter">'+(selected?E(selected.name)+" · "+completed+" / 5 вопросов":"Список класса пока пуст")+'</div></div>'+
+   '</select></label><div class="psy-bully-counter">'+(selected?E(selected.name)+" · "+completed+" / 6 вопросов":"Список класса пока пуст")+'</div></div>'+
    '<details class="psy-bully-add"><summary>Добавить учеников в список класса</summary>'+
    '<p>Имена через новую строку. Уже внесенные дети и ответы не удаляются.</p>'+
    '<textarea id="psyBullyRoster" rows="5" placeholder="Фамилия Имя&#10;Фамилия Имя"></textarea>'+
@@ -321,7 +321,7 @@
   if(!hasVariant(d))return previous.calculator(d,ctx);
   currentRows=ctx.rows;ensure(ctx.rows);
   if(ctx.calcMode!=="class")return '<section class="psy-bully"><h3>Групповая социометрия</h3>'+
-   '<p>Выберите режим «Группа / класс», чтобы внести состав класса и ответы по пяти вопросам.</p>'+
+   '<p>Выберите режим «Группа / класс», чтобы внести состав класса и ответы по шести вопросам.</p>'+
    '<button type="button" class="btn primary" data-cmode="class">Группа / класс</button></section>';
   return '<section class="psy-bully">'+heading()+rosterView(ctx)+
    questionView(ctx.rows[ctx.rowIndex])+overview(analyze(ctx.rows))+'</section>';
@@ -545,7 +545,7 @@
    '<p><strong>Версия:</strong> редакционная рабочая форма по структуре пяти критериев аналитического отчета 6.2 с шестым вопросом о поддержке. Дословный авторский бланк первоисточника не подтвержден. Не выдавайте эти формулировки за цитату из методических рекомендаций.</p>';
  }
  function processing(){
-  return '<h3>Обработка данных</h3><p>LP – число полученных положительных номинаций Q1; LM – отрицательных Q2; SP = LP - LM; SI = LP + LM. Q3, Q4 и Q5 считаются раздельно.</p>'+
+  return '<h3>Обработка данных</h3><p>LP – число полученных положительных номинаций Q1; LM – отрицательных Q2; SP = LP - LM; SI = LP + LM. Q3, Q4, Q5 и Q6 считаются раздельно.</p>'+
    '<p>Плотность позитивных связей = LP / (n × (n-1)), где n – число учеников в списке класса. Доля взаимных номинаций = 2 × число взаимных пар / LP; отношение негативных и позитивных = LM / LP.</p>'+
    '<p>Анкеты отсутствовавших и учащихся «на уточнении» исключаются как источники номинаций, но имена остаются в классе. Выборы других учащихся в их адрес сохраняются. Лимит Q1 – 5 имен, Q2-Q6 – 3, Q2 необязателен.</p>'+
    '<p>Редакционные профили в таблице – не стандартизированные статусы. Рабочие границы: отрицательный баланс – SP до -2 при LM от 2; смешанный профиль – LP от 3 и LM от 2; выраженные положительные связи – LP от 4 и SP от 3. При прочих значениях категория не выделяется.</p>'+
