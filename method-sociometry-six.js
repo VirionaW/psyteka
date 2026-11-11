@@ -177,13 +177,20 @@
   const answered=result.reduce((sum,r)=>sum+r.answered,0);
   const partial=result.reduce((sum,r)=>sum+r.partial,0);
   const selected=Math.max(0,Math.min(5,viewCriterion)),s=result[selected];
+  const archivedNegative=people.reduce((n,p)=>n+[3,4,5].filter(q=>
+    (p.socioLegacyArchive?.choices?.[q]||[]).some(Boolean)&&
+    !(p.socioChoices?.[q]||[]).some(Boolean)).length,0);
+  const restoreHint=archivedNegative?
+   '<p class="psy-socio-restore-hint"><strong>Ответы 4–6 найдены в архиве.</strong> '+
+   archivedNegative+' ранее заполненных ответов пока не включены в отрицательные выборы. '+
+   '<a href="#psySocLegacy">Восстановить из архива</a> после проверки формулировок.</p>':"";
   const perQuestion='<div class="psy-socio-summary-scroll"><table><thead><tr><th>№</th><th>Вопрос</th><th>Полностью</th><th>Частично</th><th>Учтено выборов</th><th>Взаимных пар</th></tr></thead><tbody>'+
    result.map((v,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(v.question||"Вопрос не указан")+'</td><td>'+
     v.answered+' из '+eligible+'</td><td>'+v.partial+'</td><td>'+(v.responded?v.total:'–')+'</td><td>'+(v.responded?v.pairs:'–')+'</td></tr>').join("")+'</tbody></table></div>';
   const details='<label class="psy-socio-detail-choice">Выбранный вопрос для анализа <select id="psySocCriterion">'+
    result.map((r,i)=>'<option value="'+i+'" '+(i===selected?"selected":"")+'>'+(i+1)+'. '+esc(r.question||"Без формулировки")+'</option>').join("")+'</select></label>'+
    '';
-  return '<div class="psy-new-metrics"><span>Участников в классе <b>'+people.length+'</b></span>'+
+  return restoreHint+'<div class="psy-new-metrics"><span>Участников в классе <b>'+people.length+'</b></span>'+
    '<span>Полностью заполнено <b>'+answered+' из '+(eligible*6)+'</b></span>'+
    (partial?'<span>Частично (выборы учтены) <b>'+partial+'</b></span>':'')+
    (absentIds.size?'<span>Отсутствовали <b>'+absentIds.size+'</b></span>':'')+
@@ -254,7 +261,7 @@
      '" aria-pressed="'+isAbsent+'">'+(isAbsent?"Вернуть к обследованию":"Отметить: отсутствовал")+'</button>'+
      '<span>'+(isAbsent?"Анкета не учитывается, введённые ранее ответы сохранены.":"Если ребёнка не было, отметьте его отсутствие. Пустой бланк сам по себе не означает отсутствие.")+'</span></div>':"")+
    (people.some(p=>p.socioLegacyArchive?.choices?.slice(2).some(x=>x?.some(Boolean)))?
-   '<details class="psy-socio-legacy" open><summary>Восстановление ответов из прежней анкеты (3–6)</summary>'+
+   '<details id="psySocLegacy" class="psy-socio-legacy" open><summary>Восстановление ответов из прежней анкеты (3–6)</summary>'+
    '<p><strong>Архив сохранён.</strong> При исправлении вопросов прежние ответы 3–6 были исключены из подсчётов. Если вы действительно вводили отрицательные ответы по вопросам 4–6, восстановите их без повторного ввода детей.</p>'+
    '<div class="psy-socio-restore-stats">'+
     [2,3,4,5].map(q=>'<span>Вопрос '+(q+1)+': <strong>'+
