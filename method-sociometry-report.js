@@ -170,7 +170,7 @@
    criteria:counts.filter(v=>v>0).length,unique:unique.size,
    starCriteria:result.filter((r,i)=>statusFor(person,r).key==="star").length};
  }
- function overviewSix(people,result){
+ function overviewSix(people,result,forPrint=false){
   const ordered=people.map(person=>({person,stats:sixStats(person,result)}))
    .sort((a,b)=>Number(a.stats.excluded)-Number(b.stats.excluded)||
     (b.stats.total||0)-(a.stats.total||0)||a.person.name.localeCompare(b.person.name,"ru"));
@@ -181,15 +181,17 @@
    '<th scope="col">Ученик</th><th scope="col">Вопросов, где выбирали</th>'+
    '<th scope="col">Всего выборов</th><th scope="col">Разных выбравших</th>'+
    '<th scope="col">«Звезда» по вопросам</th>'+
-   result.map((_,i)=>'<th scope="col">В'+(i+1)+'</th>').join("")+
+   (forPrint?'<th scope="col">Выборы по вопросам 1–6</th>':
+     result.map((_,i)=>'<th scope="col">В'+(i+1)+'</th>').join(""))+
    '</tr></thead><tbody>'+
    ordered.map(({person,stats})=>'<tr><th scope="row"><button type="button" class="psy-socio-name-link" data-socio-focus-id="'+E(person.socioId)+'">'+
     E(person.name)+'</button></th>'+
-    (stats.excluded?'<td colspan="10">'+(absent(person)?"Отсутствовал":"На уточнении")+
+    (stats.excluded?'<td colspan="'+(forPrint?5:10)+'">'+(absent(person)?"Отсутствовал":"На уточнении")+
      ' – показатели не рассчитываются</td>':
      '<td>'+stats.criteria+' из 6</td><td class="psy-socio-six-main">'+stats.total+
      '</td><td>'+stats.unique+'</td><td>'+stats.starCriteria+'</td>'+
-     stats.counts.map(n=>'<td>'+(n>=5?'<strong class="psy-socio-count-star" title="Не менее 5 выборов по этому вопросу">★ '+n+'</strong>':n)+'</td>').join(""))+
+     (forPrint?'<td>'+stats.counts.join(" / ")+'</td>':
+      stats.counts.map(n=>'<td>'+(n>=5?'<strong class="psy-socio-count-star" title="Не менее 5 выборов по этому вопросу">★ '+n+'</strong>':n)+'</td>').join("")))+
    '</tr>').join("")+'</tbody></table></div>'+
    '<p class="psy-socio-note">Сумма по шести разным вопросам – описательный показатель, не отдельный социометрический статус. «Звезда» определяется по каждому вопросу, если получено 5 и более положительных выборов. При незавершённых ответах данные предварительные.</p></section>';
  }
@@ -322,7 +324,7 @@
     '<h2>Полнота обследования</h2><table><thead><tr><th>№</th><th>Критерий</th><th>Завершено анкет</th><th>Положительных выборов</th><th>Взаимных пар</th></tr></thead><tbody>'+
     result.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(r.question)+'</td><td>'+r.answered+' из '+(r.eligible??people.length)+
       (r.partial?" (частично: "+r.partial+")":"")+'</td><td>'+r.total+'</td><td>'+r.pairs+'</td></tr>').join("")+'</tbody></table>'+
-    '<h2>Шесть вопросов – суммарный обзор</h2>'+overviewSix(people,result)+
+    '<h2>Шесть вопросов – суммарный обзор</h2>'+overviewSix(people,result,true)+
     '<h2>Посещаемость и достоверность</h2>'+
     '<p>Отсутствовали: '+(absentees.length?absentees.map(p=>E(p.name)).join(", "):"нет")+
     '. На уточнении: '+(reviews.length?reviews.map(p=>E(p.name)).join(", "):"нет")+'.</p>'+
