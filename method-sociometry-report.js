@@ -166,7 +166,8 @@
    '<span class="psy-socio-coverage '+(incomplete?"is-pending":"is-ready")+'">'+
     (excludedCount?"Исключено "+excludedCount+" · ":"")+
     (incomplete?"Предварительно":"Все учитываемые анкеты завершены")+' · '+s.answered+' из '+eligible+'</span></div>'+
-   (s.answered?table(people,s):'<p class="psy-socio-empty">По этому вопросу пока нет завершенных анкет. Показатели учеников не рассчитаны.</p>')+
+   (s.answered?'':'<p class="psy-socio-empty">По этому вопросу пока нет учтенных завершенных анкет. Все неподтвержденные показатели остаются пустыми.</p>')+
+   table(people,s)+
    individual(people,result)+
    '<section class="psy-socio-visual"><div class="psy-socio-section-heading"><div>'+
    '<h4>Социограмма</h4><p>Линии показывают только реальные выборы по выбранному вопросу</p></div>'+
