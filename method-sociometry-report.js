@@ -16,20 +16,23 @@
   const a=document.createElement("a");a.download=name;a.href=url;document.body.append(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),1200);
  }
+ const excluded=p=>p?.socioReview?.status==="needs-review";
  const clean=(p,s)=>{
-  const own=s.edges.get(p.socioId);
-  const received=s.incoming.get(p.socioId)||0;
-  const reciprocal=s.mutual.get(p.socioId)||0;
-  return {own,received,reciprocal,answered:own!==undefined};
+  const excludedFromAnalysis=excluded(p);
+  const own=excludedFromAnalysis?undefined:s.edges.get(p.socioId);
+  const received=excludedFromAnalysis?null:(s.incoming.get(p.socioId)||0);
+  const reciprocal=excludedFromAnalysis?null:(s.mutual.get(p.socioId)||0);
+  return {own,received,reciprocal,answered:own!==undefined,excluded:excludedFromAnalysis};
  };
  function observation(p,s,n){
   const d=clean(p,s);
+  if(d.excluded)return "Ответы ученика временно исключены из расчёта до уточнения. Внесённые выборы сохранены.";
   if(s.answered===0)return "Нет завершенных анкет. Оценить полученные выборы пока нельзя.";
   let narrative="";
   if(d.received) narrative="Получено "+d.received+" положительных выборов, взаимных связей – "+d.reciprocal+".";
   else narrative="Среди "+s.answered+" завершенных анкет положительных выборов не получено.";
   if(!d.answered)narrative+=" Собственная анкета не завершена.";
-  if(s.answered<n)narrative+=" Данные предварительные.";
+  if(s.answered<(s.eligible??n))narrative+=" Данные предварительные.";
   return narrative;
  }
  const review=p=>{
@@ -50,9 +53,10 @@
    people.map((p,i)=>'<th scope="col" title="'+E(p.name)+'">'+code(p,i)+'</th>').join("")+
    '<th scope="col">Сделано</th></tr></thead>';
   const body=people.map((p,i)=>{
-   const selected=s.edges.get(p.socioId);
+   const disabled=excluded(p),selected=s.edges.get(p.socioId);
    const cells=people.map((other,j)=>{
     if(i===j)return '<td class="psy-socio-matrix-self" title="Самовыбор запрещен">×</td>';
+    if(disabled)return '<td class="psy-socio-matrix-missing" title="Ответы исключены до уточнения">⏸</td>';
     if(!selected)return '<td class="psy-socio-matrix-missing" title="Анкета не завершена">…</td>';
     if(!selected.has(other.socioId))return '<td class="psy-socio-matrix-blank" title="Выбор отсутствует">·</td>';
     const mutual=s.edges.get(other.socioId)?.has(p.socioId);
@@ -60,14 +64,14 @@
      '" title="'+E(p.name)+" → "+E(other.name)+(mutual?" (взаимно)":"")+'">'+(mutual?"↔":"→")+'</td>';
    }).join("");
    return '<tr><th scope="row">'+code(p,i)+'. '+E(p.name)+'</th>'+cells+
-    '<td class="psy-socio-matrix-total">'+(selected?selected.size:"–")+'</td></tr>';
+    '<td class="psy-socio-matrix-total">'+(disabled?"⏸":selected?selected.size:"–")+'</td></tr>';
   }).join("");
   const footer='<tfoot><tr><th scope="row">Получено</th>'+
-   people.map(p=>'<td>'+(s.answered?T(s.incoming.get(p.socioId)):"–")+'</td>').join("")+
+   people.map(p=>'<td>'+(excluded(p)?"⏸":s.answered?T(s.incoming.get(p.socioId)):"–")+'</td>').join("")+
    '<td>'+s.total+'</td></tr></tfoot>';
   return '<div class="psy-socio-matrix-scroll"><table class="psy-socio-matrix">'+head+'<tbody>'+body+'</tbody>'+footer+'</table></div>'+
    '<p class="psy-socio-legend"><span class="psy-socio-legend-pair">↔ взаимный выбор</span><span>→ односторонний выбор</span>'+
-   '<span>· нет выбора</span><span>… анкета не завершена</span></p>';
+   '<span>· нет выбора</span><span>… анкета не завершена</span><span>⏸ исключена до уточнения</span></p>';
  }
  const short=(s,max=17)=>{const v=String(s||"").trim();return v.length>max?v.slice(0,max-1)+"…":v;};
  function sociogram(people,s){
@@ -96,7 +100,8 @@
   }
   const circles=people.map((p,i)=>{
    const pt=points.get(p.socioId),inCount=s.incoming.get(p.socioId)||0;
-   return '<g class="psy-socio-node"><title>'+E(p.name)+': получено '+inCount+' выборов</title>'+
+   return '<g class="psy-socio-node '+(excluded(p)?"is-excluded":"")+'"><title>'+E(p.name)+
+    (excluded(p)?': анкета исключена до уточнения':': получено '+inCount+' выборов')+'</title>'+
     '<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="20"/>'+
     '<text x="'+pt.x.toFixed(1)+'" y="'+(pt.y+4.5).toFixed(1)+'" text-anchor="middle">'+(i+1)+'</text></g>';
   }).join("");
@@ -119,8 +124,8 @@
    result.map((s,i)=>{
     const d=clean(target,s);
     return '<tr><td><strong>'+(i+1)+'.</strong> '+E(s.question)+'</td>'+
-     '<td>'+(d.answered?d.own.size:"–")+'</td><td>'+(s.answered?d.received:"–")+'</td>'+
-     '<td>'+(s.answered?d.reciprocal:"–")+'</td><td>'+E(observation(target,s,people.length))+'</td></tr>';
+     '<td>'+(d.answered?d.own.size:"–")+'</td><td>'+(d.excluded?"–":s.answered?d.received:"–")+'</td>'+
+     '<td>'+(d.excluded?"–":s.answered?d.reciprocal:"–")+'</td><td>'+E(observation(target,s,people.length))+'</td></tr>';
    }).join("")+'</tbody></table></div>'+
    '<p class="psy-socio-note"><strong>Отметка психолога:</strong> '+E(reviewLabel(target))+'</p>'+
    '<p class="psy-socio-note">Результаты разных критериев нельзя суммировать в единый «рейтинг» ребенка. Полученные выборы описывают только указанные ситуации.</p></div>';
@@ -131,10 +136,10 @@
    const d=clean(p,s);
    return '<tr><th scope="row">'+E(p.name)+'</th>'+
     '<td>'+(d.answered?d.own.size:"–")+'</td>'+
-    '<td>'+(s.answered?d.received:"–")+'</td>'+
-    '<td>'+(s.answered?d.reciprocal:"–")+'</td>'+
-    '<td><span class="psy-socio-answer-status '+(d.answered?"is-ready":"is-pending")+'">'+
-     (d.answered?"Заполнена":"Не завершена")+'</span></td>'+
+    '<td>'+(d.excluded?"–":s.answered?d.received:"–")+'</td>'+
+    '<td>'+(d.excluded?"–":s.answered?d.reciprocal:"–")+'</td>'+
+    '<td><span class="psy-socio-answer-status '+(d.excluded?"is-pending":d.answered?"is-ready":"is-pending")+'">'+
+     (d.excluded?"Исключена":d.answered?"Заполнена":"Не завершена")+'</span></td>'+
     '<td class="psy-socio-review-cell '+(review(p).status==="Требует уточнения"?"is-flagged":"")+'">'+E(reviewLabel(p))+'</td>'+
     '<td class="psy-socio-observation">'+E(observation(p,s,people.length))+'</td></tr>';
   }).join("");
@@ -144,18 +149,23 @@
   if(!selectedChild&&activeId)selectedChild=activeId;
   if(!people.length)return "";
   const s=result[selected]||result[0];
-  const incomplete=s.answered<people.length;
-  const reached=people.filter(p=>(s.incoming.get(p.socioId)||0)>0).length;
+  const eligible=s.eligible??people.filter(p=>!excluded(p)).length;
+  const excludedCount=people.length-eligible;
+  const incomplete=s.answered<eligible;
+  const reached=people.filter(p=>!excluded(p)&&(s.incoming.get(p.socioId)||0)>0).length;
   const description=s.answered
    ?"По "+s.answered+" завершенным анкетам зарегистрировано "+s.total+
     " положительных выборов и "+s.pairs+" взаимных пар. Хотя бы один выбор получили "+reached+
-    " из "+people.length+" учеников."+
-    (incomplete?" Данные предварительные: не все анкеты заполнены.":"")
-   :"Пока нет завершенных анкет по этому вопросу. Количественный анализ не проводится.";
+    " из "+eligible+" учитываемых учеников."+
+    (excludedCount?" На уточнении "+excludedCount+" ученик(ов), их анкеты исключены из расчёта.":"")+
+    (incomplete?" Данные предварительные: не все учитываемые анкеты заполнены.":"")
+   :eligible===0?"Все анкеты исключены до уточнения. Количественный анализ не проводится.":
+    "Пока нет завершенных анкет по этому вопросу. Количественный анализ не проводится.";
   return '<div class="psy-socio-analytics"><p class="psy-socio-class-reading">'+E(description)+'</p><div class="psy-socio-section-heading"><div>'+
    '<h4>Анализ каждого ученика</h4><p>'+E(s.question)+'</p></div>'+
    '<span class="psy-socio-coverage '+(incomplete?"is-pending":"is-ready")+'">'+
-    (incomplete?"Предварительно":"Все анкеты завершены")+' · '+s.answered+' из '+people.length+'</span></div>'+
+    (excludedCount?"Исключено "+excludedCount+" · ":"")+
+    (incomplete?"Предварительно":"Все учитываемые анкеты завершены")+' · '+s.answered+' из '+eligible+'</span></div>'+
    (s.answered?table(people,s):'<p class="psy-socio-empty">По этому вопросу пока нет завершенных анкет. Показатели учеников не рассчитаны.</p>')+
    individual(people,result)+
    '<section class="psy-socio-visual"><div class="psy-socio-section-heading"><div>'+
@@ -164,12 +174,12 @@
    sociogram(people,s)+
    '<p class="psy-socio-legend"><span>Зеленые стрелки с двух сторон – взаимный выбор</span><span>Коричневые – односторонний</span></p></section>'+
    '<details class="psy-socio-matrix-panel"><summary><span>Социоматрица</span><small>Показать таблицу всех связей</small></summary>'+
-   '<p class="psy-socio-note">Строка – кто выбирает, столбец – кого выбрали. Данные указаны только по завершенным анкетам.</p>'+
+   '<p class="psy-socio-note">Строка – кто выбирает, столбец – кого выбрали. Ответы учеников с отметкой «Требует уточнения» исключены. Выборы остальных одноклассников в их адрес не удаляются.</p>'+
    matrix(people,s)+'</details>'+
    '<div class="class-actions psy-socio-report-actions"><button type="button" class="btn" id="psySocAnalysisCSV">Скачать таблицу анализа детей</button>'+
    '<button type="button" class="btn" id="psySocMatrixCSV">Скачать социоматрицу</button>'+
    '<button type="button" class="btn" id="psySocPrintAnalysis">Посмотреть и распечатать А4</button></div>'+
-   '<p class="psy-socio-note">Нет ответов ≠ «Никто». Ноль входящих выборов не является доказательством непринятия или отвержения ребенка. Данные детей доступны только специалисту с правом доступа к обследованию.</p></div>';
+   '<p class="psy-socio-note">Знак ⏸ означает исключение из обработки, а не отсутствие выборов. Выборы других детей в адрес ученика с отметкой сохраняются. Ноль входящих выборов не означает отвержения.</p></div>';
  }
  function prepareCSV(people,result){
   const rows=[["Ученик","Вопрос","Критерий","Сделал выборов","Получил выборов","Взаимных связей","Собственная анкета","Завершено анкет класса","Анализ","Отметка психолога","Причина","Комментарий"]];
