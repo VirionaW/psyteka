@@ -179,7 +179,7 @@
   const selected=Math.max(0,Math.min(5,viewCriterion)),s=result[selected];
   const perQuestion='<div class="psy-socio-summary-scroll"><table><thead><tr><th>№</th><th>Вопрос</th><th>Полностью</th><th>Частично</th><th>Учтено выборов</th><th>Взаимных пар</th></tr></thead><tbody>'+
    result.map((v,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(v.question||"Вопрос не указан")+'</td><td>'+
-    v.answered+' из '+eligible+'</td><td>'+v.partial+'</td><td>'+v.total+'</td><td>'+v.pairs+'</td></tr>').join("")+'</tbody></table></div>';
+    v.answered+' из '+eligible+'</td><td>'+v.partial+'</td><td>'+(v.responded?v.total:'–')+'</td><td>'+(v.responded?v.pairs:'–')+'</td></tr>').join("")+'</tbody></table></div>';
   const details='<label class="psy-socio-detail-choice">Выбранный вопрос для анализа <select id="psySocCriterion">'+
    result.map((r,i)=>'<option value="'+i+'" '+(i===selected?"selected":"")+'>'+(i+1)+'. '+esc(r.question||"Без формулировки")+'</option>').join("")+'</select></label>'+
    '';
@@ -188,7 +188,7 @@
    (partial?'<span>Частично (выборы учтены) <b>'+partial+'</b></span>':'')+
    (absentIds.size?'<span>Отсутствовали <b>'+absentIds.size+'</b></span>':'')+
    (reviewIds.size?'<span>На уточнении <b>'+reviewIds.size+'</b></span>':'')+
-   '<span>Взаимных пар по выбранному вопросу <b>'+s.pairs+'</b></span></div>'+
+   '<span>Взаимных пар по выбранному вопросу <b>'+(s.responded?s.pairs:'–')+'</b></span></div>'+
    perQuestion+details+(api.sociometryReport?.render({people,result,selected,activeId:ctx.rows[ctx.rowIndex]?.socioId})||'')+
    '<p class="psy-socio-note">Каждый введённый действительный выбор учитывается, даже если остальные поля вопроса пустые. Частичные анкеты выделены отдельно. Отсутствовавшие и находящиеся на уточнении исключены как респонденты; выборы других детей в их адрес сохраняются.</p>';
  }
