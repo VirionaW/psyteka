@@ -32,6 +32,17 @@
   if(s.answered<n)narrative+=" Данные предварительные.";
   return narrative;
  }
+ const review=p=>{
+  const v=p.socioReview||{};
+  const status=v.status==="needs-review"?"Требует уточнения":v.status==="resolved"?"Уточнено":"";
+  const reason=v.reason==="same"?"Повторяющиеся выборы":
+   v.reason==="instruction"?"Уточнение инструкции":v.reason==="other"?"Наблюдение психолога":"";
+  return {status,reason,note:String(v.note||"").slice(0,1000)};
+ };
+ const reviewLabel=p=>{
+  const v=review(p);
+  return v.status?(v.status+(v.reason?" · "+v.reason:"")+(v.note?" · "+v.note:"")):"Не отмечено";
+ };
  const code=(p,i)=>String(i+1).padStart(2,"0");
  function matrix(people,s){
   const head='<thead><tr><th scope="col">Кто выбирает</th>'+
@@ -110,10 +121,11 @@
      '<td>'+(d.answered?d.own.size:"–")+'</td><td>'+(s.answered?d.received:"–")+'</td>'+
      '<td>'+(s.answered?d.reciprocal:"–")+'</td><td>'+E(observation(target,s,people.length))+'</td></tr>';
    }).join("")+'</tbody></table></div>'+
+   '<p class="psy-socio-note"><strong>Отметка психолога:</strong> '+E(reviewLabel(target))+'</p>'+
    '<p class="psy-socio-note">Результаты разных критериев нельзя суммировать в единый «рейтинг» ребенка. Полученные выборы описывают только указанные ситуации.</p></div>';
  }
  function table(people,s){
-  const header='<thead><tr><th>Ученик</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Анкета</th><th>Фактический анализ</th></tr></thead>';
+  const header='<thead><tr><th>Ученик</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Анкета</th><th>Отметка психолога</th><th>Фактический анализ</th></tr></thead>';
   const body=people.map(p=>{
    const d=clean(p,s);
    return '<tr><th scope="row">'+E(p.name)+'</th>'+
@@ -122,6 +134,7 @@
     '<td>'+(s.answered?d.reciprocal:"–")+'</td>'+
     '<td><span class="psy-socio-answer-status '+(d.answered?"is-ready":"is-pending")+'">'+
      (d.answered?"Заполнена":"Не завершена")+'</span></td>'+
+    '<td class="psy-socio-review-cell '+(review(p).status==="Требует уточнения"?"is-flagged":"")+'">'+E(reviewLabel(p))+'</td>'+
     '<td class="psy-socio-observation">'+E(observation(p,s,people.length))+'</td></tr>';
   }).join("");
   return '<div class="psy-socio-summary-scroll"><table class="psy-socio-children-table">'+header+'<tbody>'+body+'</tbody></table></div>';
@@ -158,11 +171,11 @@
    '<p class="psy-socio-note">Нет ответов ≠ «Никто». Ноль входящих выборов не является доказательством непринятия или отвержения ребенка. Данные детей доступны только специалисту с правом доступа к обследованию.</p></div>';
  }
  function prepareCSV(people,result){
-  const rows=[["Ученик","Вопрос","Критерий","Сделал выборов","Получил выборов","Взаимных связей","Собственная анкета","Завершено анкет класса","Анализ"]];
+  const rows=[["Ученик","Вопрос","Критерий","Сделал выборов","Получил выборов","Взаимных связей","Собственная анкета","Завершено анкет класса","Анализ","Отметка психолога","Причина","Комментарий"]];
   result.forEach((s,i)=>people.forEach(p=>{
    const d=clean(p,s);
    rows.push([p.name,i+1,s.question,d.answered?d.own.size:"",s.answered?d.received:"",s.answered?d.reciprocal:"",
-    d.answered?"Заполнена":"Не завершена",s.answered+" из "+people.length,observation(p,s,people.length)]);
+    d.answered?"Заполнена":"Не завершена",s.answered+" из "+people.length,observation(p,s,people.length),review(p).status,review(p).reason,review(p).note]);
   }));
   return rows;
  }
@@ -186,7 +199,7 @@
     '<h2>Анализ учеников – вопрос '+(selected+1)+'</h2><p>'+E(s.question)+'</p>'+table(people,s)+
     '<h2>Социоматрица – вопрос '+(selected+1)+'</h2>'+matrix(people,s)+
     '<h2>Индивидуальные показатели по шести вопросам</h2>'+
-    people.map(p=>'<section class="person"><h3>'+E(p.name)+'</h3><table><thead><tr><th>Вопрос</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Описание</th></tr></thead><tbody>'+
+    people.map(p=>'<section class="person"><h3>'+E(p.name)+'</h3><p class="note">Отметка психолога: '+E(reviewLabel(p))+'</p><table><thead><tr><th>Вопрос</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Описание</th></tr></thead><tbody>'+
       result.map((r,i)=>{const d=clean(p,r);return '<tr><td>'+(i+1)+'</td><td>'+(d.answered?d.own.size:"–")+'</td><td>'+(r.answered?d.received:"–")+'</td><td>'+(r.answered?d.reciprocal:"–")+'</td><td>'+E(observation(p,r,people.length))+'</td></tr>';}).join("")+
      '</tbody></table></section>').join("")+
     '<p class="note">Заключения носят описательный характер. При неполном участии показатели предварительны. Отсутствие положительных выборов нельзя трактовать как отвержение. Суммарная оценка по шести разным критериям не рассчитывается.</p>';
