@@ -309,26 +309,31 @@
    '<p class="psy-socio-note">Отрицательные выборы показывают избегаемые ситуации, а не доказанную травлю. Нельзя автоматически присваивать ярлыки «изгой», «отверженный» или «буллер».</p></div>';
  }
  function prepareCSV(people,result){
-  const rows=[["Ученик","Вопрос","Критерий","Сделал выборов","Получил выборов",
-   "Взаимных связей","Статус по положительным выборам","Анкета","Полностью заполнено анкет класса",
-   "Анализ","Отметка психолога","Причина","Комментарий",
-   "Сведения о травле (отдельные наблюдения)",
-   "Сумма полученных за шесть вопросов","Вопросов с выборами","Разных одноклассников выбрали",
-   "Вопросов со статусом Звезда"]];
-  result.forEach((s,i)=>people.forEach(p=>{
-   const d=clean(p,s),status=statusFor(p,s),six=sixStats(p,result);
-   rows.push([p.name,i+1,s.question,d.answered?d.own.size:"",
-    d.excluded?"":(s.responded??s.answered)?d.received:"",
-    d.excluded?"":(s.responded??s.answered)?d.reciprocal:"",status.name,
+  const rows=[["Ученик","Вопрос","Тип критерия","Формулировка","Сделал выборов",
+   "Получил выборов","Взаимных связей","Показатель по вопросу","Анкета",
+   "Полностью заполнено анкет класса","Наблюдение",
+   "Отметка психолога","Причина","Комментарий","Сведения о травле (отдельные наблюдения)",
+   "LP по вопросам 1–3","LM по вопросам 4–6","SP (LP–LM)","SI (LP+LM)",
+   "Разных положительных респондентов","Разных отрицательных респондентов",
+   "Положительных вопросов со статусом «Звезда»"]];
+  result.forEach((r,i)=>people.forEach(p=>{
+   const d=clean(p,r),status=statusFor(p,r),six=sixStats(p,result);
+   rows.push([p.name,i+1,r.negative?"Отрицательный":"Положительный",r.question,
+    d.answered?d.own.size:"",
+    d.excluded?"":(r.responded??r.answered)?d.received:"",
+    d.excluded?"":(r.responded??r.answered)?d.reciprocal:"",status.name,
     absent(p)?"Отсутствовал":reviewing(p)?"На уточнении":d.complete?"Заполнена":d.partial?"Частично":"Не заполнена",
-    s.answered+" из "+(s.eligible??people.length),observation(p,s,people.length),
+    r.answered+" из "+(r.eligible??people.length),observation(p,r,people.length),
     review(p).status,review(p).reason,review(p).note,concernLabel(p),
-    six.excluded?"":six.total,six.excluded?"":six.criteria,six.excluded?"":six.unique,six.excluded?"":six.starCriteria]);
+    six.excluded?"":six.positive,six.excluded?"":six.negative,
+    six.excluded?"":six.sp,six.excluded?"":six.si,
+    six.excluded?"":six.uniquePos,six.excluded?"":six.uniqueNeg,
+    six.excluded?"":six.starCriteria]);
   }));
   return rows;
  }
  function prepareMatrix(people,s){
-  return [["Кто выбирает / кого выбрали",...people.map(p=>p.name),"Сделано выборов"],...people.map(p=>{
+  return [[(s.negative?"Отрицательные выборы / кого указали":"Положительные выборы / кого выбрали"),...people.map(p=>p.name),"Сделано выборов"],...people.map(p=>{
    const chosen=s.edges.get(p.socioId),isAbsent=absent(p),isReview=reviewing(p);
    return [p.name,...people.map(other=>{
     if(p.socioId===other.socioId)return "×";
@@ -336,7 +341,7 @@
     if(isReview)return "На уточнении";
     if(!chosen)return "Анкета не завершена";
     if(!chosen.has(other.socioId))return "";
-    return s.edges.get(other.socioId)?.has(p.socioId)?"Взаимно":"Выбран";
+    return s.edges.get(other.socioId)?.has(p.socioId)?"Взаимно":s.negative?"Отрицательно":"Выбран";
    }),isAbsent?"Отсутствовал":isReview?"На уточнении":chosen?
     chosen.size+(s.partialIds?.has(p.socioId)?" (частично)":""):""];
   }),["Получено выборов",...people.map(p=>excluded(p)?"":(s.responded??s.answered)?s.incoming.get(p.socioId):""),
@@ -346,15 +351,17 @@
   const s=result[selected];
   const absentees=people.filter(absent),reviews=people.filter(p=>reviewing(p)&&!absent(p));
   const content='<h1>Социометрия класса – аналитический отчет</h1>'+
-    '<p class="note">Рабочая форма с шестью редактируемыми положительными критериями. Данные конфиденциальны.</p>'+
-    '<h2>Полнота обследования</h2><table><thead><tr><th>№</th><th>Критерий</th><th>Завершено анкет</th><th>Положительных выборов</th><th>Взаимных пар</th></tr></thead><tbody>'+
-    result.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(r.question)+'</td><td>'+r.answered+' из '+(r.eligible??people.length)+
+    '<p class="note">Вопросы 1–3 – положительные, 4–6 – отрицательные. Данные конфиденциальны.</p>'+
+    '<h2>Полнота обследования</h2><table><thead><tr><th>№</th><th>Тип</th><th>Вопрос</th><th>Завершено анкет</th><th>Получено выборов</th><th>Взаимных пар</th></tr></thead><tbody>'+
+    result.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+(r.negative?"Отрицательный":"Положительный")+
+      '</td><td>'+E(r.question)+'</td><td>'+r.answered+' из '+(r.eligible??people.length)+
       (r.partial?" (частично: "+r.partial+")":"")+'</td><td>'+r.total+'</td><td>'+r.pairs+'</td></tr>').join("")+'</tbody></table>'+
-    '<h2>Шесть вопросов – суммарный обзор</h2>'+overviewSix(people,result,true)+
+    '<h2>LP, LM, SP и SI – раздельный итог по шести вопросам</h2>'+overviewSix(people,result,true)+
     '<h2>Посещаемость и достоверность</h2>'+
     '<p>Отсутствовали: '+(absentees.length?absentees.map(p=>E(p.name)).join(", "):"нет")+
     '. На уточнении: '+(reviews.length?reviews.map(p=>E(p.name)).join(", "):"нет")+'.</p>'+
-    '<h2>Статусы по вопросу '+(selected+1)+'</h2><p>'+E(s.question)+'</p>'+table(people,s)+
+    '<h2>Показатели по вопросу '+(selected+1)+'</h2><p>'+(s.negative?"Отрицательный":"Положительный")+
+      ' выбор: '+E(s.question)+'</p>'+table(people,s)+
     '<h2>Социоматрица – вопрос '+(selected+1)+'</h2>'+
     (people.length<=16?matrix(people,s):'<p class="note">Для '+people.length+
      ' учеников социоматрица шире листа A4. Полная таблица доступна кнопкой «Скачать социоматрицу» в Метоларии.</p>')+
@@ -369,7 +376,7 @@
        (d.excluded?"–":(r.responded??r.answered)?d.reciprocal:"–")+'</td><td>'+E(statusFor(p,r).name)+'</td><td>'+
        E(observation(p,r,people.length))+'</td></tr>';}).join("")+
      '</tbody></table></section>').join("")+
-    '<p class="note">Категории положительных выборов по Я. Л. Коломинскому: звезда – от 5; предпочитаемый – 3–4; принимаемый – 1–2; изолированный – 0 (при достаточной полноте данных). Отсутствовавшим и ученикам на уточнении показатели не рассчитываются. Выявление травли требует отдельной проверки.</p>';
+    '<p class="note">Категории «Звезда» (5+), «Предпочитаемый» (3–4) и другие относятся только к положительным вопросам 1–3, при достаточной полноте ответов. Номинации вопросов 4–6 являются отрицательными и не засчитываются как популярность. LP, LM, SP и SI – описательные величины. Наличие отрицательных выборов не доказывает травлю.</p>';
   const css='@page{size:A4;margin:13mm}*{box-sizing:border-box}body{font:10pt/1.4 Arial,sans-serif;color:#263a30;padding:4mm}h1{font-size:17pt}h2{font-size:12pt;margin:16px 0 7px}h3{font-size:11pt;margin:13px 0 6px}p{margin:5px 0 10px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #b5c8ba;padding:4px 5px;text-align:left;vertical-align:top;font-size:8.2pt;overflow-wrap:anywhere}tr{break-inside:avoid}.psy-socio-matrix-scroll,.psy-socio-summary-scroll{overflow:visible!important}.psy-socio-matrix{width:100%;table-layout:fixed}.psy-socio-matrix th,.psy-socio-matrix td{font-size:7pt;padding:2px;text-align:center}.psy-socio-matrix th:first-child{width:22%;text-align:left}.note,.psy-socio-note,.psy-socio-legend{font-size:8pt;color:#536457}.person{break-inside:avoid}button.psy-socio-name-link{border:0;background:transparent;padding:0;margin:0;font:inherit;color:inherit;font-weight:bold;text-align:left}.psy-socio-answer-status,.psy-socio-status-badge{white-space:normal}.psy-socio-concern-cell{font-size:8pt}@media print{body>p>button{display:none}}body>p>button{margin-top:18px;padding:10px 18px;border:1px solid #8cae91;border-radius:9px;cursor:pointer;background:#eaf3eb;color:#254934;font:inherit}';
   const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Метолария – отчет по социометрии</title><style>'+css+'</style></head><body>'+content+
     '<p><button onclick="window.print()">Печать</button></p></body></html>';
