@@ -1,0 +1,128 @@
+/* Метолария – отдельный рабочий инструмент Q1-Q5, не меняет шестикритериальную социометрию. */
+.psy-bully{max-width:100%;min-width:0;display:grid;gap:17px;color:var(--text,#283d31)}
+.psy-bully *{box-sizing:border-box}
+.psy-bully-head{display:flex;gap:12px;align-items:center;justify-content:space-between;border:1px solid var(--stroke,#d3dfd4);background:var(--panel-soft,#f3f8f2);border-radius:15px;padding:20px 22px}
+.psy-bully-head h3{font-size:22px;line-height:1.23;font-weight:750;margin:5px 0 7px;color:var(--text,#294937)}
+.psy-bully-head p{color:var(--muted,#68776c);font-size:13px;line-height:1.45;margin:0}
+.psy-bully-eyebrow{font-size:10px;letter-spacing:.12em;font-weight:800;color:#60967b}
+.psy-bully-roster{display:grid;gap:12px;border:1px solid var(--stroke,#d5e2d7);background:var(--card,#fff);border-radius:14px;padding:17px}
+.psy-bully-roster-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.psy-bully-roster-head>label{font-size:12px;font-weight:700;display:grid;gap:7px;min-width:220px;flex:1}
+.psy-bully select,.psy-bully textarea{display:block;width:100%;min-width:0;border:1px solid var(--stroke,#bed2c1);border-radius:9px;background:var(--input-bg,#fff);color:var(--text,#284131);font:inherit;padding:9px 11px}
+.psy-bully textarea{resize:vertical;line-height:1.45}
+.psy-bully-counter{font-size:12px;color:var(--muted,#657666);flex:1;text-align:right;line-height:1.4}
+.psy-bully-add{border:1px dashed var(--stroke,#bcd1c3);border-radius:11px;padding:13px;background:var(--panel-soft,#f8faf6)}
+.psy-bully-add summary{cursor:pointer;font-size:13px;font-weight:750;color:var(--text,#365b45)}
+.psy-bully-add p,.psy-bully-micro{font-size:12px;line-height:1.5;color:var(--muted,#6a786e);margin:9px 0}
+.psy-bully-actions{display:flex;align-items:center;justify-content:flex-start;gap:9px;flex-wrap:wrap}
+.psy-bully-actions button{white-space:normal}
+.psy-bully-presence{display:flex;flex-wrap:wrap;gap:8px}
+.psy-bully-toggle{border:1px solid var(--stroke,#cfdbd1);background:var(--card,#fff);border-radius:9px;color:var(--text,#365845);padding:9px 12px;font:650 12px system-ui,sans-serif;cursor:pointer}
+.psy-bully-toggle.on{background:#f5e8d6;border-color:#ddbd8e;color:#8a5b24}
+.psy-bully-toggle:disabled{opacity:.5;cursor:default}
+.psy-bully-review-note{display:grid;gap:6px;font-weight:650;font-size:12px}
+.psy-bully-questions{display:grid;gap:13px}
+.psy-bully-questions-title{padding:4px 0 0}
+.psy-bully-questions-title h4{font-size:18px;margin:0 0 5px;font-weight:750}
+.psy-bully-questions-title p{font-size:12px;line-height:1.5;color:var(--muted,#6b7b70);margin:0}
+.psy-bully-question{background:var(--card,#fff);border:1px solid var(--stroke,#d2dfd6);border-radius:13px;padding:16px;display:grid;gap:13px}
+.psy-bully-qtop{display:flex;align-items:flex-start;gap:11px;min-width:0}
+.psy-bully-qnum{display:grid;place-items:center;flex:none;background:#e4f0e7;color:#357352;border-radius:9px;width:30px;height:30px;font-size:13px;font-weight:800}
+.psy-bully-qtop>div{min-width:0;flex:1}
+.psy-bully-qtop h5{font-size:14px;line-height:1.4;margin:0;color:var(--text,#2a4334);font-weight:750}
+.psy-bully-qtop p{font-size:11px;margin:4px 0 0;line-height:1.5;color:var(--muted,#65796b)}
+.psy-bully-qstatus{margin-left:auto;border-radius:999px;padding:5px 9px;font-size:10px;white-space:nowrap;flex:none;font-weight:750}
+.psy-bully-qstatus.ready{background:#e4f2e9;color:#307650}
+.psy-bully-qstatus.missing{background:#faf0e2;color:#95662b}
+.psy-bully-picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:11px}
+.psy-bully-pick{min-width:0;display:grid;gap:6px}
+.psy-bully-pick label{color:var(--muted,#697a6f);font-size:11px;font-weight:650}
+.psy-bully-combo{position:relative;min-width:0}
+.psy-bully-search{width:100%;min-height:42px;border:1px solid var(--stroke,#b5cbbc);border-radius:9px;background:var(--input-bg,#fff);color:var(--text,#304d3a);padding:9px 35px 9px 10px;font:500 13px system-ui,sans-serif}
+.psy-bully-search:focus{outline:2px solid #6ea287;outline-offset:1px}
+.psy-bully-arrow{position:absolute;right:3px;top:3px;bottom:3px;width:32px;border:0;background:transparent;color:var(--text,#52715c);cursor:pointer;font-size:18px}
+.psy-bully-options{position:absolute;top:calc(100% + 5px);left:0;min-width:200px;width:max-content;max-width:min(310px,85vw);max-height:240px;overflow:auto;background:var(--card,#fff);border:1px solid var(--stroke,#b9d0c0);border-radius:10px;box-shadow:0 12px 30px #18352b2d;z-index:30;padding:5px;display:grid;align-content:start}
+.psy-bully-options[hidden]{display:none!important}
+.psy-bully-option{min-width:0;width:100%;text-align:left;border:0;background:transparent;color:var(--text,#294131);padding:9px 10px;border-radius:7px;font:550 13px/1.4 system-ui,sans-serif;cursor:pointer;overflow-wrap:anywhere}
+.psy-bully-option:hover,.psy-bully-option:focus-visible{background:var(--panel-soft,#edf5ed)}
+.psy-bully-option.is-special{color:#8a6036;font-weight:750}
+.psy-bully-option:first-child{position:sticky;top:0;background:var(--card,#fff);border-bottom:1px solid var(--stroke,#e4eadd)}
+.psy-bully-nomatch{font-size:11px;color:var(--muted,#65796b);padding:0 8px}
+.psy-bully-qbuttons{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.psy-bully-qbuttons button{border-radius:8px;padding:8px 10px;font:650 11px system-ui,sans-serif;cursor:pointer}
+.psy-bully-muted{background:var(--panel-soft,#f8faf5);border:1px solid var(--stroke,#d0dfd4);color:var(--text,#4e6c58)}
+.psy-bully-complete{border:1px solid #408165;background:#e5f4e9;color:#276745}
+.psy-bully-clear{border:1px solid transparent;background:transparent;color:var(--muted,#65796b)}
+.psy-bully-empty{background:var(--panel-soft,#f5f8f3);border:1px dashed var(--stroke,#c8d7cb);padding:18px;border-radius:12px;font-size:13px;color:var(--muted,#5f7264)}
+.psy-bully-report{display:grid;gap:14px;min-width:0;border:1px solid var(--stroke,#d6e2d8);background:var(--card,#fff);border-radius:14px;padding:17px}
+.psy-bully-section-title h4{font-size:18px;margin:0 0 5px;font-weight:750}
+.psy-bully-section-title p{margin:0;color:var(--muted,#5e7364);font-size:12px}
+.psy-bully-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.psy-bully-stats>span{display:flex;flex-direction:column;gap:5px;padding:11px 13px;background:var(--panel-soft,#f4f8f4);border:1px solid var(--stroke,#dce6dc);border-radius:10px;min-width:0}
+.psy-bully-stats b{font-weight:800;font-size:22px;line-height:1.2;color:var(--text,#345743);font-variant-numeric:tabular-nums}
+.psy-bully-stats small{line-height:1.45;font-size:11px;color:var(--muted,#627569)}
+.psy-bully-stats.more{grid-template-columns:repeat(4,minmax(0,1fr))}
+.psy-bully-stats.more b{font-size:18px}
+.psy-bully-report>h4{font-size:15px;margin:7px 0 0}
+.psy-bully-table-scroll{overflow:auto;max-width:100%;border:1px solid var(--stroke,#d3ded4);border-radius:10px}
+.psy-bully-results{border-collapse:collapse;width:100%;min-width:1160px;font-size:12px}
+.psy-bully-results th,.psy-bully-results td{border-bottom:1px solid var(--stroke,#dce6dc);padding:8px 9px;vertical-align:top;line-height:1.45}
+.psy-bully-results thead th{position:sticky;top:0;background:var(--panel-soft,#eaf3ed);color:var(--text,#2d503b);font-weight:750;white-space:nowrap;z-index:1}
+.psy-bully-results tbody th{min-width:132px;text-align:left;font-weight:750}
+.psy-bully-results td:nth-child(n+3):nth-child(-n+9){text-align:center;font-variant-numeric:tabular-nums}
+.psy-bully-results tbody tr:hover{background:var(--panel-soft,#f5f9f5)}
+.psy-bully-results tr.is-excluded{opacity:.75}
+.psy-bully-signal{font-weight:750;color:#915934;background:#fbefe0}
+.psy-bully-tag{font-size:11px;font-weight:700;display:inline-block;border-radius:7px;padding:5px 8px;white-space:normal}
+.psy-bully-tag.positive{background:#e0f2e6;color:#2f6f4e}
+.psy-bully-tag.mixed{background:#f7edd4;color:#886b28}
+.psy-bully-tag.negative{background:#f8e4e1;color:#8a453d}
+.psy-bully-tag.neutral,.psy-bully-tag.limited,.psy-bully-tag.excluded{background:#eeefe9;color:#697467}
+.psy-bully-note{font-size:11px;line-height:1.55;color:var(--muted,#647468);margin:0!important}
+.psy-bully-findings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.psy-bully-finding{border:1px solid var(--stroke,#d9e4dc);border-radius:11px;padding:13px;background:var(--panel-soft,#f9fbf8);min-width:0}
+.psy-bully-finding h5{margin:0 0 9px;font-size:13px;color:var(--text,#385642)}
+.psy-bully-finding ol{padding:0 0 0 20px;margin:0;display:grid;gap:6px}
+.psy-bully-finding li{font-size:12px;line-height:1.45}
+.psy-bully-finding li span{color:var(--muted,#6b786d);float:right}
+.psy-bully-finding p{color:var(--muted,#6b786d);font-size:12px}
+.psy-bully-details{padding:14px;background:var(--panel-soft,#f6f9f5);border:1px solid var(--stroke,#d4e2d5);border-radius:11px}
+.psy-bully-details summary{cursor:pointer;font-size:14px;font-weight:750;color:var(--text,#2e4b39)}
+.psy-bully-quality{display:grid;gap:5px;margin-top:10px}
+.psy-bully-quality p{margin:0!important;color:var(--text,#455c4a);font-size:12px;line-height:1.55}
+.psy-bully-risk{border:1px solid var(--stroke,#dfd7c6);background:var(--panel-soft,#faf8f2);border-radius:11px;padding:15px}
+.psy-bully-risk h4,.psy-bully-recs h4{font-size:15px;margin:0 0 7px}
+.psy-bully-risk p,.psy-bully-recs li{font-size:12px;line-height:1.6}
+.psy-bully-risk p{margin:4px 0 11px;color:var(--muted,#64736b)}
+.psy-bully-risk ul{display:grid;gap:9px;list-style:none;margin:0 0 12px!important;padding:0!important}
+.psy-bully-risk li{font-size:12px;display:flex;gap:9px;align-items:flex-start}
+.psy-bully-risk li span{flex:none;color:#647267;background:#e7eee6;border-radius:8px;font-size:10px;padding:5px 7px}
+.psy-bully-risk li span.active{color:#935c2b;background:#f6e6ce}
+.psy-bully-recs{padding:15px;border-radius:11px;border:1px solid var(--stroke,#d7e1da)}
+.psy-bully-recs ol{display:grid;gap:9px;padding-left:20px;margin:0}
+.psy-bully-print{padding:5px;display:grid;gap:14px}
+.psy-bully-blank-q{break-inside:avoid;padding:10px;border-bottom:1px solid #d2ded4}
+.psy-bully-blank-q p{font-size:12px;line-height:1.7}
+@media(max-width:760px){
+ .psy-bully-head{padding:14px}.psy-bully-head h3{font-size:19px}
+ .psy-bully-roster,.psy-bully-report,.psy-bully-question{padding:12px}
+ .psy-bully-roster-head{align-items:stretch}.psy-bully-counter{text-align:left}
+ .psy-bully-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .psy-bully-stats.more{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .psy-bully-findings{grid-template-columns:minmax(0,1fr)}
+ .psy-bully-qtop{flex-wrap:wrap}.psy-bully-qstatus{margin-left:40px}
+ .psy-bully-picks{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .psy-bully-options{max-width:min(300px,80vw)}
+}
+@media(max-width:460px){
+ .psy-bully-picks{grid-template-columns:minmax(0,1fr)}
+ .psy-bully-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .psy-bully-qtop{gap:8px}
+ .psy-bully-qbuttons button{flex:1}
+}
+@media print{
+ .psy-bully-roster,.psy-bully-questions,.psy-bully-actions{display:none}
+ .psy-bully-report{border:none;padding:0}
+ .psy-bully-table-scroll{overflow:visible}
+ .psy-bully-results{font-size:9pt}
+}
