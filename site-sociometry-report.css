@@ -211,3 +211,21 @@
  .psy-socio-status-group{padding:9px}
  .psy-socio-concern-fields{grid-template-columns:minmax(0,1fr)}
 }
+
+/* Six-criterion evidence summary: do not conflate totals with one-criterion status. */
+.psy-socio-six-overview{min-width:0;display:grid;gap:12px;padding:15px;border:1px solid var(--stroke,#d6e2d8);border-radius:13px;background:var(--card,#fff)}
+.psy-socio-six-table{min-width:950px!important;border-collapse:collapse}
+.psy-socio-six-table th,.psy-socio-six-table td{padding:9px 10px!important;vertical-align:middle;text-align:center!important;font-size:12px;font-variant-numeric:tabular-nums;border-bottom:1px solid var(--stroke,#e2e9e2)}
+.psy-socio-six-table th:first-child{text-align:left!important;min-width:132px}
+.psy-socio-six-table thead th{background:var(--panel-soft,#edf4ed);font-weight:700;line-height:1.3}
+.psy-socio-six-table tbody tr:hover{background:var(--panel-soft,#f3f8f2)}
+.psy-socio-six-table .psy-socio-six-main{font-weight:800;font-size:15px;color:var(--text,#2e583d)}
+.psy-socio-count-star{display:inline-block;border-radius:6px;padding:3px 6px;background:#f5ead3;color:#7c591e;white-space:nowrap}
+.psy-socio-person-six{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.psy-socio-person-six>span{display:flex;flex-direction:column;gap:3px;background:var(--panel-soft,#eef6ed);padding:11px 12px;border-radius:9px}
+.psy-socio-person-six b{font-size:20px;color:var(--text,#345943);font-variant-numeric:tabular-nums}
+.psy-socio-person-six small{font-size:11px;line-height:1.4;color:var(--muted,#647567)}
+@media(max-width:680px){
+ .psy-socio-six-overview{padding:10px}
+ .psy-socio-person-six{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
