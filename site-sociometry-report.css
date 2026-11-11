@@ -71,3 +71,14 @@
  .psy-socio-filter,.psy-socio-report-actions{display:none}
  .psy-socio-children-table{min-width:0!important}
 }
+/* Explicit answer completion, not a psychological rating. */
+.psy-socio-question-status{display:inline-flex;align-items:center;border-radius:99px;padding:5px 9px;font-size:11px;font-weight:700}
+.psy-socio-question-status.is-ready{color:#28694b;background:#e6f3e9}
+.psy-socio-question-status.is-pending{color:#8c5e2c;background:#fff1e0}
+.psy-socio-question-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:11px}
+.psy-socio-question-bottom span{font-size:11px;color:var(--muted,#637568);line-height:1.45;flex:1;min-width:150px}
+.psy-socio-none-fill{cursor:pointer;border:1px solid var(--stroke,#bad0c0);background:var(--panel-soft,#f5f9f5);color:var(--text,#365944);border-radius:9px;padding:8px 10px;font:600 12px/1.3 system-ui,sans-serif}
+.psy-socio-none-fill:hover{background:#e3eee4}
+.psy-socio-none-fill:focus-visible{outline:2px solid #4f8c67;outline-offset:2px}
+.psy-socio-class-reading{padding:14px 16px!important;margin:0!important;border:1px solid var(--stroke,#cbded1);border-radius:12px;background:var(--panel-soft,#eef6f0);color:var(--text,#2d4c39);font-size:14px;line-height:1.6}
+@media(max-width:700px){.psy-socio-question-bottom{align-items:flex-start}.psy-socio-question-status{margin-left:0}}
