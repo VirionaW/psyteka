@@ -51,7 +51,7 @@
     '<td class="psy-socio-matrix-total">'+(selected?selected.size:"–")+'</td></tr>';
   }).join("");
   const footer='<tfoot><tr><th scope="row">Получено</th>'+
-   people.map(p=>'<td>'+T(s.incoming.get(p.socioId))+'</td>').join("")+
+   people.map(p=>'<td>'+(s.answered?T(s.incoming.get(p.socioId)):"–")+'</td>').join("")+
    '<td>'+s.total+'</td></tr></tfoot>';
   return '<div class="psy-socio-matrix-scroll"><table class="psy-socio-matrix">'+head+'<tbody>'+body+'</tbody>'+footer+'</table></div>'+
    '<p class="psy-socio-legend"><span class="psy-socio-legend-pair">↔ взаимный выбор</span><span>→ односторонний выбор</span>'+
@@ -131,7 +131,14 @@
   if(!people.length)return "";
   const s=result[selected]||result[0];
   const incomplete=s.answered<people.length;
-  return '<div class="psy-socio-analytics"><div class="psy-socio-section-heading"><div>'+
+  const reached=people.filter(p=>(s.incoming.get(p.socioId)||0)>0).length;
+  const description=s.answered
+   ?"По "+s.answered+" завершенным анкетам зарегистрировано "+s.total+
+    " положительных выборов и "+s.pairs+" взаимных пар. Хотя бы один выбор получили "+reached+
+    " из "+people.length+" учеников."+
+    (incomplete?" Данные предварительные: не все анкеты заполнены.":"")
+   :"Пока нет завершенных анкет по этому вопросу. Количественный анализ не проводится.";
+  return '<div class="psy-socio-analytics"><p class="psy-socio-class-reading">'+E(description)+'</p><div class="psy-socio-section-heading"><div>'+
    '<h4>Анализ каждого ученика</h4><p>'+E(s.question)+'</p></div>'+
    '<span class="psy-socio-coverage '+(incomplete?"is-pending":"is-ready")+'">'+
     (incomplete?"Предварительно":"Все анкеты завершены")+' · '+s.answered+' из '+people.length+'</span></div>'+
@@ -168,7 +175,7 @@
     if(!chosen.has(other.socioId))return "";
     return s.edges.get(other.socioId)?.has(p.socioId)?"Взаимно":"Выбран";
    }),chosen?chosen.size:""];
-  }),["Получено выборов",...people.map(p=>s.incoming.get(p.socioId)),s.total]];
+  }),["Получено выборов",...people.map(p=>s.answered?s.incoming.get(p.socioId):""),s.answered?s.total:""]];
  }
  function printView(people,result,selected){
   const s=result[selected],ids=people.map(p=>p.socioId);
