@@ -70,7 +70,7 @@
      pairs++;mutual.set(from,mutual.get(from)+1);mutual.set(to,mutual.get(to)+1);
     }
    }
-   return {question,answered:answers.size,total,pairs,incoming,mutual};
+   return {question,answered:answers.size,total,pairs,incoming,mutual,edges:answers};
   });
   return {people,result};
  }
@@ -82,14 +82,13 @@
   const selected=Math.max(0,Math.min(5,viewCriterion)),s=result[selected];
   const perQuestion='<div class="psy-socio-summary-scroll"><table><thead><tr><th>№</th><th>Вопрос</th><th>Заполнено анкет</th><th>Выборов</th><th>Взаимных пар</th></tr></thead><tbody>'+
    result.map((v,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(v.question||"Вопрос не указан")+'</td><td>'+v.answered+' из '+people.length+'</td><td>'+v.total+'</td><td>'+v.pairs+'</td></tr>').join("")+'</tbody></table></div>';
-  const details='<label class="psy-socio-detail-choice">Подробности по вопросу <select id="psySocCriterion">'+
+  const details='<label class="psy-socio-detail-choice">Выбранный вопрос для анализа <select id="psySocCriterion">'+
    result.map((r,i)=>'<option value="'+i+'" '+(i===selected?"selected":"")+'>'+(i+1)+'. '+esc(r.question||"Без формулировки")+'</option>').join("")+'</select></label>'+
-   '<div class="psy-socio-summary-scroll"><table><thead><tr><th>Ученик</th><th>Получено выборов</th><th>Взаимных выборов</th><th>Анкета по вопросу</th></tr></thead><tbody>'+
-   people.map(p=>'<tr><td>'+esc(p.name)+'</td><td>'+s.incoming.get(p.socioId)+'</td><td>'+s.mutual.get(p.socioId)+'</td><td>'+(validPicks(p,selected,new Set(people.map(x=>x.socioId)))!==null?"Заполнена":"Не завершена")+'</td></tr>').join("")+'</tbody></table></div>';
+   '';
   return '<div class="psy-new-metrics"><span>Участников в классе <b>'+people.length+'</b></span>'+
    '<span>Ответов по вопросам <b>'+answered+' из '+(people.length*6)+'</b></span>'+
    '<span>Взаимных пар по выбранному вопросу <b>'+s.pairs+'</b></span></div>'+
-   perQuestion+details+
+   perQuestion+details+(api.sociometryReport?.render({people,result,selected,activeId:ctx.rows[ctx.rowIndex]?.socioId})||'')+
    '<p class="psy-socio-note">Подсчитываются только полностью заполненные ответы по конкретному вопросу. Вариант «Никто» – явный ответ, пустое поле – незавершенный ввод. Отсутствие входящих выборов не означает отвержения ребенка.</p>';
  }
  function blank(){
@@ -170,6 +169,8 @@
    document.getElementById("psySocCriterion")?.addEventListener("change",e=>{
     viewCriterion=Number(e.target.value)||0;refresh();
    });
+   const {people,result}=analyze(ctx.rows);
+   if(people.length)api.sociometryReport?.bind({people,result},refresh,Math.max(0,Math.min(5,viewCriterion)));
   }
   bindDetails();
   document.getElementById("psySocAdd")?.addEventListener("click",()=>{
@@ -181,7 +182,7 @@
    if(!newNames.length){message("Эти ученики уже есть в списке.");return;}
    ctx.onBulkAdd?.(newNames.map(n=>n.slice(0,120)));
   });
-  document.getElementById("psySocPerson")?.addEventListener("change",e=>ctx.onSelect?.(Number(e.target.value)));
+  document.getElementById("psySocPerson")?.addEventListener("change",e=>{const i=Number(e.target.value);api.sociometryReport?.select?.(rows[i]?.socioId);ctx.onSelect?.(i);});
   document.getElementById("psySocNext")?.addEventListener("click",()=>ctx.onNext?.());
   document.getElementById("psySocRename")?.addEventListener("change",e=>{
    const name=e.target.value.trim();
