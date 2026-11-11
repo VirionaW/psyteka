@@ -152,7 +152,7 @@
    pending.map(p=>'<li><button type="button" data-socio-focus-id="'+E(p.socioId)+'">'+
     E(p.name)+'</button><small>'+E(statusFor(p,s).name)+'</small></li>').join("")+'</ul></section>':"";
   return '<section class="psy-socio-status-board"><div class="psy-socio-section-heading"><div>'+
-   '<h4>Социометрические статусы</h4><p>Границы Я. Л. Коломинского по положительным выборам именно этого вопроса</p></div></div>'+
+   '<h4>Категории по выбранному вопросу</h4><p>Только один критерий: 5 и более – «Звезда», 3–4 – «Предпочитаемый». Итог всех шести вопросов показан выше.</p></div></div>'+
    '<div class="psy-socio-status-groups">'+cards+pendingCard+'</div>'+
    '<p class="psy-socio-note">'+(coverageEnough(s)?
      "Статусы по положительным выборам: заполнено "+s.answered+" из "+s.eligible+" учитываемых анкет.":
@@ -175,8 +175,8 @@
    .sort((a,b)=>Number(a.stats.excluded)-Number(b.stats.excluded)||
     (b.stats.total||0)-(a.stats.total||0)||a.person.name.localeCompare(b.person.name,"ru"));
   return '<section class="psy-socio-six-overview"><div class="psy-socio-section-heading"><div>'+
-   '<h4>Кого чаще выбирали по всем шести вопросам</h4>'+
-   '<p>Считаем реальные голоса, число разных выбравших учеников и количество вопросов, в которых был получен выбор</p></div></div>'+
+   '<h4>Все шесть вопросов – общая картина</h4>'+
+   '<p>По каждому ребёнку: сколько раз его назвали в вопросах 1–6, сколько разных детей его выбирали и по каким вопросам он достиг 5 выборов. Это не статус по одному вопросу.</p></div></div>'+
    '<div class="psy-socio-summary-scroll"><table class="psy-socio-six-table"><thead><tr>'+
    '<th scope="col">Ученик</th><th scope="col">Вопросов, где выбирали</th>'+
    '<th scope="col">Всего выборов</th><th scope="col">Разных выбравших</th>'+
@@ -264,8 +264,10 @@
     noResponses.map(p=>E(p.name)).join(", ")+'.</p>':"")+'</div>';
   return '<div class="psy-socio-analytics">'+classStats+lists+
    overviewSix(people,result)+
+   '<p class="psy-socio-criterion-warning"><strong>Ниже – только вопрос № '+(selected+1)+':</strong> '+
+    E(s.question)+' Категории «Звезда», «Предпочитаемый» и другие относятся исключительно к этому вопросу, а не к сумме за шесть.</p>'+
    statusGroups(people,s)+
-   '<div class="psy-socio-section-heading"><div><h4>Таблица детей</h4><p>'+E(s.question)+'</p></div>'+
+   '<div class="psy-socio-section-heading"><div><h4>Таблица детей · вопрос № '+(selected+1)+'</h4><p>'+E(s.question)+'</p></div>'+
    '<span class="psy-socio-coverage '+(s.answered<eligible?"is-pending":"is-ready")+'">'+
    (s.answered<eligible?"Данные предварительные":"Все учтённые анкеты завершены")+'</span></div>'+
    table(people,s)+
