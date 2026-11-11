@@ -229,3 +229,7 @@
  .psy-socio-six-overview{padding:10px}
  .psy-socio-person-six{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* Status category refers to one selected question; never to the six-question total. */
+.psy-socio-criterion-warning{padding:12px 15px!important;margin:1px 0!important;border-left:4px solid #9baf89;border-radius:9px;background:var(--panel-soft,#f2f7ef);color:var(--text,#36513b);font-size:13px;line-height:1.6}
+.psy-socio-criterion-warning strong{font-weight:800}
