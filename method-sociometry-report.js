@@ -158,17 +158,55 @@
      "Пока обследовано "+s.answered+" из "+s.eligible+". При неполном участии 1–2, 3–4 и 5+ полученных выборов отмечаются предварительно; 0 не считается изоляцией до завершения хотя бы 75% анкет (и минимум 5 ответов).")+
    ' «Изолированный» здесь означает 0 положительных выборов, а не «изгой», «отверженный» или жертва травли. Для выявления буллинга этих ответов недостаточно. <a href="https://psyjournals.ru/journals/sociosphera/archive/2010_n2/35334" target="_blank" rel="noopener noreferrer">Основание категорий</a>.</p></section>';
  }
+ function sixStats(person,result){
+  if(excluded(person))return {excluded:true,counts:[],total:null,criteria:null,unique:null,starCriteria:null};
+  const counts=result.map(r=>r.incoming.get(person.socioId)||0);
+  const unique=new Set();
+  result.forEach(r=>r.edges.forEach((chosen,from)=>{
+   if(chosen.has(person.socioId))unique.add(from);
+  }));
+  return {excluded:false,counts,total:counts.reduce((a,b)=>a+b,0),
+   criteria:counts.filter(v=>v>0).length,unique:unique.size,
+   starCriteria:result.filter((r,i)=>statusFor(person,r).key==="star").length};
+ }
+ function overviewSix(people,result){
+  const ordered=people.map(person=>({person,stats:sixStats(person,result)}))
+   .sort((a,b)=>Number(a.stats.excluded)-Number(b.stats.excluded)||
+    (b.stats.total||0)-(a.stats.total||0)||a.person.name.localeCompare(b.person.name,"ru"));
+  return '<section class="psy-socio-six-overview"><div class="psy-socio-section-heading"><div>'+
+   '<h4>Кого чаще выбирали по всем шести вопросам</h4>'+
+   '<p>Считаем реальные голоса, число разных выбравших учеников и количество вопросов, в которых был получен выбор</p></div></div>'+
+   '<div class="psy-socio-summary-scroll"><table class="psy-socio-six-table"><thead><tr>'+
+   '<th scope="col">Ученик</th><th scope="col">Вопросов, где выбирали</th>'+
+   '<th scope="col">Всего выборов</th><th scope="col">Разных выбравших</th>'+
+   '<th scope="col">«Звезда» по вопросам</th>'+
+   result.map((_,i)=>'<th scope="col">В'+(i+1)+'</th>').join("")+
+   '</tr></thead><tbody>'+
+   ordered.map(({person,stats})=>'<tr><th scope="row"><button type="button" class="psy-socio-name-link" data-socio-focus-id="'+E(person.socioId)+'">'+
+    E(person.name)+'</button></th>'+
+    (stats.excluded?'<td colspan="10">'+(absent(person)?"Отсутствовал":"На уточнении")+
+     ' – показатели не рассчитываются</td>':
+     '<td>'+stats.criteria+' из 6</td><td class="psy-socio-six-main">'+stats.total+
+     '</td><td>'+stats.unique+'</td><td>'+stats.starCriteria+'</td>'+
+     stats.counts.map(n=>'<td>'+(n>=5?'<strong class="psy-socio-count-star" title="Не менее 5 выборов по этому вопросу">★ '+n+'</strong>':n)+'</td>').join(""))+
+   '</tr>').join("")+'</tbody></table></div>'+
+   '<p class="psy-socio-note">Сумма по шести разным вопросам – описательный показатель, не отдельный социометрический статус. «Звезда» определяется по каждому вопросу, если получено 5 и более положительных выборов. При незавершённых ответах данные предварительные.</p></section>';
+ }
  function individual(people,result){
   const target=people.find(p=>p.socioId===selectedChild)||people[0];
   if(!target)return "";
   selectedChild=target.socioId;
-  const isAbsent=absent(target);
+  const isAbsent=absent(target),six=sixStats(target,result);
   return '<div class="psy-socio-individual"><div class="psy-socio-section-heading"><div><h4>Карточка ученика</h4>'+
    '<p>Статус и взаимные связи отдельно по каждому из шести вопросов</p></div><label>Ученик <select id="psySocAnalysedPerson">'+
    people.map(p=>'<option value="'+E(p.socioId)+'" '+(p.socioId===target.socioId?"selected":"")+'>'+E(p.name)+
     (absent(p)?" – отсутствовал":"")+'</option>').join("")+
    '</select></label></div>'+
    (isAbsent?'<p class="psy-socio-empty">Отсутствовал на обследовании. Все шесть результатов пустые, статус не присваивается.</p>':"")+
+   (!six.excluded?'<div class="psy-socio-person-six"><span><b>'+six.criteria+' из 6</b><small>вопросов с выборами</small></span>'+
+     '<span><b>'+six.total+'</b><small>всего получено</small></span>'+
+     '<span><b>'+six.unique+'</b><small>разных одноклассников</small></span>'+
+     '<span><b>'+six.starCriteria+'</b><small>вопросов со статусом «Звезда»</small></span></div>':"")+
    '<div class="psy-socio-summary-scroll"><table class="psy-socio-person-table"><thead><tr><th>Вопрос</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Статус</th><th>Конкретный вывод</th></tr></thead><tbody>'+
    result.map((s,i)=>{
     const d=clean(target,s),st=statusFor(target,s);
@@ -219,6 +257,7 @@
    (noResponses.length?'<p><strong>Не завершили вопрос ('+noResponses.length+'):</strong> '+
     noResponses.map(p=>E(p.name)).join(", ")+'.</p>':"")+'</div>';
   return '<div class="psy-socio-analytics">'+classStats+lists+
+   overviewSix(people,result)+
    statusGroups(people,s)+
    '<div class="psy-socio-section-heading"><div><h4>Таблица детей</h4><p>'+E(s.question)+'</p></div>'+
    '<span class="psy-socio-coverage '+(s.answered<eligible?"is-pending":"is-ready")+'">'+
