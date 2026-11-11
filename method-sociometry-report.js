@@ -185,35 +185,38 @@
   const rows=[["Ученик","Вопрос","Критерий","Сделал выборов","Получил выборов","Взаимных связей","Собственная анкета","Завершено анкет класса","Анализ","Отметка психолога","Причина","Комментарий"]];
   result.forEach((s,i)=>people.forEach(p=>{
    const d=clean(p,s);
-   rows.push([p.name,i+1,s.question,d.answered?d.own.size:"",s.answered?d.received:"",s.answered?d.reciprocal:"",
-    d.answered?"Заполнена":"Не завершена",s.answered+" из "+people.length,observation(p,s,people.length),review(p).status,review(p).reason,review(p).note]);
+   rows.push([p.name,i+1,s.question,d.answered?d.own.size:"",d.excluded?"":s.answered?d.received:"",
+    d.excluded?"":s.answered?d.reciprocal:"",
+    d.excluded?"Исключена до уточнения":d.answered?"Заполнена":"Не завершена",
+    s.answered+" из "+(s.eligible??people.length),observation(p,s,people.length),review(p).status,review(p).reason,review(p).note]);
   }));
   return rows;
  }
  function prepareMatrix(people,s){
   return [["Кто выбирает / кого выбрали",...people.map(p=>p.name),"Сделано выборов"],...people.map(p=>{
-   const chosen=s.edges.get(p.socioId);
+   const chosen=s.edges.get(p.socioId),isExcluded=excluded(p);
    return [p.name,...people.map(other=>{
     if(p.socioId===other.socioId)return "×";
+    if(isExcluded)return "Исключено до уточнения";
     if(!chosen)return "Анкета не завершена";
     if(!chosen.has(other.socioId))return "";
     return s.edges.get(other.socioId)?.has(p.socioId)?"Взаимно":"Выбран";
-   }),chosen?chosen.size:""];
-  }),["Получено выборов",...people.map(p=>s.answered?s.incoming.get(p.socioId):""),s.answered?s.total:""]];
+   }),isExcluded?"Исключено":chosen?chosen.size:""];
+  }),["Получено выборов",...people.map(p=>excluded(p)?"":s.answered?s.incoming.get(p.socioId):""),s.answered?s.total:""]];
  }
  function printView(people,result,selected){
   const s=result[selected],ids=people.map(p=>p.socioId);
   const content='<h1>Социометрия класса – аналитический отчет</h1>'+
     '<p class="note">Рабочая форма с шестью редактируемыми положительными критериями. Данные конфиденциальны.</p>'+
     '<h2>Полнота обследования</h2><table><thead><tr><th>№</th><th>Критерий</th><th>Завершено анкет</th><th>Положительных выборов</th><th>Взаимных пар</th></tr></thead><tbody>'+
-    result.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(r.question)+'</td><td>'+r.answered+' из '+people.length+'</td><td>'+r.total+'</td><td>'+r.pairs+'</td></tr>').join("")+'</tbody></table>'+
+    result.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(r.question)+'</td><td>'+r.answered+' из '+(r.eligible??people.length)+'</td><td>'+r.total+'</td><td>'+r.pairs+'</td></tr>').join("")+'</tbody></table>'+
     '<h2>Анализ учеников – вопрос '+(selected+1)+'</h2><p>'+E(s.question)+'</p>'+table(people,s)+
     '<h2>Социоматрица – вопрос '+(selected+1)+'</h2>'+matrix(people,s)+
     '<h2>Индивидуальные показатели по шести вопросам</h2>'+
     people.map(p=>'<section class="person"><h3>'+E(p.name)+'</h3><p class="note">Отметка психолога: '+E(reviewLabel(p))+'</p><table><thead><tr><th>Вопрос</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Описание</th></tr></thead><tbody>'+
-      result.map((r,i)=>{const d=clean(p,r);return '<tr><td>'+(i+1)+'</td><td>'+(d.answered?d.own.size:"–")+'</td><td>'+(r.answered?d.received:"–")+'</td><td>'+(r.answered?d.reciprocal:"–")+'</td><td>'+E(observation(p,r,people.length))+'</td></tr>';}).join("")+
+      result.map((r,i)=>{const d=clean(p,r);return '<tr><td>'+(i+1)+'</td><td>'+(d.answered?d.own.size:"–")+'</td><td>'+(d.excluded?"–":r.answered?d.received:"–")+'</td><td>'+(d.excluded?"–":r.answered?d.reciprocal:"–")+'</td><td>'+E(observation(p,r,people.length))+'</td></tr>';}).join("")+
      '</tbody></table></section>').join("")+
-    '<p class="note">Заключения носят описательный характер. При неполном участии показатели предварительны. Отсутствие положительных выборов нельзя трактовать как отвержение. Суммарная оценка по шести разным критериям не рассчитывается.</p>';
+    '<p class="note">Анкеты с отметкой «Требует уточнения» исключены из обработки. Выборы остальных учеников в адрес такого ребёнка сохраняются; индивидуальные показатели скрыты. После статуса «Уточнено» его ответы вновь участвуют в расчетах. Отсутствие положительных выборов нельзя трактовать как отвержение.</p>';
   const css='@page{size:A4;margin:13mm}*{box-sizing:border-box}body{font:10pt/1.4 Arial,sans-serif;color:#263a30;padding:4mm}h1{font-size:17pt}h2{font-size:12pt;margin:16px 0 7px}h3{font-size:11pt;margin:13px 0 6px}p{margin:5px 0 10px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #b5c8ba;padding:4px 5px;text-align:left;vertical-align:top;font-size:8.2pt;overflow-wrap:anywhere}tr{break-inside:avoid}.psy-socio-matrix-scroll,.psy-socio-summary-scroll{overflow:visible!important}.psy-socio-matrix{width:100%;table-layout:fixed}.psy-socio-matrix th,.psy-socio-matrix td{font-size:7pt;padding:2px;text-align:center}.psy-socio-matrix th:first-child{width:22%;text-align:left}.note,.psy-socio-note,.psy-socio-legend{font-size:8pt;color:#536457}.person{break-inside:avoid}@media print{button{display:none}}button{margin-top:18px;padding:10px 18px;border:1px solid #8cae91;border-radius:9px;cursor:pointer;background:#eaf3eb;color:#254934;font:inherit}';
   const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Метолария – отчет по социометрии</title><style>'+css+'</style></head><body>'+content+
     '<p><button onclick="window.print()">Печать</button></p></body></html>';
