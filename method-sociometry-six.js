@@ -140,7 +140,7 @@
     (active?'<label class="psy-socio-rename">Имя или код ученика<input id="psySocRename" maxlength="120" value="'+esc(r.name)+'"></label>':""):"")+
    '</div>'+
    '<details class="psy-socio-custom"><summary>Изменить формулировки 6 вопросов</summary>'+
-   '<p class="psy-socio-note">Это редактируемые вопросы, а не стандартизованный авторский опросник. Если ответы уже внесены, изменение вопроса меняет смысл сохраненных выборов.</p>'+
+   '<p class="psy-socio-note">Это редактируемые вопросы, а не стандартизованный авторский опросник. При изменении вопроса с уже введенными ответами программа предложит очистить только этот вопрос – остальные пять сохранятся.</p>'+
    q.map((question,i)=>'<label><span>Вопрос '+(i+1)+'</span><input type="text" maxlength="220" data-socio-edit="'+i+'" value="'+esc(question)+'"></label>').join("")+'</details>'+
    (active?'<div class="psy-socio-progress"><strong>'+esc(r.name)+'</strong><span id="psySocProgress">'+count+' из 6 вопросов заполнено</span></div>'+
     '<div class="psy-socio-questions">'+questionCards+'</div>':
@@ -192,12 +192,18 @@
    }
    rows[ctx.rowIndex].name=name;ctx.onSelect?.(ctx.rowIndex);
   });
-  document.querySelectorAll("[data-socio-edit]").forEach(el=>el.addEventListener("input",()=>{
+  document.querySelectorAll("[data-socio-edit]").forEach(el=>el.addEventListener("change",()=>{
    const q=questions(rows),index=Number(el.dataset.socioEdit);
-   q[index]=el.value.slice(0,220);setQuestions(rows,q);
-   const title=document.querySelector('[data-socio-title="'+index+'"]');
-   if(title)title.textContent=q[index]||"Укажите текст вопроса";
-   refresh();
+   const next=el.value.trim().slice(0,220),old=q[index];
+   if(!next){el.value=old;message("Вопрос не может быть пустым.");return;}
+   if(next===old)return;
+   const answered=rows.some(r=>r.socioChoices?.[index]?.some(v=>v&&v!==""));
+   if(answered&&!confirm("По этому вопросу уже есть ответы. Изменить формулировку и очистить только ответы по этому вопросу? Остальные пять вопросов сохранятся.")){
+    el.value=old;return;
+   }
+   if(answered)rows.forEach(r=>{if(Array.isArray(r.socioChoices))r.socioChoices[index]=["","",""];});
+   q[index]=next;setQuestions(rows,q);
+   ctx.onSelect?.(ctx.rowIndex);
   }));
   document.querySelectorAll("[data-socio-question]").forEach(el=>el.addEventListener("change",()=>{
    const row=rows[ctx.rowIndex],q=Number(el.dataset.socioQuestion),slot=Number(el.dataset.socioSlot);
@@ -238,6 +244,7 @@
  D.instructions="Для каждого вопроса выбери до трех одноклассников. Можно выбрать меньше трех человек или никого. Не выбирай себя и не повторяй одно имя в рамках вопроса.";
  D.scoring="Входящие положительные выборы и взаимные пары подсчитываются отдельно по каждому вопросу. Пустой ответ не равен выбору «Никто». В подсчет включаются только завершенные ответы по конкретному вопросу.";
  D.interpret="Ответы показывают предпочтения в конкретных ситуациях, а не постоянный статус ученика. Отсутствие входящих выборов не равнозначно отвержению.";
+ D.warning="Конфиденциальная процедура с шестью редактируемыми положительными критериями. Это не стандартизованная нормативная шкала. Не публикуйте результаты детей и не приписывайте им диагностические статусы.";
  D.version="SOCIOMETRY-CUSTOM-SIX-2026";
  D.guideFile=null;D.answerFile=null;
  D.indicators=["Входящие положительные выборы по каждому вопросу","Взаимные пары по каждому вопросу","Доля завершенных ответов"];
