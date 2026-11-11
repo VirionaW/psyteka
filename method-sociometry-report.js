@@ -196,39 +196,40 @@
  function render({people,result,selected,activeId}){
   if(!selectedChild&&activeId)selectedChild=activeId;
   if(!people.length)return "";
-  const s=result[selected]||result[0];
-  const eligible=s.eligible??people.filter(p=>!excluded(p)).length;
-  const excludedCount=people.length-eligible;
-  const incomplete=s.answered<eligible;
+  const s=result[selected]||result[0],eligible=s.eligible??people.filter(p=>!excluded(p)).length;
+  const absentees=people.filter(absent),onReview=people.filter(p=>reviewing(p)&&!absent(p));
+  const noResponses=people.filter(p=>!excluded(p)&&!s.edges.has(p.socioId));
   const reached=people.filter(p=>!excluded(p)&&(s.incoming.get(p.socioId)||0)>0).length;
-  const description=s.answered
-   ?"По "+s.answered+" завершенным анкетам зарегистрировано "+s.total+
-    " положительных выборов и "+s.pairs+" взаимных пар. Хотя бы один выбор получили "+reached+
-    " из "+eligible+" учитываемых учеников."+
-    (excludedCount?" На уточнении "+excludedCount+" ученик(ов), их анкеты исключены из расчёта.":"")+
-    (incomplete?" Данные предварительные: не все учитываемые анкеты заполнены.":"")
-   :eligible===0?"Все анкеты исключены до уточнения. Количественный анализ не проводится.":
-    "Пока нет завершенных анкет по этому вопросу. Количественный анализ не проводится.";
-  return '<div class="psy-socio-analytics"><p class="psy-socio-class-reading">'+E(description)+'</p><div class="psy-socio-section-heading"><div>'+
-   '<h4>Анализ каждого ученика</h4><p>'+E(s.question)+'</p></div>'+
-   '<span class="psy-socio-coverage '+(incomplete?"is-pending":"is-ready")+'">'+
-    (excludedCount?"Исключено "+excludedCount+" · ":"")+
-    (incomplete?"Предварительно":"Все учитываемые анкеты завершены")+' · '+s.answered+' из '+eligible+'</span></div>'+
-   (s.answered?'':'<p class="psy-socio-empty">По этому вопросу пока нет учтенных завершенных анкет. Все неподтвержденные показатели остаются пустыми.</p>')+
+  const classStats='<div class="psy-socio-facts">'+
+   '<span><strong>'+s.answered+' / '+eligible+'</strong><small>учтено анкет</small></span>'+
+   '<span><strong>'+s.total+'</strong><small>положительных выборов</small></span>'+
+   '<span><strong>'+s.pairs+'</strong><small>взаимных пар</small></span>'+
+   '<span><strong>'+reached+'</strong><small>детей получили выборы</small></span></div>';
+  const lists='<div class="psy-socio-roster-notices">'+
+   (absentees.length?'<p><strong>Отсутствовали ('+absentees.length+'):</strong> '+absentees.map(p=>E(p.name)).join(", ")+
+     ' – результаты пустые, статус не присваивается.</p>':"")+
+   (onReview.length?'<p><strong>На уточнении ('+onReview.length+'):</strong> '+onReview.map(p=>E(p.name)).join(", ")+
+     ' – анкеты временно исключены.</p>':"")+
+   (noResponses.length?'<p><strong>Не завершили вопрос ('+noResponses.length+'):</strong> '+
+    noResponses.map(p=>E(p.name)).join(", ")+'.</p>':"")+'</div>';
+  return '<div class="psy-socio-analytics">'+classStats+lists+
+   statusGroups(people,s)+
+   '<div class="psy-socio-section-heading"><div><h4>Таблица детей</h4><p>'+E(s.question)+'</p></div>'+
+   '<span class="psy-socio-coverage '+(s.answered<eligible?"is-pending":"is-ready")+'">'+
+   (s.answered<eligible?"Данные предварительные":"Все учтённые анкеты завершены")+'</span></div>'+
    table(people,s)+
-   individual(people,result)+
    '<section class="psy-socio-visual"><div class="psy-socio-section-heading"><div>'+
-   '<h4>Социограмма</h4><p>Линии показывают только реальные выборы по выбранному вопросу</p></div>'+
+   '<h4>Схема связей одного ребёнка</h4><p>Без перекрещивающихся стрелок: видно, кто его выбрал, кого выбрал он и где взаимность</p></div>'+
    '<label class="psy-socio-filter"><input type="checkbox" id="psySocMutualOnly" '+(onlyMutual?"checked":"")+'><span>Только взаимные</span></label></div>'+
-   sociogram(people,s)+
-   '<p class="psy-socio-legend"><span>Зеленые стрелки с двух сторон – взаимный выбор</span><span>Коричневые – односторонний</span></p></section>'+
-   '<details class="psy-socio-matrix-panel"><summary><span>Социоматрица</span><small>Показать таблицу всех связей</small></summary>'+
-   '<p class="psy-socio-note">Строка – кто выбирает, столбец – кого выбрали. Ответы учеников с отметкой «Требует уточнения» исключены. Выборы остальных одноклассников в их адрес не удаляются.</p>'+
+   sociogram(people,s)+'</section>'+
+   individual(people,result)+
+   '<details class="psy-socio-matrix-panel"><summary><span>Полная социоматрица</span><small>Показать все связи в таблице</small></summary>'+
+   '<p class="psy-socio-note">Строка – кто выбирает, столбец – кого выбрали. Отсутствовавшие и находящиеся на уточнении не учитываются как респонденты.</p>'+
    matrix(people,s)+'</details>'+
    '<div class="class-actions psy-socio-report-actions"><button type="button" class="btn" id="psySocAnalysisCSV">Скачать таблицу анализа детей</button>'+
    '<button type="button" class="btn" id="psySocMatrixCSV">Скачать социоматрицу</button>'+
    '<button type="button" class="btn" id="psySocPrintAnalysis">Посмотреть и распечатать А4</button></div>'+
-   '<p class="psy-socio-note">Знак ⏸ означает исключение из обработки, а не отсутствие выборов. Выборы других детей в адрес ученика с отметкой сохраняются. Ноль входящих выборов не означает отвержения.</p></div>';
+   '<p class="psy-socio-note">«Изгой», «отверженный» и «буллер» не определяются положительными выборами. Сведения о травле вводятся психологом отдельно, не влияют на расчёты и не присваиваются автоматически.</p></div>';
  }
  function prepareCSV(people,result){
   const rows=[["Ученик","Вопрос","Критерий","Сделал выборов","Получил выборов","Взаимных связей","Собственная анкета","Завершено анкет класса","Анализ","Отметка психолога","Причина","Комментарий"]];
