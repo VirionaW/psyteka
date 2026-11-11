@@ -75,6 +75,36 @@
   return {people,result};
  }
  const responseName=(id,people)=>id===NONE?"Никто":(people.find(p=>p.socioId===id)?.name||"");
+ function repetition(row){
+  const groups=new Map();
+  for(let i=0;i<6;i++){
+   const values=picks(row,i);
+   if(values.some(v=>!v))continue;
+   const ids=values.filter(v=>v!==NONE).sort();
+   if(!ids.length)continue;
+   const key=ids.join("|"),found=groups.get(key)||{count:0,ids};
+   found.count++;groups.set(key,found);
+  }
+  return [...groups.values()].sort((a,b)=>b.count-a.count)[0]?.count||0;
+ }
+ function reviewMarkup(row){
+  const status=row.socioReview?.status||"",reason=row.socioReview?.reason||"same",note=row.socioReview?.note||"";
+  const repeats=repetition(row);
+  return '<section class="psy-socio-review" aria-label="Заметки психолога о достоверности ответов">'+
+   '<div class="psy-socio-review-head"><div><strong>Проверка ответов</strong><p>Повторение одних и тех же друзей – не доказательство неправды.</p></div>'+
+   '<button type="button" id="psySocFlag" class="psy-socio-review-button '+(status?"is-flagged":"")+'" aria-pressed="'+(!!status)+'">'+
+   (status?"Снять отметку":"Требует уточнения")+'</button></div>'+
+   '<p id="psySocRepeatedHint" class="psy-socio-review-hint" '+(repeats<3?"hidden":"")+'>'+
+   (repeats>=3?"Одни и те же ученики выбраны в "+repeats+" вопросах. Можно уточнить, различал ли ребенок предложенные ситуации.":"")+'</p>'+
+   '<div id="psySocReviewFields" class="psy-socio-review-fields" '+(!status?"hidden":"")+'>'+
+   '<label>Причина уточнения<select id="psySocReviewReason"><option value="same" '+(reason==="same"?"selected":"")+'>Повторяющиеся выборы</option>'+
+   '<option value="instruction" '+(reason==="instruction"?"selected":"")+'>Неясно понимание вопросов</option>'+
+   '<option value="other" '+(reason==="other"?"selected":"")+'>Другое наблюдение психолога</option></select></label>'+
+   '<label>Статус<select id="psySocReviewStatus"><option value="needs-review" '+(status==="needs-review"?"selected":"")+'>Требует уточнения</option>'+
+   '<option value="resolved" '+(status==="resolved"?"selected":"")+'>Уточнено</option></select></label>'+
+   '<label class="psy-socio-review-note">Комментарий специалиста<textarea id="psySocReviewNote" maxlength="1000" rows="2" placeholder="Например: обсудить, чем отличаются работа в паре и проект">'+esc(note)+'</textarea></label></div>'+
+   '<p class="psy-socio-note">Отметка не влияет на подсчет выборов и видна только в результатах специалиста.</p></section>';
+ }
  function resultHTML(ctx){
   const {people,result}=analyze(ctx.rows);
   if(!people.length)return '<p>Добавьте список класса, чтобы начать обследование.</p>';
@@ -118,12 +148,16 @@
     '<span class="psy-socio-question-status '+(validPicks(r,i,new Set(people.map(p=>p.socioId)))!==null?"is-ready":"is-pending")+'" data-socio-status="'+i+'">'+(validPicks(r,i,new Set(people.map(p=>p.socioId)))!==null?"Заполнено":"Не заполнено")+'</span></div>'+
     '<div class="psy-socio-picks">'+[0,1,2].map(k=>{
      const val=selected[k];
-     return '<label><span>'+(k+1)+' выбор</span><select data-socio-question="'+i+'" data-socio-slot="'+k+'" aria-label="Вопрос '+(i+1)+', выбор '+(k+1)+'">'+
-      '<option value="" '+(!val?"selected":"")+'>Выбрать ученика</option>'+
-      '<option value="'+NONE+'" '+(val===NONE?"selected":"")+'>Никто</option>'+
-      people.filter(p=>p.socioId!==r.socioId).map(p=>'<option value="'+esc(p.socioId)+'" '+(p.socioId===val?"selected":"")+
-       (chosen.has(p.socioId)&&p.socioId!==val?" disabled":"")+'>'+esc(p.name)+'</option>').join("")+
-      '</select></label>';
+     const inputId='psySocInput'+i+'_'+k,optionId='psySocOptions'+i+'_'+k;
+     const display=val===NONE?"Никто":(people.find(p=>p.socioId===val)?.name||"");
+     return '<div class="psy-socio-pick"><label for="'+inputId+'">'+(k+1)+' выбор</label>'+
+      '<div class="psy-socio-combo" data-socio-question="'+i+'" data-socio-slot="'+k+'">'+
+      '<input id="'+inputId+'" class="psy-socio-typeahead" type="text" autocomplete="off" spellcheck="false" maxlength="120"'+
+      ' placeholder="Написать или выбрать" value="'+esc(display)+'" role="combobox" aria-autocomplete="list"'+
+      ' aria-expanded="false" aria-controls="'+optionId+'" aria-label="Вопрос '+(i+1)+', выбор '+(k+1)+'"'+
+      ' data-selected="'+esc(val)+'">'+
+      '<button type="button" class="psy-socio-drop" aria-label="Показать список учеников" title="Выбрать ученика"><span aria-hidden="true">⌄</span></button>'+
+      '<div id="'+optionId+'" class="psy-socio-options" role="listbox" hidden></div></div></div>';
     }).join("")+'</div><div class="psy-socio-question-bottom"><button type="button" class="psy-socio-none-fill" data-socio-fill="'+i+'">Остальные – никто</button><span>Если выборов меньше трех, остальные поля можно заполнить вариантом «Никто».</span></div></section>';
   }).join(""):"";
   return '<section class="psy-new-work psy-socio"><div class="psy-socio-intro"><h3>Социометрия класса</h3>'+
@@ -143,7 +177,7 @@
    '<p class="psy-socio-note">Это редактируемые вопросы, а не стандартизованный авторский опросник. При изменении вопроса с уже введенными ответами программа предложит очистить только этот вопрос – остальные пять сохранятся.</p>'+
    q.map((question,i)=>'<label><span>Вопрос '+(i+1)+'</span><input type="text" maxlength="220" data-socio-edit="'+i+'" value="'+esc(question)+'"></label>').join("")+'</details>'+
    (active?'<div class="psy-socio-progress"><strong>'+esc(r.name)+'</strong><span id="psySocProgress">'+count+' из 6 вопросов заполнено</span></div>'+
-    '<div class="psy-socio-questions">'+questionCards+'</div>':
+    '<div class="psy-socio-questions">'+questionCards+'</div>'+reviewMarkup(r):
     '<p class="psy-socio-note">Добавьте учеников, затем выберите ребенка из списка.</p>')+
    '<div class="psy-socio-results"><h3>Сводка по классу</h3><div id="psySocResult">'+resultHTML(ctx)+'</div>'+
    '<div class="class-actions"><button type="button" class="btn" id="psySocRaw">Скачать ответы CSV</button>'+
@@ -166,6 +200,7 @@
     el.textContent=ready?"Заполнено":"Не заполнено";
     el.classList.toggle("is-ready",ready);el.classList.toggle("is-pending",!ready);
    });
+   if(typeof updateRepetition==='function')updateRepetition();
   };
   function bindDetails(){
    document.getElementById("psySocCriterion")?.addEventListener("change",e=>{
@@ -212,20 +247,114 @@
    picks(row,index).forEach((v,i)=>{if(!v)putPick(row,index,i,NONE);});
    ctx.onSelect?.(ctx.rowIndex);
   }));
-  document.querySelectorAll("[data-socio-question]").forEach(el=>el.addEventListener("change",()=>{
-   const row=rows[ctx.rowIndex],q=Number(el.dataset.socioQuestion),slot=Number(el.dataset.socioSlot);
-   const value=el.value,old=picks(row,q);
-   if(value!==NONE&&value!==""&&old.some((v,i)=>i!==slot&&v===value)){
-    el.value=old[slot];message("В одном вопросе нельзя выбирать одного ученика дважды.");return;
-   }
-   putPick(row,q,slot,value);
-   const chosen=new Set(picks(row,q).filter(v=>v&&v!==NONE));
-   document.querySelectorAll('[data-socio-question="'+q+'"]').forEach(select=>{
-    const own=select.value;
-    [...select.options].forEach(opt=>{if(opt.value&&opt.value!==NONE)opt.disabled=chosen.has(opt.value)&&opt.value!==own;});
+  const normalize=x=>String(x||"").normalize("NFKC").toLocaleLowerCase("ru").replace(/ё/g,"е").trim();
+  const allCombos=[...document.querySelectorAll(".psy-socio-combo")];
+  const getCandidates=(combo,term)=>{
+   const row=rows[ctx.rowIndex],q=Number(combo.dataset.socioQuestion),slot=Number(combo.dataset.socioSlot);
+   const current=picks(row,q)[slot],used=new Set(picks(row,q).filter((v,i)=>i!==slot&&v&&v!==NONE));
+   const matches=members(rows).filter(p=>p.socioId!==row.socioId&&!used.has(p.socioId)&&
+    normalize(p.name).includes(normalize(term))).map(p=>({id:p.socioId,text:p.name}));
+   return [{id:NONE,text:"Никто"},...matches];
+  };
+  const closeCombo=combo=>{
+   const panel=combo.querySelector(".psy-socio-options"),input=combo.querySelector(".psy-socio-typeahead");
+   panel.hidden=true;input.setAttribute("aria-expanded","false");
+   combo.classList.remove("is-open");
+  };
+  const closeOther=keep=>allCombos.forEach(c=>{if(c!==keep)closeCombo(c)});
+  const commit=(combo,id)=>{
+   const row=rows[ctx.rowIndex],q=Number(combo.dataset.socioQuestion),slot=Number(combo.dataset.socioSlot);
+   const allowed=getCandidates(combo,"").some(p=>p.id===id);
+   if(!allowed){message("Этот ученик уже выбран или недоступен.");return;}
+   putPick(row,q,slot,id);
+   const input=combo.querySelector(".psy-socio-typeahead"),found=members(rows).find(p=>p.socioId===id);
+   input.value=id===NONE?"Никто":found?.name||"";input.dataset.selected=id;
+   closeCombo(combo);refresh();
+   combo.querySelector(".psy-socio-drop")?.focus();
+  };
+  const drawOptions=(combo,term)=>{
+   closeOther(combo);
+   const panel=combo.querySelector(".psy-socio-options"),input=combo.querySelector(".psy-socio-typeahead");
+   const options=getCandidates(combo,term);
+   panel.replaceChildren();
+   options.forEach((option,i)=>{
+    const b=document.createElement("button");b.type="button";b.className="psy-socio-option";
+    b.setAttribute("role","option");b.dataset.socioOption=option.id;
+    b.textContent=option.text;if(option.id===NONE)b.classList.add("is-nobody");
+    b.setAttribute("aria-selected",String(option.id===input.dataset.selected));
+    b.addEventListener("mousedown",e=>e.preventDefault());
+    b.addEventListener("click",()=>commit(combo,option.id));
+    panel.append(b);
    });
-   refresh();
-  }));
+   if(options.length===1&&normalize(term)&&normalize(term)!=="никто"){
+    const hint=document.createElement("p");hint.className="psy-socio-no-matches";
+    hint.textContent="Совпадений нет. Проверьте написание имени в списке класса.";
+    panel.append(hint);
+   }
+   panel.hidden=false;input.setAttribute("aria-expanded","true");
+   combo.classList.add("is-open");
+   return options;
+  };
+  allCombos.forEach(combo=>{
+   const input=combo.querySelector(".psy-socio-typeahead"),drop=combo.querySelector(".psy-socio-drop");
+   input.addEventListener("focus",()=>drawOptions(combo,""));
+   input.addEventListener("input",()=>{
+    const row=rows[ctx.rowIndex],q=Number(combo.dataset.socioQuestion),slot=Number(combo.dataset.socioSlot);
+    const current=picks(row,q)[slot];
+    const shown=current===NONE?"Никто":(members(rows).find(p=>p.socioId===current)?.name||"");
+    if(input.value!==shown&&current){putPick(row,q,slot,"");input.dataset.selected="";refresh();}
+    drawOptions(combo,input.value);
+   });
+   input.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){closeCombo(combo);return;}
+    if(e.key==="ArrowDown"||e.key==="ArrowUp"){
+     e.preventDefault();
+     if(combo.querySelector(".psy-socio-options").hidden)drawOptions(combo,input.value);
+     const opts=[...combo.querySelectorAll(".psy-socio-option")];
+     if(!opts.length)return;
+     const cur=opts.indexOf(document.activeElement),step=e.key==="ArrowDown"?1:-1;
+     opts[(cur+step+opts.length)%opts.length].focus();return;
+    }
+    if(e.key==="Enter"){
+     if(combo.querySelector(".psy-socio-options").hidden)drawOptions(combo,input.value);
+     const match=getCandidates(combo,input.value);
+     const exact=match.find(v=>normalize(v.text)===normalize(input.value));
+     const pupil=match.find(v=>v.id!==NONE);
+     const chosen=exact||pupil;
+     if(chosen){e.preventDefault();commit(combo,chosen.id);}
+     else{e.preventDefault();message("Выберите ученика из списка или вариант «Никто».");}
+    }
+   });
+   drop.addEventListener("click",()=>{
+    const open=!combo.querySelector(".psy-socio-options").hidden;
+    if(open)closeCombo(combo);else drawOptions(combo,"");
+    input.focus({preventScroll:true});
+   });
+  });
+  document.addEventListener("pointerdown",e=>{
+   if(!e.target.closest?.(".psy-socio-combo"))allCombos.forEach(closeCombo);
+  },{once:false});
+  const currentReview=()=>rows[ctx.rowIndex].socioReview||{};
+  const updateReview=(patch)=>{
+   const row=rows[ctx.rowIndex];row.socioReview={...currentReview(),...patch};
+   window.dispatchEvent(new Event("psy-assessment-dirty"));
+  };
+  document.getElementById("psySocFlag")?.addEventListener("click",()=>{
+   const row=rows[ctx.rowIndex],has=!!row.socioReview?.status;
+   updateReview({status:has?"":"needs-review"});
+   ctx.onSelect?.(ctx.rowIndex);
+  });
+  document.getElementById("psySocReviewReason")?.addEventListener("change",e=>updateReview({reason:e.target.value}));
+  document.getElementById("psySocReviewStatus")?.addEventListener("change",e=>{
+   updateReview({status:e.target.value});ctx.onSelect?.(ctx.rowIndex);
+  });
+  document.getElementById("psySocReviewNote")?.addEventListener("input",e=>updateReview({note:e.target.value.slice(0,1000)}));
+  const updateRepetition=()=>{
+   const count=repetition(rows[ctx.rowIndex]),hint=document.getElementById("psySocRepeatedHint");
+   if(!hint)return;
+   hint.hidden=count<3;
+   hint.textContent=count>=3?"Одни и те же ученики выбраны в "+count+" вопросах. Можно уточнить, различал ли ребенок предложенные ситуации.":"";
+  };
   document.getElementById("psySocSave")?.addEventListener("click",()=>ctx.onSave?.());
   document.getElementById("psySocRaw")?.addEventListener("click",()=>{
    const people=members(rows),q=questions(rows),ids=new Set(people.map(r=>r.socioId));
