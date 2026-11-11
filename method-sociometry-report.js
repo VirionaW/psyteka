@@ -232,26 +232,31 @@
    '<p class="psy-socio-note">«Изгой», «отверженный» и «буллер» не определяются положительными выборами. Сведения о травле вводятся психологом отдельно, не влияют на расчёты и не присваиваются автоматически.</p></div>';
  }
  function prepareCSV(people,result){
-  const rows=[["Ученик","Вопрос","Критерий","Сделал выборов","Получил выборов","Взаимных связей","Собственная анкета","Завершено анкет класса","Анализ","Отметка психолога","Причина","Комментарий"]];
+  const rows=[["Ученик","Вопрос","Критерий","Сделал выборов","Получил выборов",
+   "Взаимных связей","Статус по положительным выборам","Анкета","Учтено анкет класса",
+   "Анализ","Отметка психолога","Причина","Комментарий",
+   "Сведения о травле (отдельные наблюдения)"]];
   result.forEach((s,i)=>people.forEach(p=>{
-   const d=clean(p,s);
+   const d=clean(p,s),status=statusFor(p,s);
    rows.push([p.name,i+1,s.question,d.answered?d.own.size:"",d.excluded?"":s.answered?d.received:"",
-    d.excluded?"":s.answered?d.reciprocal:"",
-    d.excluded?"Исключена до уточнения":d.answered?"Заполнена":"Не завершена",
-    s.answered+" из "+(s.eligible??people.length),observation(p,s,people.length),review(p).status,review(p).reason,review(p).note]);
+    d.excluded?"":s.answered?d.reciprocal:"",status.name,
+    absent(p)?"Отсутствовал":reviewing(p)?"На уточнении":d.answered?"Заполнена":"Не завершена",
+    s.answered+" из "+(s.eligible??people.length),observation(p,s,people.length),
+    review(p).status,review(p).reason,review(p).note,concernLabel(p)]);
   }));
   return rows;
  }
  function prepareMatrix(people,s){
   return [["Кто выбирает / кого выбрали",...people.map(p=>p.name),"Сделано выборов"],...people.map(p=>{
-   const chosen=s.edges.get(p.socioId),isExcluded=excluded(p);
+   const chosen=s.edges.get(p.socioId),isAbsent=absent(p),isReview=reviewing(p);
    return [p.name,...people.map(other=>{
     if(p.socioId===other.socioId)return "×";
-    if(isExcluded)return "Исключено до уточнения";
+    if(isAbsent)return "Отсутствовал";
+    if(isReview)return "На уточнении";
     if(!chosen)return "Анкета не завершена";
     if(!chosen.has(other.socioId))return "";
     return s.edges.get(other.socioId)?.has(p.socioId)?"Взаимно":"Выбран";
-   }),isExcluded?"Исключено":chosen?chosen.size:""];
+   }),isAbsent?"Отсутствовал":isReview?"На уточнении":chosen?chosen.size:""];
   }),["Получено выборов",...people.map(p=>excluded(p)?"":s.answered?s.incoming.get(p.socioId):""),s.answered?s.total:""]];
  }
  function printView(people,result,selected){
@@ -290,10 +295,16 @@
   document.getElementById("psySocMutualOnly")?.addEventListener("change",e=>{
    onlyMutual=!!e.target.checked;refresh();
   });
+  document.querySelectorAll("[data-socio-focus-id]").forEach(btn=>btn.addEventListener("click",()=>{
+   if(!people.some(p=>p.socioId===btn.dataset.socioFocusId))return;
+   selectedChild=btn.dataset.socioFocusId;
+   refresh();
+  }));
   document.getElementById("psySocAnalysisCSV")?.addEventListener("click",()=>download("Метолария_социометрия_анализ_детей.csv",prepareCSV(people,result)));
   document.getElementById("psySocMatrixCSV")?.addEventListener("click",()=>download("Метолария_социометрия_матрица.csv",prepareMatrix(people,s)));
   document.getElementById("psySocPrintAnalysis")?.addEventListener("click",()=>printView(people,result,selected));
  }
  api.sociometryReport={render,bind,prepareCSV,prepareMatrix,observation,matrix,sociogram,
+  statusFor,statusGroups,coverageEnough,
   select:id=>{if(id)selectedChild=id;}};
 })();
