@@ -462,17 +462,19 @@
    const out=[["Ученик","Вопрос","Формулировка","1 выбор","2 выбор","3 выбор","Статус ввода","Учет в расчете"]];
    people.forEach(r=>q.forEach((question,i)=>{
     out.push([r.name,i+1,question,...picks(r,i).map(id=>responseName(id,people)),
-     validPicks(r,i,ids)!==null?"Заполнен":"Не завершен",
-     absent(r)?"Не участвовал":reviewPending(r)?"Исключено – требует уточнения":"Учитывается при завершении"]);
+     validPicks(r,i,ids)!==null?"Заполнен":picks(r,i).some(Boolean)?"Частично":"Не заполнен",
+     absent(r)?"Не участвовал":reviewPending(r)?"Исключено – требует уточнения":"Введённые выборы учитываются"]);
    }));
    download("Метолария_социометрия_ответы.csv",out);
   });
   document.getElementById("psySocSummary")?.addEventListener("click",()=>{
    const {people,result}=analyze(rows);
-   const out=[["Вопрос","Формулировка","Ученик","Входящие выборы","Взаимные выборы","Учтено анкет","Взаимных пар","Учет ученика"]];
+   const out=[["Вопрос","Формулировка","Ученик","Входящие выборы","Взаимные выборы",
+    "Полных анкет","Частичных анкет","Взаимных пар","Учёт ученика"]];
    result.forEach((s,i)=>people.forEach(p=>out.push([i+1,s.question,p.name,
     excluded(p)?"":s.incoming.get(p.socioId),excluded(p)?"":s.mutual.get(p.socioId),
-    s.answered,s.pairs,absent(p)?"Не участвовал":reviewPending(p)?"Исключено – требует уточнения":"Учитывается"])));
+    s.answered,s.partial,s.pairs,
+    absent(p)?"Не участвовал":reviewPending(p)?"Исключено – требует уточнения":"Введённые выборы учитываются"])));
    download("Метолария_социометрия_сводка.csv",out);
   });
  }
