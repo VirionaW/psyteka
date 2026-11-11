@@ -310,6 +310,11 @@
   }))];
  }
  function printView(a){
+  const describe=(key,max=6)=>a.ranked(key).slice(0,max).map(({p,m})=>E(p.name)+" ("+m[key]+")").join("; ")||"не зафиксированы";
+  const negative=a.people.filter(p=>!excluded(p)&&a.metrics.get(p.bullyId).sp<=-2)
+   .map(p=>E(p.name)+" ("+a.metrics.get(p.bullyId).sp+")").join("; ")||"не выделены";
+  const mixed=a.people.filter(p=>!excluded(p)&&a.metrics.get(p.bullyId).lp>=3&&a.metrics.get(p.bullyId).lm>=2)
+   .map(p=>E(p.name)+" (LP "+a.metrics.get(p.bullyId).lp+", LM "+a.metrics.get(p.bullyId).lm+")").join("; ")||"не выделены";
   const headline='<h1>Аналитический отчет по межличностным отношениям и профилактике буллинга</h1>'+
    '<p>Для служебного пользования. Персональные данные несовершеннолетних.</p>'+
    '<p>В анализе '+a.n+' учащихся; по Q1 ответили '+a.results[0].responded.size+
@@ -324,8 +329,20 @@
    '<h2>Полнота анкет</h2>'+Q.map((q,i)=>'<p>Q'+(i+1)+' '+E(q.short)+
     ': ответили '+a.results[i].responded.size+' из '+a.eligible+
     ', пропущено '+a.results[i].skipped.size+'.</p>').join("")+
+   '<h2>Основные наблюдения</h2>'+
+   '<p><b>Чаще выбирали положительно:</b> '+describe("lp")+'.</p>'+
+   '<p><b>Чаще называли возможными инициаторами:</b> '+describe("ag")+'. Это сведения одноклассников, не обвинение.</p>'+
+   '<p><b>Чаще называли среди тех, кого обижают:</b> '+describe("vi")+'. Нужна проверка безопасности.</p>'+
+   '<p><b>Чаще называли защитниками:</b> '+describe("df")+'.</p>'+
+   '<p><b>Выраженный отрицательный баланс:</b> '+negative+'.</p>'+
+   '<p><b>Сочетание позитивных и негативных выборов:</b> '+mixed+'.</p>'+
    '<h2>Сигналы к проверке</h2><ul>'+a.flags.map(f=>'<li>'+E(f.label)+
     ': '+(!f.ready?"недостаточно ответов":f.triggered?"отмечен":"не отмечен")+'</li>').join("")+'</ul>'+
+   '<h2>Рекомендуемые действия</h2><ol>'+
+   (a.vics.length?'<li>Индивидуально проверить безопасность и ситуацию: '+describe("vi",4)+'.</li>':"")+
+   (a.acc.length?'<li>Уточнить содержание сообщений о возможной агрессии: '+describe("ag",4)+'.</li>':"")+
+   (a.defs.length?'<li>В беседе уточнить возможности поддержки со стороны названных защитников: '+describe("df",4)+'.</li>':"")+
+   '<li>Сверить состав класса и пропуски, обсудить ситуацию с классным руководителем, провести наблюдение на уроках и переменах.</li></ol>'+
    '<p>Ответы детей отражают восприятие одноклассников. Проверка фактов травли требует индивидуальных бесед, наблюдения и сверки с педагогами. Отчет не устанавливает роли агрессора или жертвы.</p>';
   const css='@page{size:A4 landscape;margin:12mm}body{font:10pt/1.45 Arial,sans-serif;color:#283d30}h1{font-size:16pt}h2{font-size:12pt;margin-top:18px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #a8b7ad;padding:4px 5px;font-size:7.7pt;text-align:left;vertical-align:top}thead{display:table-header-group}tr{page-break-inside:avoid}p{margin:8px 0}@media print{button{display:none}}button{padding:10px;border:1px solid #67917b;border-radius:7px;margin-top:20px;background:#eef8ee;cursor:pointer}';
   const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Метолария – анализ межличностных отношений</title><style>'+
@@ -340,7 +357,6 @@
   if(d.methodType!==KIND)return previous.bind(d,ctx);
   if(ctx.calcMode!=="class")return;
   const rows=ctx.rows,person=()=>rows[ctx.rowIndex],refresh=()=>ctx.onSelect?.(ctx.rowIndex);
-  const rerender=()=>{const panel=document.getElementById("psyBullyReport");if(panel)panel.outerHTML=overview(analyze(rows));bindReport();};
   const focus=(q,i)=>{
    const input=document.getElementById("psyBullyInput"+q+"_"+i);
    if(input){input.scrollIntoView?.({block:"center",behavior:"smooth"});input.focus({preventScroll:true});}
@@ -468,6 +484,7 @@
   return '<h3>Обработка данных</h3><p>LP – число полученных положительных номинаций Q1; LM – отрицательных Q2; SP = LP - LM; SI = LP + LM. Q3, Q4 и Q5 считаются раздельно.</p>'+
    '<p>Плотность позитивных связей = LP / (n × (n-1)), где n – число учеников в списке класса. Доля взаимных номинаций = 2 × число взаимных пар / LP; отношение негативных и позитивных = LM / LP.</p>'+
    '<p>Анкеты отсутствовавших и учащихся «на уточнении» исключаются как источники номинаций, но имена остаются в классе. Выборы других учащихся в их адрес сохраняются. Лимит Q1 – 5 имен, Q2-Q5 – 3, Q2 необязателен.</p>'+
+   '<p>Редакционные профили в таблице – не стандартизированные статусы. Рабочие границы: отрицательный баланс – SP до -2 при LM от 2; смешанный профиль – LP от 3 и LM от 2; выраженные положительные связи – LP от 4 и SP от 3. При прочих значениях категория не выделяется.</p>'+
    '<p>Пороговые сигналы из представленного отчета носят ориентировочный характер. Профили и номинации возможных агрессоров/жертв не являются выводами о фактах травли.</p>';
  }
  D[NAME]={
