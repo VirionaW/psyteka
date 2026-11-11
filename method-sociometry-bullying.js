@@ -19,17 +19,17 @@
   selectedVariant=variant;
   if(Array.isArray(rows))rows.forEach(r=>{if(r&&typeof r==="object")r.socioVariant=variant;});
  };
- const labelVariant=variant=>variant===VARIANT?"6 вопросов: отношения и профилактика буллинга":"6 положительных вопросов";
+ const labelVariant=variant=>variant===VARIANT?"6 вопросов: отношения и профилактика буллинга":"6 вопросов: 3 положительных и 3 отрицательных";
  const controls=()=>{
   return '<section class="psy-socio-version-picker" aria-label="Варианты социометрии">'+
-   '<div><strong>Вариант социометрии</strong><small>Выбор действует для портфолио, руководства, бланка и обработки</small></div>'+
+   '<div><strong>Вариант социометрии</strong><small>Выбор действует для руководства, бланка и обработки</small></div>'+
    '<div class="psy-socio-version-options">'+[PRIMARY,VARIANT].map(v=>
     '<button type="button" class="psy-socio-version-option '+(selectedVariant===v?"is-selected":"")+
      '" data-socio-variant="'+v+'" aria-pressed="'+(selectedVariant===v)+'">'+labelVariant(v)+'</button>'
    ).join("")+'</div>'+
    '<p>'+(selectedVariant===VARIANT?
     "Рабочая форма из 6 вопросов: положительные и отрицательные связи, сообщения о возможной травле и поддержке. Формулировки не подтверждены как авторский бланк.":
-    "6 положительных критериев: 3 выбора в каждом, анализ предпочтений и взаимности.")+'</p></section>';
+    "Вопросы 1–3 – положительные, 4–6 – отрицательные; до 3 выборов в каждом вопросе.")+'</p></section>';
  };
  const details=d=>selectedVariant===VARIANT?{...d,author:"Методологическая традиция Я. Л. Морено; рабочая форма Метоларии",
   count:"6 вопросов: связи, возможная травля и поддержка",
