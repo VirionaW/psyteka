@@ -48,12 +48,15 @@
   if(!Array.isArray(r.socioChoices))r.socioChoices=[];
   const values=picks(r,q);values[i]=value;r.socioChoices[q]=values;
  };
- function validPicks(row,q,ids){
-  const values=picks(row,q);
-  if(values.some(v=>!v))return null;
-  const selected=values.filter(v=>v!==NONE);
+ function observedPicks(row,q,ids){
+  const values=picks(row,q),selected=values.filter(v=>v&&v!==NONE);
   if(selected.some(v=>v===row.socioId||!ids.has(v)))return null;
-  return new Set(selected).size===selected.length?selected:null;
+  if(new Set(selected).size!==selected.length)return null;
+  return {selected,started:values.some(Boolean),complete:values.every(Boolean)};
+ }
+ function validPicks(row,q,ids){
+  const entry=observedPicks(row,q,ids);
+  return entry?.complete?entry.selected:null;
  }
  function analyze(rows){
   ensureIds(rows);
@@ -65,20 +68,25 @@
   const result=questions(rows).map((question,q)=>{
    const answers=new Map(),incoming=new Map(people.map(p=>[p.socioId,0]));
    const mutual=new Map(people.map(p=>[p.socioId,0]));
+   const completeIds=new Set(),partialIds=new Set();
    let total=0,pairs=0;
    for(const r of people){
     if(excluded(r))continue;
-    const selected=validPicks(r,q,ids);
-    if(selected===null)continue;
-    answers.set(r.socioId,new Set(selected));
-    for(const id of selected){incoming.set(id,incoming.get(id)+1);total++;}
+    const entry=observedPicks(r,q,ids);
+    if(!entry?.started)continue;
+    // Every recorded valid nomination counts, even when only 1–2 of 3 fields
+    // were entered. Completeness is tracked separately from nominations.
+    answers.set(r.socioId,new Set(entry.selected));
+    (entry.complete?completeIds:partialIds).add(r.socioId);
+    for(const id of entry.selected){incoming.set(id,incoming.get(id)+1);total++;}
    }
    for(const [from,chosen] of answers)for(const to of chosen){
     if(from<to&&answers.get(to)?.has(from)){
      pairs++;mutual.set(from,mutual.get(from)+1);mutual.set(to,mutual.get(to)+1);
     }
    }
-   return {question,answered:answers.size,total,pairs,incoming,mutual,edges:answers,eligible,excludedIds,absentIds,reviewIds};
+   return {question,answered:completeIds.size,responded:answers.size,partial:partialIds.size,
+    completeIds,partialIds,total,pairs,incoming,mutual,edges:answers,eligible,excludedIds,absentIds,reviewIds};
   });
   return {people,result,eligible,excludedIds,absentIds,reviewIds};
  }
@@ -133,8 +141,9 @@
   if(!people.length)return '<p>Добавьте список класса, чтобы начать обследование.</p>';
   const answered=result.reduce((sum,r)=>sum+r.answered,0);
   const selected=Math.max(0,Math.min(5,viewCriterion)),s=result[selected];
-  const perQuestion='<div class="psy-socio-summary-scroll"><table><thead><tr><th>№</th><th>Вопрос</th><th>Заполнено анкет</th><th>Выборов</th><th>Взаимных пар</th></tr></thead><tbody>'+
-   result.map((v,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(v.question||"Вопрос не указан")+'</td><td>'+v.answered+' из '+eligible+'</td><td>'+v.total+'</td><td>'+v.pairs+'</td></tr>').join("")+'</tbody></table></div>';
+  const perQuestion='<div class="psy-socio-summary-scroll"><table><thead><tr><th>№</th><th>Вопрос</th><th>Полностью</th><th>Частично</th><th>Учтено выборов</th><th>Взаимных пар</th></tr></thead><tbody>'+
+   result.map((v,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(v.question||"Вопрос не указан")+'</td><td>'+
+    v.answered+' из '+eligible+'</td><td>'+v.partial+'</td><td>'+v.total+'</td><td>'+v.pairs+'</td></tr>').join("")+'</tbody></table></div>';
   const details='<label class="psy-socio-detail-choice">Выбранный вопрос для анализа <select id="psySocCriterion">'+
    result.map((r,i)=>'<option value="'+i+'" '+(i===selected?"selected":"")+'>'+(i+1)+'. '+esc(r.question||"Без формулировки")+'</option>').join("")+'</select></label>'+
    '';
@@ -144,7 +153,7 @@
    (reviewIds.size?'<span>На уточнении <b>'+reviewIds.size+'</b></span>':'')+
    '<span>Взаимных пар по выбранному вопросу <b>'+s.pairs+'</b></span></div>'+
    perQuestion+details+(api.sociometryReport?.render({people,result,selected,activeId:ctx.rows[ctx.rowIndex]?.socioId})||'')+
-   '<p class="psy-socio-note">В учтённые анкеты не входят отсутствовавшие и участники с отметкой «Требует уточнения». Выборы остальных учеников в их адрес остаются в классовых данных. Пропуск ответа не равен «Никто».</p>';
+   '<p class="psy-socio-note">Каждый введённый действительный выбор учитывается, даже если остальные поля вопроса пустые. Частичные анкеты выделены отдельно. Отсутствовавшие и находящиеся на уточнении исключены как респонденты; выборы других детей в их адрес сохраняются.</p>';
  }
  function blank(){
   const q=questions(currentRows);
@@ -469,7 +478,7 @@
  D.count="6 редактируемых вопросов, до 3 выборов в каждом";
  D.goal="Изучение предпочитаемых партнеров по шести положительным критериям взаимодействия в классе.";
  D.instructions="Для каждого вопроса выбери до трех одноклассников. Можно выбрать меньше трех человек или никого. Не выбирай себя и не повторяй одно имя в рамках вопроса.";
- D.scoring="По каждому вопросу отдельно подсчитываются положительные и взаимные выборы. Отсутствовавшие и ученики с отметкой «Требует уточнения» не считаются респондентами; их ответы сохраняются, но не участвуют в расчёте. Выборы других детей в их адрес не удаляются. Пустое поле не равно «Никто».";
+ D.scoring="По каждому вопросу учитывается каждый действительный введённый положительный выбор, даже если в двух других полях ничего не указано. Полнота анкеты отмечается отдельно; пустое поле не равно «Никто». Отсутствовавшие и ученики с отметкой «Требует уточнения» не считаются респондентами; их ответы сохраняются, выборы других детей в их адрес не удаляются.";
  D.interpret="Статусы по Я. Л. Коломинскому применяются отдельно по каждому вопросу при достаточном числе завершённых анкет (не менее 5 и 75% учитываемых). Они характеризуют положительные выборы, не определяют отвержение или травлю. Отсутствовавшие и находящиеся на уточнении не получают категорий.";
  D.warning="Конфиденциальная процедура с шестью редактируемыми положительными критериями. Это не стандартизованная нормативная шкала. Не публикуйте результаты детей и не приписывайте им диагностические статусы.";
  D.version="SOCIOMETRY-CUSTOM-SIX-2026";
