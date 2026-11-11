@@ -16,25 +16,52 @@
   const a=document.createElement("a");a.download=name;a.href=url;document.body.append(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),1200);
  }
- const excluded=p=>p?.socioReview?.status==="needs-review";
+ const absent=p=>p?.socioAbsent===true;
+ const reviewing=p=>p?.socioReview?.status==="needs-review";
+ const excluded=p=>absent(p)||reviewing(p);
  const clean=(p,s)=>{
-  const excludedFromAnalysis=excluded(p);
-  const own=excludedFromAnalysis?undefined:s.edges.get(p.socioId);
-  const received=excludedFromAnalysis?null:(s.incoming.get(p.socioId)||0);
-  const reciprocal=excludedFromAnalysis?null:(s.mutual.get(p.socioId)||0);
-  return {own,received,reciprocal,answered:own!==undefined,excluded:excludedFromAnalysis};
+  const unavailable=excluded(p);
+  const own=unavailable?undefined:s.edges.get(p.socioId);
+  const received=unavailable?null:(s.incoming.get(p.socioId)||0);
+  const reciprocal=unavailable?null:(s.mutual.get(p.socioId)||0);
+  return {own,received,reciprocal,answered:own!==undefined,excluded:unavailable,absent:absent(p),review:reviewing(p)};
+ };
+ // These four positive-choice categories are the Kolominsky thresholds;
+ // they do not measure hostility, rejection, bullying or diagnoses.
+ const categories=[
+  {key:"star",name:"Звёзды",short:"Звезда",range:"5 и более выборов"},
+  {key:"preferred",name:"Предпочитаемые",short:"Предпочитаемый",range:"3–4 выбора"},
+  {key:"accepted",name:"Принимаемые",short:"Принимаемый",range:"1–2 выбора"},
+  {key:"isolated",name:"Изолированные",short:"Изолированный",range:"0 выборов"}
+ ];
+ const coverageEnough=s=>s.answered>=5&&(s.eligible||0)>0&&s.answered/(s.eligible||1)>=0.75;
+ const statusFor=(p,s)=>{
+  if(absent(p))return {key:"absent",name:"Отсутствовал",count:null};
+  if(reviewing(p))return {key:"review",name:"На уточнении",count:null};
+  if(!s.edges.has(p.socioId))return {key:"missing",name:"Анкета не заполнена",count:null};
+  const count=s.incoming.get(p.socioId)||0;
+  if(!coverageEnough(s))return {key:"pending",name:"Предварительно",count};
+  const group=count>=5?categories[0]:count>=3?categories[1]:count>=1?categories[2]:categories[3];
+  return {key:group.key,name:group.short,count};
  };
  function observation(p,s,n){
-  const d=clean(p,s);
-  if(d.excluded)return "Ответы ученика временно исключены из расчёта до уточнения. Внесённые выборы сохранены.";
-  if(s.answered===0)return "Нет завершенных анкет. Оценить полученные выборы пока нельзя.";
-  let narrative="";
-  if(d.received) narrative="Получено "+d.received+" положительных выборов, взаимных связей – "+d.reciprocal+".";
-  else narrative="Среди "+s.answered+" завершенных анкет положительных выборов не получено.";
-  if(!d.answered)narrative+=" Собственная анкета не завершена.";
-  if(s.answered<(s.eligible??n))narrative+=" Данные предварительные.";
-  return narrative;
+  const d=clean(p,s),status=statusFor(p,s);
+  if(status.key==="absent")return "Не участвовал в обследовании. Показатели не рассчитываются.";
+  if(status.key==="review")return "Анкета исключена до уточнения. Сохранённые выборы не учитываются.";
+  if(status.key==="missing")return "Анкета не завершена. Нужен ответ ребёнка.";
+  if(status.key==="pending")return "Пока мало анкет для статусной категории. Получено "+d.received+" выборов.";
+  if(status.key==="isolated")return "0 положительных выборов по этому вопросу; уточнить включённость в общение. Это не означает отвержения.";
+  if(status.key==="star")return "Высокое число положительных выборов по этому вопросу. Взаимных связей – "+d.reciprocal+".";
+  return "Положительные выборы: "+d.received+"; взаимные связи – "+d.reciprocal+".";
  }
+ const concernLabel=p=>{
+  const v=p.socioPeerConcern||{};
+  if(!v.status)return "";
+  const state=v.status==="verified"?"Эпизод подтверждён отдельно":"Сигнал проверяется";
+  const role=v.role==="affected"?"пострадавший":v.role==="initiator"?"предполагаемый инициатор":
+   v.role==="witness"?"свидетель":"роль не установлена";
+  return state+" · "+role+(v.note?" · "+String(v.note).slice(0,1200):"");
+ };
  const review=p=>{
   const v=p.socioReview||{};
   const status=v.status==="needs-review"?"Требует уточнения":v.status==="resolved"?"Уточнено":"";
