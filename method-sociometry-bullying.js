@@ -102,8 +102,8 @@
   });
   const byId=new Map(people.map(p=>[p.bullyId,p]));
   const metrics=new Map(people.map(p=>{
-   const [lp,lm,ag,vi,df]=results.map(r=>r.incoming.get(p.bullyId)||0);
-   return [p.bullyId,{lp,lm,sp:lp-lm,si:lp+lm,ag,vi,df,excluded:excluded(p)}];
+   const [lp,lm,ag,vi,df,help]=results.map(r=>r.incoming.get(p.bullyId)||0);
+   return [p.bullyId,{lp,lm,sp:lp-lm,si:lp+lm,ag,vi,df,help,excluded:excluded(p)}];
   }));
   let mutualPairs=0;
   for(const [from,toSet]of results[0].edges)for(const to of toSet)
@@ -116,7 +116,7 @@
   const coverage=eligible.length?100*covered/eligible.length:0;
   const ranked=(key)=>people.filter(p=>!review(p)).map(p=>({p,m:metrics.get(p.bullyId)}))
    .filter(x=>x.m[key]>0).sort((a,b)=>b.m[key]-a.m[key]||a.p.name.localeCompare(b.p.name,"ru"));
-  const acc=ranked("ag"),vics=ranked("vi"),defs=ranked("df");
+  const acc=ranked("ag"),vics=ranked("vi"),defs=ranked("df"),helpers=ranked("help");
   // Five descriptive checks based on the supplied example; not a validated diagnostic index.
   const minimum=Math.max(5,Math.ceil(eligible.length*.75));
   const positiveReady=eligible.length>=5&&results[0].responded.size>=minimum;
@@ -140,7 +140,7 @@
   const enough=flags.every(f=>f.ready);
   const relationshipsReady=positiveReady&&negativeReady;
   return {people,byId,eligible:eligible.length,results,metrics,n,LP,LM,density,reciprocity,
-    negativeRatio,mutualPairs,coverage,ranked,flags,enough,relationshipsReady,acc,vics,defs,
+    negativeRatio,mutualPairs,coverage,ranked,flags,enough,relationshipsReady,acc,vics,defs,helpers,
     absent:people.filter(absent),pending:people.filter(p=>review(p)&&!absent(p))};
  }
  function profile(m,ready=true,anyData=true){
@@ -253,9 +253,9 @@
    '<span><b>'+pct(a.coverage)+'</b><small>Охват ответами по Q1</small></span></div>';
   const table='<div class="psy-bully-table-scroll"><table class="psy-bully-results"><thead><tr>'+
    '<th>Ученик</th><th>Бланк</th><th>LP</th><th>LM</th><th>SP</th><th>SI</th>'+
-   '<th>Агр. Q3</th><th>Жертва Q4</th><th>Защ. Q5</th><th>Профиль по числам</th><th>Уточнение</th>'+
+   '<th>Агр. Q3</th><th>Жертва Q4</th><th>Защ. Q5</th><th>Помощь Q6</th><th>Профиль по числам</th><th>Уточнение</th>'+
    '</tr></thead><tbody>'+row.map(({p,m})=>{
-    const incoming=review(p)?Array(7).fill("–"):[m.lp,m.lm,m.sp,m.si,m.ag,m.vi,m.df];
+    const incoming=review(p)?Array(8).fill("–"):[m.lp,m.lm,m.sp,m.si,m.ag,m.vi,m.df,m.help];
     const status=absent(p)?"Отсутствовал":review(p)?"На уточнении":rowNote(p,m);
     return '<tr'+(review(p)?' class="is-excluded"':"")+'><th scope="row">'+E(p.name)+'</th>'+
      '<td>'+E(status)+'</td>'+incoming.map((v,i)=>'<td class="'+(typeof v==="number"&&i>=4&&v>=3?"psy-bully-signal":"")+
@@ -288,16 +288,19 @@
     a.acc.slice(0,4).map(x=>x.p.name+' ('+x.m.ag+')').join(", ")+'.':"",
    a.defs.length?'Уточнить конструктивное поведение возможных защитников: '+
     a.defs.slice(0,3).map(x=>x.p.name+' ('+x.m.df+')').join(", ")+'.':"",
+   a.helpers.length?'Уточнить доступность поддержки у тех, к кому чаще обращаются за помощью: '+
+    a.helpers.slice(0,3).map(x=>x.p.name+' ('+x.m.help+')').join(", ")+'.':"",
    'Сверить состав класса, незаполненные анкеты и наблюдения педагога. Не предъявлять результаты с именами учащимся.'
   ].filter(Boolean);
   return '<section class="psy-bully-report" id="psyBullyReport"><div class="psy-bully-section-title"><h4>Анализ класса</h4>'+
    '<p>Только внесенные ответы; без подставленных или демонстрационных результатов.</p></div>'+
    info+'<h4>Количественные показатели по детям</h4>'+table+
-   '<p class="psy-bully-note">LP – положительные выборы; LM – отрицательные; SP = LP - LM; SI = LP + LM. «Агр.», «Жертва», «Защ.» – номинации, а не установленная роль в травле. У отсутствовавших собственная анкета пустая, но полученные от других детей номинации показаны отдельно – как и в образце отчета.</p>'+
+   '<p class="psy-bully-note">LP – положительные выборы; LM – отрицательные; SP = LP - LM; SI = LP + LM. «Агр.», «Жертва», «Защ.» – номинации, а не установленная роль в травле. Q6 – к кому обращаются за помощью. У отсутствовавших собственная анкета пустая, но входящие выборы других детей сохранены.</p>'+
    '<div class="psy-bully-findings">'+names("lp","Положительные выборы (Q1)")+
     names("vi","Кого называли пострадавшим (Q4)")+
     names("ag","Кого называли инициатором (Q3)")+
-    names("df","Кого называли защитником (Q5)")+'</div>'+
+    names("df","Кого называли защитником (Q5)")+
+    names("help","К кому обращаются за помощью (Q6)")+'</div>'+
    '<details class="psy-bully-details" open><summary>Полнота и качество анкет</summary>'+quality+'</details>'+
    risk+'<section class="psy-bully-recs"><h4>Что проверить психологу</h4>'+
    '<ol>'+recommendations.map(x=>'<li>'+E(x)+'</li>').join("")+'</ol></section>'+
@@ -328,11 +331,11 @@
  }
  function mainRows(a){
   return [["Ученик","Статус бланка","LP","LM","SP","SI","Q3 предполагаемый инициатор",
-   "Q4 предполагаемый пострадавший","Q5 защитник","Описание профиля","Ответ по Q1"],
+   "Q4 предполагаемый пострадавший","Q5 защитник","Q6 помощь","Описание профиля","Ответ по Q1"],
    ...a.people.map(p=>{
     const m=a.metrics.get(p.bullyId),no=review(p);
     return [p.name,absent(p)?"Отсутствовал":review(p)?"На уточнении":rowNote(p,m),
-     ...(no?Array(7).fill(""):[m.lp,m.lm,m.sp,m.si,m.ag,m.vi,m.df]),
+     ...(no?Array(8).fill(""):[m.lp,m.lm,m.sp,m.si,m.ag,m.vi,m.df,m.help]),
      no?"Без расчета":profile(m,a.relationshipsReady,
        a.results[0].responded.size+a.results[1].responded.size>0).name,record(p,0).status];
    })];
@@ -372,6 +375,7 @@
    '<p><b>Чаще называли возможными инициаторами:</b> '+describe("ag")+'. Это сведения одноклассников, не обвинение.</p>'+
    '<p><b>Чаще называли среди тех, кого обижают:</b> '+describe("vi")+'. Нужна проверка безопасности.</p>'+
    '<p><b>Чаще называли защитниками:</b> '+describe("df")+'.</p>'+
+   '<p><b>К кому обратились бы за помощью (вопрос 6):</b> '+describe("help")+'.</p>'+
    '<p><b>Выраженный отрицательный баланс:</b> '+negative+'.</p>'+
    '<p><b>Сочетание позитивных и негативных выборов:</b> '+mixed+'.</p>'+
    '<h2>Сигналы к проверке</h2><ul>'+a.flags.map(f=>'<li>'+E(f.label)+
@@ -380,6 +384,7 @@
    (a.vics.length?'<li>Индивидуально проверить безопасность и ситуацию: '+describe("vi",4)+'.</li>':"")+
    (a.acc.length?'<li>Уточнить содержание сообщений о возможной агрессии: '+describe("ag",4)+'.</li>':"")+
    (a.defs.length?'<li>В беседе уточнить возможности поддержки со стороны названных защитников: '+describe("df",4)+'.</li>':"")+
+   (a.helpers.length?'<li>Уточнить возможности поддержки по шестому вопросу: '+describe("help",4)+'.</li>':"")+
    '<li>Сверить состав класса и пропуски, обсудить ситуацию с классным руководителем, провести наблюдение на уроках и переменах.</li></ol>'+
    '<p>Ответы детей отражают восприятие одноклассников. Проверка фактов травли требует индивидуальных бесед, наблюдения и сверки с педагогами. Отчет не устанавливает роли агрессора или жертвы.</p>';
   const css='@page{size:A4 landscape;margin:12mm}body{font:10pt/1.45 Arial,sans-serif;color:#283d30}h1{font-size:16pt}h2{font-size:12pt;margin-top:18px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #a8b7ad;padding:4px 5px;font-size:7.7pt;text-align:left;vertical-align:top}thead{display:table-header-group}tr{page-break-inside:avoid}p{margin:8px 0}@media print{button{display:none}}button{padding:10px;border:1px solid #67917b;border-radius:7px;margin-top:20px;background:#eef8ee;cursor:pointer}';
