@@ -301,7 +301,7 @@ function setTab(name){
  if(name==='materials'&&window.PSY_GUIDE_STANDARD?.selectionUnsupported(methodNow.name)){
    body.innerHTML='<div class="notice">Для выбранной возрастной версии в Метоларии нет проверенного бланка или стимулов. Не используйте материалы другой редакции. Откройте вкладку «Методика / руководство» и перейдите к опубликованному источнику.</div>';
  }
- if(variantUI)body.insertAdjacentHTML("afterbegin",variantUI.controls());
+ if(variantUI&&name!=="overview")body.insertAdjacentHTML("afterbegin",variantUI.controls());
  if(name==='instruction'&&window.PSY_GUIDE_STANDARD){
    if(!['phillips58','semester2026','mspss','orekhovaHouses8','luscherHub'].includes(DETAILS[methodNow.name]?.workflow))body.innerHTML=window.PSY_GUIDE_STANDARD.supplement(methodNow.name,DETAILS[methodNow.name],methodNow,body.innerHTML);
    window.PSY_GUIDE_STANDARD.bind(()=>setTab('instruction'));
