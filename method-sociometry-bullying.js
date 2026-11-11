@@ -189,9 +189,10 @@
       return '<div class="psy-bully-pick"><label for="psyBullyInput'+i+'_'+j+'">'+(j+1)+' выбор</label>'+
        '<div class="psy-bully-combo" data-q="'+i+'" data-slot="'+j+'">'+
        '<input id="psyBullyInput'+i+'_'+j+'" class="psy-bully-search" type="text" autocomplete="off" maxlength="120"'+
-       ' placeholder="Написать или выбрать" value="'+E(current?.name||"")+'" data-value="'+E(value)+'" role="combobox" aria-expanded="false"/>'+
+       ' placeholder="Написать или выбрать" value="'+E(current?.name||"")+'" data-value="'+E(value)+
+        '" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="psyBullyOptions'+i+'_'+j+'"/>'+
        '<button type="button" class="psy-bully-arrow" aria-label="Показать учеников">⌄</button>'+
-       '<div class="psy-bully-options" hidden></div></div></div>';
+       '<div class="psy-bully-options" id="psyBullyOptions'+i+'_'+j+'" role="listbox" hidden></div></div></div>';
      }).join("")+'</div>'+
      '<div class="psy-bully-qbuttons">'+
      '<button type="button" class="psy-bully-muted" data-bully-answer="'+i+'" data-state="none">Никто</button>'+
@@ -201,7 +202,8 @@
      '<button type="button" class="psy-bully-clear" data-bully-clear="'+i+'">Очистить</button>'+
      '</div></article>';
    }).join("")+
-   '<div class="psy-bully-actions"><button type="button" class="btn" id="psyBullyNext">Следующий ученик</button></div></section>';
+   '<div class="psy-bully-actions"><button type="button" class="btn" id="psyBullyNext">Следующий ученик</button>'+
+   '<span id="psyBullyNotice" class="psy-bully-micro" role="status"></span></div></section>';
  }
  function overview(a){
   const items=[
@@ -446,16 +448,31 @@
     opts.forEach(opt=>{
      const b=document.createElement("button");b.type="button";b.textContent=opt.name;
      b.className="psy-bully-option"+(opt.id.startsWith("__")?" is-special":"");
+     b.setAttribute("role","option");
      b.addEventListener("mousedown",e=>e.preventDefault());
      b.addEventListener("click",()=>commit(combo,opt.id));box.append(b);
     });
-    if(!candidates(combo,term).length&&term){const p=document.createElement("p");p.textContent="Имен с таким написанием нет.";p.className="psy-bully-nomatch";box.append(p);}
+    if(!candidates(combo,term).length&&term){const p=document.createElement("p");
+     p.textContent="Совпадений по именам нет. «Никто» и «Не знаю» доступны выше.";
+     p.className="psy-bully-nomatch";box.append(p);}
     box.hidden=false;input.setAttribute("aria-expanded","true");
    };
    input.addEventListener("focus",()=>show(""));
    input.addEventListener("input",()=>show(input.value));
+   input.addEventListener("blur",()=>{
+    const q=Number(combo.dataset.q),slot=Number(combo.dataset.slot),saved=record(person(),q).picks[slot];
+    input.value=rowsOf(rows).find(p=>p.bullyId===saved)?.name||"";
+    close(combo);
+   });
    input.addEventListener("keydown",e=>{
-    if(e.key==="Escape"){close(combo);return;}
+    if(e.key==="Escape"){close(combo);input.blur();return;}
+    if(e.key==="ArrowDown"||e.key==="ArrowUp"){
+     e.preventDefault();
+     if(combo.querySelector(".psy-bully-options").hidden)show(input.value);
+     const options=[...combo.querySelectorAll(".psy-bully-option")];
+     if(options.length)options[e.key==="ArrowDown"?0:options.length-1].focus();
+     return;
+    }
     if(e.key==="Enter"){e.preventDefault();
      const exact=candidates(combo,input.value).find(p=>norm(p.name)===norm(input.value));
      const first=exact||candidates(combo,input.value)[0];
@@ -483,7 +500,7 @@
  }
  function instruction(){
   return '<h3>Инструкция обследуемому</h3><p>Ответь на пять вопросов о взаимоотношениях в классе. Не выбирай себя. Никому не показывай свои ответы. Если не знаешь, так и напиши. Второй вопрос можно пропустить.</p>'+
-   '<h3>Состав пяти вопросов</h3><ol>'+Q.map(q=>'<li><b>'+E(q.label)+'</b> – '+E(q.sub)+'</li>').join("")+'</ol>'+
+   '<h3>Состав пяти вопросов</h3><ol>'+Q.map(q=>'<li><b>'+E(q.label)+'</b><p>'+E(q.sub)+'</p></li>').join("")+'</ol>'+
    '<h3>Порядок для специалиста</h3><p>Обеспечьте конфиденциальность, используйте полный список класса. Отмечайте отсутствующих отдельно. Не приравнивайте пропуск к ответу «Никто».</p>'+
    '<p><strong>Версия:</strong> редакционная рабочая форма по структуре пяти вопросов аналитического отчета 6.2. Дословный авторский бланк первоисточника не подтвержден. Не выдавайте эти формулировки за цитату из методических рекомендаций.</p>';
  }
