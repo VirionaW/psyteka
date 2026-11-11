@@ -218,7 +218,8 @@
      '<td class="psy-socio-six-main">'+(stats.positive??"–")+'</td><td class="psy-socio-six-negative">'+(stats.negative??"–")+
      '</td><td>'+(stats.sp??"–")+'</td><td>'+(stats.si??"–")+'</td>'+
      '<td>'+(stats.uniquePos??"–")+' / '+(stats.uniqueNeg??"–")+'</td><td>'+stats.starCriteria+'</td>'+
-     (forPrint?'<td>'+stats.counts.slice(0,3).join(" / ")+' | '+stats.counts.slice(3).join(" / ")+'</td>':
+     (forPrint?'<td>'+stats.counts.slice(0,3).map((n,i)=>(result[i].responded??result[i].answered)?n:"–").join(" / ")+
+      ' | '+stats.counts.slice(3).map((n,i)=>(result[i+3].responded??result[i+3].answered)?n:"–").join(" / ")+'</td>':
       stats.counts.map((n,i)=>'<td>'+(!(result[i].responded??result[i].answered)?"–":
        i<3&&n>=5?'<strong class="psy-socio-count-star">★ '+n+'</strong>':n)+'</td>').join("")))+
    '</tr>').join("")+'</tbody></table></div>'+
@@ -364,7 +365,9 @@
     '<h2>Полнота обследования</h2><table><thead><tr><th>№</th><th>Тип</th><th>Вопрос</th><th>Завершено анкет</th><th>Получено выборов</th><th>Взаимных пар</th></tr></thead><tbody>'+
     result.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+(r.negative?"Отрицательный":"Положительный")+
       '</td><td>'+E(r.question)+'</td><td>'+r.answered+' из '+(r.eligible??people.length)+
-      (r.partial?" (частично: "+r.partial+")":"")+'</td><td>'+r.total+'</td><td>'+r.pairs+'</td></tr>').join("")+'</tbody></table>'+
+      (r.partial?" (частично: "+r.partial+")":"")+'</td><td>'+
+      ((r.responded??r.answered)?r.total:"–")+'</td><td>'+
+      ((r.responded??r.answered)?r.pairs:"–")+'</td></tr>').join("")+'</tbody></table>'+
     '<h2>LP, LM, SP и SI – раздельный итог по шести вопросам</h2>'+overviewSix(people,result,true)+
     '<h2>Посещаемость и достоверность</h2>'+
     '<p>Отсутствовали: '+(absentees.length?absentees.map(p=>E(p.name)).join(", "):"нет")+
