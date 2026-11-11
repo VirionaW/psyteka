@@ -329,7 +329,7 @@
    drop.addEventListener("click",()=>{
     const open=!combo.querySelector(".psy-socio-options").hidden;
     if(open){closeCombo(combo);drop.focus({preventScroll:true});}
-    else{drawOptions(combo,"");input.focus({preventScroll:true});}
+    else{input.focus({preventScroll:true});drawOptions(combo,"");}
    });
   });
   if(!outsideComboListenerAdded){
