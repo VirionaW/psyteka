@@ -301,7 +301,11 @@
    const allowed=getCandidates(combo,"").some(p=>p.id===id);
    if(!allowed){message("Этот ученик уже выбран или недоступен.");return;}
    putPick(row,q,slot,id);
-   if(id===NONE)for(let i=slot+1;i<3;i++)if(!picks(row,q)[i])putPick(row,q,i,NONE);
+   if(id===NONE)for(let i=slot+1;i<3;i++)if(!picks(row,q)[i]){
+    putPick(row,q,i,NONE);
+    const later=document.getElementById("psySocInput"+q+"_"+i);
+    if(later){later.value="Никто";later.dataset.selected=NONE;}
+   }
    const input=combo.querySelector(".psy-socio-typeahead"),found=members(rows).find(p=>p.socioId===id);
    input.value=id===NONE?"Никто":found?.name||"";input.dataset.selected=id;
    closeCombo(combo);refresh();advanceAfter(row,q,slot);
