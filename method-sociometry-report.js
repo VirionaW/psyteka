@@ -102,42 +102,55 @@
  }
  const short=(s,max=17)=>{const v=String(s||"").trim();return v.length>max?v.slice(0,max-1)+"…":v;};
  function sociogram(people,s){
-  if(!s.answered)return '<p class="psy-socio-empty">Схема появится, когда будет заполнена хотя бы одна анкета по вопросу.</p>';
-  if(people.length>40)return '<p class="psy-socio-empty">Для групп более 40 учеников связи удобнее изучать в социоматрице: крупная схема становится нечитаемой.</p>';
-  const n=people.length,cx=420,cy=268,rx=355,ry=203,points=new Map();
-  people.forEach((p,i)=>{
-   const angle=-Math.PI/2+2*Math.PI*i/Math.max(1,n);
-   points.set(p.socioId,{x:cx+rx*Math.cos(angle),y:cy+ry*Math.sin(angle),i});
-  });
-  const links=[];
-  for(const [from,ids] of s.edges)for(const to of ids){
-   const mutual=!!s.edges.get(to)?.has(from);
-   if(mutual&&from>to)continue;
-   if(onlyMutual&&!mutual)continue;
-   const a=points.get(from),b=points.get(to);
-   if(!a||!b)continue;
-   const dx=b.x-a.x,dy=b.y-a.y,length=Math.hypot(dx,dy);
-   if(!length)continue;
-   const ux=dx/length,uy=dy/length;
-   const x1=a.x+ux*23,y1=a.y+uy*23,x2=b.x-ux*23,y2=b.y-uy*23;
-   const vals=[x1,y1,x2,y2].map(v=>v.toFixed(1));
-   links.push('<path d="M'+vals[0]+' '+vals[1]+' L'+vals[2]+' '+vals[3]+'" class="'+
-    (mutual?"psy-socio-edge-mutual":"psy-socio-edge-directed")+'"'+
-    (mutual?' marker-start="url(#psySocReciprocal)" marker-end="url(#psySocReciprocal)"':' marker-end="url(#psySocArrow)"')+'/>');
-  }
-  const circles=people.map((p,i)=>{
-   const pt=points.get(p.socioId),inCount=s.incoming.get(p.socioId)||0;
-   return '<g class="psy-socio-node '+(excluded(p)?"is-excluded":"")+'"><title>'+E(p.name)+
-    (excluded(p)?': анкета исключена до уточнения':': получено '+inCount+' выборов')+'</title>'+
-    '<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="20"/>'+
-    '<text x="'+pt.x.toFixed(1)+'" y="'+(pt.y+4.5).toFixed(1)+'" text-anchor="middle">'+(i+1)+'</text></g>';
-  }).join("");
-  return '<div class="psy-socio-network-plot"><svg viewBox="0 0 840 536" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Схема положительных выборов учеников по текущему вопросу">'+
-   '<defs><marker id="psySocArrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L7 3.5 L0 7 Z" fill="#a98355"/></marker>'+
-   '<marker id="psySocReciprocal" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto-start-reverse" markerUnits="strokeWidth"><path d="M0 0 L7 3.5 L0 7 Z" fill="#32806e"/></marker></defs>'+
-   '<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" class="psy-socio-orbit"/>'+
-   links.join("")+circles+'</svg></div>'+
-   '<div class="psy-socio-map-key">'+people.map((p,i)=>'<span><b>'+(i+1)+'</b>'+E(short(p.name,28))+'</span>').join("")+'</div>';
+  const target=people.find(p=>p.socioId===selectedChild)||people[0];
+  if(!target)return '<p class="psy-socio-empty">Учеников пока нет.</p>';
+  const status=statusFor(target,s);
+  if(status.key==="absent")return '<p class="psy-socio-empty">Ученик отсутствовал. Личные связи не строятся, анкета не заполнялась.</p>';
+  if(status.key==="review")return '<p class="psy-socio-empty">Анкета ученика исключена до уточнения. Связи не отображаются.</p>';
+  if(!s.answered)return '<p class="psy-socio-empty">Пока нет завершённых анкет по этому вопросу.</p>';
+  const myChoices=s.edges.get(target.socioId)||new Set();
+  const incoming=people.filter(p=>s.edges.get(p.socioId)?.has(target.socioId));
+  const outgoing=people.filter(p=>myChoices.has(p.socioId));
+  const mutual=new Set(incoming.filter(p=>myChoices.has(p.socioId)).map(p=>p.socioId));
+  const incomingShown=onlyMutual?incoming.filter(p=>mutual.has(p.socioId)):incoming;
+  const outgoingShown=onlyMutual?outgoing.filter(p=>mutual.has(p.socioId)):outgoing;
+  const peers=(arr,dir)=>arr.length?
+   '<ul class="psy-socio-focus-list">'+arr.map(p=>
+    '<li><button type="button" data-socio-focus-id="'+E(p.socioId)+'">'+E(p.name)+'</button>'+
+    (mutual.has(p.socioId)?'<small class="is-reciprocal">↔ взаимно</small>':'<small>'+
+      (dir==="incoming"?"→ к ученику":"→ от ученика")+'</small>')+'</li>'
+   ).join("")+'</ul>':
+   '<p class="psy-socio-focus-empty">По выбранному фильтру связей нет</p>';
+  return '<div class="psy-socio-focus-map">'+
+   '<div class="psy-socio-focus-side"><h5>Кто его выбрал <b>'+incomingShown.length+'</b></h5>'+peers(incomingShown,"incoming")+'</div>'+
+   '<div class="psy-socio-focus-center"><span class="psy-socio-focus-kicker">Ребёнок в центре</span>'+
+   '<strong>'+E(target.name)+'</strong><span class="psy-socio-focus-status">'+E(status.name)+'</span>'+
+   '<p>'+E(s.question)+'</p>'+
+   '<div><b>'+myChoices.size+'</b><small>сделано</small><b>'+incoming.length+'</b><small>получено</small>'+
+   '<b>'+mutual.size+'</b><small>взаимно</small></div>'+
+   '</div>'+
+   '<div class="psy-socio-focus-side"><h5>Кого он выбрал <b>'+outgoingShown.length+'</b></h5>'+peers(outgoingShown,"outgoing")+'</div></div>'+
+   '<p class="psy-socio-legend">Показаны связи только выбранного ученика. Нажмите на имя в списке, чтобы переместить его в центр. Зелёным обозначен взаимный выбор.</p>';
+ }
+ function statusGroups(people,s){
+  const groups=categories.map(c=>({...c,people:people.filter(p=>statusFor(p,s).key===c.key)}));
+  const pending=people.filter(p=>!categories.some(c=>c.key===statusFor(p,s).key));
+  const makeCard=c=>'<section class="psy-socio-status-group is-'+c.key+'"><div><strong>'+E(c.name)+'</strong>'+
+   '<span>'+c.people.length+'</span></div><small>'+E(c.range)+'</small>'+
+   (c.people.length?'<ul>'+c.people.map(p=>'<li><button type="button" data-socio-focus-id="'+E(p.socioId)+'">'+
+    E(p.name)+'</button></li>').join("")+'</ul>':'<p>Нет учеников</p>')+'</section>';
+  const cards=groups.map(makeCard).join("");
+  const pendingCard=pending.length?'<section class="psy-socio-status-group is-other"><div><strong>Без категории</strong><span>'+pending.length+'</span></div>'+
+   '<small>Не участвовали, на уточнении, анкет нет или данных мало</small><ul>'+
+   pending.map(p=>'<li><button type="button" data-socio-focus-id="'+E(p.socioId)+'">'+
+    E(p.name)+'</button><small>'+E(statusFor(p,s).name)+'</small></li>').join("")+'</ul></section>':"";
+  return '<section class="psy-socio-status-board"><div class="psy-socio-section-heading"><div>'+
+   '<h4>Социометрические статусы</h4><p>Границы Я. Л. Коломинского по положительным выборам именно этого вопроса</p></div></div>'+
+   '<div class="psy-socio-status-groups">'+cards+pendingCard+'</div>'+
+   '<p class="psy-socio-note">'+(coverageEnough(s)?
+     "Категории доступны: заполнено "+s.answered+" из "+s.eligible+" учитываемых анкет.":
+     "Для присвоения категорий требуется не менее 5 завершённых анкет и 75% участия. Пока статусы остаются предварительными.")+
+   ' «Изолированный» здесь означает 0 положительных выборов, а не «изгой», «отверженный» или жертва травли. Для выявления буллинга этих ответов недостаточно.</p></section>';
  }
  function individual(people,result){
   const target=people.find(p=>p.socioId===selectedChild)||people[0];
