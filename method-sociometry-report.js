@@ -126,7 +126,8 @@
   }).join("");
   return '<div class="psy-socio-summary-scroll"><table class="psy-socio-children-table">'+header+'<tbody>'+body+'</tbody></table></div>';
  }
- function render({people,result,selected}){
+ function render({people,result,selected,activeId}){
+  if(!selectedChild&&activeId)selectedChild=activeId;
   if(!people.length)return "";
   const s=result[selected]||result[0];
   const incomplete=s.answered<people.length;
@@ -182,12 +183,20 @@
       result.map((r,i)=>{const d=clean(p,r);return '<tr><td>'+(i+1)+'</td><td>'+(d.answered?d.own.size:"–")+'</td><td>'+(r.answered?d.received:"–")+'</td><td>'+(r.answered?d.reciprocal:"–")+'</td><td>'+E(observation(p,r,people.length))+'</td></tr>';}).join("")+
      '</tbody></table></section>').join("")+
     '<p class="note">Заключения носят описательный характер. При неполном участии показатели предварительны. Отсутствие положительных выборов нельзя трактовать как отвержение. Суммарная оценка по шести разным критериям не рассчитывается.</p>';
-  const css='@page{size:A4;margin:13mm}*{box-sizing:border-box}body{font:10pt/1.4 Arial,sans-serif;color:#263a30;padding:4mm}h1{font-size:17pt}h2{font-size:12pt;margin:16px 0 7px}h3{font-size:11pt;margin:13px 0 6px}p{margin:5px 0 10px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #b5c8ba;padding:4px 5px;text-align:left;vertical-align:top;font-size:8.2pt;overflow-wrap:anywhere}tr{break-inside:avoid}.psy-socio-matrix-scroll,.psy-socio-summary-scroll{overflow:visible!important}.psy-socio-matrix{width:100%;table-layout:fixed}.psy-socio-matrix th,.psy-socio-matrix td{font-size:7pt;padding:2px;text-align:center}.psy-socio-matrix th:first-child{width:22%;text-align:left}.note,.psy-socio-note,.psy-socio-legend{font-size:8pt;color:#536457}.person{break-inside:avoid}button{display:none}';
+  const css='@page{size:A4;margin:13mm}*{box-sizing:border-box}body{font:10pt/1.4 Arial,sans-serif;color:#263a30;padding:4mm}h1{font-size:17pt}h2{font-size:12pt;margin:16px 0 7px}h3{font-size:11pt;margin:13px 0 6px}p{margin:5px 0 10px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #b5c8ba;padding:4px 5px;text-align:left;vertical-align:top;font-size:8.2pt;overflow-wrap:anywhere}tr{break-inside:avoid}.psy-socio-matrix-scroll,.psy-socio-summary-scroll{overflow:visible!important}.psy-socio-matrix{width:100%;table-layout:fixed}.psy-socio-matrix th,.psy-socio-matrix td{font-size:7pt;padding:2px;text-align:center}.psy-socio-matrix th:first-child{width:22%;text-align:left}.note,.psy-socio-note,.psy-socio-legend{font-size:8pt;color:#536457}.person{break-inside:avoid}@media print{button{display:none}}button{margin-top:18px;padding:10px 18px;border:1px solid #8cae91;border-radius:9px;cursor:pointer;background:#eaf3eb;color:#254934;font:inherit}';
   const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Метолария – отчет по социометрии</title><style>'+css+'</style></head><body>'+content+
     '<p><button onclick="window.print()">Печать</button></p></body></html>';
-  const blob=new Blob([html],{type:"text/html;charset=utf-8"}),url=URL.createObjectURL(blob);
-  const a=document.createElement("a");a.href=url;a.download="Метолария_социометрия_отчет_A4.html";
-  document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+  const preview=window.open("","_blank");
+  if(preview){
+   preview.document.open();
+   preview.document.write(html);
+   preview.document.close();
+   preview.focus();
+  }else{
+   const blob=new Blob([html],{type:"text/html;charset=utf-8"}),url=URL.createObjectURL(blob);
+   const a=document.createElement("a");a.href=url;a.download="Метолария_социометрия_отчет_A4.html";
+   document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }
  }
  function bind(ctx,refresh,selected){
   const {people,result}=ctx, s=result[selected];
@@ -201,5 +210,6 @@
   document.getElementById("psySocMatrixCSV")?.addEventListener("click",()=>download("Метолария_социометрия_матрица.csv",prepareMatrix(people,s)));
   document.getElementById("psySocPrintAnalysis")?.addEventListener("click",()=>printView(people,result,selected));
  }
- api.sociometryReport={render,bind,prepareCSV,prepareMatrix,observation,matrix,sociogram};
+ api.sociometryReport={render,bind,prepareCSV,prepareMatrix,observation,matrix,sociogram,
+  select:id=>{if(id)selectedChild=id;}};
 })();
