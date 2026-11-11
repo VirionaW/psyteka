@@ -97,14 +97,15 @@
      '" title="'+E(p.name)+" → "+E(other.name)+(mutual?" (взаимно)":"")+'">'+(mutual?"↔":"→")+'</td>';
    }).join("");
    return '<tr><th scope="row">'+code(p,i)+'. '+E(p.name)+'</th>'+cells+
-    '<td class="psy-socio-matrix-total">'+(wasAbsent?"О":disabled?"⏸":selected?selected.size:"–")+'</td></tr>';
+    '<td class="psy-socio-matrix-total">'+(wasAbsent?"О":disabled?"⏸":selected?
+       selected.size+(s.partialIds?.has(p.socioId)?"*":""):"–")+'</td></tr>';
   }).join("");
   const footer='<tfoot><tr><th scope="row">Получено</th>'+
-   people.map(p=>'<td>'+(absent(p)?"О":reviewing(p)?"⏸":s.answered?T(s.incoming.get(p.socioId)):"–")+'</td>').join("")+
+   people.map(p=>'<td>'+(absent(p)?"О":reviewing(p)?"⏸":(s.responded??s.answered)?T(s.incoming.get(p.socioId)):"–")+'</td>').join("")+
    '<td>'+s.total+'</td></tr></tfoot>';
   return '<div class="psy-socio-matrix-scroll"><table class="psy-socio-matrix">'+head+'<tbody>'+body+'</tbody>'+footer+'</table></div>'+
    '<p class="psy-socio-legend"><span class="psy-socio-legend-pair">↔ взаимный выбор</span><span>→ односторонний выбор</span>'+
-   '<span>· нет выбора</span><span>… анкета не завершена</span><span>⏸ на уточнении</span><span>О отсутствовал</span></p>';
+   '<span>· нет выбора</span><span>… ответа нет</span><span>* ответ частичный</span><span>⏸ на уточнении</span><span>О отсутствовал</span></p>';
  }
  const short=(s,max=17)=>{const v=String(s||"").trim();return v.length>max?v.slice(0,max-1)+"…":v;};
  function sociogram(people,s){
@@ -211,8 +212,8 @@
    result.map((s,i)=>{
     const d=clean(target,s),st=statusFor(target,s);
     return '<tr><td><strong>'+(i+1)+'.</strong> '+E(s.question)+'</td>'+
-     '<td>'+(d.answered?d.own.size:"–")+'</td><td>'+(d.excluded?"–":s.answered?d.received:"–")+'</td>'+
-     '<td>'+(d.excluded?"–":s.answered?d.reciprocal:"–")+'</td>'+
+     '<td>'+(d.answered?d.own.size:"–")+'</td><td>'+(d.excluded?"–":(s.responded??s.answered)?d.received:"–")+'</td>'+
+     '<td>'+(d.excluded?"–":(s.responded??s.answered)?d.reciprocal:"–")+'</td>'+
      '<td><span class="psy-socio-status-badge is-'+st.key+'">'+E(st.name)+'</span></td>'+
      '<td>'+E(observation(target,s,people.length))+'</td></tr>';
    }).join("")+'</tbody></table></div>'+
@@ -224,13 +225,13 @@
   const header='<thead><tr><th>Ученик</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Социометрический статус</th><th>Анкета</th><th>Сведения о травле</th><th>Конкретный анализ</th></tr></thead>';
   const body=people.map(p=>{
    const d=clean(p,s),st=statusFor(p,s);
-   const attendance=st.key==="absent"?"Отсутствовал":st.key==="review"?"На уточнении":d.answered?"Заполнена":"Не завершена";
+   const attendance=st.key==="absent"?"Отсутствовал":st.key==="review"?"На уточнении":d.complete?"Заполнена":d.partial?"Частично":"Не заполнена";
    return '<tr><th scope="row"><button type="button" class="psy-socio-name-link" data-socio-focus-id="'+E(p.socioId)+'">'+E(p.name)+'</button></th>'+
     '<td>'+(d.answered?d.own.size:"–")+'</td>'+
-    '<td>'+(d.excluded?"–":s.answered?d.received:"–")+'</td>'+
-    '<td>'+(d.excluded?"–":s.answered?d.reciprocal:"–")+'</td>'+
+    '<td>'+(d.excluded?"–":(s.responded??s.answered)?d.received:"–")+'</td>'+
+    '<td>'+(d.excluded?"–":(s.responded??s.answered)?d.reciprocal:"–")+'</td>'+
     '<td><span class="psy-socio-status-badge is-'+st.key+'">'+E(st.name)+'</span></td>'+
-    '<td><span class="psy-socio-answer-status '+(d.answered?"is-ready":"is-pending")+'">'+attendance+'</span></td>'+
+    '<td><span class="psy-socio-answer-status '+(d.complete?"is-ready":"is-pending")+'">'+attendance+'</span></td>'+
     '<td class="psy-socio-concern-cell">'+(concernLabel(p)?'<span title="'+E(concernLabel(p))+'">'+
       E(concernLabel(p).slice(0,115))+(concernLabel(p).length>115?"…":"")+'</span>':"–")+'</td>'+
     '<td class="psy-socio-observation">'+E(observation(p,s,people.length))+'</td></tr>';
@@ -243,9 +244,10 @@
   const s=result[selected]||result[0],eligible=s.eligible??people.filter(p=>!excluded(p)).length;
   const absentees=people.filter(absent),onReview=people.filter(p=>reviewing(p)&&!absent(p));
   const noResponses=people.filter(p=>!excluded(p)&&!s.edges.has(p.socioId));
+  const partials=people.filter(p=>!excluded(p)&&s.partialIds?.has(p.socioId));
   const reached=people.filter(p=>!excluded(p)&&(s.incoming.get(p.socioId)||0)>0).length;
   const classStats='<div class="psy-socio-facts">'+
-   '<span><strong>'+s.answered+' / '+eligible+'</strong><small>учтено анкет</small></span>'+
+   '<span><strong>'+s.answered+' / '+eligible+'</strong><small>полностью заполнено</small></span>'+
    '<span><strong>'+s.total+'</strong><small>положительных выборов</small></span>'+
    '<span><strong>'+s.pairs+'</strong><small>взаимных пар</small></span>'+
    '<span><strong>'+reached+'</strong><small>детей получили выборы</small></span></div>';
@@ -254,7 +256,9 @@
      ' – результаты пустые, статус не присваивается.</p>':"")+
    (onReview.length?'<p><strong>На уточнении ('+onReview.length+'):</strong> '+onReview.map(p=>E(p.name)).join(", ")+
      ' – анкеты временно исключены.</p>':"")+
-   (noResponses.length?'<p><strong>Не завершили вопрос ('+noResponses.length+'):</strong> '+
+   (partials.length?'<p><strong>Заполнено частично ('+partials.length+'):</strong> '+
+    partials.map(p=>E(p.name)).join(", ")+'. Все введённые выборы учтены.</p>':"")+
+   (noResponses.length?'<p><strong>Не ответили на вопрос ('+noResponses.length+'):</strong> '+
     noResponses.map(p=>E(p.name)).join(", ")+'.</p>':"")+'</div>';
   return '<div class="psy-socio-analytics">'+classStats+lists+
    overviewSix(people,result)+
