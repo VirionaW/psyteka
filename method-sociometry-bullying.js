@@ -85,7 +85,7 @@
   const negativeRatio=LP?100*LM/LP:null;
   const covered=results[0].responded.size;
   const coverage=eligible.length?100*covered/eligible.length:0;
-  const ranked=(key)=>people.filter(p=>!excluded(p)).map(p=>({p,m:metrics.get(p.bullyId)}))
+  const ranked=(key)=>people.filter(p=>!review(p)).map(p=>({p,m:metrics.get(p.bullyId)}))
    .filter(x=>x.m[key]>0).sort((a,b)=>b.m[key]-a.m[key]||a.p.name.localeCompare(b.p.name,"ru"));
   const acc=ranked("ag"),vics=ranked("vi"),defs=ranked("df");
   // Five descriptive checks based on the supplied example; not a validated diagnostic index.
@@ -97,12 +97,12 @@
   const flags=[
    {label:"Одновременно часто называемые в положительных связях и возможными инициаторами",
     ready:positiveReady&&initiatorReady,
-    triggered:people.some(p=>!excluded(p)&&metrics.get(p.bullyId).lp>=3&&metrics.get(p.bullyId).ag>=3)},
+    triggered:people.some(p=>!review(p)&&metrics.get(p.bullyId).lp>=3&&metrics.get(p.bullyId).ag>=3)},
    {label:"Повторяющиеся номинации возможных пострадавших (не менее 3)",
     ready:victimReady,triggered:vics.some(x=>x.m.vi>=3)},
    {label:"Ученики с отрицательным балансом позитивных и негативных выборов",
     ready:positiveReady&&negativeReady,
-    triggered:people.some(p=>!excluded(p)&&metrics.get(p.bullyId).sp<=-2)},
+    triggered:people.some(p=>!review(p)&&metrics.get(p.bullyId).sp<=-2)},
    {label:"Плотность положительных связей ниже 20%",
     ready:positiveReady,triggered:density!=null&&density<20},
    {label:"Отрицательных номинаций более 30% от положительных",
@@ -134,9 +134,9 @@
   if(a[1].status==="skip")issues.push("Q2 пропущен (допустимо)");
   return "Ответы по "+answered+" из 5 вопросов"+(issues.length?" · "+issues.join("; "):"");
  };
- const tag=(p,m)=>excluded(p)?'<span class="psy-bully-tag excluded">'+(absent(p)?"Отсутствовал":"На уточнении")+'</span>':
-  '<span class="psy-bully-tag '+profile(m).type+'">'+E(profile(m).name)+'</span>';
- const blankCell=(p,val)=>excluded(p)?"–":String(val);
+ const tag=(p,m)=>review(p)?'<span class="psy-bully-tag excluded">На уточнении</span>':
+  '<span class="psy-bully-tag '+profile(m).type+'">'+E(profile(m).name)+
+    (absent(p)?" · без бланка":"")+'</span>';
  function heading(){
   return '<header class="psy-bully-head"><div><span class="psy-bully-eyebrow">МЕЖЛИЧНОСТНЫЕ ОТНОШЕНИЯ</span>'+
    '<h3>Социометрия и профилактика буллинга</h3>'+
@@ -218,14 +218,14 @@
    '<th>Ученик</th><th>Бланк</th><th>LP</th><th>LM</th><th>SP</th><th>SI</th>'+
    '<th>Агр. Q3</th><th>Жертва Q4</th><th>Защ. Q5</th><th>Профиль по числам</th><th>Уточнение</th>'+
    '</tr></thead><tbody>'+row.map(({p,m})=>{
-    const incoming=excluded(p)?Array(7).fill("–"):[m.lp,m.lm,m.sp,m.si,m.ag,m.vi,m.df];
+    const incoming=review(p)?Array(7).fill("–"):[m.lp,m.lm,m.sp,m.si,m.ag,m.vi,m.df];
     const status=absent(p)?"Отсутствовал":review(p)?"На уточнении":rowNote(p,m);
-    return '<tr'+(excluded(p)?' class="is-excluded"':"")+'><th scope="row">'+E(p.name)+'</th>'+
+    return '<tr'+(review(p)?' class="is-excluded"':"")+'><th scope="row">'+E(p.name)+'</th>'+
      '<td>'+E(status)+'</td>'+incoming.map((v,i)=>'<td class="'+(typeof v==="number"&&i>=4&&v>=3?"psy-bully-signal":"")+
       '">'+v+'</td>').join("")+
-     '<td>'+tag(p,m)+'</td><td>'+(!excluded(p)&&m.vi>=3?"Проверить ситуацию безопасности":
-      !excluded(p)&&m.ag>=3?"Проверить содержание сообщений":
-      !excluded(p)&&m.sp<=-2?"Уточнить отношения":"–")+'</td></tr>';
+     '<td>'+tag(p,m)+'</td><td>'+(!review(p)&&m.vi>=3?"Проверить ситуацию безопасности":
+      !review(p)&&m.ag>=3?"Проверить содержание сообщений":
+      !review(p)&&m.sp<=-2?"Уточнить отношения":"–")+'</td></tr>';
    }).join("")+'</tbody></table></div>';
   const quality='<div class="psy-bully-quality">'+
    (a.absent.length?'<p><strong>Отсутствовали:</strong> '+a.absent.map(p=>E(p.name)).join(", ")+'.</p>':"")+
@@ -256,7 +256,7 @@
   return '<section class="psy-bully-report" id="psyBullyReport"><div class="psy-bully-section-title"><h4>Анализ класса</h4>'+
    '<p>Только внесенные ответы; без подставленных или демонстрационных результатов.</p></div>'+
    info+'<h4>Количественные показатели по детям</h4>'+table+
-   '<p class="psy-bully-note">LP – положительные выборы; LM – отрицательные; SP = LP - LM; SI = LP + LM. «Агр.», «Жертва», «Защ.» – номинации, а не установленная роль в травле. Дети без собственной анкеты могут получать номинации, но отсутствие не равно нулю.</p>'+
+   '<p class="psy-bully-note">LP – положительные выборы; LM – отрицательные; SP = LP - LM; SI = LP + LM. «Агр.», «Жертва», «Защ.» – номинации, а не установленная роль в травле. У отсутствовавших собственная анкета пустая, но полученные от других детей номинации показаны отдельно – как и в образце отчета.</p>'+
    '<div class="psy-bully-findings">'+names("lp","Положительные выборы (Q1)")+
     names("vi","Кого называли пострадавшим (Q4)")+
     names("ag","Кого называли инициатором (Q3)")+
@@ -293,7 +293,7 @@
   return [["Ученик","Статус бланка","LP","LM","SP","SI","Q3 предполагаемый инициатор",
    "Q4 предполагаемый пострадавший","Q5 защитник","Описание профиля","Ответ по Q1"],
    ...a.people.map(p=>{
-    const m=a.metrics.get(p.bullyId),no=excluded(p);
+    const m=a.metrics.get(p.bullyId),no=review(p);
     return [p.name,absent(p)?"Отсутствовал":review(p)?"На уточнении":rowNote(p,m),
      ...(no?Array(7).fill(""):[m.lp,m.lm,m.sp,m.si,m.ag,m.vi,m.df]),
      no?"Без расчета":profile(m).name,record(p,0).status];
@@ -311,9 +311,9 @@
  }
  function printView(a){
   const describe=(key,max=6)=>a.ranked(key).slice(0,max).map(({p,m})=>E(p.name)+" ("+m[key]+")").join("; ")||"не зафиксированы";
-  const negative=a.people.filter(p=>!excluded(p)&&a.metrics.get(p.bullyId).sp<=-2)
+  const negative=a.people.filter(p=>!review(p)&&a.metrics.get(p.bullyId).sp<=-2)
    .map(p=>E(p.name)+" ("+a.metrics.get(p.bullyId).sp+")").join("; ")||"не выделены";
-  const mixed=a.people.filter(p=>!excluded(p)&&a.metrics.get(p.bullyId).lp>=3&&a.metrics.get(p.bullyId).lm>=2)
+  const mixed=a.people.filter(p=>!review(p)&&a.metrics.get(p.bullyId).lp>=3&&a.metrics.get(p.bullyId).lm>=2)
    .map(p=>E(p.name)+" (LP "+a.metrics.get(p.bullyId).lp+", LM "+a.metrics.get(p.bullyId).lm+")").join("; ")||"не выделены";
   const headline='<h1>Аналитический отчет по межличностным отношениям и профилактике буллинга</h1>'+
    '<p>Для служебного пользования. Персональные данные несовершеннолетних.</p>'+
