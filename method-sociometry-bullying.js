@@ -1,13 +1,40 @@
 "use strict";
-/* Метолария: отдельная рабочая форма по структуре 5 вопросов пользовательского отчета 6.2.
+/* Метолария: ВАРИАНТ основной социометрии на шесть вопросов, дополнен по структуре отчета 6.2.
    НЕ является дословным воспроизведением неизвестного первоисточника.
    Индивидуальные данные живут только в строках текущего обследования в существующем
    механизме сохранения пользователя. Никаких тестовых/реальных детских данных. */
 (function(){
- const api=window.PSY_NEW_METHODS,D=window.PSY_FULL_METHODS,C=window.PSY_CATALOG;
- if(!api||!D||!Array.isArray(C))return;
- const NAME="Социометрия и профилактика буллинга (5 вопросов)";
- const KIND="bullying-sociometry";
+ const api=window.PSY_NEW_METHODS,D=window.PSY_FULL_METHODS;
+ if(!api||!D)return;
+ const NAME="Социометрическое исследование класса";
+ const KIND="sociometry";
+ const VARIANT="relations6";
+ const PRIMARY="positive6";
+ let selectedVariant=PRIMARY;
+ const current=rows=>rows?.find(r=>r?.socioVariant===VARIANT)?.socioVariant||PRIMARY;
+ const hasVariant=d=>d?.methodType===KIND&&selectedVariant===VARIANT;
+ const activate=rows=>{selectedVariant=current(rows);return selectedVariant;};
+ const setVariant=(value,rows)=>{
+  const variant=value===VARIANT?VARIANT:PRIMARY;
+  selectedVariant=variant;
+  if(Array.isArray(rows))rows.forEach(r=>{if(r&&typeof r==="object")r.socioVariant=variant;});
+ };
+ const labelVariant=variant=>variant===VARIANT?"6 вопросов: отношения и профилактика буллинга":"6 положительных вопросов";
+ const controls=()=>{
+  return '<section class="psy-socio-version-picker" aria-label="Варианты социометрии">'+
+   '<div><strong>Вариант социометрии</strong><small>Выбор действует для портфолио, руководства, бланка и обработки</small></div>'+
+   '<div class="psy-socio-version-options">'+[PRIMARY,VARIANT].map(v=>
+    '<button type="button" class="psy-socio-version-option '+(selectedVariant===v?"is-selected":"")+
+     '" data-socio-variant="'+v+'" aria-pressed="'+(selectedVariant===v)+'">'+labelVariant(v)+'</button>'
+   ).join("")+'</div>'+
+   '<p>'+(selectedVariant===VARIANT?
+    "Рабочая форма из 6 вопросов: положительные и отрицательные связи, сообщения о возможной травле и поддержке. Формулировки не подтверждены как авторский бланк.":
+    "6 положительных критериев: 3 выбора в каждом, анализ предпочтений и взаимности.")+'</p></section>';
+ };
+ const details=d=>selectedVariant===VARIANT?{...d,author:"Методологическая традиция Я. Л. Морено; рабочая форма Метоларии",
+  count:"6 критериев: связи, возможная травля и поддержка",
+  goal:"Анализ полученных положительных и отрицательных номинаций, сообщений о возможной травле и ресурсов поддержки класса.",
+  indicators:["LP, LM, SP, SI","Номинации возможных инициаторов, пострадавших, защитников","Номинации поддержки Q6","Плотность и взаимность связей"]}:d;
  const previous={calculator:api.calculator,bind:api.bind,materials:api.materials,
   instruction:api.instruction,processing:api.processing,score:api.score};
  const Q=[
@@ -20,7 +47,9 @@
   {short:"Кого чаще обижают",label:"Кого из одноклассников, по твоему мнению, чаще обижают?",
    sub:"Не более 3 имен. Результат – сигнал для проверки, а не подтверждение травли.",max:3,kind:"VICTIM"},
   {short:"Защитники",label:"Кто из класса чаще вступается за тех, кого обижают?",
-   sub:"Не более 3 имен.",max:3,kind:"DEF"}
+   sub:"Не более 3 имен.",max:3,kind:"DEF"},
+  {short:"К кому обратиться",label:"К кому из класса ты обратился(лась) бы за помощью в трудной ситуации?",
+   sub:"Не более 3 имен. Дополнительный шестой вопрос о возможной поддержке; редакционная формулировка.",max:3,kind:"HELP"}
  ];
  const E=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const norm=x=>String(x||"").normalize("NFKC").toLocaleLowerCase("ru").replace(/ё/g,"е").trim();
@@ -137,7 +166,7 @@
   const issues=[];
   if(a[0].status==="answered"&&a[0].picks.length<2)issues.push("в Q1 меньше 2 имен");
   if(a[1].status==="skip")issues.push("Q2 пропущен (допустимо)");
-  return "Ответы по "+answered+" из 5 вопросов"+(issues.length?" · "+issues.join("; "):"");
+  return "Ответы по "+answered+" из 6 вопросов"+(issues.length?" · "+issues.join("; "):"");
  };
  const tag=(p,m,a)=>review(p)?'<span class="psy-bully-tag excluded">На уточнении</span>':
   '<span class="psy-bully-tag '+profile(m,a.relationshipsReady,a.results[0].responded.size+a.results[1].responded.size>0).type+'">'+
@@ -146,7 +175,7 @@
  function heading(){
   return '<header class="psy-bully-head"><div><span class="psy-bully-eyebrow">МЕЖЛИЧНОСТНЫЕ ОТНОШЕНИЯ</span>'+
    '<h3>Социометрия и профилактика буллинга</h3>'+
-   '<p>Пять типов номинаций – анализ по реальным ответам, без автоматических обвинений детей.</p></div></header>';
+   '<p>Шесть критериев отношений и поддержки – анализ по реальным ответам, без автоматических обвинений детей.</p></div></header>';
  }
  function rosterView(ctx){
   const people=rowsOf(ctx.rows),p=ctx.rows[ctx.rowIndex],active=!!p?.name?.trim();
@@ -280,7 +309,7 @@
  }
  let currentRows=null;
  function calculator(d,ctx){
-  if(d.methodType!==KIND)return previous.calculator(d,ctx);
+  if(!hasVariant(d))return previous.calculator(d,ctx);
   currentRows=ctx.rows;ensure(ctx.rows);
   if(ctx.calcMode!=="class")return '<section class="psy-bully"><h3>Групповая социометрия</h3>'+
    '<p>Выберите режим «Группа / класс», чтобы внести состав класса и ответы по пяти вопросам.</p>'+
@@ -363,7 +392,7 @@
    document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200);}
  }
  function bind(d,ctx){
-  if(d.methodType!==KIND)return previous.bind(d,ctx);
+  if(!hasVariant(d))return previous.bind(d,ctx);
   if(ctx.calcMode!=="class")return;
   const rows=ctx.rows,person=()=>rows[ctx.rowIndex],refresh=()=>ctx.onSelect?.(ctx.rowIndex);
   const focus=(q,i)=>{
@@ -371,7 +400,7 @@
    if(input){input.scrollIntoView?.({block:"center",behavior:"smooth"});input.focus({preventScroll:true});}
   };
   const nextQuestion=q=>{
-   if(q<4){focus(q+1,0);}
+   if(q<Q.length-1){focus(q+1,0);}
    else {
     const next=rows.findIndex((p,i)=>i>ctx.rowIndex&&p.name?.trim()&&!absent(p));
     if(next>=0){ctx.onSelect?.(next);focus(0,0);}
@@ -499,44 +528,25 @@
     '</div>').join("")+'<p>Ответы конфиденциальны.</p></section>';
  }
  function instruction(){
-  return '<h3>Инструкция обследуемому</h3><p>Ответь на пять вопросов о взаимоотношениях в классе. Не выбирай себя. Никому не показывай свои ответы. Если не знаешь, так и напиши. Второй вопрос можно пропустить.</p>'+
-   '<h3>Состав пяти вопросов</h3><ol>'+Q.map(q=>'<li><b>'+E(q.label)+'</b><p>'+E(q.sub)+'</p></li>').join("")+'</ol>'+
+  return '<h3>Инструкция обследуемому</h3><p>Ответь на шесть вопросов о взаимоотношениях в классе. Не выбирай себя. Никому не показывай свои ответы. Если не знаешь, так и напиши. Второй вопрос можно пропустить.</p>'+
+   '<h3>Состав шести вопросов</h3><ol>'+Q.map(q=>'<li><b>'+E(q.label)+'</b><p>'+E(q.sub)+'</p></li>').join("")+'</ol>'+
    '<h3>Порядок для специалиста</h3><p>Обеспечьте конфиденциальность, используйте полный список класса. Отмечайте отсутствующих отдельно. Не приравнивайте пропуск к ответу «Никто».</p>'+
-   '<p><strong>Версия:</strong> редакционная рабочая форма по структуре пяти вопросов аналитического отчета 6.2. Дословный авторский бланк первоисточника не подтвержден. Не выдавайте эти формулировки за цитату из методических рекомендаций.</p>';
+   '<p><strong>Версия:</strong> редакционная рабочая форма по структуре пяти критериев аналитического отчета 6.2 с шестым вопросом о поддержке. Дословный авторский бланк первоисточника не подтвержден. Не выдавайте эти формулировки за цитату из методических рекомендаций.</p>';
  }
  function processing(){
   return '<h3>Обработка данных</h3><p>LP – число полученных положительных номинаций Q1; LM – отрицательных Q2; SP = LP - LM; SI = LP + LM. Q3, Q4 и Q5 считаются раздельно.</p>'+
    '<p>Плотность позитивных связей = LP / (n × (n-1)), где n – число учеников в списке класса. Доля взаимных номинаций = 2 × число взаимных пар / LP; отношение негативных и позитивных = LM / LP.</p>'+
-   '<p>Анкеты отсутствовавших и учащихся «на уточнении» исключаются как источники номинаций, но имена остаются в классе. Выборы других учащихся в их адрес сохраняются. Лимит Q1 – 5 имен, Q2-Q5 – 3, Q2 необязателен.</p>'+
+   '<p>Анкеты отсутствовавших и учащихся «на уточнении» исключаются как источники номинаций, но имена остаются в классе. Выборы других учащихся в их адрес сохраняются. Лимит Q1 – 5 имен, Q2-Q6 – 3, Q2 необязателен.</p>'+
    '<p>Редакционные профили в таблице – не стандартизированные статусы. Рабочие границы: отрицательный баланс – SP до -2 при LM от 2; смешанный профиль – LP от 3 и LM от 2; выраженные положительные связи – LP от 4 и SP от 3. При прочих значениях категория не выделяется.</p>'+
    '<p>Пороговые сигналы из представленного отчета носят ориентировочный характер. Профили и номинации возможных агрессоров/жертв не являются выводами о фактах травли.</p>';
  }
- D[NAME]={
-  author:"Редакционная рабочая форма Метоларии по образцу пяти вопросов из аналитического отчета",
-  age:"Школьные классы при понимании вопросов; решение о применении – за специалистом",
-  kind:"Групповое анкетирование о межличностных отношениях",
-  count:"5 вопросов: положительные и отрицательные связи, возможные инициаторы, пострадавшие, защитники",
-  goal:"Предварительное изучение позитивных и негативных номинаций, сообщений о травле и ресурсов поддержки класса.",
-  instructions:"Ответь на пять вопросов о взаимоотношениях в классе. Не выбирай себя. Второй вопрос можно пропустить.",
-  scoring:"LP, LM, SP, SI; отдельные номинации Q3-Q5; взаимность и плотность положительных связей; описательные сигналы для проверки.",
-  interpret:"Номинации отражают восприятие одноклассников, а не подтвержденные действия или роли. Ведите беседы и наблюдения для проверки.",
-  warning:"Для служебного пользования. Персональные данные несовершеннолетних. Формулировки вопросов – редакционная рабочая версия, не подтвержденная как дословный авторский первоисточник.",
-  workflow:"fresh06",methodType:KIND,calculator:true,version:"BULLY-FIVE-WORKING-2026",
-  indicators:["LP/LM/SP/SI","Номинации возможных инициаторов, пострадавших и защитников",
-   "Плотность и взаимность положительных связей","Охват и полнота анкет","Ориентировочные сигналы для проверки"],
-  questions:[]
- };
- if(!C.some(x=>x.name===NAME))C.push({
-  id:"bullying-sociometry-five",name:NAME,theme:"Мониторинг риска",
-  author:"Рабочая форма Метоларии по структуре пяти вопросов",
-  age:"Школьные классы",format:"Групповое анкетирование",count:"5 вопросов",
-  goal:"Выборы одноклассников, межличностные отношения и предварительные сигналы о возможной травле."
- });
- api.calculator=(d,ctx)=>d?.methodType===KIND?calculator(d,ctx):previous.calculator(d,ctx);
- api.bind=(d,ctx)=>d?.methodType===KIND?bind(d,ctx):previous.bind(d,ctx);
- api.materials=(d,flag)=>d?.methodType===KIND?blank():previous.materials(d,flag);
- api.instruction=d=>d?.methodType===KIND?instruction():previous.instruction(d);
- api.processing=d=>d?.methodType===KIND?processing():previous.processing(d);
- api.score=(d,...rest)=>d?.methodType===KIND?null:previous.score?.(d,...rest);
+ api.calculator=(d,ctx)=>hasVariant(d)?calculator(d,ctx):previous.calculator(d,ctx);
+ api.bind=(d,ctx)=>hasVariant(d)?bind(d,ctx):previous.bind(d,ctx);
+ api.materials=(d,flag)=>hasVariant(d)?blank():previous.materials(d,flag);
+ api.instruction=d=>hasVariant(d)?instruction():previous.instruction(d);
+ api.processing=d=>hasVariant(d)?processing():previous.processing(d);
+ api.score=(d,...rest)=>hasVariant(d)?null:previous.score?.(d,...rest);
+ window.PSY_SOCIO_VARIANTS={name:NAME,PRIMARY,VARIANT,activate,setVariant,
+  getVariant:()=>selectedVariant,controls,details};
  window.PSY_BULLY_SOCIO={analyze,profile,Q,mainRows,rawRows,name:NAME};
 })();
