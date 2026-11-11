@@ -282,16 +282,20 @@
  }
  function prepareCSV(people,result){
   const rows=[["Ученик","Вопрос","Критерий","Сделал выборов","Получил выборов",
-   "Взаимных связей","Статус по положительным выборам","Анкета","Учтено анкет класса",
+   "Взаимных связей","Статус по положительным выборам","Анкета","Полностью заполнено анкет класса",
    "Анализ","Отметка психолога","Причина","Комментарий",
-   "Сведения о травле (отдельные наблюдения)"]];
+   "Сведения о травле (отдельные наблюдения)",
+   "Сумма полученных за шесть вопросов","Вопросов с выборами","Разных одноклассников выбрали",
+   "Вопросов со статусом Звезда"]];
   result.forEach((s,i)=>people.forEach(p=>{
-   const d=clean(p,s),status=statusFor(p,s);
-   rows.push([p.name,i+1,s.question,d.answered?d.own.size:"",d.excluded?"":s.answered?d.received:"",
-    d.excluded?"":s.answered?d.reciprocal:"",status.name,
-    absent(p)?"Отсутствовал":reviewing(p)?"На уточнении":d.answered?"Заполнена":"Не завершена",
+   const d=clean(p,s),status=statusFor(p,s),six=sixStats(p,result);
+   rows.push([p.name,i+1,s.question,d.answered?d.own.size:"",
+    d.excluded?"":(s.responded??s.answered)?d.received:"",
+    d.excluded?"":(s.responded??s.answered)?d.reciprocal:"",status.name,
+    absent(p)?"Отсутствовал":reviewing(p)?"На уточнении":d.complete?"Заполнена":d.partial?"Частично":"Не заполнена",
     s.answered+" из "+(s.eligible??people.length),observation(p,s,people.length),
-    review(p).status,review(p).reason,review(p).note,concernLabel(p)]);
+    review(p).status,review(p).reason,review(p).note,concernLabel(p),
+    six.excluded?"":six.total,six.excluded?"":six.criteria,six.excluded?"":six.unique,six.excluded?"":six.starCriteria]);
   }));
   return rows;
  }
@@ -305,8 +309,10 @@
     if(!chosen)return "Анкета не завершена";
     if(!chosen.has(other.socioId))return "";
     return s.edges.get(other.socioId)?.has(p.socioId)?"Взаимно":"Выбран";
-   }),isAbsent?"Отсутствовал":isReview?"На уточнении":chosen?chosen.size:""];
-  }),["Получено выборов",...people.map(p=>excluded(p)?"":s.answered?s.incoming.get(p.socioId):""),s.answered?s.total:""]];
+   }),isAbsent?"Отсутствовал":isReview?"На уточнении":chosen?
+    chosen.size+(s.partialIds?.has(p.socioId)?" (частично)":""):""];
+  }),["Получено выборов",...people.map(p=>excluded(p)?"":(s.responded??s.answered)?s.incoming.get(p.socioId):""),
+   (s.responded??s.answered)?s.total:""]];
  }
  function printView(people,result,selected){
   const s=result[selected];
@@ -314,7 +320,9 @@
   const content='<h1>Социометрия класса – аналитический отчет</h1>'+
     '<p class="note">Рабочая форма с шестью редактируемыми положительными критериями. Данные конфиденциальны.</p>'+
     '<h2>Полнота обследования</h2><table><thead><tr><th>№</th><th>Критерий</th><th>Завершено анкет</th><th>Положительных выборов</th><th>Взаимных пар</th></tr></thead><tbody>'+
-    result.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(r.question)+'</td><td>'+r.answered+' из '+(r.eligible??people.length)+'</td><td>'+r.total+'</td><td>'+r.pairs+'</td></tr>').join("")+'</tbody></table>'+
+    result.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+E(r.question)+'</td><td>'+r.answered+' из '+(r.eligible??people.length)+
+      (r.partial?" (частично: "+r.partial+")":"")+'</td><td>'+r.total+'</td><td>'+r.pairs+'</td></tr>').join("")+'</tbody></table>'+
+    '<h2>Шесть вопросов – суммарный обзор</h2>'+overviewSix(people,result)+
     '<h2>Посещаемость и достоверность</h2>'+
     '<p>Отсутствовали: '+(absentees.length?absentees.map(p=>E(p.name)).join(", "):"нет")+
     '. На уточнении: '+(reviews.length?reviews.map(p=>E(p.name)).join(", "):"нет")+'.</p>'+
@@ -328,7 +336,10 @@
      (review(p).status?'<p class="note">Отметка психолога: '+E(reviewLabel(p))+'</p>':"")+
      (concernLabel(p)?'<p class="note">Отдельные сведения о травле: '+E(concernLabel(p))+'</p>':"")+
      '<table><thead><tr><th>Вопрос</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Категория</th><th>Описание</th></tr></thead><tbody>'+
-      result.map((r,i)=>{const d=clean(p,r);return '<tr><td>'+(i+1)+'</td><td>'+(d.answered?d.own.size:"–")+'</td><td>'+(d.excluded?"–":r.answered?d.received:"–")+'</td><td>'+(d.excluded?"–":r.answered?d.reciprocal:"–")+'</td><td>'+E(statusFor(p,r).name)+'</td><td>'+E(observation(p,r,people.length))+'</td></tr>';}).join("")+
+      result.map((r,i)=>{const d=clean(p,r);return '<tr><td>'+(i+1)+'</td><td>'+(d.answered?d.own.size:"–")+'</td><td>'+
+       (d.excluded?"–":(r.responded??r.answered)?d.received:"–")+'</td><td>'+
+       (d.excluded?"–":(r.responded??r.answered)?d.reciprocal:"–")+'</td><td>'+E(statusFor(p,r).name)+'</td><td>'+
+       E(observation(p,r,people.length))+'</td></tr>';}).join("")+
      '</tbody></table></section>').join("")+
     '<p class="note">Категории положительных выборов по Я. Л. Коломинскому: звезда – от 5; предпочитаемый – 3–4; принимаемый – 1–2; изолированный – 0 (при достаточной полноте данных). Отсутствовавшим и ученикам на уточнении показатели не рассчитываются. Выявление травли требует отдельной проверки.</p>';
   const css='@page{size:A4;margin:13mm}*{box-sizing:border-box}body{font:10pt/1.4 Arial,sans-serif;color:#263a30;padding:4mm}h1{font-size:17pt}h2{font-size:12pt;margin:16px 0 7px}h3{font-size:11pt;margin:13px 0 6px}p{margin:5px 0 10px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #b5c8ba;padding:4px 5px;text-align:left;vertical-align:top;font-size:8.2pt;overflow-wrap:anywhere}tr{break-inside:avoid}.psy-socio-matrix-scroll,.psy-socio-summary-scroll{overflow:visible!important}.psy-socio-matrix{width:100%;table-layout:fixed}.psy-socio-matrix th,.psy-socio-matrix td{font-size:7pt;padding:2px;text-align:center}.psy-socio-matrix th:first-child{width:22%;text-align:left}.note,.psy-socio-note,.psy-socio-legend{font-size:8pt;color:#536457}.person{break-inside:avoid}button.psy-socio-name-link{border:0;background:transparent;padding:0;margin:0;font:inherit;color:inherit;font-weight:bold;text-align:left}.psy-socio-answer-status,.psy-socio-status-badge{white-space:normal}.psy-socio-concern-cell{font-size:8pt}@media print{body>p>button{display:none}}body>p>button{margin-top:18px;padding:10px 18px;border:1px solid #8cae91;border-radius:9px;cursor:pointer;background:#eaf3eb;color:#254934;font:inherit}';
