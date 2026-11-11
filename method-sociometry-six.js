@@ -254,9 +254,17 @@
      '" aria-pressed="'+isAbsent+'">'+(isAbsent?"Вернуть к обследованию":"Отметить: отсутствовал")+'</button>'+
      '<span>'+(isAbsent?"Анкета не учитывается, введённые ранее ответы сохранены.":"Если ребёнка не было, отметьте его отсутствие. Пустой бланк сам по себе не означает отсутствие.")+'</span></div>':"")+
    (people.some(p=>p.socioLegacyArchive?.choices?.slice(2).some(x=>x?.some(Boolean)))?
-   '<details class="psy-socio-legacy"><summary>Архив ответов по прежним вопросам 3–6</summary>'+
-   '<p>Раньше эти вопросы были сформулированы иначе. Старые ответы сохранены в архиве и не включаются в новый подсчёт. Список детей и ответы на вопросы 1–2 сохранены.</p>'+
-   '<button type="button" class="btn" id="psySocLegacyCSV">Скачать архив старых ответов CSV</button></details>':"")+
+   '<details class="psy-socio-legacy" open><summary>Восстановление ответов из прежней анкеты (3–6)</summary>'+
+   '<p><strong>Архив сохранён.</strong> При исправлении вопросов прежние ответы 3–6 были исключены из подсчётов. Если вы действительно вводили отрицательные ответы по вопросам 4–6, восстановите их без повторного ввода детей.</p>'+
+   '<div class="psy-socio-restore-stats">'+
+    [2,3,4,5].map(q=>'<span>Вопрос '+(q+1)+': <strong>'+
+      people.reduce((n,p)=>n+(p.socioLegacyArchive?.choices?.[q]||[]).filter(v=>v&&v!==NONE).length,0)+
+      '</strong> выборов в архиве</span>').join("")+'</div>'+
+   '<div class="class-actions">'+
+   '<button type="button" class="btn primary" id="psySocRestoreNegative">Восстановить ответы 4–6 как отрицательные</button>'+
+   '<button type="button" class="btn" id="psySocRestoreThird">Восстановить ответы 3</button>'+
+   '<button type="button" class="btn" id="psySocLegacyCSV">Скачать архив CSV</button></div>'+
+   '<p>Восстанавливаются только пустые ответы; уже заполненные новые ответы не перезаписываются. Исходный архив остаётся нетронутым. Перед восстановлением подтвердите, что в архиве записаны ответы именно на эти вопросы.</p></details>':"")+
    '<details class="psy-socio-custom"><summary>Изменить формулировки 6 вопросов</summary>'+
    '<p class="psy-socio-note">Это редактируемые вопросы, а не стандартизованный авторский опросник. При изменении вопроса с уже введенными ответами программа предложит очистить только этот вопрос – остальные пять сохранятся.</p>'+
    q.map((question,i)=>'<label><span>Вопрос '+(i+1)+'</span><input type="text" maxlength="220" data-socio-edit="'+i+'" value="'+esc(question)+'"></label>').join("")+'</details>'+
@@ -499,6 +507,37 @@
    hint.textContent=count>=3?"Одни и те же ученики выбраны в "+count+" положительных вопросах. Можно уточнить, различал ли ребенок предложенные ситуации.":"";
   };
   document.getElementById("psySocSave")?.addEventListener("click",()=>ctx.onSave?.());
+  const restoreLegacy=(indexes)=>{
+   const people=members(rows);
+   const archived=people.filter(r=>indexes.some(q=>(r.socioLegacyArchive?.choices?.[q]||[]).some(Boolean)));
+   if(!archived.length){message("В архиве нет ответов на выбранные вопросы.");return;}
+   const label=indexes.map(q=>q+1).join(", ");
+   const questionText=indexes.map(q=>(q+1)+". "+questions(rows)[q]).join("\n");
+   if(!confirm("Восстановить ответы по вопросам "+label+"?\n"+
+     questionText+"\n\nПодтвердите, что эти ответы действительно были собраны на указанные вопросы. "+
+     "Текущие заполненные поля заменяться НЕ будут, архив сохранится."))return;
+   let restored=0,skipped=0;
+   for(const row of people)for(const q of indexes){
+    const source=row.socioLegacyArchive?.choices?.[q];
+    if(!Array.isArray(source)||!source.some(Boolean))continue;
+    const target=picks(row,q);
+    if(target.some(Boolean)){skipped++;continue;}
+    if(!Array.isArray(row.socioChoices))row.socioChoices=[];
+    row.socioChoices[q]=[0,1,2].map(i=>String(source[i]||""));
+    if(!row.socioRestoreLog)row.socioRestoreLog={};
+    row.socioRestoreLog[q]={restoredFromArchive:true};
+    restored++;
+   }
+   if(restored){
+    window.dispatchEvent(new Event("psy-assessment-dirty"));
+    ctx.onSelect?.(ctx.rowIndex);
+    message("Восстановлено "+restored+" ответов по вопросам "+label+
+     (skipped?". Заполненные новые ответы сохранены: "+skipped+".":"")+
+     " Проверьте таблицу и сохраните обследование в профиль.");
+   }else message("Ничего не перезаписано: соответствующие новые ответы уже заполнены.");
+  };
+  document.getElementById("psySocRestoreNegative")?.addEventListener("click",()=>restoreLegacy([3,4,5]));
+  document.getElementById("psySocRestoreThird")?.addEventListener("click",()=>restoreLegacy([2]));
   document.getElementById("psySocLegacyCSV")?.addEventListener("click",()=>{
    const people=members(rows);
    const out=[["Ученик","Прежний номер вопроса","Прежняя формулировка","1 выбор","2 выбор","3 выбор"]];
