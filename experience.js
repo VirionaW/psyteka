@@ -291,6 +291,8 @@ function setTab(name){
  document.getElementById('modal')?.classList.toggle('psy-main-tabs',mainTab);
  window.PSY_PORTFOLIO_VISUAL?.syncHeader?.();
  if(!methodNow){return}
+ const variantUI=window.PSY_SOCIO_VARIANTS?.name===methodNow.name?window.PSY_SOCIO_VARIANTS:null;
+ variantUI?.activate(rows);
  body.innerHTML=name==="overview"?viewOverview(methodNow):
  name==="instruction"?viewInstruction(methodNow):
  name==="materials"?viewMaterials(methodNow):
@@ -299,6 +301,7 @@ function setTab(name){
  if(name==='materials'&&window.PSY_GUIDE_STANDARD?.selectionUnsupported(methodNow.name)){
    body.innerHTML='<div class="notice">Для выбранной возрастной версии в Метоларии нет проверенного бланка или стимулов. Не используйте материалы другой редакции. Откройте вкладку «Методика / руководство» и перейдите к опубликованному источнику.</div>';
  }
+ if(variantUI)body.insertAdjacentHTML("afterbegin",variantUI.controls());
  if(name==='instruction'&&window.PSY_GUIDE_STANDARD){
    if(!['phillips58','semester2026','mspss','orekhovaHouses8','luscherHub'].includes(DETAILS[methodNow.name]?.workflow))body.innerHTML=window.PSY_GUIDE_STANDARD.supplement(methodNow.name,DETAILS[methodNow.name],methodNow,body.innerHTML);
    window.PSY_GUIDE_STANDARD.bind(()=>setTab('instruction'));
@@ -370,6 +373,13 @@ function setTab(name){
  const quickEntryContext={tab:name,calcMode,rows,rowIndex,rerender:()=>setTab("score"),selectRow:i=>{rowIndex=i;modeIndices[calcMode]=i;setTab("score");const el=document.querySelector('.psy-semester-grid select:not(:disabled), .psy-ph-grid select:not(:disabled)');if(el)el.focus();}};
  if(!window.PSY_MATCH_MSPSS?.supports(DETAILS[methodNow.name]))window.PSY_CLASS_ENTRY_2026?.enhance(DETAILS[methodNow.name],quickEntryContext);
  bindControls();
+ if(variantUI)body.querySelectorAll("[data-socio-variant]").forEach(button=>button.addEventListener("click",()=>{
+  const next=button.dataset.socioVariant;
+  if(next===variantUI.getVariant())return;
+  variantUI.setVariant(next,rows);
+  window.PSY_DRAFTS?.flush?.();
+  setTab(tabNow);
+ }));
  bindAnswerCopyControls();
  if(!window.PSY_MATCH_MSPSS?.supports(DETAILS[methodNow.name]))window.PSY_CLASS_ENTRY_2026?.bind(DETAILS[methodNow.name],quickEntryContext);
  bindBottomParticipantChooser();
@@ -485,7 +495,8 @@ function viewOverview(m){
  if(DETAILS[m.name]?.workflow==='specialToolkit')return window.PSY_SPECIAL_TOOLKIT.portfolio(DETAILS[m.name]);
  if(DETAILS[m.name]?.workflow==='specialSheet')return window.PSY_SPECIAL.portfolio(DETAILS[m.name],m);
  if(DETAILS[m.name]?.workflow==='preschoolSheet'&&DETAILS[m.name].portfolioFilled)return window.PSY_PRESCHOOL.portfolio(DETAILS[m.name]);
- const d=DETAILS[m.name]||{},o=window.PSY_PORTFOLIO_EDITS?.[m.name]||{};
+ const d=(window.PSY_SOCIO_VARIANTS?.name===m.name?window.PSY_SOCIO_VARIANTS.details(DETAILS[m.name]):DETAILS[m.name])||{},
+       o=window.PSY_PORTFOLIO_EDITS?.[m.name]||{};
  const copy=window.PSY_CONTENT_OVERRIDES;
  const shown=(field,fallback)=>copy?.display?.(m,field,fallback)??fallback;
  const author=profileText(shown("author",o.author||d.author||m.author||""));
@@ -1031,6 +1042,7 @@ function bindControls(){
    },
    onBulkAdd:names=>{
     const oldQuestions=rows.find(r=>Array.isArray(r.socioQuestions))?.socioQuestions;
+    const oldVariant=rows.find(r=>r?.socioVariant)?.socioVariant;
     if(rows.length===1&&!rows[0].name?.trim()&&!rows[0].socioChoices?.some(x=>x?.some(Boolean)))rows.splice(0,1);
     let first=-1;
     const known=new Set(rows.map(r=>String(r.name||'').trim().toLocaleLowerCase('ru')));
@@ -1039,7 +1051,8 @@ function bindControls(){
      if(!value||known.has(key))continue;
      known.add(key);
      if(first<0)first=rows.length;
-     rows.push({name:value,answers:[],...(oldQuestions?{socioQuestions:oldQuestions.slice()}:{} )});
+     rows.push({name:value,answers:[],...(oldQuestions?{socioQuestions:oldQuestions.slice()}:{} ),
+      ...(oldVariant?{socioVariant:oldVariant}:{})});
     }
     if(!rows.length)rows.push({name:'',answers:[]});
     rowIndex=first>=0?first:Math.min(rowIndex,rows.length-1);
