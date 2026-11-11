@@ -161,7 +161,7 @@
     }).join("")+'</div><div class="psy-socio-question-bottom"><button type="button" class="psy-socio-none-fill" data-socio-fill="'+i+'">Остальные – никто</button><span>Если выборов меньше трех, остальные поля можно заполнить вариантом «Никто».</span></div></section>';
   }).join(""):"";
   return '<section class="psy-new-work psy-socio"><div class="psy-socio-intro"><h3>Социометрия класса</h3>'+
-   '<p>Шесть положительных вопросов. На каждый – три выбора из своего класса или «Никто». Ответы сохраняются в обследовании и учитываются отдельно по каждому вопросу.</p></div>'+
+   '<p>В каждом поле можно написать имя и выбрать ученика из подсказок или раскрыть полный список. «Никто» всегда доступен первым. Выборы учитываются отдельно по каждому вопросу.</p></div>'+
    '<div class="psy-socio-roster"><div class="psy-socio-roster-head"><strong>Список класса</strong><span>'+people.length+' учеников</span></div>'+
    '<details class="psy-socio-add" '+(!people.length?"open":"")+'><summary>Добавить учеников списком</summary>'+
    '<p class="psy-socio-note">Вставьте список из журнала – по одному имени или условному коду в строке. Повторы не добавляются.</p>'+
@@ -351,7 +351,7 @@
   };
   document.getElementById("psySocFlag")?.addEventListener("click",()=>{
    const row=rows[ctx.rowIndex],has=!!row.socioReview?.status;
-   updateReview({status:has?"":"needs-review"});
+   updateReview(has?{status:"",reason:"",note:""}:{status:"needs-review"});
    ctx.onSelect?.(ctx.rowIndex);
   });
   document.getElementById("psySocReviewReason")?.addEventListener("change",e=>updateReview({reason:e.target.value}));
@@ -411,6 +411,7 @@
   if(d.methodType!=="sociometry")return previous.processing(d);
   return '<h3>Обработка результатов</h3><p>'+esc(d.scoring)+'</p>'+
    '<p>«Никто» фиксирует осознанное отсутствие выбора на конкретной позиции. Незаполненное поле означает, что ответ еще не внесен. Самовыбор и повтор одного ученика в рамках вопроса исключаются.</p>'+
+   '<p>Имя выбранного ученика можно ввести через поиск или выбрать из списка. «Никто» остается доступным независимо от текста поиска. Отметка «Требует уточнения» не означает ложь и не меняет подсчет.</p>'+
    '<p>Разные критерии не складываются в общий показатель популярности. Для каждого вопроса формируется собственная таблица и отдельная сводка.</p>'+
    '<p class="notice">'+esc(d.warning)+'</p>';
  };
