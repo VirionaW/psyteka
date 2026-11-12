@@ -444,11 +444,16 @@
    const input=combo.querySelector(".psy-socio-typeahead"),drop=combo.querySelector(".psy-socio-drop");
    input.addEventListener("focus",()=>drawOptions(combo,input.value===("Никто")?"":input.value));
    input.addEventListener("input",()=>{
+    // Typing a search query is not a new answer. The previous pupil remains
+    // selected until another option is explicitly confirmed.
+    drawOptions(combo,input.value);
+   });
+   input.addEventListener("blur",()=>{
     const row=rows[ctx.rowIndex],q=Number(combo.dataset.socioQuestion),slot=Number(combo.dataset.socioSlot);
     const current=picks(row,q)[slot];
-    const shown=current===NONE?"Никто":(members(rows).find(p=>p.socioId===current)?.name||"");
-    if(input.value!==shown&&current){putPick(row,q,slot,"");input.dataset.selected="";refresh();}
-    drawOptions(combo,input.value);
+    input.value=current===NONE?"Никто":(members(rows).find(p=>p.socioId===current)?.name||"");
+    input.dataset.selected=current;
+    closeCombo(combo);
    });
    input.addEventListener("keydown",e=>{
     if(e.key==="Escape"){closeCombo(combo);return;}
