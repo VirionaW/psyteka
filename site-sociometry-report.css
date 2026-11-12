@@ -259,3 +259,19 @@
 .psy-socio-restore-hint strong{color:var(--text,#79502e)}
 .psy-socio-restore-hint a{font-weight:750;text-decoration:underline;text-underline-offset:2px;color:var(--text,#885228)}
 @media(max-width:680px){.psy-socio-restore-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Overall six-question balance is separate from the criterion-specific preferred/star labels. */
+.psy-socio-six-table .psy-socio-overall{max-width:200px;line-height:1.4}
+.psy-socio-overall{display:inline-block;padding:6px 8px;border-radius:8px;font-size:11px;font-weight:750;background:var(--panel-soft,#edf1ec);color:var(--text,#49624c)}
+.psy-socio-overall.is-negative-strong,.psy-socio-overall.is-negative-balance{background:#f5e5df;color:#8d4637}
+.psy-socio-overall.is-positive-balance{background:#e0f1e6;color:#316c48}
+.psy-socio-overall.is-missing{background:#f5f1e9;color:#856c4c}
+.psy-socio-overall-summary{display:grid;gap:6px;margin:12px 0;padding:14px 16px;border:1px solid var(--stroke,#d9e4dc);border-left:4px solid #83a793;border-radius:10px;background:var(--panel-soft,#f2f7f1)}
+.psy-socio-overall-summary strong{font-size:14px;font-weight:800}
+.psy-socio-overall-summary p{font-size:12px;line-height:1.65;margin:0;color:var(--text,#495a4e)}
+.psy-socio-overall-summary.is-negative-strong,.psy-socio-overall-summary.is-negative-balance{background:var(--panel-soft,#fbf1ed);border-color:#e1c9bf;border-left-color:#bc755b}
+.psy-socio-overall-summary.is-negative-strong strong,.psy-socio-overall-summary.is-negative-balance strong{color:#8d4637}
+@media print{
+ .psy-socio-overall{font-size:8pt;padding:2px 4px;max-width:none}
+ .psy-socio-overall-summary{break-inside:avoid}
+}
