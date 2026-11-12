@@ -75,6 +75,15 @@ async function saveCurrentAssessment(){
     submit.textContent="Повторяем сохранение…";
     data=await cloud.saveAssessment(args);
    }
+   // Confirm the exact pupil rows can be read back from the same account.
+   // A successful write acknowledgement alone must not imply the answers survived.
+   const stored=await cloud.getAssessment(data.id);
+   const normalize=value=>Array.isArray(value)?value.map(normalize):
+    value&&typeof value==="object"?Object.fromEntries(Object.keys(value).sort().map(k=>[k,normalize(value[k])])):value;
+   const expected=normalize(JSON.parse(JSON.stringify(snapshotRows)));
+   const actual=normalize(stored?.snapshot?.rows||[]);
+   if(stored?.method_name!==originalMethod||JSON.stringify(actual)!==JSON.stringify(expected))
+    throw Error("Контрольная проверка сохраненных ответов не прошла. Запись не подтверждена.");
    if(methodNow?.name===originalMethod&&calcMode===originalMode){
     activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=title;
     savedModeRecords[originalMode]={id:data.id,title,baseline};
