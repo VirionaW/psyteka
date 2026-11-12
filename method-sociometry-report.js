@@ -146,7 +146,7 @@
    '<p class="psy-socio-legend">Показаны '+(s.negative?"отрицательные":"положительные")+
     ' номинации выбранного ученика. Взаимность означает выбор в обе стороны по одному критерию, а не дружбу или травлю.</p>';
  }
- function statusGroups(people,s){
+ function statusGroups(people,s,result){
   if(s.negative){
    if(!(s.responded??s.answered))return '<section class="psy-socio-status-board is-negative">'+
     '<h4>Отрицательные выборы</h4><p class="psy-socio-note">По этому вопросу пока не введено ни одной анкеты. Нулевые значения в анализ не включаются.</p></section>';
@@ -160,10 +160,15 @@
   }
   const groups=categories.map(c=>({...c,people:people.filter(p=>statusFor(p,s).key===c.key)}));
   const pending=people.filter(p=>!categories.some(c=>c.key===statusFor(p,s).key));
+  const balances=p=>{
+   const info=overallProfile(p,result),v=sixStats(p,result);
+   return v.positive==null||v.negative==null?"":'<small class="psy-socio-status-balance '+info.key+
+    '" title="'+E(info.detail)+'">LP '+v.positive+' · LM '+v.negative+'</small>';
+  };
   const makeCard=c=>'<section class="psy-socio-status-group is-'+c.key+'"><div><strong>'+E(c.name)+'</strong>'+
-   '<span>'+c.people.length+'</span></div><small>'+E(c.range)+'</small>'+
+   '<span>'+c.people.length+'</span></div><small>'+E(c.range)+' · только по вопросу</small>'+
    (c.people.length?'<ul>'+c.people.map(p=>'<li><button type="button" data-socio-focus-id="'+E(p.socioId)+'">'+
-    E(p.name)+'</button></li>').join("")+'</ul>':'<p>Нет учеников</p>')+'</section>';
+    E(p.name)+'</button>'+balances(p)+'</li>').join("")+'</ul>':'<p>Нет учеников</p>')+'</section>';
   return '<section class="psy-socio-status-board"><div class="psy-socio-section-heading"><div>'+
    '<h4>Категории по положительному вопросу</h4>'+
    '<p>«Звезда» – 5 и более, «Предпочитаемый» – 3–4 выбора в одном положительном вопросе</p></div></div>'+
@@ -323,7 +328,7 @@
     (s.negative?"отрицательный":"положительный")+' выбор:</strong> '+
     E(s.question)+(s.negative?" Отрицательные выборы не дают статусов «Звезда» и «Предпочитаемый».":
     " Категории положительных выборов относятся только к этому вопросу.")+'</p>'+
-   statusGroups(people,s)+
+   statusGroups(people,s,result)+
    '<div class="psy-socio-section-heading"><div><h4>Таблица детей · вопрос № '+(selected+1)+'</h4><p>'+E(s.question)+'</p></div>'+
    '<span class="psy-socio-coverage '+(s.answered<eligible?"is-pending":"is-ready")+'">'+
    (s.answered<eligible?"Данные предварительные":"Все учтённые анкеты завершены")+'</span></div>'+
@@ -350,7 +355,7 @@
    "Отметка психолога","Причина","Комментарий","Сведения о травле (отдельные наблюдения)",
    "LP по вопросам 1–3","LM по вопросам 4–6","SP (LP–LM)","SI (LP+LM)",
    "Разных положительных респондентов","Разных отрицательных респондентов",
-   "Положительных вопросов со статусом «Звезда»"]];
+   "Положительных вопросов со статусом «Звезда»","Общая картина по 6 вопросам"]];
   result.forEach((r,i)=>people.forEach(p=>{
    const d=clean(p,r),status=statusFor(p,r),six=sixStats(p,result);
    rows.push([p.name,i+1,r.negative?"Отрицательный":"Положительный",r.question,
@@ -363,7 +368,7 @@
     six.excluded?"":six.positive,six.excluded?"":six.negative,
     six.excluded?"":six.sp,six.excluded?"":six.si,
     six.excluded?"":six.uniquePos,six.excluded?"":six.uniqueNeg,
-    six.excluded?"":six.starCriteria]);
+    six.excluded?"":six.starCriteria,overallProfile(p,result).label]);
   }));
   return rows;
  }
@@ -404,6 +409,8 @@
      ' учеников социоматрица шире листа A4. Полная таблица доступна кнопкой «Скачать социоматрицу» в Метоларии.</p>')+
     '<h2>Индивидуальные показатели по шести вопросам</h2>'+
     people.map(p=>'<section class="person"><h3>'+E(p.name)+'</h3>'+
+     '<p><strong>Общая картина:</strong> '+E(overallProfile(p,result).label)+'. '+
+     E(overallProfile(p,result).detail)+'</p>'+
      (absent(p)?'<p class="note">Отсутствовал на обследовании – результаты не заполнены.</p>':"")+
      (review(p).status?'<p class="note">Отметка психолога: '+E(reviewLabel(p))+'</p>':"")+
      (concernLabel(p)?'<p class="note">Отдельные сведения о травле: '+E(concernLabel(p))+'</p>':"")+
