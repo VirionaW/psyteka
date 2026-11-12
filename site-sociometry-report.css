@@ -275,3 +275,8 @@
  .psy-socio-overall{font-size:8pt;padding:2px 4px;max-width:none}
  .psy-socio-overall-summary{break-inside:avoid}
 }
+
+/* Context beside positive per-question categories, so a negative balance is not hidden. */
+.psy-socio-status-balance{display:inline-block;margin:2px 0 2px 5px;padding:2px 5px;border-radius:5px;font:650 10px/1.4 system-ui,sans-serif;background:var(--panel-soft,#edf1ec);color:var(--muted,#5c665f);white-space:nowrap}
+.psy-socio-status-balance.negative-strong,.psy-socio-status-balance.negative-balance{background:#f7e7e1;color:#974c3a}
+.psy-socio-status-group li{flex-wrap:wrap;align-items:center}
