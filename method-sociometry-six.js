@@ -79,9 +79,15 @@
  const setQuestions=(rows,next)=>rows.forEach(r=>{r.socioQuestions=next.slice();});
  const picks=(r,q)=>Array.isArray(r.socioChoices?.[q])
   ?[0,1,2].map(i=>String(r.socioChoices[q][i]||"")):["","",""];
+ const markEdited=()=>window.dispatchEvent(new Event("psy-assessment-dirty"));
  const putPick=(r,q,i,value)=>{
   if(!Array.isArray(r.socioChoices))r.socioChoices=[];
-  const values=picks(r,q);values[i]=value;r.socioChoices[q]=values;
+  const values=picks(r,q);
+  if(values[i]===value)return;
+  values[i]=value;r.socioChoices[q]=values;
+  // A selected pupil must trigger draft sync; a custom suggestion click
+  // does not fire a native select/input/change event.
+  markEdited();
  };
  function observedPicks(row,q,ids){
   const values=picks(row,q),selected=values.filter(v=>v&&v!==NONE);
@@ -268,7 +274,8 @@
       people.reduce((n,p)=>n+(p.socioLegacyArchive?.choices?.[q]||[]).filter(v=>v&&v!==NONE).length,0)+
       '</strong> выборов в архиве</span>').join("")+'</div>'+
    '<div class="class-actions">'+
-   '<button type="button" class="btn primary" id="psySocRestoreNegative">Восстановить ответы 4–6 как отрицательные</button>'+
+   '<button type="button" class="btn primary" id="psySocRestoreAll">Восстановить ответы 3–6</button>'+
+   '<button type="button" class="btn" id="psySocRestoreNegative">Только 4–6 как отрицательные</button>'+
    '<button type="button" class="btn" id="psySocRestoreThird">Восстановить ответы 3</button>'+
    '<button type="button" class="btn" id="psySocLegacyCSV">Скачать архив CSV</button></div>'+
    '<p>Восстанавливаются только пустые ответы; уже заполненные новые ответы не перезаписываются. Исходный архив остаётся нетронутым. Перед восстановлением подтвердите, что в архиве записаны ответы именно на эти вопросы.</p></details>':"")+
@@ -333,7 +340,7 @@
    if(rows.some((r,i)=>i!==ctx.rowIndex&&String(r.name||"").trim().toLocaleLowerCase("ru")===name.toLocaleLowerCase("ru"))){
     e.target.value=rows[ctx.rowIndex].name;message("Этот ученик уже есть в списке.");return;
    }
-   rows[ctx.rowIndex].name=name;ctx.onSelect?.(ctx.rowIndex);
+   rows[ctx.rowIndex].name=name;markEdited();ctx.onSelect?.(ctx.rowIndex);
   });
   document.querySelectorAll("[data-socio-edit]").forEach(el=>el.addEventListener("change",()=>{
    const q=questions(rows),index=Number(el.dataset.socioEdit);
@@ -345,7 +352,7 @@
     el.value=old;return;
    }
    if(answered)rows.forEach(r=>{if(Array.isArray(r.socioChoices))r.socioChoices[index]=["","",""];});
-   q[index]=next;setQuestions(rows,q);
+   q[index]=next;setQuestions(rows,q);markEdited();
    ctx.onSelect?.(ctx.rowIndex);
   }));
   const focusAnswer=(question,slot)=>{
@@ -543,6 +550,7 @@
      " Проверьте таблицу и сохраните обследование в профиль.");
    }else message("Ничего не перезаписано: соответствующие новые ответы уже заполнены.");
   };
+  document.getElementById("psySocRestoreAll")?.addEventListener("click",()=>restoreLegacy([2,3,4,5]));
   document.getElementById("psySocRestoreNegative")?.addEventListener("click",()=>restoreLegacy([3,4,5]));
   document.getElementById("psySocRestoreThird")?.addEventListener("click",()=>restoreLegacy([2]));
   document.getElementById("psySocLegacyCSV")?.addEventListener("click",()=>{
