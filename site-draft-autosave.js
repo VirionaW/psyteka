@@ -141,7 +141,14 @@
   if(e.target?.closest?.("#modal button"))setTimeout(schedule,0);
  },true);
  window.addEventListener("psy-processing-view-change",()=>{setTimeout(restore,0)});
- window.addEventListener("psy-assessment-dirty",schedule);
+ window.addEventListener("psy-assessment-dirty",()=>{
+  if(state()?.assessmentId){
+   status("Есть несохранённые изменения в результате. Нажмите «Сохранить результат в профиль». Черновик отдельно не перезаписывается.",true);
+  }else schedule();
+ });
+ window.addEventListener("psy-assessment-saved",()=>{
+  status("Результат сохранён в профиле, ответы проверены чтением из облака.",false);
+ });
  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")flush()});
  window.addEventListener("pagehide",flush);
  window.PSY_DRAFTS={flush,restore,showRecovery};
