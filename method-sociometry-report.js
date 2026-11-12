@@ -197,6 +197,25 @@
    negCriteria:counts.slice(3,6).filter(v=>v>0).length,
    starCriteria:result.slice(0,3).filter(r=>statusFor(person,r).key==="star").length};
  }
+ // Descriptive six-question balance, NOT a normed Moreno/Kolominsky category.
+ function overallProfile(person,result){
+  const v=sixStats(person,result);
+  if(v.excluded)return {key:"excluded",label:absent(person)?"Отсутствовал":"На уточнении",detail:"В общей оценке не участвует."};
+  if(v.positive===null||v.negative===null)return {key:"missing",label:"Данных для сравнения нет",
+   detail:"Нужны ответы и на положительные вопросы 1–3, и на отрицательные 4–6."};
+  const basis="LP "+v.positive+", LM "+v.negative+", SP "+v.sp+
+   "; разных одноклассников: положительно "+v.uniquePos+", отрицательно "+v.uniqueNeg+".";
+  const note=" Описательная характеристика, не доказательство травли и не диагноз.";
+  if(v.negative>v.positive){
+   const strong=v.negative>=2*Math.max(1,v.positive)&&v.negative-v.positive>=3;
+   return {key:strong?"negative-strong":"negative-balance",
+    label:strong?"Выраженное преобладание отрицательных выборов":"Преобладание отрицательных выборов",
+    detail:basis+" Нужно индивидуально уточнить причины избегания, социальную ситуацию и безопасность ребёнка."+note};
+  }
+  if(v.positive>v.negative)return {key:"positive-balance",label:"Преобладание положительных выборов",
+   detail:basis+" Положительных выборов больше, но важен контекст отдельных вопросов."+note};
+  return {key:"even-balance",label:"Равный баланс выборов",detail:basis+note};
+ }
  function overviewSix(people,result,forPrint=false){
   const ordered=people.map(person=>({person,stats:sixStats(person,result)}))
    .sort((a,b)=>Number(a.stats.excluded)-Number(b.stats.excluded)||
@@ -207,23 +226,26 @@
    '<p>LP – полученные положительные номинации (1–3), LM – отрицательные (4–6); SP = LP − LM, SI = LP + LM</p></div></div>'+
    '<div class="psy-socio-summary-scroll"><table class="psy-socio-six-table"><thead><tr>'+
    '<th>Ученик</th><th>LP (1–3)</th><th>LM (4–6)</th><th>SP</th><th>SI</th>'+
-   '<th>Разных: + / −</th><th>«Звезда» по 1–3</th>'+
+   '<th>Разных: + / −</th><th>Общая картина</th><th>«Звезда» по 1–3</th>'+
    (forPrint?'<th>По вопросам 1–3 / 4–6</th>':
     result.map((_,i)=>'<th class="'+(i>=3?"is-negative":"is-positive")+'">'+
      (i>=3?"− ":"+ ")+'В'+(i+1)+'</th>').join(""))+'</tr></thead><tbody>'+
    ordered.map(({person,stats})=>'<tr><th scope="row"><button type="button" class="psy-socio-name-link" data-socio-focus-id="'+
     E(person.socioId)+'">'+E(person.name)+'</button></th>'+
-    (stats.excluded?'<td colspan="'+(forPrint?7:12)+'">'+(absent(person)?"Отсутствовал":"На уточнении")+
+    (stats.excluded?'<td colspan="'+(forPrint?8:13)+'">'+(absent(person)?"Отсутствовал":"На уточнении")+
       ' – показатели не рассчитываются</td>':
      '<td class="psy-socio-six-main">'+(stats.positive??"–")+'</td><td class="psy-socio-six-negative">'+(stats.negative??"–")+
      '</td><td>'+(stats.sp??"–")+'</td><td>'+(stats.si??"–")+'</td>'+
-     '<td>'+(stats.uniquePos??"–")+' / '+(stats.uniqueNeg??"–")+'</td><td>'+stats.starCriteria+'</td>'+
+     '<td>'+(stats.uniquePos??"–")+' / '+(stats.uniqueNeg??"–")+'</td>'+
+     '<td><span class="psy-socio-overall is-'+overallProfile(person,result).key+
+      '" title="'+E(overallProfile(person,result).detail)+'">'+E(overallProfile(person,result).label)+'</span></td>'+
+     '<td>'+stats.starCriteria+'</td>'+
      (forPrint?'<td>'+stats.counts.slice(0,3).map((n,i)=>(result[i].responded??result[i].answered)?n:"–").join(" / ")+
       ' | '+stats.counts.slice(3).map((n,i)=>(result[i+3].responded??result[i+3].answered)?n:"–").join(" / ")+'</td>':
       stats.counts.map((n,i)=>'<td>'+(!(result[i].responded??result[i].answered)?"–":
        i<3&&n>=5?'<strong class="psy-socio-count-star">★ '+n+'</strong>':n)+'</td>').join("")))+
    '</tr>').join("")+'</tbody></table></div>'+
-   '<p class="psy-socio-note">«–» означает отсутствие введённых ответов, а не нулевое число выборов. LP, LM, SP и SI – описательные показатели, не диагнозы. При неполном обследовании результаты предварительные.</p></section>';
+   '<p class="psy-socio-note">«Общая картина» описывает баланс LP и LM по шести вопросам, без нормативного ярлыка. Статус «Предпочитаемый» относится только к отдельному положительному вопросу и не отменяет отрицательных выборов. «–» означает отсутствие ответов; результаты неполного обследования предварительные.</p></section>';
  }
  function individual(people,result){
   const target=people.find(p=>p.socioId===selectedChild)||people[0];
@@ -239,7 +261,10 @@
    (!six.excluded?'<div class="psy-socio-person-six"><span><b>'+(six.positive??"–")+'</b><small>положительных (LP)</small></span>'+
      '<span><b>'+(six.negative??"–")+'</b><small>отрицательных (LM)</small></span>'+
      '<span><b>'+(six.sp??"–")+'</b><small>баланс (SP)</small></span>'+
-     '<span><b>'+(six.si??"–")+'</b><small>заметность (SI)</small></span></div>':"")+
+     '<span><b>'+(six.si??"–")+'</b><small>заметность (SI)</small></span></div>'+
+     '<div class="psy-socio-overall-summary is-'+overallProfile(target,result).key+'">'+
+     '<strong>'+E(overallProfile(target,result).label)+'</strong>'+
+     '<p>'+E(overallProfile(target,result).detail)+'</p></div>':"")+
    '<div class="psy-socio-summary-scroll"><table class="psy-socio-person-table"><thead><tr><th>Вопрос</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Статус</th><th>Конкретный вывод</th></tr></thead><tbody>'+
    result.map((s,i)=>{
     const d=clean(target,s),st=statusFor(target,s);
