@@ -348,10 +348,18 @@
    if(!next){el.value=old;message("Вопрос не может быть пустым.");return;}
    if(next===old)return;
    const answered=rows.some(r=>r.socioChoices?.[index]?.some(v=>v&&v!==""));
-   if(answered&&!confirm("По этому вопросу уже есть ответы. Изменить формулировку и очистить только ответы по этому вопросу? Остальные пять вопросов сохранятся.")){
+   if(answered&&!confirm("По этому вопросу уже есть ответы. Сохранить их в историю, изменить формулировку и начать новый ответ по этому вопросу? Остальные пять вопросов не изменятся.")){
     el.value=old;return;
    }
-   if(answered)rows.forEach(r=>{if(Array.isArray(r.socioChoices))r.socioChoices[index]=["","",""];});
+   if(answered)rows.forEach(r=>{
+    if(!Array.isArray(r.socioChoices)||!r.socioChoices[index]?.some(Boolean))return;
+    if(!Array.isArray(r.socioQuestionHistory))r.socioQuestionHistory=[];
+    r.socioQuestionHistory.push({
+     question:index+1,originalText:old,newText:next,
+     choices:picks(r,index).slice(),date:new Date().toISOString()
+    });
+    r.socioChoices[index]=["","",""];
+   });
    q[index]=next;setQuestions(rows,q);markEdited();
    ctx.onSelect?.(ctx.rowIndex);
   }));
