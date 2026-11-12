@@ -24,7 +24,10 @@
   Object.keys(r).some(k=>!["name","answers","ageYears","sex","schoolGrade","ageManual","attendance"].includes(k)&&r[k]!=null&&JSON.stringify(r[k])!=="{}"))}
  function take(){try{const d=bridge()?.get?.();return d&&filled(d.snapshot)?d:null}catch(_){return null}}
  const keyOf=d=>d.methodName+"::"+d.snapshot.calcMode;
- const equalRows=(a,b)=>JSON.stringify(a?.rows||[])===JSON.stringify(b?.rows||[]);
+ // Supabase stores jsonb and may reorder object keys. Compare values, not key order.
+ const canonical=value=>Array.isArray(value)?value.map(canonical):
+  value&&typeof value==="object"?Object.fromEntries(Object.keys(value).sort().map(k=>[k,canonical(value[k])])):value;
+ const equalRows=(a,b)=>JSON.stringify(canonical(a?.rows||[]))===JSON.stringify(canonical(b?.rows||[]));
  function recoveryControl(){
   let button=modal.querySelector("#psyDraftRecover");
   if(!button){
