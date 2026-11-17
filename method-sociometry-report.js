@@ -227,15 +227,19 @@
    const sp=z(plus.map((v,i)=>v-minus[i])),si=z(plus.map((v,i)=>v+minus[i]));
    samples.forEach(({p,v},i)=>{
     const zp=plus[i],zm=minus[i],zsp=sp[i],zsi=si[i];
-    let key="average",label="Без выраженной крайней категории";
-    if(zp>0&&zm>0&&zsi>1){key="controversial";label="Противоречивое положение";}
-    else if(zp>0&&zm<0&&zsp>1){key="popular";label="Положительно востребованный";}
-    else if(zp<0&&zm>0&&zsp< -1){key="rejected";label="Выраженное отрицательное отношение";}
-    else if(zp<0&&zm<0&&zsi< -1){key="neglected";label="Низкая социальная заметность";}
+    let key="average",label="Среднее положение";
+    if(zp>0&&zm>0&&zsi>1){key="controversial";label="Противоречивый";}
+    else if(zp>0&&zm<0&&zsp>1){key="popular";label="Звезда (популярный)";}
+    else if(zp<0&&zm>0&&zsp< -1){key="rejected";label="Отвергаемый";}
+    else if(zp<0&&zm<0&&zsi< -1){key="neglected";label="Незаметный (игнорируемый)";}
+    else if(zp>0&&zm<0){key="preferred";label="Предпочитаемый";}
     profiles.set(p.socioId,{key,label,
       detail:"LP "+v.positive+", LM "+v.negative+", SP "+v.sp+", SI "+v.si+
        "; zSP "+zsp.toFixed(2)+", zSI "+zsi.toFixed(2)+
-       ". Предварительная категория относительно класса. Это не диагноз и не доказательство травли."+
+       ". Предварительная категория относительно класса. "+
+       (key==="preferred"?"«Предпочитаемый» здесь описательная подгруппа среднего статуса, не отдельная нормативная группа. ":"")+
+       (v.positive===0&&v.negative===0?"Ни одного выбора во всех шести вопросах. ":"")+
+       "Не диагноз и не доказательство травли."+
        (!result[0].edges.has(p.socioId)?" Собственный бланк по первому критерию не заполнен.":"")});
    });
   }
@@ -248,6 +252,29 @@
   return standardProfiles(people,result).get(person.socioId)||
    {key:"missing",label:"Недостаточно данных",detail:"Недостаточно данных для сравнения."};
  }
+ function groupsSix(people,result){
+  const profiles=standardProfiles(people,result);
+  const kinds=[
+   ["popular","Звёзды"],["preferred","Предпочитаемые"],
+   ["controversial","Противоречивые"],["rejected","Отвергаемые"],
+   ["neglected","Незаметные"],["average","Среднее положение"]
+  ];
+  const groups=kinds.map(([key,label])=>({
+   key,label,pupils:people.filter(p=>profiles.get(p.socioId)?.key===key)
+  }));
+  const other=people.filter(p=>!excluded(p)&&!profiles.has(p.socioId));
+  return '<section class="psy-socio-groups-overview">'+
+   '<h4>Кто есть кто в классе - социометрические статусы</h4>'+
+   '<div class="psy-socio-groups-grid">'+groups.map(g=>
+    '<div class="psy-socio-group-cell is-'+g.key+'"><strong>'+E(g.label)+
+    ' <span>'+g.pupils.length+'</span></strong><p>'+
+    (g.pupils.length?g.pupils.map(p=>'<button type="button" data-socio-focus-id="'+E(p.socioId)+'">'+E(p.name)+'</button>').join(', '):'Нет учеников')+
+    '</p></div>'
+   ).join('')+'</div>'+
+   (other.length?'<p>Пока не распределены: '+other.map(p=>E(p.name)).join(', ')+'</p>':'')+
+   '<p class="psy-socio-note">«Предпочитаемые» - описательная подгруппа среднего статуса с LP выше и LM ниже среднего по классу. «Изгой» не устанавливается этой методикой. «Никого не назвали» определяется отдельно, когда LP = 0 и LM = 0.</p>'+
+   '</section>';
+ }
  function overviewSix(people,result,forPrint=false){
   const ordered=people.map(person=>({person,stats:sixStats(person,result)}))
    .sort((a,b)=>Number(a.stats.excluded)-Number(b.stats.excluded)||
@@ -255,10 +282,11 @@
     a.person.name.localeCompare(b.person.name,"ru"));
   return '<section class="psy-socio-six-overview"><div class="psy-socio-section-heading"><div>'+
    '<h4>Итог по 6 вопросам: положительные и отрицательные отдельно</h4>'+
-   '<p>LP – полученные положительные номинации (1–3), LM – отрицательные (4–6); SP = LP − LM, SI = LP + LM</p></div></div>'+
+   '<p>LP - положительные (1–3), LM - отрицательные (4–6), SP = LP − LM, SI = LP + LM</p></div></div>'+
+   groupsSix(people,result)+
    '<div class="psy-socio-summary-scroll"><table class="psy-socio-six-table"><thead><tr>'+
    '<th>Ученик</th><th>LP (1–3)</th><th>LM (4–6)</th><th>SP</th><th>SI</th>'+
-   '<th>Разных: + / −</th><th>Сравнительная категория</th><th>Вопросов с 5+ положит.</th>'+
+   '<th>Разных: + / −</th><th>Социометрический статус</th><th>Вопросов с 5+ положит.</th>'+
    (forPrint?'<th>По вопросам 1–3 / 4–6</th>':
     result.map((_,i)=>'<th class="'+(i>=3?"is-negative":"is-positive")+'">'+
      (i>=3?"− ":"+ ")+'В'+(i+1)+'</th>').join(""))+'</tr></thead><tbody>'+
@@ -277,7 +305,7 @@
       stats.counts.map((n,i)=>'<td>'+(!(result[i].responded??result[i].answered)?"–":
        i<3&&n>=5?'<strong class="psy-socio-count-star">'+n+'</strong>':n)+'</td>').join("")))+
    '</tr>').join("")+'</tbody></table></div>'+
-   '<p class="psy-socio-note">Категории рассчитаны с z-нормированием LP и LM внутри класса по исследовательской схеме Coie/Dodge. Для шести ситуационных вопросов это предварительное применение, не официальный ключ Морено. Высокий показатель одного вопроса не равен статусу «звезды».</p></section>';
+   '<p class="psy-socio-note">Статус по Coie/Dodge рассчитан относительно класса по стандартизированным LP и LM. «Предпочитаемые» - описательная подгруппа среднего статуса. Для данного шестикритериального бланка результат предварительный. Буллинг не исследовался.</p></section>';
  }
  function individual(people,result){
   const target=people.find(p=>p.socioId===selectedChild)||people[0];
@@ -382,7 +410,7 @@
    "Отметка психолога","Причина","Комментарий","Сведения о травле (отдельные наблюдения)",
    "LP по вопросам 1–3","LM по вопросам 4–6","SP (LP–LM)","SI (LP+LM)",
    "Разных положительных респондентов","Разных отрицательных респондентов",
-   "Положительных вопросов с 5 и более выборами","Сравнительная категория по 6 вопросам"]];
+   "Положительных вопросов с 5 и более выборами","Социометрический статус по 6 вопросам"]];
   result.forEach((r,i)=>people.forEach(p=>{
    const d=clean(p,r),status=statusFor(p,r),six=sixStats(p,result);
    rows.push([p.name,i+1,r.negative?"Отрицательный":"Положительный",r.question,
