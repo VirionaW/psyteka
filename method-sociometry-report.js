@@ -33,10 +33,10 @@
  // These four positive-choice categories are the Kolominsky thresholds;
  // they do not measure hostility, rejection, bullying or diagnoses.
  const categories=[
-  {key:"star",name:"Звёзды",short:"Звезда",range:"5 и более выборов"},
-  {key:"preferred",name:"Предпочитаемые",short:"Предпочитаемый",range:"3–4 выбора"},
-  {key:"accepted",name:"Принимаемые",short:"Принимаемый",range:"1–2 выбора"},
-  {key:"isolated",name:"Изолированные",short:"Изолированный",range:"0 выборов"}
+  {key:"star",name:"5+ положительных выборов",short:"5+ выборов",range:"По одному вопросу"},
+  {key:"preferred",name:"3–4 положительных выбора",short:"3–4 выбора",range:"По одному вопросу"},
+  {key:"accepted",name:"1–2 положительных выбора",short:"1–2 выбора",range:"По одному вопросу"},
+  {key:"isolated",name:"0 положительных выборов",short:"0 выборов",range:"По одному вопросу"}
  ];
  const coverageEnough=s=>s.answered>=5&&(s.eligible||0)>0&&s.answered/(s.eligible||1)>=0.75;
  const statusFor=(p,s)=>{
@@ -161,7 +161,7 @@
   const groups=categories.map(c=>({...c,people:people.filter(p=>statusFor(p,s).key===c.key)}));
   const pending=people.filter(p=>!categories.some(c=>c.key===statusFor(p,s).key));
   const balances=p=>{
-   const info=overallProfile(p,result),v=sixStats(p,result);
+   const info=overallProfile(p,result,people),v=sixStats(p,result);
    return v.positive==null||v.negative==null?"":'<small class="psy-socio-status-balance '+info.key+
     '" title="'+E(info.detail)+'">LP '+v.positive+' · LM '+v.negative+'</small>';
   };
@@ -170,14 +170,14 @@
    (c.people.length?'<ul>'+c.people.map(p=>'<li><button type="button" data-socio-focus-id="'+E(p.socioId)+'">'+
     E(p.name)+'</button>'+balances(p)+'</li>').join("")+'</ul>':'<p>Нет учеников</p>')+'</section>';
   return '<section class="psy-socio-status-board"><div class="psy-socio-section-heading"><div>'+
-   '<h4>Категории по положительному вопросу</h4>'+
-   '<p>«Звезда» – 5 и более, «Предпочитаемый» – 3–4 выбора в одном положительном вопросе</p></div></div>'+
+   '<h4>Частота положительных выборов по одному вопросу</h4>'+
+   '<p>Количество номинаций по критерию не равно общей категории ребёнка</p></div></div>'+
    '<div class="psy-socio-status-groups">'+groups.map(makeCard).join("")+
     (pending.length?'<section class="psy-socio-status-group is-other"><div><strong>Без категории</strong><span>'+
      pending.length+'</span></div><ul>'+pending.map(p=>'<li><button type="button" data-socio-focus-id="'+
       E(p.socioId)+'">'+E(p.name)+'</button> – '+E(statusFor(p,s).name)+'</li>').join("")+
     '</ul></section>':"")+'</div>'+
-   '<p class="psy-socio-note">Категории относятся только к положительным вопросам 1–3. При неполном охвате результаты предварительны, а нулевой выбор не считается подтверждённой изоляцией. <a href="https://psyjournals.ru/journals/sociosphera/archive/2010_n2/35334" target="_blank" rel="noopener noreferrer">Основание категорий</a>.</p></section>';
+   '<p class="psy-socio-note">Высокое число выборов по одному вопросу не означает статус «звезды» в классе. Нуль в одном критерии не доказывает изоляцию. Общая категория по сумме шести вопросов показана выше.</p></section>';
  }
  function sixStats(person,result){
   if(excluded(person))return {excluded:true,counts:[],positive:null,negative:null,sp:null,si:null,
@@ -202,24 +202,51 @@
    negCriteria:counts.slice(3,6).filter(v=>v>0).length,
    starCriteria:result.slice(0,3).filter(r=>statusFor(person,r).key==="star").length};
  }
- // Descriptive six-question balance, NOT a normed Moreno/Kolominsky category.
- function overallProfile(person,result){
-  const v=sixStats(person,result);
-  if(v.excluded)return {key:"excluded",label:absent(person)?"Отсутствовал":"На уточнении",detail:"В общей оценке не участвует."};
-  if(v.positive===null||v.negative===null)return {key:"missing",label:"Данных для сравнения нет",
-   detail:"Нужны ответы и на положительные вопросы 1–3, и на отрицательные 4–6."};
-  const basis="LP "+v.positive+", LM "+v.negative+", SP "+v.sp+
-   "; разных одноклассников: положительно "+v.uniquePos+", отрицательно "+v.uniqueNeg+".";
-  const note=" Описательная характеристика, не доказательство травли и не диагноз.";
-  if(v.negative>v.positive){
-   const strong=v.negative>=2*Math.max(1,v.positive)&&v.negative-v.positive>=3;
-   return {key:strong?"negative-strong":"negative-balance",
-    label:strong?"Выраженное преобладание отрицательных выборов":"Преобладание отрицательных выборов",
-    detail:basis+" Нужно индивидуально уточнить причины избегания, социальную ситуацию и безопасность ребёнка."+note};
+ // Exploratory extension of Coie and Dodge (1983) to three positive and
+ // three negative situational criteria. NOT a standardized Moreno key.
+ const statusCache=new WeakMap();
+ function standardProfiles(people,result){
+  const cached=statusCache.get(result);
+  if(cached&&cached.people===people)return cached.profiles;
+  const profiles=new Map();
+  const valid=people.filter(p=>!excluded(p)&&p.socioId);
+  const nPos=Math.min(...result.slice(0,3).map(r=>r.responded??r.answered));
+  const nNeg=Math.min(...result.slice(3,6).map(r=>r.responded??r.answered));
+  const samples=valid.map(p=>({p,v:sixStats(p,result)}))
+   .filter(x=>x.v.positive!==null&&x.v.negative!==null);
+  if(nPos<5||nNeg<5||samples.length<5){
+   valid.forEach(p=>profiles.set(p.socioId,{key:"missing",label:"Недостаточно анкет",
+    detail:"Недостаточно ответов по положительным и отрицательным вопросам для сопоставления с классом."}));
+  }else{
+   const z=values=>{
+    const avg=values.reduce((a,b)=>a+b,0)/values.length;
+    const sd=Math.sqrt(values.reduce((a,b)=>a+(b-avg)**2,0)/values.length);
+    return values.map(v=>sd>0?(v-avg)/sd:0);
+   };
+   const plus=z(samples.map(x=>x.v.positive)),minus=z(samples.map(x=>x.v.negative));
+   const sp=z(plus.map((v,i)=>v-minus[i])),si=z(plus.map((v,i)=>v+minus[i]));
+   samples.forEach(({p,v},i)=>{
+    const zp=plus[i],zm=minus[i],zsp=sp[i],zsi=si[i];
+    let key="average",label="Без выраженной крайней категории";
+    if(zp>0&&zm>0&&zsi>1){key="controversial";label="Противоречивое положение";}
+    else if(zp>0&&zm<0&&zsp>1){key="popular";label="Положительно востребованный";}
+    else if(zp<0&&zm>0&&zsp< -1){key="rejected";label="Выраженное отрицательное отношение";}
+    else if(zp<0&&zm<0&&zsi< -1){key="neglected";label="Низкая социальная заметность";}
+    profiles.set(p.socioId,{key,label,
+      detail:"LP "+v.positive+", LM "+v.negative+", SP "+v.sp+", SI "+v.si+
+       "; zSP "+zsp.toFixed(2)+", zSI "+zsi.toFixed(2)+
+       ". Предварительная категория относительно класса. Это не диагноз и не доказательство травли."+
+       (!result[0].edges.has(p.socioId)?" Собственный бланк по первому критерию не заполнен.":"")});
+   });
   }
-  if(v.positive>v.negative)return {key:"positive-balance",label:"Преобладание положительных выборов",
-   detail:basis+" Положительных выборов больше, но важен контекст отдельных вопросов."+note};
-  return {key:"even-balance",label:"Равный баланс выборов",detail:basis+note};
+  statusCache.set(result,{people,profiles});
+  return profiles;
+ }
+ function overallProfile(person,result,people){
+  if(excluded(person))return {key:"excluded",label:absent(person)?"Отсутствовал":"На уточнении",
+   detail:"Не участвует в сравнительной классификации."};
+  return standardProfiles(people,result).get(person.socioId)||
+   {key:"missing",label:"Недостаточно данных",detail:"Недостаточно данных для сравнения."};
  }
  function overviewSix(people,result,forPrint=false){
   const ordered=people.map(person=>({person,stats:sixStats(person,result)}))
@@ -231,7 +258,7 @@
    '<p>LP – полученные положительные номинации (1–3), LM – отрицательные (4–6); SP = LP − LM, SI = LP + LM</p></div></div>'+
    '<div class="psy-socio-summary-scroll"><table class="psy-socio-six-table"><thead><tr>'+
    '<th>Ученик</th><th>LP (1–3)</th><th>LM (4–6)</th><th>SP</th><th>SI</th>'+
-   '<th>Разных: + / −</th><th>Общая картина</th><th>«Звезда» по 1–3</th>'+
+   '<th>Разных: + / −</th><th>Сравнительная категория</th><th>Вопросов с 5+ положит.</th>'+
    (forPrint?'<th>По вопросам 1–3 / 4–6</th>':
     result.map((_,i)=>'<th class="'+(i>=3?"is-negative":"is-positive")+'">'+
      (i>=3?"− ":"+ ")+'В'+(i+1)+'</th>').join(""))+'</tr></thead><tbody>'+
@@ -242,15 +269,15 @@
      '<td class="psy-socio-six-main">'+(stats.positive??"–")+'</td><td class="psy-socio-six-negative">'+(stats.negative??"–")+
      '</td><td>'+(stats.sp??"–")+'</td><td>'+(stats.si??"–")+'</td>'+
      '<td>'+(stats.uniquePos??"–")+' / '+(stats.uniqueNeg??"–")+'</td>'+
-     '<td><span class="psy-socio-overall is-'+overallProfile(person,result).key+
-      '" title="'+E(overallProfile(person,result).detail)+'">'+E(overallProfile(person,result).label)+'</span></td>'+
+     '<td><span class="psy-socio-overall is-'+overallProfile(person,result,people).key+
+      '" title="'+E(overallProfile(person,result,people).detail)+'">'+E(overallProfile(person,result,people).label)+'</span></td>'+
      '<td>'+stats.starCriteria+'</td>'+
      (forPrint?'<td>'+stats.counts.slice(0,3).map((n,i)=>(result[i].responded??result[i].answered)?n:"–").join(" / ")+
       ' | '+stats.counts.slice(3).map((n,i)=>(result[i+3].responded??result[i+3].answered)?n:"–").join(" / ")+'</td>':
       stats.counts.map((n,i)=>'<td>'+(!(result[i].responded??result[i].answered)?"–":
-       i<3&&n>=5?'<strong class="psy-socio-count-star">★ '+n+'</strong>':n)+'</td>').join("")))+
+       i<3&&n>=5?'<strong class="psy-socio-count-star">'+n+'</strong>':n)+'</td>').join("")))+
    '</tr>').join("")+'</tbody></table></div>'+
-   '<p class="psy-socio-note">«Общая картина» описывает баланс LP и LM по шести вопросам, без нормативного ярлыка. Статус «Предпочитаемый» относится только к отдельному положительному вопросу и не отменяет отрицательных выборов. «–» означает отсутствие ответов; результаты неполного обследования предварительные.</p></section>';
+   '<p class="psy-socio-note">Категории рассчитаны с z-нормированием LP и LM внутри класса по исследовательской схеме Coie/Dodge. Для шести ситуационных вопросов это предварительное применение, не официальный ключ Морено. Высокий показатель одного вопроса не равен статусу «звезды».</p></section>';
  }
  function individual(people,result){
   const target=people.find(p=>p.socioId===selectedChild)||people[0];
@@ -267,9 +294,9 @@
      '<span><b>'+(six.negative??"–")+'</b><small>отрицательных (LM)</small></span>'+
      '<span><b>'+(six.sp??"–")+'</b><small>баланс (SP)</small></span>'+
      '<span><b>'+(six.si??"–")+'</b><small>заметность (SI)</small></span></div>'+
-     '<div class="psy-socio-overall-summary is-'+overallProfile(target,result).key+'">'+
-     '<strong>'+E(overallProfile(target,result).label)+'</strong>'+
-     '<p>'+E(overallProfile(target,result).detail)+'</p></div>':"")+
+     '<div class="psy-socio-overall-summary is-'+overallProfile(target,result,people).key+'">'+
+     '<strong>'+E(overallProfile(target,result,people).label)+'</strong>'+
+     '<p>'+E(overallProfile(target,result,people).detail)+'</p></div>':"")+
    '<div class="psy-socio-summary-scroll"><table class="psy-socio-person-table"><thead><tr><th>Вопрос</th><th>Сделал</th><th>Получил</th><th>Взаимно</th><th>Статус</th><th>Конкретный вывод</th></tr></thead><tbody>'+
    result.map((s,i)=>{
     const d=clean(target,s),st=statusFor(target,s);
@@ -355,7 +382,7 @@
    "Отметка психолога","Причина","Комментарий","Сведения о травле (отдельные наблюдения)",
    "LP по вопросам 1–3","LM по вопросам 4–6","SP (LP–LM)","SI (LP+LM)",
    "Разных положительных респондентов","Разных отрицательных респондентов",
-   "Положительных вопросов со статусом «Звезда»","Общая картина по 6 вопросам"]];
+   "Положительных вопросов с 5 и более выборами","Сравнительная категория по 6 вопросам"]];
   result.forEach((r,i)=>people.forEach(p=>{
    const d=clean(p,r),status=statusFor(p,r),six=sixStats(p,result);
    rows.push([p.name,i+1,r.negative?"Отрицательный":"Положительный",r.question,
@@ -368,7 +395,7 @@
     six.excluded?"":six.positive,six.excluded?"":six.negative,
     six.excluded?"":six.sp,six.excluded?"":six.si,
     six.excluded?"":six.uniquePos,six.excluded?"":six.uniqueNeg,
-    six.excluded?"":six.starCriteria,overallProfile(p,result).label]);
+    six.excluded?"":six.starCriteria,overallProfile(p,result,people).label]);
   }));
   return rows;
  }
@@ -409,8 +436,8 @@
      ' учеников социоматрица шире листа A4. Полная таблица доступна кнопкой «Скачать социоматрицу» в Метоларии.</p>')+
     '<h2>Индивидуальные показатели по шести вопросам</h2>'+
     people.map(p=>'<section class="person"><h3>'+E(p.name)+'</h3>'+
-     '<p><strong>Общая картина:</strong> '+E(overallProfile(p,result).label)+'. '+
-     E(overallProfile(p,result).detail)+'</p>'+
+     '<p><strong>Общая картина:</strong> '+E(overallProfile(p,result,people).label)+'. '+
+     E(overallProfile(p,result,people).detail)+'</p>'+
      (absent(p)?'<p class="note">Отсутствовал на обследовании – результаты не заполнены.</p>':"")+
      (review(p).status?'<p class="note">Отметка психолога: '+E(reviewLabel(p))+'</p>':"")+
      (concernLabel(p)?'<p class="note">Отдельные сведения о травле: '+E(concernLabel(p))+'</p>':"")+
@@ -420,7 +447,7 @@
        (d.excluded?"–":(r.responded??r.answered)?d.reciprocal:"–")+'</td><td>'+E(statusFor(p,r).name)+'</td><td>'+
        E(observation(p,r,people.length))+'</td></tr>';}).join("")+
      '</tbody></table></section>').join("")+
-    '<p class="note">Категории «Звезда» (5+), «Предпочитаемый» (3–4) и другие относятся только к положительным вопросам 1–3, при достаточной полноте ответов. Номинации вопросов 4–6 являются отрицательными и не засчитываются как популярность. LP, LM, SP и SI – описательные величины. Наличие отрицательных выборов не доказывает травлю.</p>';
+    '<p class="note">Общая категория рассчитана на основе стандартизированных LP и LM относительно класса по схеме Coie/Dodge. Поскольку форма состоит из шести ситуационных критериев, вывод предварительный. Номинации по вопросам 4–6 не являются показателями популярности и не доказывают травлю. Отдельная ролевая анкета о буллинге не проводилась.</p>';
   const css='@page{size:A4;margin:13mm}*{box-sizing:border-box}body{font:10pt/1.4 Arial,sans-serif;color:#263a30;padding:4mm}h1{font-size:17pt}h2{font-size:12pt;margin:16px 0 7px}h3{font-size:11pt;margin:13px 0 6px}p{margin:5px 0 10px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #b5c8ba;padding:4px 5px;text-align:left;vertical-align:top;font-size:8.2pt;overflow-wrap:anywhere}tr{break-inside:avoid}.psy-socio-matrix-scroll,.psy-socio-summary-scroll{overflow:visible!important}.psy-socio-matrix{width:100%;table-layout:fixed}.psy-socio-matrix th,.psy-socio-matrix td{font-size:7pt;padding:2px;text-align:center}.psy-socio-matrix th:first-child{width:22%;text-align:left}.note,.psy-socio-note,.psy-socio-legend{font-size:8pt;color:#536457}.person{break-inside:avoid}button.psy-socio-name-link{border:0;background:transparent;padding:0;margin:0;font:inherit;color:inherit;font-weight:bold;text-align:left}.psy-socio-answer-status,.psy-socio-status-badge{white-space:normal}.psy-socio-concern-cell{font-size:8pt}@media print{body>p>button{display:none}}body>p>button{margin-top:18px;padding:10px 18px;border:1px solid #8cae91;border-radius:9px;cursor:pointer;background:#eaf3eb;color:#254934;font:inherit}';
   const html='<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Метолария – отчет по социометрии</title><style>'+css+'</style></head><body>'+content+
     '<p><button onclick="window.print()">Печать</button></p></body></html>';
