@@ -289,3 +289,23 @@
 .psy-socio-overall.is-average,.psy-socio-overall-summary.is-average{background:#f0f5f1;color:#476453;border-color:#dce9e0}
 .psy-socio-status-balance.controversial,.psy-socio-status-balance.rejected{background:#f6e7e1;color:#8e4a39}
 .psy-socio-status-balance.popular{background:#e4f2e8;color:#36744d}
+
+/* Ясные итоговые названия для психолога: группа определена по шести вопросам. */
+.psy-socio-groups-overview{padding:13px 15px;margin:10px 0 16px;border:1px solid var(--stroke,#dce7df);border-radius:12px;background:var(--panel-soft,#f8faf8)}
+.psy-socio-groups-overview>h4{margin:0 0 10px;color:var(--text,#284b3a);font-size:15px}
+.psy-socio-groups-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.psy-socio-group-cell{padding:9px 11px;border-radius:9px;background:var(--card,#fff);border:1px solid var(--stroke,#dfe8df);min-width:0}
+.psy-socio-group-cell>strong{display:flex;justify-content:space-between;gap:5px;color:var(--text,#385b46);font-size:12px}
+.psy-socio-group-cell>strong span{font-variant-numeric:tabular-nums;font-weight:800}
+.psy-socio-group-cell>p{margin:5px 0 0;font-size:11px;line-height:1.6;overflow-wrap:anywhere}
+.psy-socio-group-cell button{border:0;background:transparent;color:inherit;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:2px;padding:0;cursor:pointer;font:inherit;text-align:left}
+.psy-socio-group-cell button:hover{text-decoration-color:currentColor}
+.psy-socio-group-cell.is-popular{background:#e4f2e9;border-color:#c5e1cf}
+.psy-socio-group-cell.is-preferred{background:#edf7f0;border-color:#d1e7d9}
+.psy-socio-group-cell.is-controversial{background:#fcf0de;border-color:#e7d7b7}
+.psy-socio-group-cell.is-rejected{background:#fae7e2;border-color:#e9c6c0}
+.psy-socio-group-cell.is-neglected{background:#ebf0f1;border-color:#d4dfe1}
+.psy-socio-overall.is-preferred,.psy-socio-overall-summary.is-preferred{background:#ecf7ee;color:#2f6b4c;border-color:#cee5d4}
+.psy-socio-status-balance.preferred{background:#eaf7ed;color:#35704d}
+@media(max-width:640px){.psy-socio-groups-grid{grid-template-columns:1fr}}
+@media print{.psy-socio-groups-overview{break-inside:avoid}.psy-socio-groups-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
