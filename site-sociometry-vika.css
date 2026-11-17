@@ -17,3 +17,5 @@
 .psy-vika-results .class-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-top:8px}
 .psy-vika-pending{margin:0!important;font-size:18px;color:var(--text,#263b2d);padding:14px 16px;border:1px dashed var(--stroke,#bbcaba);border-radius:10px;background:var(--panel-soft,#f8faf7)}
 @media(max-width:760px){.psy-vika-picks{grid-template-columns:1fr}.psy-socio-vika .psy-socio-question-heading{flex-wrap:wrap}.psy-socio-vika .psy-socio-question-heading .psy-socio-question-status{margin-left:41px}.psy-vika-results .class-actions>*{flex:1 1 180px}}
+.psy-socio-version-picker .psy-socio-version-options{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:850px){.psy-socio-version-picker .psy-socio-version-options{grid-template-columns:1fr}}
