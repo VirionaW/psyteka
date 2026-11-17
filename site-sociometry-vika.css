@@ -1,0 +1,19 @@
+/* Социометрия Вики – отдельный ввод ответов без автоматического расчета. */
+.psy-socio-vika{display:grid;gap:16px;min-width:0}
+.psy-socio-vika .psy-socio-intro{max-width:960px}
+.psy-vika-student-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:12px 16px;border:1px solid var(--stroke,#d9e4d9);border-radius:13px;background:var(--panel-soft,#f8faf7)}
+.psy-vika-student-head>div{display:grid;gap:4px}
+.psy-vika-student-head strong{font-size:17px;color:var(--text,#284233)}
+.psy-vika-student-head span{font-size:13px;color:var(--muted,#67776c)}
+.psy-vika-kind{display:block;font-size:12px;font-weight:500;color:var(--muted,#627268);margin-top:3px}
+.psy-socio-vika .psy-socio-question-heading{align-items:flex-start}
+.psy-socio-vika .psy-socio-question-heading .psy-socio-question-status{margin-left:auto;white-space:nowrap;padding-top:4px}
+.psy-vika-picks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.psy-vika-pick{display:grid;gap:6px;font-size:13px;font-weight:600;color:var(--text,#314838);min-width:0}
+.psy-vika-pick select{width:100%;min-width:0;box-sizing:border-box;padding:11px 12px;border:1px solid var(--stroke,#b7c9ba);border-radius:9px;font:inherit;font-weight:400;background:var(--input-bg,#fff);color:var(--text,#253f30)}
+.psy-vika-pick select:focus-visible{outline:2px solid #6f9178;outline-offset:2px}
+.psy-vika-pick select:disabled{opacity:.55;cursor:not-allowed}
+.psy-vika-results{display:grid;gap:8px}
+.psy-vika-results .class-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-top:8px}
+.psy-vika-pending{margin:0!important;font-size:18px;color:var(--text,#263b2d);padding:14px 16px;border:1px dashed var(--stroke,#bbcaba);border-radius:10px;background:var(--panel-soft,#f8faf7)}
+@media(max-width:760px){.psy-vika-picks{grid-template-columns:1fr}.psy-socio-vika .psy-socio-question-heading{flex-wrap:wrap}.psy-socio-vika .psy-socio-question-heading .psy-socio-question-status{margin-left:41px}.psy-vika-results .class-actions>*{flex:1 1 180px}}
