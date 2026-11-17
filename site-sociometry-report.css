@@ -280,3 +280,12 @@
 .psy-socio-status-balance{display:inline-block;margin:2px 0 2px 5px;padding:2px 5px;border-radius:5px;font:650 10px/1.4 system-ui,sans-serif;background:var(--panel-soft,#edf1ec);color:var(--muted,#5c665f);white-space:nowrap}
 .psy-socio-status-balance.negative-strong,.psy-socio-status-balance.negative-balance{background:#f7e7e1;color:#974c3a}
 .psy-socio-status-group li{flex-wrap:wrap;align-items:center}
+
+/* Общая категория 6 критериев по z-нормированным LP / LM, не абсолютные пороги. */
+.psy-socio-overall.is-popular,.psy-socio-overall-summary.is-popular{background:#e2f1e7;color:#286847;border-color:#c4e0d0}
+.psy-socio-overall.is-rejected,.psy-socio-overall-summary.is-rejected{background:#f9e5e1;color:#923c33;border-color:#e9c4bf}
+.psy-socio-overall.is-controversial,.psy-socio-overall-summary.is-controversial{background:#f8edda;color:#805d2c;border-color:#e8d7b5}
+.psy-socio-overall.is-neglected,.psy-socio-overall-summary.is-neglected{background:#e9eff0;color:#53666b;border-color:#d2dddf}
+.psy-socio-overall.is-average,.psy-socio-overall-summary.is-average{background:#f0f5f1;color:#476453;border-color:#dce9e0}
+.psy-socio-status-balance.controversial,.psy-socio-status-balance.rejected{background:#f6e7e1;color:#8e4a39}
+.psy-socio-status-balance.popular{background:#e4f2e8;color:#36744d}
