@@ -26,7 +26,7 @@
   ];
   const E = value => String(value ?? "").replace(/[&<>"']/g, c =>
     ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const norm = value => String(value || "").normalize("NFKC").trim().toLocaleLowerCase("ru").replace(/ё/g,"е");
+  const norm = value => String(value || "").normalize("NFKC").trim().toLocaleLowerCase("ru").replace(/\u0451/g,"е");
   const roster = rows => (rows || []).filter(p => String(p?.name || "").trim());
   const absent = p => p?.bullyFiveAbsent === true;
   const changed = () => window.dispatchEvent(new Event("psy-assessment-dirty"));
@@ -73,12 +73,12 @@
     }
   };
   const titleVariant = v => v === versions.PRIMARY ? "Социометрия: положительные и отрицательные выборы (6)" :
-    v === versions.VARIANT ? "Отношения и поддержка (6)" :
-    v === "vika6" ? "Вопросы Вики (6)" : "Профилактика буллинга: SNA (5)";
+    v === versions.VARIANT ? "Прежняя форма отношений и поддержки (6)" :
+    v === "vika6" ? "Социометрия Вики (6)" : "Профилактика буллинга: SNA (5)";
   versions.controls = () => '<section class="psy-socio-version-picker" aria-label="Варианты социометрии">' +
     '<div><strong>Выберите вариант</strong><small>Каждый вариант хранит свои ответы отдельно</small></div>' +
     '<div class="psy-socio-version-options">' +
-    [versions.PRIMARY,versions.VARIANT,"vika6",FIVE].map(value =>
+    [versions.PRIMARY,FIVE,"vika6",versions.VARIANT].map(value =>
       '<button type="button" class="psy-socio-version-option ' + (selected === value ? "is-selected" : "") +
       '" data-socio-variant="' + value + '" aria-pressed="' + (selected === value) + '">' +
       E(titleVariant(value)) + '</button>').join("") + '</div>' +
