@@ -173,6 +173,48 @@
   const names = (a,key,max=5) => a.people.map(p => ({p,value:a.measures.get(p.socioId)?.[key]||0}))
     .filter(x => x.value>0).sort((x,y)=>y.value-x.value||x.p.name.localeCompare(y.p.name,"ru"))
     .slice(0,max).map(x => E(x.p.name)+" ("+integer(x.value)+")").join(", ") || "номинации не внесены";
+
+  function sociogram(a) {
+    const n=a.people.length;
+    if(n<2) return '<p>Для построения социограммы нужно не менее двух учеников.</p>';
+    const W=840,H=560,cx=W/2,cy=H/2,r=Math.min(234,Math.max(125,150+n*4));
+    const positions=new Map(a.people.map((p,i)=>{
+      const angle=-Math.PI/2+2*Math.PI*i/n;
+      return [p.socioId,{x:cx+Math.cos(angle)*r,y:cy+Math.sin(angle)*r}];
+    }));
+    const links=(q,stroke,dashed)=>Array.from(a.stats[q].edges).flatMap(([from,targets])=>
+      [...targets].map(to=>{
+        const v=positions.get(from),w=positions.get(to);
+        if(!v||!w)return "";
+        const dx=w.x-v.x,dy=w.y-v.y,len=Math.hypot(dx,dy)||1;
+        const start=19,end=24;
+        const x1=v.x+dx*start/len,y1=v.y+dy*start/len;
+        const x2=w.x-dx*end/len,y2=w.y-dy*end/len;
+        return '<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+
+          '" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="'+stroke+
+          '" stroke-width="1.6" opacity=".44" '+(dashed?'stroke-dasharray="6 4" ':'')+
+          'marker-end="url(#psyB5Arrow'+q+')" />';
+      }).join(""));
+    const nodes=a.people.map((p,i)=>{
+      const pos=positions.get(p.socioId),label=String(i+1).padStart(2,"0");
+      return '<g><title>'+E(p.name)+'</title><circle cx="'+pos.x.toFixed(1)+
+        '" cy="'+pos.y.toFixed(1)+'" r="19" fill="#f7fbf8" stroke="#537a62" stroke-width="2"/>'+
+        '<text x="'+pos.x.toFixed(1)+'" y="'+(pos.y+4.5).toFixed(1)+
+        '" font-size="12" font-weight="700" text-anchor="middle" fill="#2c4b39">'+label+'</text></g>';
+    }).join("");
+    const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+
+      '" role="img" aria-label="Социограмма: направленные положительные и отрицательные выборы">' +
+      '<defs><marker id="psyB5Arrow0" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#3f79a6"/></marker>'+
+      '<marker id="psyB5Arrow1" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#c45e61"/></marker></defs>'+
+      links(0,"#3f79a6",false)+links(1,"#c45e61",true)+nodes+'</svg>';
+    return '<details class="psy-b5-graph"><summary>Социограмма: связи класса</summary>'+
+      '<p>Синие сплошные стрелки – позитивные выборы (Q1); красные пунктирные – негативные (Q2). Направление стрелки показывает, кто кого назвал. Цвет узлов не означает роль в травле.</p>'+
+      '<div class="psy-b5-graph-figure">'+svg+'</div>'+
+      '<div class="psy-b5-graph-legend">'+a.people.map((p,i)=>
+        '<span><strong>'+String(i+1).padStart(2,"0")+'</strong> – '+E(p.name)+'</span>').join("")+'</div>'+
+      '</details>';
+  }
+
   function table(a) {
     return '<div class="psy-b5-table-wrap"><table class="psy-b5-table"><thead><tr>' +
       ['Ученик','LP','LM','SP','SI','Q3','Q4','Q5','Посредничество','Анкета'].map(x => '<th>'+x+'</th>').join("") +
@@ -200,7 +242,7 @@
       [['Положительных номинаций',a.stats[0].nominations],['Отрицательных номинаций',a.stats[1].nominations],
        ['Плотность позитивной сети',percent(a.density)],['Взаимность позитивных выборов',percent(a.reciprocity)]]
         .map(([label,value])=>'<div><small>'+label+'</small><strong>'+value+'</strong></div>').join("") + '</div>' +
-      '<h4>Сводная таблица по ученикам</h4>'+table(a)+
+      '<h4>Сводная таблица по ученикам</h4>'+table(a)+sociogram(a)+
       '<h4>Номинации по вопросам 3-5</h4>' +
       '<p><strong>Кого называли среди обижающих других (Q3):</strong> '+names(a,"ag")+'.</p>' +
       '<p><strong>Кого называли среди тех, кого обижают (Q4):</strong> '+names(a,"vi")+'.</p>' +
