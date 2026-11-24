@@ -53,3 +53,11 @@
 .psy-b5-print-q strong{display:block;margin:7px 0}
 @media(max-width:900px){.psy-b5-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.psy-socio-version-picker .psy-socio-version-options{grid-template-columns:1fr}.psy-b5-choices{grid-template-columns:1fr}.psy-b5-question{padding:12px}.psy-b5-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.psy-b5-actions>*{flex:1 1 190px}.psy-b5-roster,.psy-b5-results,.psy-b5-open{padding:12px}.psy-b5-coverage>div{flex-wrap:wrap}}
+
+.psy-b5-graph{border:1px solid var(--stroke,#d9e3dc);background:var(--card,#fff);border-radius:11px;padding:12px 14px;min-width:0}
+.psy-b5-graph summary{font-weight:700;font-size:14px;cursor:pointer;padding:5px 0}
+.psy-b5-graph>p{font-size:12px;line-height:1.55;color:var(--muted,#68786e);margin:9px 0}
+.psy-b5-graph-figure{width:100%;max-width:800px;margin:auto}
+.psy-b5-graph-figure svg{display:block;width:100%;height:auto}
+.psy-b5-graph-legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:5px 10px;font-size:11px;line-height:1.55;color:var(--text,#354e3c);margin-top:8px}
+.psy-b5-graph-legend span{min-width:0;overflow-wrap:anywhere}
