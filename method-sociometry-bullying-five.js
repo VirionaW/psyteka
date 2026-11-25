@@ -257,10 +257,12 @@
   }
   function field(p,i,j,people) {
     const r=record(p,i),chosen=r.picks[j]||"";
-    const options='<option value="">Не указан</option>' +
-      people.filter(x => x.socioId!==p.socioId).map(x =>
-        '<option value="'+E(x.socioId)+'" '+(chosen===x.socioId?"selected":"")+'>'+E(x.name)+'</option>').join("");
-    return '<label class="psy-b5-choice">'+(j+1)+' выбор<select data-b5-q="'+i+'" data-b5-slot="'+j+'" '+(r.status!=="answered"?"disabled":"")+'>'+options+'</select></label>';
+    const name=people.find(x=>x.socioId===chosen)?.name||"";
+    return '<label class="psy-b5-choice">'+(j+1)+' выбор'+
+      '<input type="text" autocomplete="off" spellcheck="false" list="psyB5NamesList"'+
+      ' data-b5-q="'+i+'" data-b5-slot="'+j+'" data-b5-id="'+E(chosen)+'"'+
+      ' value="'+E(name)+'" placeholder="Напишите ФИО или код" maxlength="120"'+
+      (r.status!=="answered"?" disabled":"")+' /></label>';
   }
   function calculator(d,ctx) {
     if (ctx.calcMode!=="class") return '<div class="psy-b5"><h3>Профилактика буллинга: SNA-анкетирование</h3>' +
@@ -282,12 +284,13 @@
         '</article>';
     }).join(""):"";
     return '<section class="psy-b5"><div class="psy-b5-intro"><h3>Профилактика буллинга: SNA-анкетирование</h3>' +
-      '<p>Пять вопросов из методических рекомендаций 2026 года. Заполняйте по одному ученику. Выбирайте одноклассников из списка, без повторов и самовыбора. Вопрос 2 можно пропустить.</p></div>' +
+      '<p>Пять вопросов из методических рекомендаций 2026 года. Сначала внесите отдельный список класса для буллинга. Затем печатайте ФИО одноклассников с клавиатуры и подтверждайте Enter. Повторы и выбор себя не учитываются. Вопрос 2 можно пропустить.</p></div>' +
       '<section class="psy-b5-roster"><div class="psy-socio-roster-head"><strong>Список класса</strong><span>'+people.length+' учеников</span></div>' +
-      '<details '+(!people.length?"open":"")+'><summary>Добавить учеников списком</summary>' +
-      '<p class="psy-socio-note">Лучше использовать условные коды; по одному ученику на строку.</p>' +
-      '<textarea rows="4" id="psyB5Names" placeholder="Ученик 01&#10;Ученик 02&#10;Ученик 03"></textarea>' +
-      '<button class="btn primary" type="button" id="psyB5Add">Добавить в класс</button></details>' +
+      '<div class="psy-b5-roster-import"><label for="psyB5Names"><strong>Сначала добавьте список класса</strong></label>' +
+      '<p class="psy-socio-note">Вставьте или напечатайте ФИО с клавиатуры, по одному ученику на строку. Можно вставить столбец из Excel. Уже внесенные ответы не удаляются.</p>' +
+      '<textarea rows="5" id="psyB5Names" placeholder="Иванова Анна&#10;Петров Борис&#10;Сидорова Мария"></textarea>' +
+      '<button class="btn primary" type="button" id="psyB5Add">Добавить список класса</button></div>' +
+      '<datalist id="psyB5NamesList">'+people.map(x=>'<option value="'+E(x.name)+'"></option>').join("")+'</datalist>' +
       '<div role="status" id="psyB5Message" class="psy-socio-message"></div>' +
       (people.length?'<div class="psy-b5-person"><label>Ученик<select id="psyB5Person">'+list+'</select></label>' +
         '<button class="btn" type="button" id="psyB5Next">Следующий ученик</button></div>':"")+'</section>' +
@@ -379,23 +382,49 @@
       setRecord(p,Number(button.dataset.b5Clear),"",[]);
       rerender();
     }));
-    document.querySelectorAll("[data-b5-q]").forEach(select=>select.addEventListener("change",()=>{
-      const p=current(),i=Number(select.dataset.b5Q),slot=Number(select.dataset.b5Slot);
-      if (!p) return;
-      const ids=new Set(roster(ctx.rows).map(x=>x.socioId));
-      const next=record(p,i).picks.slice();
-      while(next.length<Q[i].max) next.push("");
-      const value=select.value;
-      if(value && (value===p.socioId || !ids.has(value))) {
-        message("Нельзя выбирать себя или неизвестного ученика.");select.value=next[slot]||"";return;
-      }
-      if(value && next.some((id,k)=>k!==slot && id===value)) {
-        message("В одном вопросе повторять одного ученика нельзя.");select.value=next[slot]||"";return;
-      }
-      next[slot]=value;
-      setRecord(p,i,"answered",next);
-      rerender();
-    }));
+    document.querySelectorAll("[data-b5-q]").forEach(input=>{
+      const restore=()=>{
+        const p=current(),i=Number(input.dataset.b5Q),slot=Number(input.dataset.b5Slot);
+        input.value=roster(ctx.rows).find(x=>x.socioId===record(p,i).picks[slot])?.name||"";
+      };
+      const commit=moveNext=>{
+        const p=current(),i=Number(input.dataset.b5Q),slot=Number(input.dataset.b5Slot);
+        if(!p)return;
+        const text=input.value.trim(),all=roster(ctx.rows);
+        const candidates=all.filter(x=>x.socioId!==p.socioId);
+        let matches=candidates.filter(x=>norm(x.name)===norm(text));
+        if(!matches.length&&text)
+          matches=candidates.filter(x=>norm(x.name).startsWith(norm(text)));
+        const next=record(p,i).picks.slice();
+        while(next.length<Q[i].max)next.push("");
+        const chosen=!text?"":matches.length===1?matches[0].socioId:null;
+        if(chosen===null){
+          message(text&&norm(text)===norm(p.name)?"Нельзя выбирать самого себя.":
+            "Выберите однозначное ФИО из списка класса. Можно написать имя с клавиатуры.");
+          restore();return;
+        }
+        if(chosen&&next.some((id,k)=>k!==slot&&id===chosen)){
+          message("Этот ученик уже указан в ответе на данный вопрос.");restore();return;
+        }
+        if(next[slot]!==chosen){
+          next[slot]=chosen;
+          setRecord(p,i,"answered",next);
+        }
+        input.dataset.b5Id=chosen;
+        input.value=chosen?all.find(x=>x.socioId===chosen)?.name||"":"";
+        message(chosen?"Выбор записан. Можно печатать следующий ответ.":"Выбор очищен.");
+        if(moveNext){
+          const order=[...document.querySelectorAll("[data-b5-q]:not(:disabled)")];
+          const other=order[order.indexOf(input)+1];
+          if(other){other.focus({preventScroll:true});other.select?.();}
+        }
+      };
+      input.addEventListener("change",()=>commit(false));
+      input.addEventListener("keydown",e=>{
+        if(e.key==="Enter"){e.preventDefault();commit(true);}
+        if(e.key==="Escape"){e.preventDefault();restore();}
+      });
+    });
     document.getElementById("psyB5Open")?.addEventListener("input",e=>{
       if(!current())return;
       current().bullyFiveOpenAnswer=e.target.value.slice(0,3000);
