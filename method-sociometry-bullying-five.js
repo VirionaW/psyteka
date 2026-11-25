@@ -257,12 +257,14 @@
   }
   function field(p,i,j,people) {
     const r=record(p,i),chosen=r.picks[j]||"";
-    const name=people.find(x=>x.socioId===chosen)?.name||"";
-    return '<label class="psy-b5-choice">'+(j+1)+' выбор'+
-      '<input type="text" autocomplete="off" spellcheck="false" list="psyB5NamesList"'+
+    const name=r.status==="none"&&j===0?"Никто":people.find(x=>x.socioId===chosen)?.name||"";
+    return '<div class="psy-b5-choice"><label for="psyB5Choice'+i+'_'+j+'">'+(j+1)+' выбор</label>'+
+      '<div class="psy-b5-choice-row"><input type="text" id="psyB5Choice'+i+'_'+j+'" autocomplete="off" spellcheck="false" list="psyB5NamesList"'+
       ' data-b5-q="'+i+'" data-b5-slot="'+j+'" data-b5-id="'+E(chosen)+'"'+
       ' value="'+E(name)+'" placeholder="Напишите ФИО или код" maxlength="120"'+
-      ' /></label>';
+      (r.status==="none"&&j>0?' disabled':'')+' />'+
+      (j===0?'<button type="button" class="psy-b5-nobody" data-b5-nobody="'+i+'" aria-label="Ответить Никто на вопрос '+(i+1)+'">Никто</button>':'')+
+      '</div></div>';
   }
   function calculator(d,ctx) {
     if (ctx.calcMode!=="class") return '<div class="psy-b5"><h3>Профилактика буллинга: SNA-анкетирование</h3>' +
@@ -275,7 +277,7 @@
       return '<article class="psy-b5-question"><div class="psy-b5-qhead"><span class="psy-b5-num">'+(i+1)+'</span><div><h4>'+E(q.title)+'</h4><p>'+E(q.sub)+'</p><small>'+E(q.type)+'</small></div></div>' +
         '<div class="psy-b5-status">' +
         '<label><input type="radio" name="b5-state-'+i+'" data-b5-state="'+i+'" value="answered" '+(r.status==="answered"?"checked":"")+' /> Выбрать учеников</label>' +
-        '<label><input type="radio" name="b5-state-'+i+'" data-b5-state="'+i+'" value="none" '+(r.status==="none"?"checked":"")+' /> Никого</label>' +
+        '<label><input type="radio" name="b5-state-'+i+'" data-b5-state="'+i+'" value="none" '+(r.status==="none"?"checked":"")+' /> Никто</label>' +
         (q.optional?'<label><input type="radio" name="b5-state-'+i+'" data-b5-state="'+i+'" value="skip" '+(r.status==="skip"?"checked":"")+' /> Пропустить</label>':"") +
         '<button class="psy-b5-clear" type="button" data-b5-clear="'+i+'">Очистить ответ</button></div>' +
         '<div class="psy-b5-choices">' + Array.from({length:q.max},(_,j)=>field(p,i,j,people)).join("")+'</div>'+
@@ -284,13 +286,13 @@
         '</article>';
     }).join(""):"";
     return '<section class="psy-b5"><div class="psy-b5-intro"><h3>Профилактика буллинга: SNA-анкетирование</h3>' +
-      '<p>Пять вопросов из методических рекомендаций 2026 года. Сначала внесите отдельный список класса для буллинга. Затем печатайте ФИО одноклассников с клавиатуры и подтверждайте Enter. Повторы и выбор себя не учитываются. Вопрос 2 можно пропустить.</p></div>' +
+      '<p>Пять вопросов из методических рекомендаций 2026 года. Сначала внесите список класса. Затем печатайте ФИО и подтверждайте Enter или выбирайте «Никто» рядом с первым полем вопроса. Вопрос 2 можно пропустить.</p></div>' +
       '<section class="psy-b5-roster"><div class="psy-socio-roster-head"><strong>Список класса</strong><span>'+people.length+' учеников</span></div>' +
       '<div class="psy-b5-roster-import"><label for="psyB5Names"><strong>Сначала добавьте список класса</strong></label>' +
       '<p class="psy-socio-note">Вставьте или напечатайте ФИО с клавиатуры, по одному ученику на строку. Можно вставить столбец из Excel. Уже внесенные ответы не удаляются.</p>' +
       '<textarea rows="5" id="psyB5Names" placeholder="Иванова Анна&#10;Петров Борис&#10;Сидорова Мария"></textarea>' +
       '<button class="btn primary" type="button" id="psyB5Add">Добавить список класса</button></div>' +
-      '<datalist id="psyB5NamesList">'+people.map(x=>'<option value="'+E(x.name)+'"></option>').join("")+'</datalist>' +
+      '<datalist id="psyB5NamesList"><option value="Никто"></option>'+people.map(x=>'<option value="'+E(x.name)+'"></option>').join("")+'</datalist>' +
       '<div role="status" id="psyB5Message" class="psy-socio-message"></div>' +
       (people.length?'<div class="psy-b5-person"><label>Ученик<select id="psyB5Person">'+list+'</select></label>' +
         '<button class="btn" type="button" id="psyB5Next">Следующий ученик</button></div>':"")+'</section>' +
@@ -378,6 +380,12 @@
       setRecord(p,i,value,value==="answered"?record(p,i).picks:[]);
       rerender();
     }));
+    document.querySelectorAll("[data-b5-nobody]").forEach(button=>button.addEventListener("click",()=>{
+      const p=current(),i=Number(button.dataset.b5Nobody);
+      if(!p||!Number.isInteger(i)||i<0||i>=Q.length)return;
+      setRecord(p,i,"none",[]);
+      rerender();
+    }));
     document.querySelectorAll("[data-b5-clear]").forEach(button=>button.addEventListener("click",()=>{
       const p=current();if(!p)return;
       setRecord(p,Number(button.dataset.b5Clear),"",[]);
@@ -386,12 +394,18 @@
     document.querySelectorAll("[data-b5-q]").forEach(input=>{
       const restore=()=>{
         const p=current(),i=Number(input.dataset.b5Q),slot=Number(input.dataset.b5Slot);
-        input.value=roster(ctx.rows).find(x=>x.socioId===record(p,i).picks[slot])?.name||"";
+        const r=record(p,i);
+        input.value=r.status==="none"&&slot===0?"Никто":
+          roster(ctx.rows).find(x=>x.socioId===r.picks[slot])?.name||"";
       };
       const commit=moveNext=>{
         const p=current(),i=Number(input.dataset.b5Q),slot=Number(input.dataset.b5Slot);
         if(!p)return;
         const text=input.value.trim(),all=roster(ctx.rows);
+        if(norm(text)==="никто"||norm(text)==="никого"){
+          if(record(p,i).status!=="none")setRecord(p,i,"none",[]);
+          rerender();return;
+        }
         const candidates=all.filter(x=>x.socioId!==p.socioId);
         let matches=candidates.filter(x=>norm(x.name)===norm(text));
         if(!matches.length&&text)
