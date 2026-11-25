@@ -85,3 +85,32 @@
 .psy-b5-nobody:hover{background:var(--hover,#e2f0e5)}
 .psy-b5-nobody:focus-visible{outline:2px solid #5c9270;outline-offset:2px}
 @media(max-width:650px){.psy-b5-choice-row{gap:6px}.psy-b5-nobody{padding:7px 10px}}
+
+/* Five-question bullying uses exactly the same combobox control as sociometry. */
+.psy-b5-choices{grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.psy-b5-choice{position:relative;display:grid;gap:7px;min-width:0}
+.psy-b5-choice>label{font-size:12px;font-weight:700;color:var(--muted,#647b6b)}
+.psy-b5-choice .psy-b5-combo{position:relative;min-width:0}
+.psy-b5-choice .psy-b5-combo.is-open{z-index:35}
+.psy-b5-choice .psy-b5-typeahead{display:block;box-sizing:border-box;width:100%;min-width:0;min-height:45px;
+ padding:10px 42px 10px 12px;border:1px solid var(--stroke,#b7ccba);border-radius:10px;
+ background:var(--input-bg,#fff);color:var(--text,#213528);font:inherit;font-size:14px;font-weight:400}
+.psy-b5-choice .psy-b5-typeahead:focus-visible{outline:2px solid #478b6b;outline-offset:1px}
+.psy-b5-choice .psy-b5-drop{position:absolute;top:4px;right:4px;bottom:4px;width:34px;
+ padding:0;border:0;border-left:1px solid var(--stroke,#d5e1d6);border-radius:5px;
+ background:transparent;color:var(--text,#426450);font-size:21px;cursor:pointer}
+.psy-b5-choice .psy-b5-options{position:absolute;top:calc(100% + 5px);left:0;right:0;
+ min-width:210px;max-width:min(320px,90vw);max-height:250px;overflow:auto;
+ border:1px solid var(--stroke,#c7d5ca);box-shadow:0 14px 32px #10291b2e;border-radius:12px;
+ padding:6px;background:var(--card,#fff);z-index:40}
+.psy-b5-choice .psy-b5-options[hidden]{display:none!important}
+.psy-b5-question-bottom{display:flex;align-items:center;justify-content:flex-end;gap:9px;
+ flex-wrap:wrap;padding-top:2px}
+.psy-b5-question-bottom .psy-b5-clear{margin-left:0;color:var(--muted,#69776d);padding:8px}
+.psy-b5-skip{border:1px solid var(--stroke,#c5d6c8);background:var(--panel-soft,#f3f8f2);
+ color:var(--text,#3a6550);padding:9px 12px;border-radius:8px;font:650 12px system-ui,sans-serif;cursor:pointer}
+.psy-b5-skip:hover,.psy-b5-skip:focus-visible{background:var(--hover,#e8f3e9)}
+.psy-b5-question:first-child{border-left:4px solid #7aa789}
+.psy-b5-question:nth-child(2){border-left:4px solid #b88b71}
+@media(max-width:800px){.psy-b5-choices{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.psy-b5-choices{grid-template-columns:minmax(0,1fr)}}
