@@ -1012,7 +1012,7 @@ function result(d,r){
  return '<section class="psy-711-result'+(d.id==="razuvaeva-osr29"?" psy-711-razuvaeva-result":"")+'"><h3>Результаты участника</h3>'+controls+
  '<div class="psy-711-scale-grid'+(d.id==="razuvaeva-osr29"?" psy-711-razuvaeva-grid":"")+'">'+
  (d.id==="razuvaeva-osr29"?razOverallHtml(z):"")+z.scales.map(s=>
- '<div class="psy-711-scale psy-711-'+(d.id==="lazarus-wcq50"&&wcqRaw()?"neutral":tone(d,s))+'"><b>'+esc(s.name)+'</b><strong>'+(d.id==="lazarus-wcq50"?(wcqRaw()?'<span class="psy-711-number psy-711-'+rawTone(s)+'">'+s.raw+'</span> / '+s.max:wcqValue(s)):num(d,s)+' / '+maximum(d,s))+'</strong>'+
+ '<div class="psy-711-scale psy-711-'+tone(d,s)+'"><b>'+esc(s.name)+'</b><strong>'+(d.id==="lazarus-wcq50"?(wcqRaw()?s.raw+" / "+s.max:wcqValue(s)):num(d,s)+' / '+maximum(d,s))+'</strong>'+
  (d.id==="razuvaeva-osr29"?"":'<span>'+esc(
  d.id==="lazarus-wcq50"?(wcqRaw()?rawLabel(s):s.tScore!==null?window.PSY_WCQ_NORMS_2026.level(s.tScore):"Доля максимума шкалы"):label(d,s))+'</span>')+
  '<div class="psy-711-track"><span style="width:'+(d.id==="lazarus-wcq50"&&!wcqRaw()&&s.tScore!==null?Math.max(0,Math.min(100,s.tScore/90*100)):s.percent)+'%"></span></div></div>').join("")+'</div>'+
