@@ -18,16 +18,20 @@
   }
   n.textContent=message;n.style.color=failed?"#a04424":"#557460";
  }
- function filled(s){return (s?.rows||[]).some(r=>
-  String(r.name||"").trim()||
-  Array.isArray(r.answers)&&r.answers.some(v=>v!==""&&v!=null)||
-  Object.keys(r).some(k=>!["name","answers","ageYears","sex","schoolGrade","ageManual","attendance"].includes(k)&&r[k]!=null&&JSON.stringify(r[k])!=="{}"))}
+ function filled(s){
+  const banks=Object.values(s?.sociometryVariants?.banks||{}).flatMap(v=>Array.isArray(v?.rows)?v.rows:[]);
+  return [...(s?.rows||[]),...banks].some(r=>String(r?.name||"").trim()||
+   Array.isArray(r?.answers)&&r.answers.some(v=>v!==""&&v!=null)||
+   Object.keys(r||{}).some(k=>!["name","answers","ageYears","sex","schoolGrade","ageManual","attendance",
+    "socioVariant","socioId","bullyId"].includes(k)&&r[k]!=null&&JSON.stringify(r[k])!=="{}"&&JSON.stringify(r[k])!=="[]"));
+ }
  function take(){try{const d=bridge()?.get?.();return d&&filled(d.snapshot)?d:null}catch(_){return null}}
  const keyOf=d=>d.methodName+"::"+d.snapshot.calcMode;
  // Supabase stores jsonb and may reorder object keys. Compare values, not key order.
  const canonical=value=>Array.isArray(value)?value.map(canonical):
   value&&typeof value==="object"?Object.fromEntries(Object.keys(value).sort().map(k=>[k,canonical(value[k])])):value;
- const equalRows=(a,b)=>JSON.stringify(canonical(a?.rows||[]))===JSON.stringify(canonical(b?.rows||[]));
+ const equalRows=(a,b)=>JSON.stringify(canonical({rows:a?.rows||[],sociometryVariants:a?.sociometryVariants||null}))===
+  JSON.stringify(canonical({rows:b?.rows||[],sociometryVariants:b?.sociometryVariants||null}));
  function recoveryControl(){
   let button=modal.querySelector("#psyDraftRecover");
   if(!button){
