@@ -31,14 +31,15 @@ function socSnapshot(){
 }
 function socRestore(persisted){
  if(!isSocioMethod())return;
- const incoming=Array.isArray(rows)&&rows.length?rows:[{name:"",answers:[]}],banks={};
+ const sourceRows=calcMode==="class"?rows:modeSnapshots.class;
+ const incoming=Array.isArray(sourceRows)&&sourceRows.length?sourceRows:[{name:"",answers:[]}],banks={};
  const fromRow=incoming.find(r=>SOCIO_VARIANTS.includes(r?.socioVariant))?.socioVariant||"positive6";
  if(persisted?.banks&&typeof persisted.banks==="object")for(const name of SOCIO_VARIANTS){
   const bank=persisted.banks[name];
   if(Array.isArray(bank?.rows)&&bank.rows.length)
    banks[name]={rows:bank.rows,index:Math.max(0,Math.min(bank.rows.length-1,Number(bank.index)||0))};
  }
- if(!banks[fromRow])banks[fromRow]={rows:incoming,index:Math.max(0,Math.min(incoming.length-1,rowIndex||0))};
+ if(!persisted?.banks&&!banks[fromRow])banks[fromRow]={rows:incoming,index:Math.max(0,Math.min(incoming.length-1,rowIndex||0))};
  if(!persisted?.banks)for(const name of SOCIO_VARIANTS){
   if(banks[name])continue;
   if(incoming.some(r=>socHasValue(r?.[SOCIO_FIELDS[name]])||
