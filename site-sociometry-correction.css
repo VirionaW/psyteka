@@ -1,0 +1,17 @@
+/* Безопасное исправление ученика в социометрии: все четыре варианта. */
+.psy-socio-correction{display:grid;gap:10px;padding:14px 16px;margin:0 0 14px;border:1px solid var(--stroke,#c8d8ca);background:var(--panel-soft,#f7faf7);border-radius:12px;min-width:0}
+.psy-socio-correction-title{display:flex;align-items:baseline;flex-wrap:wrap;justify-content:space-between;gap:5px 12px}
+.psy-socio-correction-title strong{font-size:14px;color:var(--text,#2c4533)}
+.psy-socio-correction-title small{font-size:11px;color:var(--muted,#617468)}
+.psy-socio-correction-actions{display:flex;align-items:end;flex-wrap:wrap;gap:10px}
+.psy-socio-correction-actions label{flex:1 1 220px;min-width:140px;display:grid;gap:5px;font-size:12px;font-weight:650;color:var(--text,#34483a)}
+.psy-socio-correction-actions input{width:100%;box-sizing:border-box;border:1px solid var(--stroke,#b7c7bc);background:var(--input-bg,#fff);color:var(--text,#30473a);padding:10px 11px;border-radius:9px;font:inherit;font-size:14px}
+.psy-socio-correction-actions input:focus-visible{outline:2px solid #68977a;outline-offset:2px}
+.psy-socio-correction-actions>.btn{min-height:40px;max-width:100%;white-space:normal}
+.psy-socio-correction-clear{border-color:#c8a1a1!important;color:#8e4242!important;background:var(--card,#fff)!important}
+.psy-socio-correction-clear:disabled{opacity:.46;cursor:not-allowed}
+.psy-socio-correction-message{font-size:12px;color:var(--muted,#5e7465);line-height:1.4;margin:0!important}
+.psy-socio-pick-clear{border:0!important;background:transparent!important;color:var(--muted,#78857a)!important;min-width:25px;padding:2px 4px;cursor:pointer;font:700 15px/1 system-ui;flex:none}
+.psy-socio-pick-clear:hover{color:#a34242!important}
+.psy-socio-pick-clear:focus-visible{outline:2px solid #558b6a;outline-offset:2px}
+@media(max-width:600px){.psy-socio-correction{padding:12px}.psy-socio-correction-actions{gap:9px}.psy-socio-correction-actions>.btn{flex:1 1 150px}}
