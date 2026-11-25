@@ -246,11 +246,13 @@
       ' aria-expanded="false" aria-controls="'+optionId+'" aria-label="Вопрос '+(i+1)+', выбор '+(k+1)+'"'+
       ' data-selected="'+esc(val)+'">'+
       '<button type="button" class="psy-socio-drop" aria-label="Показать список учеников" title="Выбрать ученика"><span aria-hidden="true">⌄</span></button>'+
-      '<div id="'+optionId+'" class="psy-socio-options" role="listbox" hidden></div></div></div>';
+      '<div id="'+optionId+'" class="psy-socio-options" role="listbox" hidden></div></div>'+
+       '<button type="button" class="psy-socio-pick-clear" data-socio-clear-choice="'+i+':'+k+'"' +
+       ' title="Очистить только этот выбор" aria-label="Очистить вопрос '+(i+1)+', выбор '+(k+1)+'">Очистить выбор</button></div>';
     }).join("")+'</div><div class="psy-socio-question-bottom"><button type="button" class="psy-socio-none-fill" data-socio-fill="'+i+'">Остальные – никто</button><span>Если выборов меньше трех, остальные поля можно заполнить вариантом «Никто».</span></div></section>';
   }).join(""):"";
   return '<section class="psy-new-work psy-socio"><div class="psy-socio-intro"><h3>Социометрия класса</h3>'+
-   '<p>Вопросы 1–3 – положительные выборы, 4–6 – отрицательные. Введите имя или выберите из списка. «Никто» всегда доступен. После выбора курсор переходит к следующему полю.</p></div>'+
+   '<p>Вопросы 1–3 – положительные выборы, 4–6 – отрицательные. Введите имя или выберите из списка. «Никто» всегда доступен. Для исправления выбора нажмите «Очистить выбор». На следующего ученика переходите отдельной кнопкой.</p></div>'+
    '<div class="psy-socio-roster"><div class="psy-socio-roster-head"><strong>Список класса</strong><span>'+people.length+' учеников</span></div>'+
    '<details class="psy-socio-add" '+(!people.length?"open":"")+'><summary>Добавить учеников списком</summary>'+
    '<p class="psy-socio-note">Вставьте список из журнала – по одному имени или условному коду в строке. Повторы не добавляются.</p>'+
@@ -260,8 +262,7 @@
    (people.length?'<div class="psy-socio-student-picker"><label>Выбранный ученик<select id="psySocPerson">'+
     ctx.rows.map((person,i)=>person.name?.trim()?'<option value="'+i+'" '+(i===ctx.rowIndex?"selected":"")+'>'+esc(person.name)+
      (absent(person)?" – отсутствовал":reviewPending(person)?" – уточнение":"")+'</option>':"").join("")+
-    '</select></label><button type="button" class="btn" id="psySocNext">Следующий ученик</button></div>'+
-    (active?'<label class="psy-socio-rename">Имя или код ученика<input id="psySocRename" maxlength="120" value="'+esc(r.name)+'"></label>':""):"")+
+    '</select></label><button type="button" class="btn" id="psySocNext">Следующий ученик</button></div>':"")+
    '</div>'+
    (active?'<div class="psy-socio-attendance"><button type="button" id="psySocAbsent" class="psy-socio-absence-button '+(isAbsent?"is-absent":"")+
      '" aria-pressed="'+isAbsent+'">'+(isAbsent?"Вернуть к обследованию":"Отметить: отсутствовал")+'</button>'+
@@ -382,14 +383,8 @@
    }
    const ids=new Set(members(rows).map(p=>p.socioId));
    if(!questions(rows).every((_,q)=>validPicks(row,q,ids)!==null))return;
-   const next=rows.findIndex((r,i)=>i>ctx.rowIndex&&String(r.name||"").trim()&&!absent(r));
-   if(next>=0){
-    ctx.onSelect?.(next);
-    focusAnswer(0,0);
-   }else{
-    message("Все шесть вопросов заполнены. Это последний ученик.");
-    document.getElementById("psySocFlag")?.focus?.();
-   }
+   // Never switch pupils automatically while correcting a completed questionnaire.
+   message("Все шесть вопросов заполнены. Для другого ученика нажмите «Следующий ученик».");
   };
   document.querySelectorAll("[data-socio-fill]").forEach(btn=>btn.addEventListener("click",()=>{
    const row=rows[ctx.rowIndex],index=Number(btn.dataset.socioFill);
@@ -415,6 +410,7 @@
    const row=rows[ctx.rowIndex],q=Number(combo.dataset.socioQuestion),slot=Number(combo.dataset.socioSlot);
    const allowed=getCandidates(combo,"").some(p=>p.id===id);
    if(!allowed){message("Этот ученик уже выбран или недоступен.");return;}
+   const replacing=Boolean(picks(row,q)[slot]);
    putPick(row,q,slot,id);
    if(id===NONE)for(let i=slot+1;i<3;i++)if(!picks(row,q)[i]){
     putPick(row,q,i,NONE);
@@ -423,8 +419,20 @@
    }
    const input=combo.querySelector(".psy-socio-typeahead"),found=members(rows).find(p=>p.socioId===id);
    input.value=id===NONE?"Никто":found?.name||"";input.dataset.selected=id;
-   closeCombo(combo);refresh();advanceAfter(row,q,slot);
+   closeCombo(combo);refresh();
+   // Replacing an existing pupil must not move focus to another answer.
+   if(!replacing)advanceAfter(row,q,slot);
   };
+  document.querySelectorAll("[data-socio-clear-choice]").forEach(button=>button.addEventListener("click",()=>{
+   const row=rows[ctx.rowIndex],parts=String(button.dataset.socioClearChoice||"").split(":").map(Number);
+   const [q,slot]=parts;
+   if(!row||!Number.isInteger(q)||!Number.isInteger(slot)||q<0||q>=6||slot<0||slot>=3)return;
+   putPick(row,q,slot,"");
+   const input=document.getElementById("psySocInput"+q+"_"+slot);
+   if(input){input.value="";input.dataset.selected="";}
+   refresh();
+   input?.focus({preventScroll:true});
+  }));
   const drawOptions=(combo,term)=>{
    closeOther(combo);
    const panel=combo.querySelector(".psy-socio-options"),input=combo.querySelector(".psy-socio-typeahead");
