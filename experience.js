@@ -1420,6 +1420,11 @@ window.addEventListener("psy-assessment-dirty",()=>{
  save.textContent=activeSavedAssessmentId?"Сохранить изменения":"Сохранить результат";
  save.classList.remove("psy-is-saved");
 });
+/* Refresh the fixed sociometry save when a legacy free-text field changes. */
+for(const type of ["input","change"])document.addEventListener(type,e=>{
+ if(DETAILS[methodNow?.name]?.methodType==="sociometry"&&e.target.closest?.("#modal .modalbody"))
+  syncSocSaveFooter();
+});
 /* After any student answer or class detail changes, a previous cloud save is no longer current. */
 const markAssessmentEdited=()=>window.dispatchEvent(new Event("psy-assessment-dirty"));
 document.addEventListener("input",e=>{
