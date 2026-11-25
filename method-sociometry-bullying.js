@@ -192,10 +192,10 @@
    ctx.rows.map((person,i)=>person.name?.trim()?'<option value="'+i+'" '+(ctx.rowIndex===i?"selected":"")+'>'+E(person.name)+
     (absent(person)?" · отсутствовал":review(person)?" · уточнить":"")+'</option>':"").join("")+
    '</select></label><div class="psy-bully-counter">'+(selected?E(selected.name)+" · "+completed+" / 6 вопросов":"Список класса пока пуст")+'</div></div>'+
-   '<details class="psy-bully-add"><summary>Добавить учеников в список класса</summary>'+
-   '<p>Имена через новую строку. Уже внесенные дети и ответы не удаляются.</p>'+
+   '<div class="psy-bully-add"><strong>Сначала добавьте список класса</strong>'+
+   '<p>Напечатайте ФИО с клавиатуры или вставьте столбец из Excel, по одному ученику в строке. Остальные анкеты останутся на месте.</p>'+
    '<textarea id="psyBullyRoster" rows="5" placeholder="Фамилия Имя&#10;Фамилия Имя"></textarea>'+
-   '<div class="psy-bully-actions"><button type="button" class="btn" id="psyBullyAdd">Добавить в класс</button></div></details>'+
+   '<div class="psy-bully-actions"><button type="button" class="btn" id="psyBullyAdd">Добавить список класса</button></div></div>'+
    '<div class="psy-bully-presence">'+
    '<button class="psy-bully-toggle '+(absent(selected)?"on":"")+'" type="button" id="psyBullyAbsent" '+(!active?"disabled":"")+'>'+
    (absent(selected)?"Вернуть к обследованию":"Отметить: отсутствовал")+'</button>'+
@@ -515,8 +515,12 @@
     }
     if(e.key==="Enter"){e.preventDefault();
      const exact=candidates(combo,input.value).find(p=>norm(p.name)===norm(input.value));
-     const first=exact||candidates(combo,input.value)[0];
-     if(first)commit(combo,first.bullyId);else if(norm(input.value)==="никто")commit(combo,ID_NONE);
+     const matches=candidates(combo,input.value);
+     const first=exact||(matches.length===1?matches[0]:null);
+     if(first)commit(combo,first.bullyId);
+     else if(norm(input.value)==="никто")commit(combo,ID_NONE);
+     else{const t=document.getElementById("psyBullyNotice");
+      if(t)t.textContent="Уточните ФИО, чтобы выбран был один конкретный ученик.";}
     }
    });
    drop.addEventListener("click",()=>{if(!combo.querySelector(".psy-bully-options").hidden){close(combo);drop.focus();}
