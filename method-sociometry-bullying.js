@@ -413,9 +413,9 @@
   const nextQuestion=q=>{
    if(q<Q.length-1){focus(q+1,0);}
    else {
-    const next=rows.findIndex((p,i)=>i>ctx.rowIndex&&p.name?.trim()&&!absent(p));
-    if(next>=0){ctx.onSelect?.(next);focus(0,0);}
-    else{const t=document.getElementById("psyBullyNotice");if(t)t.textContent="Последний ученик в списке.";}
+    // Do not jump to another child when a completed response is edited.
+    const t=document.getElementById("psyBullyNotice");
+    if(t)t.textContent="Все вопросы заполнены. Для перехода нажмите «Следующий ученик».";
    }
   };
   document.getElementById("psyBullyPerson")?.addEventListener("change",e=>ctx.onSelect?.(Number(e.target.value)));
