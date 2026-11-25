@@ -380,7 +380,7 @@
       const p=current(),q=Number(button.dataset.b5Skip);
       if(!p||q!==1)return;
       setRecord(p,q,"skip",[]);
-      rerender();
+      advanceQuestion(q);
     }));
     document.querySelectorAll("[data-b5-clear]").forEach(button=>button.addEventListener("click",()=>{
       const p=current();if(!p)return;
@@ -389,6 +389,14 @@
     }));
     const combos=[...document.querySelectorAll(".psy-b5-combo")];
     const people=roster(ctx.rows);
+    const advanceQuestion=q=>{
+      // Finish this question only. Never auto-switch to the next pupil.
+      const target=document.getElementById(q<Q.length-1?
+        "psyB5Input"+(q+1)+"_0":"psyB5Open");
+      if(!target)return;
+      target.focus({preventScroll:true});
+      target.scrollIntoView?.({behavior:"smooth",block:"center"});
+    };
     const close=combo=>{
       const panel=combo.querySelector(".psy-b5-options"),input=combo.querySelector(".psy-b5-typeahead");
       if(panel)panel.hidden=true;
@@ -443,9 +451,12 @@
       combos.filter(c=>Number(c.dataset.b5Q)===q).forEach(restore);
       close(combo);
       message(id===NONE?"Выбрано «Никто».":"Выбор записан.");
-      if(!wasFilled&&id!==NONE){
-        const inputs=[...document.querySelectorAll(".psy-b5-typeahead")];
-        const next=inputs[inputs.indexOf(input)+1];
+      // A "Nobody" or a confirmed final slot completes the current
+      // question. Move to the next question, never to another child.
+      if(id===NONE||slot===Q[q].max-1){
+        advanceQuestion(q);
+      }else if(!wasFilled){
+        const next=document.getElementById("psyB5Input"+q+"_"+(slot+1));
         if(next){next.focus({preventScroll:true});next.select?.();}
       }
     };
