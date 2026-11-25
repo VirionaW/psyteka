@@ -262,7 +262,7 @@
       '<input type="text" autocomplete="off" spellcheck="false" list="psyB5NamesList"'+
       ' data-b5-q="'+i+'" data-b5-slot="'+j+'" data-b5-id="'+E(chosen)+'"'+
       ' value="'+E(name)+'" placeholder="Напишите ФИО или код" maxlength="120"'+
-      (r.status!=="answered"?" disabled":"")+' /></label>';
+      ' /></label>';
   }
   function calculator(d,ctx) {
     if (ctx.calcMode!=="class") return '<div class="psy-b5"><h3>Профилактика буллинга: SNA-анкетирование</h3>' +
@@ -355,11 +355,12 @@
     const current=()=>ctx.rows[ctx.rowIndex];
     const rerender=()=>ctx.onSelect?.(ctx.rowIndex);
     const message=s=>{ const el=document.getElementById("psyB5Message"); if (el) el.textContent=s; };
+    if(!roster(ctx.rows).length)document.getElementById("psyB5Names")?.focus({preventScroll:true});
     document.getElementById("psyB5Person")?.addEventListener("change", e=>ctx.onSelect?.(Number(e.target.value)));
     document.getElementById("psyB5Next")?.addEventListener("click", ()=>ctx.onNext?.());
     document.getElementById("psyB5Add")?.addEventListener("click", ()=>{
       const names=(document.getElementById("psyB5Names")?.value||"").split(/\r?\n|;/)
-        .map(s=>s.trim().slice(0,120)).filter(Boolean);
+        .map(s=>s.trim().replace(/^\d+[.)]\s*/,"").slice(0,120)).filter(Boolean);
       const existing=new Set(roster(ctx.rows).map(p=>norm(p.name)));
       const added=names.filter(s=>{const key=norm(s);if(existing.has(key))return false;existing.add(key);return true;});
       if (!added.length) {message("Введите новые имена или коды учеников.");return;}
@@ -406,10 +407,12 @@
         if(chosen&&next.some((id,k)=>k!==slot&&id===chosen)){
           message("Этот ученик уже указан в ответе на данный вопрос.");restore();return;
         }
-        if(next[slot]!==chosen){
+        if(next[slot]!==chosen||record(p,i).status!=="answered"){
           next[slot]=chosen;
           setRecord(p,i,"answered",next);
         }
+        const answered=document.querySelector('input[name="b5-state-'+i+'"][value="answered"]');
+        if(answered)answered.checked=true;
         input.dataset.b5Id=chosen;
         input.value=chosen?all.find(x=>x.socioId===chosen)?.name||"":"";
         message(chosen?"Выбор записан. Можно печатать следующий ответ.":"Выбор очищен.");
