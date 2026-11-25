@@ -92,8 +92,30 @@
    const raw=JSON.stringify(snapshot.scoreArchive);
    if(raw.length<=100000)scoreArchive=JSON.parse(raw);
   }
+  /* Preserve separate class rosters for each sociometry questionnaire. */
+  let sociometryVariants=null;
+  if(snapshot.sociometryVariants?.banks&&typeof snapshot.sociometryVariants.banks==="object"){
+   const allowed=["positive6","relations6","vika6","bullying-sna-five"],banks={};
+   for(const key of allowed){
+    const b=snapshot.sociometryVariants.banks[key];
+    if(!b)continue;
+    if(!Array.isArray(b.rows)||b.rows.length>300)
+     throw Error("Неверный список учеников варианта социометрии");
+    const raw=JSON.stringify(b.rows);
+    if(!raw||raw.length>850000)throw Error("Слишком большой объем данных социометрии");
+    const bankRows=JSON.parse(raw).map(r=>{
+     if(!r||typeof r!=="object"||Array.isArray(r))throw Error("Неверная запись участника");
+     r.name=String(r.name||"").slice(0,120);
+     r.answers=Array.isArray(r.answers)?r.answers.slice(0,500):[];
+     return r;
+    });
+    banks[key]={rows:bankRows,index:Math.max(0,Math.min(Math.max(0,bankRows.length-1),Number(b.index)||0))};
+   }
+   sociometryVariants={active:allowed.includes(snapshot.sociometryVariants.active)?
+      snapshot.sociometryVariants.active:"positive6",banks};
+  }
   return {calcMode:snapshot.calcMode,rows,rowIndex:Math.min(rows.length-1,Math.max(0,Number(snapshot.rowIndex)||0)),
-   ...(scoreArchive?{scoreArchive}:{})};
+   ...(scoreArchive?{scoreArchive}:{}),...(sociometryVariants?{sociometryVariants}:{})};
  }
  async function saveAssessment({id=null,title,methodName,snapshot}){
   await ready;
