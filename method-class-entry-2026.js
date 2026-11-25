@@ -908,6 +908,11 @@ const size=d=>cfg(d).n,limit=d=>cfg(d).max;
  let wcqMode="standard";
  try{if(sessionStorage.getItem("psy-wcq-result-mode")==="raw")wcqMode="raw"}catch(_){}
  const wcqRaw=()=>wcqMode==="raw";
+ function setWCQMode(mode){
+  wcqMode=mode==="raw"?"raw":"standard";
+  try{sessionStorage.setItem("psy-wcq-result-mode",wcqMode)}catch(_){}
+  return wcqMode;
+ }
  const rawTone=s=>s.raw<=s.max/3?"low":s.raw<=2*s.max/3?"middle":"high";
  const rawLabel=s=>({low:"Низкий уровень напряженности",middle:"Средний уровень напряженности",high:"Высокий уровень напряженности"})[rawTone(s)];
  const rawRanges=max=>{const a=max/3,b=2*max/3;return "0-"+a+" / "+(a+1)+"-"+b+" / "+(b+1)+"-"+max};
@@ -1185,7 +1190,7 @@ function bind(d,ctx){
    root.addEventListener("click",e=>{
     const button=e.target.closest?.("[data-wcq-view]");if(!button)return;
     const next=button.dataset.wcqView==="raw"?"raw":"standard";if(next===wcqMode)return;
-    wcqMode=next;try{sessionStorage.setItem("psy-wcq-result-mode",next)}catch(_){}
+    setWCQMode(next);
     ctx.onRender?.();
    });
   }
@@ -1341,5 +1346,5 @@ m.calculator=(d,ctx)=>supports(d)?calculator(d,ctx):old.calculator(d,ctx);
 m.instruction=d=>supports(d)?guide(d):old.instruction(d);
 m.materials=d=>supports(d)?sheet(d):old.materials(d);
 m.printPage=(d,blank,combined)=>supports(d)?printable(d,combined?"combined":blank?"blank":"guide"):old.printPage(d,blank,combined);
-window.PSY_SCHOOL_711_UI={supports,scored,present,result,group,calculator,guide,sheet,printable,csv,report};
+window.PSY_SCHOOL_711_UI={supports,scored,present,result,group,calculator,guide,sheet,printable,csv,report,getWCQMode:()=>wcqMode,setWCQMode};
 })();
