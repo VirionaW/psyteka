@@ -273,9 +273,64 @@ function enhanceMethodView(tab,html){
  return html;
 }
 /* Copy only answer values, not student metadata. Clipboard stays in current browser session. */
+/* WCQ clipboard: in-memory only; never delete or overwrite class records on paste. */
+let copiedWCQClass=null;
+function bindWCQCopyControls(d){
+ const current=rows[rowIndex],entry=document.querySelector("#modal .psy-mspss-entry");
+ if(!current||!entry)return;
+ const hasAnswers=r=>Array.isArray(r?.answers)&&r.answers.some(v=>v!==null&&v!==undefined&&v!=="");
+ const named=r=>String(r?.name||"").trim();
+ const classRows=()=>rows.filter(r=>named(r)||hasAnswers(r));
+ const cloneRow=r=>({name:named(r),answers:(r.answers||[]).slice(),attendance:r.attendance==="absent"?"absent":"present",schoolGrade:r.schoolGrade??null,ageYears:r.ageYears??null,ageManual:!!r.ageManual,sex:["m","f"].includes(r.sex)?r.sex:""});
+ const makeToolbar=()=>{const box=document.createElement("div");box.className="psy-answer-copy-toolbar";const info=document.createElement("span");info.className="psy-copy-status";info.setAttribute("role","status");return {box,info}};
+ const button=(label,handler)=>{const el=document.createElement("button");el.type="button";el.className="btn";el.textContent=label;el.onclick=handler;return el};
+ const one=makeToolbar();
+ const compatible=()=>copiedAssessmentAnswers?.key===d.id&&copiedAssessmentAnswers.version==="default"&&copiedAssessmentAnswers.sourceRow!==current;
+ const copy=button("Копировать ответы участника",()=>{
+  if(!hasAnswers(current))return;
+  copiedAssessmentAnswers={key:d.id,version:"default",answers:current.answers.slice(),source:named(current)||"участник",sourceRow:current};
+  one.info.textContent="Ответы скопированы. Можно вставить в другом режиме или протоколе.";refresh();
+ });
+ const paste=button("Вставить ответы участника",()=>{
+  if(!compatible())return;
+  if(current.attendance==="absent"){one.info.textContent="Сначала отметьте участника присутствующим.";return;}
+  if(hasAnswers(current)&&!confirm("Заменить ответы только у "+(named(current)||"текущего участника")+"?"))return;
+  current.answers=copiedAssessmentAnswers.answers.slice();
+  window.dispatchEvent(new Event("psy-assessment-dirty"));setTab("score");
+ });
+ one.box.append(copy,paste,one.info);
+ const anchor=entry.querySelector(".psy-711-advance")||entry.querySelector("#school711Result");
+ if(anchor)anchor.before(one.box);else entry.append(one.box);
+ let classCopy=null,classPaste=null;
+ if(calcMode==="class"){
+  const all=makeToolbar();
+  classCopy=button("Копировать весь класс",()=>{
+   const source=classRows();if(!source.length)return;
+   copiedWCQClass={sourceRows:rows,records:source.map(cloneRow)};
+   all.info.textContent="Скопировано участников: "+source.length+". Данные доступны в этой вкладке.";refresh();
+  });
+  classPaste=button("Вставить весь класс",()=>{
+   if(!copiedWCQClass||copiedWCQClass.sourceRows===rows)return;
+   const norm=r=>named(r).toLocaleLowerCase("ru");
+   const existing=new Set(rows.map(norm).filter(Boolean));
+   const incoming=copiedWCQClass.records.filter(r=>{const key=norm(r);if(key&&existing.has(key))return false;if(key)existing.add(key);return true});
+   if(!incoming.length){all.info.textContent="Все участники уже есть. Существующие ответы сохранены.";return}
+   if(!confirm("Добавить "+incoming.length+" участников из скопированного класса? Существующие записи не будут изменены."))return;
+   const empty=rows.length===1&&!named(rows[0])&&!hasAnswers(rows[0])&&rows[0].attendance!=="absent";
+   if(empty)rows.splice(0,1);
+   const first=rows.length;rows.push(...incoming.map(cloneRow));rowIndex=first;modeIndices.class=first;
+   window.dispatchEvent(new Event("psy-assessment-dirty"));setTab("score");
+  });
+  all.box.append(classCopy,classPaste,all.info);
+  const group=document.getElementById("school711Group");if(group)group.before(all.box);
+ }
+ function refresh(){copy.disabled=!hasAnswers(current);paste.disabled=!compatible()||current.attendance==="absent";if(classCopy)classCopy.disabled=!classRows().length;if(classPaste)classPaste.disabled=!copiedWCQClass||copiedWCQClass.sourceRows===rows;}
+ entry.addEventListener("input",refresh);refresh();
+}
 function bindAnswerCopyControls(){
  if(tabNow!=="score"||!methodNow)return;
  const d=DETAILS[methodNow.name];
+ if(d?.id==="lazarus-wcq50"){bindWCQCopyControls(d);return;}
  if(!window.PSY_MATCH_MSPSS?.supports(d)||calcMode!=="class")return;
  const current=rows[rowIndex],entry=document.querySelector("#modal .psy-mspss-entry");
  if(!current||!entry)return;
