@@ -61,3 +61,15 @@
 .psy-b5-graph-figure svg{display:block;width:100%;height:auto}
 .psy-b5-graph-legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:5px 10px;font-size:11px;line-height:1.55;color:var(--text,#354e3c);margin-top:8px}
 .psy-b5-graph-legend span{min-width:0;overflow-wrap:anywhere}
+
+/* Visible keyboard-first class roster and free-text sociometric nominations. */
+.psy-b5-roster-import{display:grid;gap:8px;margin:12px 0 16px;padding:14px;border:1px solid var(--stroke,#d8e4d9);border-radius:12px;background:var(--card,#fff)}
+.psy-b5-roster-import label{font-size:15px;color:var(--text,#284131)}
+.psy-b5-roster-import .psy-socio-note{margin:0}
+.psy-b5-roster-import textarea{display:block;width:100%;box-sizing:border-box;min-height:112px;resize:vertical;background:var(--input-bg,#fff);color:var(--text,#293e34);font:inherit;font-size:14px;line-height:1.65;padding:12px;border-radius:9px;border:1px solid var(--stroke,#bdcebe)}
+.psy-b5-roster-import textarea:focus-visible{outline:2px solid #588a6c;outline-offset:2px}
+.psy-b5-roster-import .btn{justify-self:start}
+.psy-b5-choice input[type="text"]{display:block;width:100%;min-width:0;box-sizing:border-box;padding:11px;border:1px solid var(--stroke,#bacdbd);border-radius:9px;font:inherit;font-size:14px;font-weight:400;background:var(--input-bg,#fff);color:var(--text,#283f31)}
+.psy-b5-choice input[type="text"]:focus-visible{outline:2px solid #5b9272;outline-offset:2px}
+.psy-b5-choice input[type="text"]::placeholder{color:var(--muted,#708175);opacity:.75}
+@media(max-width:600px){.psy-b5-roster-import{padding:11px}.psy-b5-roster-import .btn{width:100%}}
