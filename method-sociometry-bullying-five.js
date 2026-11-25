@@ -438,7 +438,10 @@
         setRecord(p,q,"answered",picks);
       }
       const input=combo.querySelector(".psy-b5-typeahead");
-      restore(combo);close(combo);
+      // A change to "Nobody" can clear or reopen other slots of this
+      // question. Refresh every visible input without rebuilding the page.
+      combos.filter(c=>Number(c.dataset.b5Q)===q).forEach(restore);
+      close(combo);
       message(id===NONE?"Выбрано «Никто».":"Выбор записан.");
       if(!wasFilled&&id!==NONE){
         const inputs=[...document.querySelectorAll(".psy-b5-typeahead")];
