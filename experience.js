@@ -21,6 +21,16 @@ window.PSY_REPORT_FILENAME=(fallback,mode)=>{
 };
 let savedModeRecords={one:{id:null,title:"",baseline:null},class:{id:null,title:"",baseline:null}};
 let assessmentSaveDialogOpen=false;
+/* Fixed save action for all sociometry variants with confirmed cloud persistence. */
+function syncSocSaveFooter(){
+ const button=document.getElementById("psySocSaveBottom");
+ if(!button)return;
+ const baseline=savedModeRecords[calcMode]?.baseline;
+ const unchanged=Boolean(activeSavedAssessmentId&&baseline!=null&&JSON.stringify(rows)===baseline);
+ button.textContent=unchanged?"Сохранено ✓":activeSavedAssessmentId?"Сохранить изменения":"Сохранить в профиль";
+ button.classList.toggle("psy-is-saved",unchanged);
+ button.disabled=unchanged;
+}
 async function saveCurrentAssessment(){
  const cloud=window.PSY_CLOUD;
  if(!methodNow||!cloud){alert("Войдите в аккаунт для облачного сохранения.");return}
@@ -89,6 +99,7 @@ async function saveCurrentAssessment(){
     savedModeRecords[originalMode]={id:data.id,title,baseline};
    }
    close();
+   syncSocSaveFooter();
    window.dispatchEvent(new CustomEvent("psy-assessment-saved",{detail:{id:data.id,methodName:originalMethod,calcMode:originalMode}}));
    const btn=document.getElementById("cpSaveBottom")||document.getElementById("mspssSaveBottom");
    if(btn){
@@ -325,7 +336,9 @@ function setTab(name){
   const insideProcessing=name==="score"||name==="processing";
   bottom.textContent=insideProcessing?"← Вернуться к портфолио":"Обработка результатов →";
   bottom.classList.toggle("primary",!insideProcessing||methodNow&&['mspss','simpleAnalogies12','pairedAssoc20'].includes(DETAILS[methodNow.name]?.workflow));
-  const right=document.querySelector('#modal .psy-mspss-footer-right');if(right)right.hidden=!insideProcessing;
+  const socioSave=document.getElementById("psySocSaveBottom");
+   if(socioSave){socioSave.hidden=!(insideProcessing&&calcMode==="class");if(!socioSave.hidden)syncSocSaveFooter();}
+   const right=document.querySelector('#modal .psy-mspss-footer-right');if(right)right.hidden=!insideProcessing;
   const reset=document.getElementById('mspssResetBottom');if(reset)reset.hidden=!insideProcessing;const save=document.getElementById('mspssSaveBottom');if(save)save.hidden=!insideProcessing;
    const back=document.getElementById('mspssBack');if(back)back.hidden=!insideProcessing;
    const report=document.getElementById('mspssReportBottom');if(report){
@@ -382,6 +395,10 @@ function setTab(name){
  const quickEntryContext={tab:name,calcMode,rows,rowIndex,rerender:()=>setTab("score"),selectRow:i=>{rowIndex=i;modeIndices[calcMode]=i;setTab("score");const el=document.querySelector('.psy-semester-grid select:not(:disabled), .psy-ph-grid select:not(:disabled)');if(el)el.focus();}};
  if(!window.PSY_MATCH_MSPSS?.supports(DETAILS[methodNow.name]))window.PSY_CLASS_ENTRY_2026?.enhance(DETAILS[methodNow.name],quickEntryContext);
  bindControls();
+ // Existing method handlers are bound first; remove duplicated deep-page save controls.
+ if(DETAILS[methodNow?.name]?.methodType==="sociometry" && document.getElementById("psySocSaveBottom")?.hidden===false){
+  body.querySelectorAll("#psySocSave,#psyBullySave,#psyVikaSave,#psyB5Save").forEach(button=>button.remove());
+ }
  if(variantUI)body.querySelectorAll("[data-socio-variant]").forEach(button=>button.addEventListener("click",()=>{
   const next=button.dataset.socioVariant;
   if(next===variantUI.getVariant())return;
@@ -1212,6 +1229,7 @@ function openMethod(m){
  const mspssPilot=d?.workflow==='mspss';
  const cpPilot=!!window.PSY_MATCH_MSPSS?.supports(d);
  const schultePilot=d?.workflow==='schulte5';
+  const sociometryPilot=d?.methodType==='sociometry';
  const luriaPilot=d?.workflow==='luria10x5';
  const analogyPilot=d?.workflow==='simpleAnalogies12';
  $('#modal').classList.toggle('psy-schulte-example',schultePilot);
@@ -1224,7 +1242,7 @@ function openMethod(m){
  document.querySelectorAll('.modal-tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
  const footer=$('#modal').querySelector('.modalfoot');
  footer.hidden=!d;
- footer.innerHTML=specialPilot?'<div class="psy-special-shared-footer"><span id="specialFooterStatus" class="psy-special-footer-state pending">Требуется заполнение</span><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button></div>':preschoolPilot?'<div class="psy-preschool-shared-footer"><span id="preschoolFooterStatus" class="psy-preschool-footer-state pending">Требуется заполнение</span><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button></div>':luriaPilot?'<div class="psy-luria-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button><button type="button" class="btn" id="luriaBack" hidden>Вернуться к портфолио</button><div class="psy-luria-footer-right"><span class="psy-luria-status is-waiting" id="luriaFooterStatus" hidden>Требуется заполнение</span><button type="button" class="btn" id="luriaReportBottom" disabled hidden>Скачать отчет участника</button><button type="button" class="btn" id="luriaResetBottom" hidden>Очистить ответы</button></div></div>':analogyPilot?'<div class="psy-analogies-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button><button type="button" class="btn psy-analogies-back" id="anaBack" hidden>Вернуться к портфолио</button><div class="psy-analogies-footer-right"><button type="button" class="btn psy-analogies-report" id="anaReportBottom" disabled hidden>Скачать отчет участника</button><button type="button" class="btn psy-analogies-reset" id="anaResetBottom" hidden>Очистить ответы</button></div></div>':schultePilot?'<div class="psy-schulte-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button type="button" class="btn psy-schulte-back" id="schulteBack" hidden>← Вернуться к портфолио</button><div class="psy-schulte-footer-right"><button type="button" class="btn psy-schulte-report" id="schulteReportBottom" disabled hidden>Скачать отчёт участника</button><button type="button" class="btn psy-schulte-reset" id="schulteResetBottom" hidden>Очистить ответы</button></div></div>':cpPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="cpBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="cpReportBottom" disabled hidden>Скачать отчет · Word</button><button type="button" class="btn psy-mspss-report" id="cpAnalyticBottom" disabled hidden>Аналитическая справка · Word</button><button class="btn psy-mspss-save" id="cpSaveBottom" hidden>Сохранить результат</button><button class="btn psy-mspss-reset" id="cpResetBottom" hidden>Очистить ответы</button></div></div>':matchMSPSS?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button></div>':mspssPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="mspssBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="mspssReportBottom" disabled hidden>Скачать отчет участника</button><button class="btn psy-mspss-save" id="mspssSaveBottom" hidden>Сохранить результат</button><button class="btn psy-mspss-reset" id="mspssResetBottom" hidden>Очистить ответы</button></div></div>':'<div class="psy-standard-footer">'+(d?'<button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button>':'')+'</div>';
+ footer.innerHTML=specialPilot?'<div class="psy-special-shared-footer"><span id="specialFooterStatus" class="psy-special-footer-state pending">Требуется заполнение</span><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button></div>':preschoolPilot?'<div class="psy-preschool-shared-footer"><span id="preschoolFooterStatus" class="psy-preschool-footer-state pending">Требуется заполнение</span><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button></div>':luriaPilot?'<div class="psy-luria-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button><button type="button" class="btn" id="luriaBack" hidden>Вернуться к портфолио</button><div class="psy-luria-footer-right"><span class="psy-luria-status is-waiting" id="luriaFooterStatus" hidden>Требуется заполнение</span><button type="button" class="btn" id="luriaReportBottom" disabled hidden>Скачать отчет участника</button><button type="button" class="btn" id="luriaResetBottom" hidden>Очистить ответы</button></div></div>':analogyPilot?'<div class="psy-analogies-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button><button type="button" class="btn psy-analogies-back" id="anaBack" hidden>Вернуться к портфолио</button><div class="psy-analogies-footer-right"><button type="button" class="btn psy-analogies-report" id="anaReportBottom" disabled hidden>Скачать отчет участника</button><button type="button" class="btn psy-analogies-reset" id="anaResetBottom" hidden>Очистить ответы</button></div></div>':schultePilot?'<div class="psy-schulte-footer"><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button type="button" class="btn psy-schulte-back" id="schulteBack" hidden>← Вернуться к портфолио</button><div class="psy-schulte-footer-right"><button type="button" class="btn psy-schulte-report" id="schulteReportBottom" disabled hidden>Скачать отчёт участника</button><button type="button" class="btn psy-schulte-reset" id="schulteResetBottom" hidden>Очистить ответы</button></div></div>':cpPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="cpBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="cpReportBottom" disabled hidden>Скачать отчет · Word</button><button type="button" class="btn psy-mspss-report" id="cpAnalyticBottom" disabled hidden>Аналитическая справка · Word</button><button class="btn psy-mspss-save" id="cpSaveBottom" hidden>Сохранить результат</button><button class="btn psy-mspss-reset" id="cpResetBottom" hidden>Очистить ответы</button></div></div>':matchMSPSS?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button></div>':mspssPilot?'<div class="psy-mspss-footer"><button class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов →</button><button class="btn psy-mspss-return" id="mspssBack" hidden>← Вернуться к портфолио</button><div class="psy-mspss-footer-right"><button class="btn psy-mspss-report" id="mspssReportBottom" disabled hidden>Скачать отчет участника</button><button class="btn psy-mspss-save" id="mspssSaveBottom" hidden>Сохранить результат</button><button class="btn psy-mspss-reset" id="mspssResetBottom" hidden>Очистить ответы</button></div></div>':sociometryPilot?'<div class="psy-standard-footer psy-sociometry-sticky-footer"><button type="button" class="btn primary psy-sociometry-save-bottom" id="psySocSaveBottom" hidden>Сохранить в профиль</button><button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button></div>':'<div class="psy-standard-footer">'+(d?'<button type="button" class="btn primary psy-bottom-processing" id="bottomProcessing">Обработка результатов</button>':'')+'</div>';
  // Schulte has exactly one primary action in the overview.
  // Anchor it to the right edge of the modal footer, independently of flex/grid
  // styles that may have been introduced by shared modal themes.
@@ -1246,7 +1264,8 @@ function openMethod(m){
  }
  if(d?.guideFile&&d?.answerFile&&d?.processingFile){const buttons=footer.querySelector('#methodButtons');if(buttons)buttons.insertAdjacentHTML('afterbegin','<a class="btn" href="'+escapeHTML(d.guideFile)+'" target="_blank" rel="noopener noreferrer">Руководство А4</a><a class="btn" href="'+escapeHTML(d.answerFile)+'" target="_blank" rel="noopener noreferrer">Бланк А4</a><a class="btn" href="'+escapeHTML(d.processingFile)+'" target="_blank" rel="noopener noreferrer">Обработка А4</a>'+(d.stimulusFile?'<a class="btn" href="'+escapeHTML(d.stimulusFile)+'" target="_blank" rel="noopener noreferrer">Стимулы А4</a>':''));}
  if(d?.workflow==='storycards'||d?.workflow==='ladder7'||d?.workflow==='schulte5'||d?.workflow==='familySocio110'||d?.workflow==='luria10x5'){const link=[...footer.querySelectorAll('a')].find(a=>a.textContent.includes('Первоисточник'));if(link||d?.workflow==='kfdBurns72'){link.href=d.source;link.textContent=d.workflow==='ladder7'?'Опубликованное руководство PDF ↗':'Методическое описание ↗';}}
- if(d)$('#bottomProcessing').onclick=()=>d.workflow==='luscherHub'?window.location.assign('luscher-tests.html'):d.workflow==='orekhovaHouses8'?window.location.assign('orekhova-houses.html'):setTab(tabNow==='score'||tabNow==='processing'?'overview':d.calculator?'score':'processing');
+ if(sociometryPilot)document.getElementById("psySocSaveBottom").onclick=saveCurrentAssessment;
+  if(d)$('#bottomProcessing').onclick=()=>d.workflow==='luscherHub'?window.location.assign('luscher-tests.html'):d.workflow==='orekhovaHouses8'?window.location.assign('orekhova-houses.html'):setTab(tabNow==='score'||tabNow==='processing'?'overview':d.calculator?'score':'processing');
  if(analogyPilot){$('#anaBack').onclick=()=>setTab('overview');}
  if(luriaPilot){
   $('#luriaBack').onclick=()=>setTab('overview');
@@ -1395,6 +1414,7 @@ if(new URLSearchParams(location.search).has("method")){
 if(document.readyState==="complete")openRequestedLibraryMethod();
 else window.addEventListener("load",openRequestedLibraryMethod,{once:true});
 window.addEventListener("psy-assessment-dirty",()=>{
+ syncSocSaveFooter();
  const save=document.getElementById("cpSaveBottom")||document.getElementById("mspssSaveBottom");
  if(!save)return;
  save.textContent=activeSavedAssessmentId?"Сохранить изменения":"Сохранить результат";
