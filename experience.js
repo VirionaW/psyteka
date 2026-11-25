@@ -56,8 +56,12 @@ function socSwitch(name){
  if(!isSocioMethod()||!SOCIO_VARIANTS.includes(name))return false;
  socStoreActive();
  if(!socioBanks[name])socioBanks[name]={rows:[{name:"",answers:[],socioVariant:name}],index:0};
- socioActive=name;rows=socioBanks[name].rows;rowIndex=socioBanks[name].index;
- modeSnapshots.class=rows;modeIndices.class=rowIndex;
+ socioActive=name;
+ if(calcMode==="class"){
+  rows=socioBanks[name].rows;rowIndex=socioBanks[name].index;
+  modeSnapshots.class=rows;modeIndices.class=rowIndex;
+ }
+ // Never substitute a class roster while browsing single-pupil/instruction mode.
  window.PSY_SOCIO_VARIANTS?.setVariant(name,rows);
  window.dispatchEvent(new Event("psy-assessment-dirty"));
  return true;
