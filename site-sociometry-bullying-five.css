@@ -73,3 +73,15 @@
 .psy-b5-choice input[type="text"]:focus-visible{outline:2px solid #5b9272;outline-offset:2px}
 .psy-b5-choice input[type="text"]::placeholder{color:var(--muted,#708175);opacity:.75}
 @media(max-width:600px){.psy-b5-roster-import{padding:11px}.psy-b5-roster-import .btn{width:100%}}
+
+/* Same obvious Nobody action at the answer field as in sociometry. */
+.psy-b5-choice-row{display:flex;align-items:stretch;gap:7px;min-width:0}
+.psy-b5-choice-row>input[type="text"]{flex:1 1 0;min-width:0;width:1px}
+.psy-b5-choice-row>input[type="text"]:disabled{opacity:.48;cursor:not-allowed}
+.psy-b5-nobody{flex:none;align-self:stretch;border:1px solid var(--stroke,#b9cfbd);
+ border-radius:9px;padding:8px 11px;background:var(--panel-soft,#f1f7f1);
+ color:var(--text,#3c6347);font:700 12px/1.25 system-ui,sans-serif;
+ cursor:pointer;transition:background .15s ease}
+.psy-b5-nobody:hover{background:var(--hover,#e2f0e5)}
+.psy-b5-nobody:focus-visible{outline:2px solid #5c9270;outline-offset:2px}
+@media(max-width:650px){.psy-b5-choice-row{gap:6px}.psy-b5-nobody{padding:7px 10px}}
