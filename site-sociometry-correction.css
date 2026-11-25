@@ -15,3 +15,33 @@
 .psy-socio-pick-clear:hover{color:#a34242!important}
 .psy-socio-pick-clear:focus-visible{outline:2px solid #558b6a;outline-offset:2px}
 @media(max-width:600px){.psy-socio-correction{padding:12px}.psy-socio-correction-actions{gap:9px}.psy-socio-correction-actions>.btn{flex:1 1 150px}}
+
+/* Persistent bottom-panel save for all sociometry variants. */
+.library-page #modal .modalfoot .psy-sociometry-sticky-footer{
+ display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;
+ gap:10px;width:100%;min-width:0;margin-left:auto
+}
+.library-page #modal .modalfoot #psySocSaveBottom{
+ display:inline-flex;align-items:center;justify-content:center;min-height:46px;
+ padding:11px 20px;border:1px solid #267c57;border-radius:10px;
+ background:#267c57;color:#fff;font-weight:800;white-space:normal;line-height:1.3;
+ transition:background .15s ease,border-color .15s ease
+}
+.library-page #modal .modalfoot #psySocSaveBottom:not(:disabled):hover{
+ background:#166540;border-color:#166540
+}
+.library-page #modal .modalfoot #psySocSaveBottom:focus-visible{
+ outline:3px solid #8fc2a4;outline-offset:3px
+}
+.library-page #modal .modalfoot #psySocSaveBottom.psy-is-saved{
+ background:var(--soft,#eaf3ec);color:var(--muted,#4f6858);
+ border-color:var(--line,#d5e2d7);cursor:default
+}
+.library-page #modal .modalfoot #psySocSaveBottom[hidden]{display:none!important}
+@media(max-width:580px){
+ .library-page #modal .modalfoot .psy-sociometry-sticky-footer{gap:7px}
+ .library-page #modal .modalfoot #psySocSaveBottom,
+ .library-page #modal .modalfoot .psy-sociometry-sticky-footer #bottomProcessing{
+   flex:1 1 145px;min-width:0;max-width:none;padding:9px 11px;min-height:43px;font-size:12px
+ }
+}
