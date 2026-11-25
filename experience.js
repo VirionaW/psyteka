@@ -49,8 +49,11 @@ function socRestore(persisted){
  socioActive=SOCIO_VARIANTS.includes(persisted?.active)?persisted.active:fromRow;
  if(!socioBanks[socioActive])
   socioBanks[socioActive]={rows:[{name:"",answers:[],socioVariant:socioActive}],index:0};
- rows=socioBanks[socioActive].rows;rowIndex=socioBanks[socioActive].index;
- modeSnapshots.class=rows;modeIndices.class=rowIndex;
+ modeSnapshots.class=socioBanks[socioActive].rows;
+ modeIndices.class=socioBanks[socioActive].index;
+ if(calcMode==="class"){
+  rows=modeSnapshots.class;rowIndex=modeIndices.class;
+ }
 }
 function socSwitch(name){
  if(!isSocioMethod()||!SOCIO_VARIANTS.includes(name))return false;
