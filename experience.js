@@ -9,6 +9,59 @@ let modeSnapshots={one:[{name:"",answers:[]}],class:[{name:"",answers:[]}]};
 let modeIndices={one:0,class:0};
 let copiedAssessmentAnswers=null;
 const methodSessions={};
+/* Independent class rosters for all sociometry questionnaires. */
+const SOCIO_VARIANTS=["positive6","relations6","vika6","bullying-sna-five"];
+const SOCIO_FIELDS={positive6:"socioChoices",relations6:"bullyResponses",vika6:"socioVikaAnswers","bullying-sna-five":"bullyFiveResponses"};
+let socioBanks={},socioActive="positive6";
+const isSocioMethod=()=>DETAILS[methodNow?.name]?.methodType==="sociometry";
+function socHasValue(x){
+ if(Array.isArray(x))return x.some(socHasValue);
+ if(x&&typeof x==="object")return Object.values(x).some(socHasValue);
+ return x!==null&&x!==undefined&&x!==""&&x!==false;
+}
+function socStoreActive(){
+ if(!isSocioMethod()||calcMode!=="class")return;
+ socioBanks[socioActive]={rows,index:rowIndex};
+}
+function socSnapshot(){
+ socStoreActive();
+ return {active:socioActive,banks:Object.fromEntries(Object.entries(socioBanks)
+  .filter(([name,v])=>SOCIO_VARIANTS.includes(name)&&Array.isArray(v?.rows))
+  .map(([name,v])=>[name,{rows:v.rows,index:v.index||0}]))};
+}
+function socRestore(persisted){
+ if(!isSocioMethod())return;
+ const incoming=Array.isArray(rows)&&rows.length?rows:[{name:"",answers:[]}],banks={};
+ const fromRow=incoming.find(r=>SOCIO_VARIANTS.includes(r?.socioVariant))?.socioVariant||"positive6";
+ if(persisted?.banks&&typeof persisted.banks==="object")for(const name of SOCIO_VARIANTS){
+  const bank=persisted.banks[name];
+  if(Array.isArray(bank?.rows)&&bank.rows.length)
+   banks[name]={rows:bank.rows,index:Math.max(0,Math.min(bank.rows.length-1,Number(bank.index)||0))};
+ }
+ if(!banks[fromRow])banks[fromRow]={rows:incoming,index:Math.max(0,Math.min(incoming.length-1,rowIndex||0))};
+ if(!persisted?.banks)for(const name of SOCIO_VARIANTS){
+  if(banks[name])continue;
+  if(incoming.some(r=>socHasValue(r?.[SOCIO_FIELDS[name]])||
+    (name==="bullying-sna-five"&&String(r?.bullyFiveOpenAnswer||"").trim())))
+   banks[name]={rows:incoming.map(r=>({...r,socioVariant:name})),index:Math.max(0,Math.min(incoming.length-1,rowIndex||0))};
+ }
+ socioBanks=banks;
+ socioActive=SOCIO_VARIANTS.includes(persisted?.active)?persisted.active:fromRow;
+ if(!socioBanks[socioActive])
+  socioBanks[socioActive]={rows:[{name:"",answers:[],socioVariant:socioActive}],index:0};
+ rows=socioBanks[socioActive].rows;rowIndex=socioBanks[socioActive].index;
+ modeSnapshots.class=rows;modeIndices.class=rowIndex;
+}
+function socSwitch(name){
+ if(!isSocioMethod()||!SOCIO_VARIANTS.includes(name))return false;
+ socStoreActive();
+ if(!socioBanks[name])socioBanks[name]={rows:[{name:"",answers:[],socioVariant:name}],index:0};
+ socioActive=name;rows=socioBanks[name].rows;rowIndex=socioBanks[name].index;
+ modeSnapshots.class=rows;modeIndices.class=rowIndex;
+ window.PSY_SOCIO_VARIANTS?.setVariant(name,rows);
+ window.dispatchEvent(new Event("psy-assessment-dirty"));
+ return true;
+}
 
 let activeSavedAssessmentId=null,activeSavedAssessmentTitle="";
 /* Export names must follow the user's saved assessment title, not an internal English identifier. */
@@ -26,7 +79,11 @@ function syncSocSaveFooter(){
  const button=document.getElementById("psySocSaveBottom");
  if(!button)return;
  const baseline=savedModeRecords[calcMode]?.baseline;
- const unchanged=Boolean(activeSavedAssessmentId&&baseline!=null&&JSON.stringify(rows)===baseline);
+ const bankBaseline=savedModeRecords[calcMode]?.socioBaseline;
+ const unchanged=Boolean(activeSavedAssessmentId&&(
+  isSocioMethod()&&calcMode==="class"?
+   bankBaseline!=null&&JSON.stringify(socSnapshot())===bankBaseline:
+   baseline!=null&&JSON.stringify(rows)===baseline));
  button.textContent=unchanged?"Сохранено ✓":activeSavedAssessmentId?"Сохранить изменения":"Сохранить в профиль";
  button.classList.toggle("psy-is-saved",unchanged);
  button.disabled=unchanged;
@@ -66,8 +123,11 @@ async function saveCurrentAssessment(){
    const title=name.value.trim();
    const snapshotRows=rows.map(r=>({...r,answers:Array.isArray(r.answers)?r.answers.slice():[]}));
    const baseline=JSON.stringify(snapshotRows);
+   const socSaved=isSocioMethod()&&originalMode==="class"?JSON.parse(JSON.stringify(socSnapshot())):null;
+   const socioBaseline=socSaved?JSON.stringify(socSaved):null;
    const detail=DETAILS[originalMethod];
    const snapshot={calcMode:originalMode,rowIndex,rows:snapshotRows,
+    ...(socSaved?{sociometryVariants:socSaved}:{}),
     scoreArchive:{savedAt:new Date().toISOString(),workflow:detail?.workflow||"",
      results:snapshotRows.map(r=>{
       try{
@@ -92,11 +152,12 @@ async function saveCurrentAssessment(){
     value&&typeof value==="object"?Object.fromEntries(Object.keys(value).sort().map(k=>[k,normalize(value[k])])):value;
    const expected=normalize(JSON.parse(JSON.stringify(snapshotRows)));
    const actual=normalize(stored?.snapshot?.rows||[]);
-   if(stored?.method_name!==originalMethod||JSON.stringify(actual)!==JSON.stringify(expected))
+   if(stored?.method_name!==originalMethod||JSON.stringify(actual)!==JSON.stringify(expected)||
+   (socSaved&&JSON.stringify(normalize(stored?.snapshot?.sociometryVariants||null))!==JSON.stringify(normalize(socSaved))))
     throw Error("Контрольная проверка сохраненных ответов не прошла. Запись не подтверждена.");
    if(methodNow?.name===originalMethod&&calcMode===originalMode){
     activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=title;
-    savedModeRecords[originalMode]={id:data.id,title,baseline};
+    savedModeRecords[originalMode]={id:data.id,title,baseline,socioBaseline};
    }
    close();
    syncSocSaveFooter();
@@ -402,7 +463,7 @@ function setTab(name){
  if(variantUI)body.querySelectorAll("[data-socio-variant]").forEach(button=>button.addEventListener("click",()=>{
   const next=button.dataset.socioVariant;
   if(next===variantUI.getVariant())return;
-  variantUI.setVariant(next,rows);
+  if(!socSwitch(next))variantUI.setVariant(next,rows);
   window.PSY_DRAFTS?.flush?.();
   setTab(tabNow);
  }));
@@ -1106,9 +1167,15 @@ function bindControls(){
  if(nextMode===calcMode)return;
  const carriedSociometryVariant=window.PSY_SOCIO_VARIANTS?.name===methodNow.name
   ?window.PSY_SOCIO_VARIANTS.getVariant():null;
+ socStoreActive();
  savedModeRecords[calcMode]={...savedModeRecords[calcMode],id:activeSavedAssessmentId,title:activeSavedAssessmentTitle};
  window.PSY_DRAFTS?.flush?.();calcMode=nextMode;rows=modeSnapshots[calcMode];rowIndex=modeIndices[calcMode]||0;
- if(carriedSociometryVariant)window.PSY_SOCIO_VARIANTS.setVariant(carriedSociometryVariant,rows);
+ if(carriedSociometryVariant){
+  if(calcMode==="class"&&socioBanks[socioActive]){
+   rows=socioBanks[socioActive].rows;rowIndex=socioBanks[socioActive].index;
+  }
+  window.PSY_SOCIO_VARIANTS.setVariant(carriedSociometryVariant,rows);
+ }
  activeSavedAssessmentId=savedModeRecords[calcMode]?.id||null;
  activeSavedAssessmentTitle=savedModeRecords[calcMode]?.title||"";
  setTab("score");
@@ -1204,7 +1271,7 @@ function openMethod(m){
  if(window.PSY_PMPK_OBJECT56?.catalog?.some(x=>x.title===m.name)){const item=window.PSY_PMPK_OBJECT56.catalog.find(x=>x.title===m.name);window.PSY_PMPK_OBJECT56.open(item.object56Id);return;}
  if(window.PSY_PMPK_IVANOVA?.has?.(m.name)){window.PSY_PMPK_IVANOVA.open();return;}
  if(window.PSY_PMPK_PROVERBS?.has?.(m.name)){window.PSY_PMPK_PROVERBS.open();return;}
- if(methodNow?.name){window.PSY_DRAFTS?.flush?.();methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords}};
+ if(methodNow?.name){socStoreActive();window.PSY_DRAFTS?.flush?.();methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords,socioBanks,socioActive}};
  methodNow=m;tabNow='overview';activeSavedAssessmentId=null;activeSavedAssessmentTitle='';
  // Public copy editor references a stable ID; the user-facing name may change.
  window.PSY_ACTIVE_METHOD_ID=m.id;
@@ -1215,6 +1282,8 @@ function openMethod(m){
  modeIndices=saved?.modeIndices||{one:0,class:0};
  rows=saved?.rows||modeSnapshots[calcMode];rowIndex=saved?.rowIndex||0;
  savedModeRecords=saved?.savedModeRecords||{one:{id:null,title:"",baseline:null},class:{id:null,title:"",baseline:null}};
+ if(DETAILS[m.name]?.methodType==="sociometry")socRestore(saved?.socioBanks?{active:saved.socioActive,banks:saved.socioBanks}:null);
+ else {socioBanks={};socioActive="positive6";}
  activeSavedAssessmentId=savedModeRecords[calcMode]?.id||null;
  activeSavedAssessmentTitle=savedModeRecords[calcMode]?.title||"";
  const d=DETAILS[m.name];const displayTitle=window.PSY_SCHOOL_CARDS?.compose?.(m,d,window.PSY_PORTFOLIO_EDITS?.[m.name]||{},window.PSY_GUIDE_STANDARD)?.title||m.name;$('#modalTitle').textContent=window.PSY_CONTENT_OVERRIDES?.display?.(m,'name',displayTitle)||displayTitle;$('#modalAuthor').textContent='Сведения о методике';
@@ -1291,7 +1360,8 @@ window.openMethod=openMethod;
 // Shared read/write bridge for private, version-tolerant drafts.
 window.PSY_DRAFT_BRIDGE={
  get:()=>methodNow?{methodName:methodNow.name,snapshot:{
-  calcMode,rowIndex,rows:JSON.parse(JSON.stringify(rows))
+  calcMode,rowIndex,rows:JSON.parse(JSON.stringify(rows)),
+  ...(isSocioMethod()?{sociometryVariants:JSON.parse(JSON.stringify(socSnapshot()))}:{})
  }}:null,
  restore:({methodName,snapshot})=>{
   if(!methodNow||methodNow.name!==methodName||!snapshot||!["one","class"].includes(snapshot.calcMode))return false;
@@ -1299,6 +1369,7 @@ window.PSY_DRAFT_BRIDGE={
   if(!rows.length)rows=[{name:"",answers:[]}];
   rowIndex=Math.max(0,Math.min(rows.length-1,snapshot.rowIndex||0));
   modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
+  if(isSocioMethod())socRestore(snapshot.sociometryVariants);
   activeSavedAssessmentId=null;activeSavedAssessmentTitle="";
   savedModeRecords[calcMode]={id:null,title:"",baseline:null};
   methodSessions[methodName]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords};
@@ -1326,8 +1397,10 @@ window.PSY_PROCESSING_NOTEBOOK={
   modeIndices[calcMode]=rowIndex;
   activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=data.title;
   window.PSY_DRAFTS?.flush?.();rows=data.snapshot.rows.length?data.snapshot.rows:[{name:"",answers:[]}];
-  savedModeRecords[calcMode]={id:data.id,title:data.title,baseline:JSON.stringify(rows)};
   rowIndex=Math.max(0,Math.min(rows.length-1,data.snapshot.rowIndex||0));
+  if(isSocioMethod())socRestore(data.snapshot.sociometryVariants);
+  savedModeRecords[calcMode]={id:data.id,title:data.title,baseline:JSON.stringify(rows),
+    socioBaseline:isSocioMethod()?JSON.stringify(socSnapshot()):null};
   modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
   methodSessions[methodNow.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords};
   try{
@@ -1349,6 +1422,7 @@ window.PSY_PROCESSING_NOTEBOOK={
   if(changed&&!confirm("Вернуться к чистому бланку? Несохраненные изменения текущей обработки будут потеряны. Сохраненные в профиле результаты останутся."))return false;
   window.PSY_DRAFTS?.flush?.();rows=[{name:"",answers:[]}];
   rowIndex=0;
+  if(isSocioMethod()){socioBanks={};socRestore({active:socioActive,banks:{}});}
   modeSnapshots[calcMode]=rows;
   modeIndices[calcMode]=0;
   savedModeRecords[calcMode]={id:null,title:"",baseline:null};
@@ -1399,8 +1473,10 @@ async function openRequestedLibraryMethod(){
   if(!data||data.method_name!==found.name)throw Error("Методика не совпадает с сохраненной");
   activeSavedAssessmentId=data.id;activeSavedAssessmentTitle=data.title;
   calcMode=data.snapshot.calcMode;rows=data.snapshot.rows.length?data.snapshot.rows:[{name:"",answers:[]}];
-  savedModeRecords[calcMode]={id:data.id,title:data.title,baseline:JSON.stringify(rows)};
   rowIndex=Math.max(0,Math.min(rows.length-1,data.snapshot.rowIndex));
+  if(isSocioMethod())socRestore(data.snapshot.sociometryVariants);
+  savedModeRecords[calcMode]={id:data.id,title:data.title,baseline:JSON.stringify(rows),
+    socioBaseline:isSocioMethod()?JSON.stringify(socSnapshot()):null};
   modeSnapshots[calcMode]=rows;modeIndices[calcMode]=rowIndex;
   methodSessions[found.name]={rows,modeSnapshots,modeIndices,calcMode,rowIndex,savedModeRecords};
   setTab("score");
