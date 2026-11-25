@@ -913,12 +913,11 @@ const size=d=>cfg(d).n,limit=d=>cfg(d).max;
   try{sessionStorage.setItem("psy-wcq-result-mode",wcqMode)}catch(_){}
   return wcqMode;
  }
- const rawTone=s=>s.raw<=s.max/3?"low":s.raw<=2*s.max/3?"middle":"high";
+ const rawTone=s=>s.raw<=6?"low":s.raw<=12?"middle":"high";
  const rawLabel=s=>({low:"Низкий уровень напряженности",middle:"Средний уровень напряженности",high:"Высокий уровень напряженности"})[rawTone(s)];
- const rawRanges=max=>{const a=max/3,b=2*max/3;return "0-"+a+" / "+(a+1)+"-"+b+" / "+(b+1)+"-"+max};
- const rawNote="Условные уровни напряженности: для шкал с максимумом 18 – 0-6, 7-12, 13-18; для других шкал границы пропорциональны их максимуму. Это описательные границы, не возрастные нормы.";
+ const rawNote="Единые условные границы для отображения сырых баллов; не возрастные нормы. Для шкал с максимумом, отличным от 18, эти границы не являются нормативными.";
  const wcqControls=()=>'<div class="psy-wcq-result-switch" style="display:flex!important;align-items:center;flex-wrap:wrap;gap:8px;margin:8px 0 14px" role="group" aria-label="Вид результатов Лазаруса"><span style="font-weight:600">Вид баллов:</span><button type="button" class="btn '+(wcqRaw()?"":"primary")+'" data-wcq-view="standard" aria-pressed="'+(!wcqRaw())+'">Т-баллы / проценты</button><button type="button" class="btn '+(wcqRaw()?"primary":"")+'" data-wcq-view="raw" aria-pressed="'+wcqRaw()+'">Сырые баллы</button></div>';
- const rawLegendText=d=>[...new Set(cfg(d).scales.map(s=>s.q.length*limit(d)))].sort((a,b)=>a-b).map(max=>"Максимум "+max+": "+rawRanges(max)).join("; ");
+ const rawLegendText=d=>"0-6 – низкий (зеленый); 7-12 – средний (желтый); 13 и выше – высокий (красный).";
  const rawLegend=d=>'<p class="psy-mspss-small">'+esc(rawNote)+'</p><p class="psy-mspss-small">'+esc(rawLegendText(d))+'</p>';
 const present=(d,r)=>Array.from({length:size(d)},(_,i)=>r?.answers?.[i]).filter(v=>v!==null&&v!==undefined&&v!==""&&/^[0-9]$/.test(String(v))&&Number(v)<=limit(d)).length;
 const scored=(d,r)=>r?.attendance!=="absent"&&present(d,r)===size(d)&&
