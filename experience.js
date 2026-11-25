@@ -284,6 +284,21 @@ function bindWCQCopyControls(d){
  const cloneRow=r=>({name:named(r),answers:(r.answers||[]).slice(),attendance:r.attendance==="absent"?"absent":"present",schoolGrade:r.schoolGrade??null,ageYears:r.ageYears??null,ageManual:!!r.ageManual,sex:["m","f"].includes(r.sex)?r.sex:""});
  const makeToolbar=()=>{const box=document.createElement("div");box.className="psy-answer-copy-toolbar";const info=document.createElement("span");info.className="psy-copy-status";info.setAttribute("role","status");return {box,info}};
  const button=(label,handler)=>{const el=document.createElement("button");el.type="button";el.className="btn";el.textContent=label;el.onclick=handler;return el};
+ const addModeSwitch=toolbar=>{
+  const api=window.PSY_SCHOOL_711_UI;
+  const raw=api?.getWCQMode?.()==="raw";
+  const toggle=button(raw?"Показать Т-баллы / проценты":"Показать сырые баллы",()=>{
+   if(typeof api?.setWCQMode==="function"){
+    api.setWCQMode(raw?"standard":"raw");setTab("score");
+   }else{
+    const fallback=document.querySelector('[data-wcq-view="'+(raw?"standard":"raw")+'"]');
+    if(fallback){fallback.click();return;}
+    toolbar.info.textContent="Обновление обработки еще не загружено. Ответы не изменены.";
+   }
+  });
+  toggle.classList.add("primary");toggle.style.display="inline-flex";
+  toolbar.box.prepend(toggle);
+ };
  const one=makeToolbar();
  const compatible=()=>copiedAssessmentAnswers?.key===d.id&&copiedAssessmentAnswers.version==="default"&&copiedAssessmentAnswers.sourceRow!==current;
  const copy=button("Копировать ответы участника",()=>{
@@ -299,6 +314,7 @@ function bindWCQCopyControls(d){
   window.dispatchEvent(new Event("psy-assessment-dirty"));setTab("score");
  });
  one.box.append(copy,paste,one.info);
+ addModeSwitch(one);
  const anchor=entry.querySelector(".psy-711-advance")||entry.querySelector("#school711Result");
  if(anchor)anchor.before(one.box);else entry.append(one.box);
  let classCopy=null,classPaste=null;
@@ -322,6 +338,7 @@ function bindWCQCopyControls(d){
    window.dispatchEvent(new Event("psy-assessment-dirty"));setTab("score");
   });
   all.box.append(classCopy,classPaste,all.info);
+  addModeSwitch(all);
   const group=document.getElementById("school711Group");if(group)group.before(all.box);
  }
  function refresh(){copy.disabled=!hasAnswers(current);paste.disabled=!compatible()||current.attendance==="absent";if(classCopy)classCopy.disabled=!classRows().length;if(classPaste)classPaste.disabled=!copiedWCQClass||copiedWCQClass.sourceRows===rows;}
