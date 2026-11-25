@@ -105,8 +105,10 @@
     if(!raw||raw.length>850000)throw Error("Слишком большой объем данных социометрии");
     const bankRows=JSON.parse(raw).map(r=>{
      if(!r||typeof r!=="object"||Array.isArray(r))throw Error("Неверная запись участника");
-     r.name=String(r.name||"").slice(0,120);
-     r.answers=Array.isArray(r.answers)?r.answers.slice(0,500):[];
+     // Do not add or drop fields: byte-for-byte round-trip of all answer banks
+     // must match the source before the UI can mark a cloud save as verified.
+     if(String(r.name||"").length>120)throw Error("Слишком длинное имя ученика");
+     if(Array.isArray(r.answers)&&r.answers.length>500)throw Error("Слишком много ответов ученика");
      return r;
     });
     banks[key]={rows:bankRows,index:Math.max(0,Math.min(Math.max(0,bankRows.length-1),Number(b.index)||0))};
