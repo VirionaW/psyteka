@@ -1012,7 +1012,7 @@ function result(d,r){
  return '<section class="psy-711-result'+(d.id==="razuvaeva-osr29"?" psy-711-razuvaeva-result":"")+'"><h3>Результаты участника</h3>'+controls+
  '<div class="psy-711-scale-grid'+(d.id==="razuvaeva-osr29"?" psy-711-razuvaeva-grid":"")+'">'+
  (d.id==="razuvaeva-osr29"?razOverallHtml(z):"")+z.scales.map(s=>
- '<div class="psy-711-scale psy-711-'+tone(d,s)+'"><b>'+esc(s.name)+'</b><strong>'+(d.id==="lazarus-wcq50"?(wcqRaw()?s.raw+" / "+s.max:wcqValue(s)):num(d,s)+' / '+maximum(d,s))+'</strong>'+
+ '<div class="psy-711-scale psy-711-'+(d.id==="lazarus-wcq50"&&wcqRaw()?"neutral":tone(d,s))+'"><b>'+esc(s.name)+'</b><strong>'+(d.id==="lazarus-wcq50"?(wcqRaw()?'<span class="psy-711-number psy-711-'+rawTone(s)+'">'+s.raw+'</span> / '+s.max:wcqValue(s)):num(d,s)+' / '+maximum(d,s))+'</strong>'+
  (d.id==="razuvaeva-osr29"?"":'<span>'+esc(
  d.id==="lazarus-wcq50"?(wcqRaw()?rawLabel(s):s.tScore!==null?window.PSY_WCQ_NORMS_2026.level(s.tScore):"Доля максимума шкалы"):label(d,s))+'</span>')+
  '<div class="psy-711-track"><span style="width:'+(d.id==="lazarus-wcq50"&&!wcqRaw()&&s.tScore!==null?Math.max(0,Math.min(100,s.tScore/90*100)):s.percent)+'%"></span></div></div>').join("")+'</div>'+
@@ -1081,7 +1081,7 @@ function analytical711Preview(d,rows){
 }
 function group(d,rows){
  const keys=(cfg(d).versions?.[0]?.scales||cfg(d).scales);
- return '<section class="psy-mspss-group psy-711-group psy-711-'+d.id+'"><h3>Результаты класса</h3>'+(d.id==="lazarus-wcq50"?wcqControls():"")+'<div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th>'+(d.id==="razuvaeva-osr29"?'<th>Общий результат</th>':"")+keys.map(s=>'<th>'+esc(s.name)+(d.id==="lazarus-wcq50"&&wcqRaw()?" (до "+s.q.length*limit(d)+")":"")+'</th>').join("")+'</tr></thead><tbody>'+
+ return '<section class="psy-mspss-group psy-711-group psy-711-'+d.id+'"><h3>Результаты класса</h3>'+(d.id==="lazarus-wcq50"?wcqControls():"")+'<div class="psy-mspss-scroll"><table><thead><tr><th>№</th><th>Участник</th>'+(d.id==="razuvaeva-osr29"?'<th>Общий результат</th>':"")+keys.map(s=>'<th>'+esc(s.name)+'</th>').join("")+'</tr></thead><tbody>'+
  rows.filter(r=>r.name?.trim()||present(d,r)).map((r,i)=>{const z=scored(d,r);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.name||"У-"+(i+1))+'</td>'+(d.id==="razuvaeva-osr29"?'<td class="psy-711-score-cell">'+(z?'<span class="psy-711-number psy-711-'+razOverallTone(z)+'" aria-label="'+z.overallLevel.name+'">'+z.overallScore+'</span>':"")+'</td>':"")+keys.map((s,j)=>{const v=z?.scales?.[j];return '<td class="psy-711-score-cell">'+(v?'<span class="psy-711-number psy-711-'+(d.id==="lazarus-wcq50"?wcqColor(v):tone(d,v))+'">'+(d.id==="lazarus-wcq50"?wcqValue(v):num(d,v))+'</span>':"")+'</td>'}).join("")+'</tr>'}).join("")+
  '</tbody></table></div>'+(d.id==="razuvaeva-osr29"&&new Set(rows.filter(r=>!!scored(d,r)).map(r=>razKey(d,r))).size>1?
  '<p class="psy-mspss-small">Для общей аналитической справки выберите одну редакцию ключа для всей группы.</p>':d.id==="lazarus-wcq50"&&wcqRaw()?rawLegend(d):d.id==="lazarus-wcq50"&&rows.some(person=>{const age=wcqYears(person);return age===12||age===13;})?'<p class="psy-mspss-small">Для участников 12-13 лет сравнение с группой 14-20 лет ориентировочное.</p>':"")+analytical711Preview(d,rows)+'</section>';
@@ -1252,7 +1252,7 @@ function bind(d,ctx){
 
 function csv(d,rows){
  const isWCQ=d.id==="lazarus-wcq50",scales=(cfg(d).scales||cfg(d).versions?.[0]?.scales||[]);
- const head=["№","Участник",...(d.id==="razuvaeva-osr29"?["Общий результат"]:[]),...scales.map(s=>s.name+(isWCQ&&wcqRaw()?" (сырые баллы, до "+s.q.length*limit(d)+")":""))];
+ const head=["№","Участник",...(d.id==="razuvaeva-osr29"?["Общий результат"]:[]),...scales.map(s=>s.name)];
  const cell=v=>{let x=String(v??"");if(/^\s*[=+@-]/.test(x))x="'"+x;return '"'+x.replace(/"/g,'""')+'"'};
  const lines=[head,...rows.map((r,i)=>{const scores=scored(d,r)?.scales||scales.map(()=>null);
   return [i+1,(r.name||"У-"+(i+1)),...(d.id==="razuvaeva-osr29"?[scored(d,r)?.overallScore??""]:[]),...scores.map(s=>s?(isWCQ?wcqValue(s):num(d,s)):"")];
@@ -1294,12 +1294,13 @@ function report(d,rows,mode,index){
  if(analytic)body=analytic.lines.map(analyticPara).join("")+window.PSY_ANALYTIC_SIGNATURES.word(rows);
  else{
   body=para(cfg(d).name)+para(mode==="class"?"Результаты "+(grade?grade+" класса":"класса"):"Результат участника")+para("Дата: "+new Date().toLocaleDateString("ru-RU"));
-  body+=table([["№","Участник",...(d.id==="razuvaeva-osr29"?["Общий результат"]:[]),...scales.map(s=>s.name+(d.id==="lazarus-wcq50"&&wcqRaw()?" (до "+s.q.length*limit(d)+")":""))],...rowsData],fill);
+  body+=table([["№","Участник",...(d.id==="razuvaeva-osr29"?["Общий результат"]:[]),...scales.map(s=>s.name)],...rowsData],fill);
   if(d.id==="eysenck-40")body+=para("Интервалы каждой шкалы:")+table([["Баллы","Уровень"],["0-7","Низкий"],["8-14","Средний"],["15-20","Высокий"]],[["E4F1FB","E4F1FB"],["FFF0CF","FFF0CF"],["F9DEDC","F9DEDC"]]);
   else if(d.id==="lazarus-wcq50"&&wcqRaw()){
    body+=para("Сырые баллы")+para(rawNote)+para(rawLegendText(d));
    if(mode!=="class"&&scored(d,people[0])){
-    body+=table([["Шкала","Сырой балл","Уровень"],...scored(d,people[0]).scales.map(v=>[v.name,v.raw+" / "+v.max,rawLabel(v)])]);
+    const rawScales=scored(d,people[0]).scales;
+    body+=table([["Шкала","Сырой балл","Уровень"],...rawScales.map(v=>[v.name,String(v.raw),rawLabel(v)])],rawScales.map(v=>[null,rawTone(v)==="high"?"FF6868":rawTone(v)==="middle"?"FFF14D":"4BE878",null]));
     body+=para(wcqProfile(scored(d,people[0])).replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim());
    }
   }
