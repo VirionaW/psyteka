@@ -36,7 +36,8 @@
   if(disclaimer)disclaimer.textContent="Тестовая отправка письма не активирует подписку и не запускает пробный период.";
  }
  client=window.supabase.createClient(config.url,config.publishableKey,{
-  auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+  auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true},
+  global:{fetch:config.apiFetch}
  });
  let email="",lastSendAt=0;
  const panel=document.getElementById("authSignedIn"),emailLabel=document.getElementById("authEmailLabel");
