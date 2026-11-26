@@ -1,0 +1,10 @@
+# Шлюз только к фиксированному проекту Supabase.
+# Обработка всех путей /supabase-bridge/* через index.php.
+Options -Indexes
+DirectoryIndex index.php
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^__health/?$ index.php [QSA,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]
+</IfModule>
