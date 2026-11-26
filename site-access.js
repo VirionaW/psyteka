@@ -45,7 +45,8 @@
     !/^sb_publishable_[A-Za-z0-9_-]+$/.test(config.publishableKey||"")||
     !window.supabase?.createClient){goHome();return}
  const client=window.PSY_AUTH_CLIENT||(window.PSY_AUTH_CLIENT=window.supabase.createClient(config.url,config.publishableKey,{
-  auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
+  auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false},
+  global:{fetch:config.apiFetch}
  }));
  function withTimeout(request,ms){
   return new Promise((resolve,reject)=>{
