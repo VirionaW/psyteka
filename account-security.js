@@ -7,7 +7,8 @@
  const cfg=window.PSY_AUTH_CONFIG||{};
  if(!window.supabase?.createClient||!cfg.url||!cfg.publishableKey){show("accountMfaGuest");note("Сервис авторизации недоступен");return}
  const client=window.PSY_AUTH_CLIENT||(window.PSY_AUTH_CLIENT=window.supabase.createClient(cfg.url,cfg.publishableKey,{
-  auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
+  auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false},
+  global:{fetch:cfg.apiFetch}
  }));
  let pending=null,primary=null,busy=false;
  const valid=v=>/^\d{6}$/.test(String(v||"").trim());
