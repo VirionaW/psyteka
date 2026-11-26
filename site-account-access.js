@@ -29,7 +29,8 @@
   hidePrivate();message("Аккаунт временно недоступен.");return;
  }
  const client=window.PSY_AUTH_CLIENT||(window.PSY_AUTH_CLIENT=window.supabase.createClient(config.url,config.publishableKey,{
-  auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
+  auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false},
+  global:{fetch:config.apiFetch}
  }));
  try{
   const {data,error}=await client.auth.getUser();
