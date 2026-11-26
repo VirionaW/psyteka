@@ -30,7 +30,8 @@
   !/^sb_publishable_[A-Za-z0-9_-]+$/.test(config.publishableKey||"")||
   !window.supabase?.createClient){display(guest);note("Сервис защиты временно недоступен.",true);return;}
  const client=window.supabase.createClient(config.url,config.publishableKey,{
-  auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
+  auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false},
+  global:{fetch:config.apiFetch}
  });
  let pending=null,primaryFactor=null,verifiedCount=0,busy=false;
  function pendingState(value){
