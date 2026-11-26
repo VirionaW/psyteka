@@ -19,7 +19,8 @@
    return;
   }
   const client=window.PSY_AUTH_CLIENT||(window.PSY_AUTH_CLIENT=window.supabase.createClient(config.url,config.publishableKey,{
-   auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
+   auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:false},
+  global:{fetch:config.apiFetch}
   }));
   const {data,error}=await client.auth.getUser();
   if(error||!data?.user||data.user.is_anonymous||!data.user.email_confirmed_at)return;
