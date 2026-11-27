@@ -95,7 +95,7 @@
   /* Preserve separate class rosters for each sociometry questionnaire. */
   let sociometryVariants=null;
   if(snapshot.sociometryVariants?.banks&&typeof snapshot.sociometryVariants.banks==="object"){
-   const allowed=["positive6","relations6","vika6","bullying-sna-five"],banks={};
+   const allowed=["positive6","relations6","vika6","bullying-sna-five","positive3"],banks={};
    for(const key of allowed){
     const b=snapshot.sociometryVariants.banks[key];
     if(!b)continue;

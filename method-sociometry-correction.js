@@ -13,6 +13,7 @@
  const spec=()=>{
   const v=variant();
   if(v==="relations6")return {field:"bullyResponses",label:"отношения и поддержка (6 вопросов)"};
+  if(v==="positive3")return {field:"socioThreeAnswers",label:"социометрия (3 положительных вопроса)"};
   if(v==="vika6")return {field:"socioVikaAnswers",label:"социометрия Вики (6 вопросов)"};
   if(v==="bullying-sna-five")return {field:"bullyFiveResponses",label:"профилактика буллинга SNA (5 вопросов)",open:"bullyFiveOpenAnswer"};
   return {field:"socioChoices",label:"обычная социометрия (6 вопросов)"};

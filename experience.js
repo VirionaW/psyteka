@@ -10,8 +10,8 @@ let modeIndices={one:0,class:0};
 let copiedAssessmentAnswers=null;
 const methodSessions={};
 /* Independent class rosters for all sociometry questionnaires. */
-const SOCIO_VARIANTS=["positive6","relations6","vika6","bullying-sna-five"];
-const SOCIO_FIELDS={positive6:"socioChoices",relations6:"bullyResponses",vika6:"socioVikaAnswers","bullying-sna-five":"bullyFiveResponses"};
+const SOCIO_VARIANTS=["positive6","relations6","vika6","bullying-sna-five","positive3"];
+const SOCIO_FIELDS={positive6:"socioChoices",relations6:"bullyResponses",vika6:"socioVikaAnswers","bullying-sna-five":"bullyFiveResponses",positive3:"socioThreeAnswers"};
 let socioBanks={},socioActive="positive6";
 const isSocioMethod=()=>DETAILS[methodNow?.name]?.methodType==="sociometry";
 function socHasValue(x){
