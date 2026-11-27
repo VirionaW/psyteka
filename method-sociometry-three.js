@@ -46,7 +46,7 @@
  let pendingFocus=null;
  function picks(r,q,ids){const a=values(r,q);return [...new Set(a.filter(x=>x&&x!==NONE&&x!==r.socioId&&ids.has(x)))]}
  const answered=(r,q,ids)=>!absent(r)&&(values(r,q).includes(NONE)||picks(r,q,ids).length>0);
- const done=(r,ids)=>Q.filter((_,q)=>answered(r,q,ids)).length;
+ const done=(r,ids)=>Q.filter((_,q)=>!absent(r)&&padded(r,q).every(id=>id===NONE||Boolean(id&&id!==r.socioId&&ids.has(id)))).length;
  function tally(rows){
   const roster=people(rows),ids=new Set(roster.map(r=>r.socioId)),counts=new Map(roster.map(r=>[r.socioId,[0,0,0]]));
   roster.filter(r=>!absent(r)).forEach(r=>Q.forEach((_,q)=>picks(r,q,ids).forEach(id=>counts.get(id)[q]++)));
@@ -83,7 +83,7 @@
   if(ctx.calcMode!=="class")return;
   const row=ctx.rows[ctx.rowIndex],on=(id,event,fn)=>document.getElementById(id)?.addEventListener(event,fn),rerender=()=>{dirty();ctx.onSelect?.(ctx.rowIndex)},msg=t=>{const el=document.getElementById("psyThreeMessage");if(el)el.textContent=t};
   on("psyThreeAdd","click",()=>{const names=(document.getElementById("psyThreeNames")?.value||"").split(/[\r\n;]+/).map(x=>x.trim()).filter(Boolean);if(names.length)ctx.onBulkAdd?.(names)});
-  ["psyThreePerson","psyThreeBottom"].forEach(id=>on(id,"change",e=>ctx.onSelect?.(Number(e.target.value))));
+  ["psyThreePerson","psyThreeBottom"].forEach(id=>on(id,"change",e=>{const i=Number(e.target.value);if(!absent(ctx.rows[i]))pendingFocus={q:0,j:Math.max(0,padded(ctx.rows[i],0).findIndex(x=>!x))};ctx.onSelect?.(i)}));
   const roster=()=>people(ctx.rows);
   const focus=(q,j)=>{const input=document.getElementById("psyThreeInput"+q+"_"+j);if(input){input.scrollIntoView?.({block:"center"});input.focus({preventScroll:true});input.select?.()}};
   const focusNextButton=()=>document.getElementById("psyThreeNext")?.focus({preventScroll:false});
@@ -100,7 +100,7 @@
   };
   document.querySelectorAll("[data-three-add]").forEach(b=>b.addEventListener("click",()=>{if(!row||absent(row))return;const q=Number(b.dataset.threeAdd),a=padded(row,q);if(a.length<roster().length-1){a.push("");put(q,a,{q,j:a.length-1})}}));
   document.querySelectorAll("[data-three-fill]").forEach(b=>b.addEventListener("click",()=>{if(!row||absent(row))return;const q=Number(b.dataset.threeFill),a=padded(row,q).map(x=>x||NONE);put(q,a,advance(q,a.length-1,a))}));
-  document.querySelectorAll("[data-three-nextq]").forEach(b=>b.addEventListener("click",()=>{const q=Number(b.dataset.threeNextq);if(q<2)focus(q+1,firstEmpty(q+1));else focusNextButton()}));
+  document.querySelectorAll("[data-three-nextq]").forEach(b=>b.addEventListener("click",()=>{const q=Number(b.dataset.threeNextq);if(q<2)focus(q+1,firstEmpty(q+1));else nextPupil()}));
   document.querySelectorAll("[data-three-clear]").forEach(b=>b.addEventListener("click",()=>{if(!row||absent(row))return;const [q,j]=b.dataset.threeClear.split(":").map(Number),a=padded(row,q);a[j]="";put(q,a,{q,j})}));
   const combos=[...document.querySelectorAll(".psy-socio-combo[data-three-q]")];
   const close=c=>{c.querySelector(".psy-socio-options").hidden=true;c.querySelector("input").setAttribute("aria-expanded","false");c.classList.remove("is-open")};
